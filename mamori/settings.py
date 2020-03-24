@@ -24,18 +24,26 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "know your weakness"
+SECRET_KEY = (
+    "know your weakness" if not os.getenv("SECRET_KEY") else os.getenv("SECRET_KEY")
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.getenv("DEBUG", ""))
+DEBUG = True if os.getenv("DEBUG") in ["1", "True", "true"] else False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost"]
 
 
 # Application definition
+STATIC_ROOT = None
+static_app = ["mamori.static"]
+if os.getenv("STATIC_DIR"):
+    STATIC_ROOT = os.path.join(BASE_DIR, os.getenv("STATIC_DIR"))
+    static_app = []
 
 INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
+    *static_app,
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
@@ -55,7 +63,7 @@ ROOT_URLCONF = "mamori.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "mamori/static/mamori/dist")],
+        "DIRS": [STATIC_ROOT] if STATIC_ROOT else [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -74,7 +82,7 @@ WSGI_APPLICATION = "mamori.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {"default": {}}
+DATABASES = {"default": dj_database_url.config(default=os.getenv("DATABASE_URL"))}
 
 
 # Password validation
@@ -109,4 +117,3 @@ USE_TZ = True
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATIC_URL = "/"
-STATIC_ROOT = os.path.join(BASE_DIR, "mamori/static/mamori/dist")
