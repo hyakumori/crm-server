@@ -1,0 +1,5 @@
+psycopg2
+Django
+dj-database-url
+python-dotenv
+whitenoise
