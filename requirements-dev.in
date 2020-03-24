@@ -3,3 +3,4 @@
 IPython
 black
 flake8
+requests
