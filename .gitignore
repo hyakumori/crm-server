@@ -204,3 +204,4 @@ release
 docker/.env
 
 *.dump
+wpdevserver.lock
