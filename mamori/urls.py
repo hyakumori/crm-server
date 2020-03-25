@@ -16,8 +16,10 @@ Including another URLconf
 from django.urls import path, re_path
 
 from mamori.static.views import index_view, test_view
+from mamori.graphql import view as graphql_view
 
 urlpatterns = [
     path("check", test_view, name="check"),
+    path("graphql", graphql_view, name="graphql"),
     re_path(".*", index_view, name="index"),
 ]

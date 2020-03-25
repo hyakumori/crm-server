@@ -17,6 +17,7 @@
 ```
 $ docker service create --name postgres11 \
     --mount type=volume,source=postgres11,destination=/var/lib/postgresql/data \
+    -e POSTGRES_PASSWORD=masterpassword \
     --publish 5432:5432 \
     postgres:11-alpine
 ```

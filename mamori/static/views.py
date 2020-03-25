@@ -7,7 +7,7 @@ if settings.STATIC_ROOT:
     index_view = never_cache(TemplateView.as_view(template_name="index.html"))
 else:
     import requests
-    from django.http import StreamingHttpResponse
+    from django.http import StreamingHttpResponse, HttpResponseNotModified
 
     def index_view(request):
         req_headers = dict(request.headers)
@@ -18,15 +18,20 @@ else:
             headers=req_headers,
             stream=True,
         )
-        resp = StreamingHttpResponse(
-            fe_resp.iter_content(chunk_size=128),
-            content_type=fe_resp.headers.get("content-type"),
-            status=fe_resp.status_code,
-        )
+        if fe_resp.status_code == 304:
+            resp = HttpResponseNotModified()
+        else:
+            resp = StreamingHttpResponse(
+                fe_resp.iter_content(chunk_size=128),
+                content_type=fe_resp.headers.get("content-type"),
+                status=fe_resp.status_code,
+            )
         resp["ETag"] = fe_resp.headers.get("ETag")
         resp["Date"] = fe_resp.headers.get("Date")
+        resp["Accept-Ranges"] = fe_resp.headers.get("Accept-Ranges")
         return resp
 
 
+@never_cache
 def test_view(request):
-    return HttpResponse("OK")
+    return HttpResponse("OK", content_type="text/plain")
