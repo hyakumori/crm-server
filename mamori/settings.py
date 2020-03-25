@@ -35,11 +35,15 @@ ALLOWED_HOSTS = ["localhost"]
 
 
 # Application definition
-STATIC_ROOT = None
-static_app = ["mamori.static"]
-if os.getenv("STATIC_DIR"):
-    STATIC_ROOT = os.path.join(BASE_DIR, os.getenv("STATIC_DIR"))
-    static_app = []
+STATIC_ROOT = os.path.join(
+    BASE_DIR, os.getenv("STATIC_DIR", "mamori/static/mamori/dist")
+)
+if os.getenv("STATIC_DIR") == "":
+    STATIC_ROOT = None
+
+static_app = []
+if not STATIC_ROOT:
+    static_app = ["mamori.static"]
 
 INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
