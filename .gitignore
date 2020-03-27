@@ -191,10 +191,8 @@ Sessionx.vim
 mamori/static/test/unit/coverage/
 mamori/static/test/e2e/reports/
 assets.json
-node_modules/
 npm-debug.log*
 yarn-debug.log*
-yarn.lock
 yarn-error.log*
 selenium-debug.log
 node_modules

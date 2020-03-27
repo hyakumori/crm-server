@@ -5,22 +5,29 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test": "jest"
   },
   "dependencies": {
     "core-js": "^3.6.4",
     "vue": "^2.6.11"
   },
   "devDependencies": {
+    "@babel/core": "^7.9.0",
     "@vue/cli-plugin-babel": "^4.2.0",
     "@vue/cli-plugin-eslint": "^4.2.0",
     "@vue/cli-service": "^4.2.0",
     "@vue/eslint-config-prettier": "^6.0.0",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.3",
+    "babel-jest": "^25.2.3",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-vue": "^6.1.2",
+    "jest": "^25.2.3",
+    "jest-serializer-vue": "^2.0.2",
     "prettier": "^1.19.1",
+    "vue-jest": "^3.0.5",
     "vue-template-compiler": "^2.6.11"
   }
 }

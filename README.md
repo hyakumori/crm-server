@@ -1,5 +1,7 @@
 # MAMORI crm
 
+![pipeline](https://gitlab.com/datafluct/hyakumori_crm/badges/develop/pipeline.svg)
+
 ## Requirements
 
 - Python>=3.7 (consider using `pyenv` to manage python version).
