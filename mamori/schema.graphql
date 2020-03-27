@@ -26,7 +26,7 @@ type ForestOwner {
   postcode: String
   address: String
   email: String
-  relative: ForestOwner
+  owner: ForestOwner
   relative_type: RelativeType
 }
 
@@ -41,6 +41,6 @@ type Contract {
   id: ID!
   start_date: Date!
   end_date: Date!
-  forest_id: ID!
-  owner: ID!
+  forest: Forest!
+  owner: ForestOwner!
 }
