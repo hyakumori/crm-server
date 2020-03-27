@@ -10,7 +10,7 @@
 
 - Postgresql>=11
 
-## Instalation
+## Installation
 
 ### Postgres
 
@@ -72,6 +72,6 @@ Using `pip-tools`
 
 - Add a dependeny to requirements-dev.in, consider pin its version.
 
-- Compile to `requirements-dev.txt`: `pip-compile --generate-hashes requirements-dev.in`
+- Compile to `requirements-dev.txt`: `pip-compile requirements-dev.in`
 
 Remember to reinstall package.
