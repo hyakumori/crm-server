@@ -1,0 +1,40 @@
+[
+    {
+        "text": "土地管理ID",
+        "align": "center"
+    },
+    {
+        "text": "所在地",
+        "align": "center",
+        "sortable": false
+    },
+    {
+        "text": "地目",
+        "align": "center",
+        "sortable": false
+    },
+    {
+        "text": "面積",
+        "align": "center",
+        "sortable": false
+    },
+    {
+        "text": "ステータス",
+        "align": "center",
+        "sortable": false
+    },
+    {
+        "text": "土地所有者名",
+        "align": "center",
+        "sortable": false
+    },
+    {
+        "text": "土地管理ID",
+        "align": "center",
+        "sortable": false
+    },
+    {
+        "align": "center",
+        "sortable": false
+    }
+]
