@@ -1,0 +1,15 @@
+venv
+.vscode
+dist
+docker
+mamori/static/mamori/node_modules
+.env
+.env.example
+docker-compose.infra.yml
+Dockerfile
+.dockerignore
+.gitignore
+.gitlab-ci.yml
+mamori.egg-info
+docker
+yarn.lock
