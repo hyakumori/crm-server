@@ -1,0 +1,61 @@
+﻿scalar JSON
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Forest {
+  attributes: JSON
+  basic_info: JSON
+  geodata: JSON
+  id: ID!
+  internal_id: String
+}
+
+type ForestConnection {
+  items: [Forest]
+  nextToken: String
+}
+
+type Mutation {
+  createForest(input: CreateForestInput!): Forest
+  deleteForest(input: DeleteForestInput!): Forest
+  updateForest(input: UpdateForestInput!): Forest
+}
+
+type Query {
+  getForest(id: ID!): Forest
+  listForests(filter: TableForestFilterInput, limit: Int, nextToken: String): ForestConnection
+}
+
+type Subscription {
+  onCreateForest(attributes: JSON, basic_info: JSON, geodata: JSON, id: ID, internal_id: String): Forest @subscribe(mutations : ["createForest"])
+  onDeleteForest(attributes: JSON, basic_info: JSON, geodata: JSON, id: ID, internal_id: String): Forest @subscribe(mutations : ["deleteForest"])
+  onUpdateForest(attributes: JSON, basic_info: JSON, geodata: JSON, id: ID, internal_id: String): Forest @subscribe(mutations : ["updateForest"])
+}
+
+input CreateForestInput {
+  attributes: JSON
+  basic_info: JSON
+  geodata: JSON
+  internal_id: String
+}
+
+input DeleteForestInput {
+  id: ID!
+}
+
+input TableForestFilterInput {
+  id: ID
+  internal_id: String
+}
+
+input UpdateForestInput {
+  attributes: JSON
+  basic_info: JSON
+  geodata: JSON
+  id: ID!
+  internal_id: String
+}
