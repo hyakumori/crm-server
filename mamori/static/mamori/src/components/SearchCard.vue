@@ -4,12 +4,19 @@
 
     <div v-for="(condition, index) in conditions" :key="index">
       <div class="mb-2 mt-2 d-flex align-center">
-        <h5 class="font-weight-regular mb-0" style="color: #999999">項目を選択</h5>
+        <h5 class="font-weight-regular mb-0" style="color: #999999">
+          項目を選択
+        </h5>
 
         <v-icon>mdi-chevron-down</v-icon>
       </div>
 
-      <v-text-field v-model="condition.input" clearable placeholder="パスワード" outlined></v-text-field>
+      <v-text-field
+        v-model="condition.input"
+        clearable
+        placeholder="パスワード"
+        outlined
+      ></v-text-field>
     </div>
 
     <div class="d-block" @click="addSearchField">
@@ -30,12 +37,12 @@ export default {
           input: null
         }
       ]
-    }
+    };
   },
 
   methods: {
     addSearchField() {
-      this.conditions.push({input: null})
+      this.conditions.push({ input: null });
     }
   }
 };

@@ -24,7 +24,9 @@
     </template>
 
     <template v-slot:item.owners="{ item }">
-      <p class="owner-negotiation" v-if="isOwnerNegotiation(item.owners)">商談中</p>
+      <p class="owner-negotiation" v-if="isOwnerNegotiation(item.owners)">
+        商談中
+      </p>
       <p class="d-inline" v-else>{{ item.owners }}</p>
     </template>
   </v-data-table>

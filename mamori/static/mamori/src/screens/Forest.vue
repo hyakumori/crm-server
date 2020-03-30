@@ -5,9 +5,7 @@
     </v-col>
 
     <v-col cols="9">
-      <div
-        class="list-header d-flex align-center"
-      >
+      <div class="list-header d-flex align-center">
         <p class="ml-4 mb-0 font-weight-bold caption">４件を選択済み</p>
         <p class="ml-12 mb-0 caption">アクションを選択</p>
         <v-icon>mdi-chevron-down</v-icon>
@@ -28,8 +26,8 @@
 <script>
 import DataList from "../components/DataList";
 import SearchCard from "../components/SearchCard";
-import headers from '../assets/dump_table_header.json';
-import datas from '../assets/dump_table_data.json';
+import headers from "../assets/dump_table_header.json";
+import datas from "../assets/dump_table_data.json";
 
 export default {
   name: "forest",
@@ -40,8 +38,8 @@ export default {
   },
 
   methods: {
-    rowData(val) {
-      console.log(val);
+    rowData() {
+      // console.log(val);
     }
   },
 
@@ -53,7 +51,7 @@ export default {
     getDatas() {
       return datas;
     }
-  },
+  }
 };
 </script>
 
