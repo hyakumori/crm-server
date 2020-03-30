@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <page-header />
-    <router-view></router-view>
+    <router-view class="main-content"></router-view>
   </v-app>
 </template>
 
@@ -16,3 +16,9 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.main-content {
+  background-color: #dddddd;
+}
+</style>
