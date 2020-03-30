@@ -1,0 +1,27 @@
+{
+  "icon": {
+    "archive_icon": "mdi-calendar-text",
+    "client_icon": "mdi-account-outline",
+    "forest_icon": "mdi-image-filter-hdr"
+  },
+  "page_header": {
+    "archive_list": "Archive List",
+    "client_list": "Client List",
+    "client_mgmt": "Client Management",
+    "forest_list": "Forest List",
+    "forest_mgmt": "Forest Management",
+    "negotiate_mgm": "Negotiate Management",
+    "setting": "Setting"
+  },
+  "raw_text": {
+    "search": "Search"
+  },
+  "search": {
+    "add_search_condition": "Add condition",
+    "enter_condition": "Enter condition",
+    "search_condition": "Search condition",
+    "select_action": "Select action",
+    "select_item": "Selected item",
+    "selected_action": "Selected"
+  }
+}

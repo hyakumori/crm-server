@@ -57,11 +57,13 @@ export default {
 
   computed: {
     iconMode() {
-      return this.isForestMode
-        ? "mdi-image-filter-hdr"
-        : this.isClientMode
-        ? "mdi-account"
-        : "mdi-book-account";
+      if (this.isForestMode) {
+        return this.$t("icon.forest_icon");
+      } else if (this.isClientMode) {
+        return this.$t("icon.client_icon");
+      } else {
+        return this.$t("icon.archive_icon");
+      }
     },
 
     isLoading() {
@@ -130,21 +132,21 @@ export default {
     color: white;
   }
 
-  & tr:hover {
+  & ::v-deep tr {
     cursor: pointer;
-  }
 
-  & tr p {
-    @extend %text-overflow-shared;
-  }
+    td {
+      @extend %text-overflow-shared;
+    }
 
-  & th {
-    position: relative;
-    @extend %text-overflow-shared;
+    th {
+      position: relative;
+      @extend %text-overflow-shared;
 
-    & .mdi-chevron-up {
-      position: absolute;
-      right: 0;
+      & .mdi-chevron-up {
+        position: absolute;
+        right: 0;
+      }
     }
   }
 }
