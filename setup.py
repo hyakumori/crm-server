@@ -43,7 +43,7 @@ class BaseBuildCommand(Command):
     def initialize_options(self):
         self.build_lib = None
         self.force = None
-        self.work_path = os.path.join(ROOT_PATH, "mamori/static/mamori")
+        self.work_path = None
         self.inplace = None
 
     def get_root_path(self):
@@ -220,12 +220,12 @@ class BuildAssetsCommand(BaseBuildCommand):
     description = "build static media assets"
 
     def initialize_options(self):
+        BaseBuildCommand.initialize_options(self)
         self.work_path = os.path.join(ROOT_PATH, "mamori/static/mamori")
         self.asset_json_path = os.path.join(self.work_path, "assets.json")
-        BaseBuildCommand.initialize_options(self)
 
     def get_dist_paths(self):
-        return [os.path.join(self.work_path, "/dist")]
+        return [os.path.join(self.work_path, "dist")]
 
     def get_manifest_additions(self):
         return (self.asset_json_path,)
@@ -325,7 +325,6 @@ class BuildAssetsCommand(BaseBuildCommand):
             "version": version_info["version"],
             "build": version_info["build"],
         }
-        print(self.get_asset_json_path())
         with open(self.get_asset_json_path(), "w") as fp:
             json.dump(manifest, fp)
         return manifest

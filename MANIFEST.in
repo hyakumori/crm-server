@@ -4,4 +4,4 @@ graft mamori
 prune mamori/static/mamori
 graft mamori/static/mamori/dist
 include mamori/static/mamori/assets.json
-global-exclude *~ *.py[cod]
+global-exclude *.py[cod]
