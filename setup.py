@@ -333,7 +333,7 @@ class BuildAssetsCommand(BaseBuildCommand):
         return os.path.abspath(os.path.join(self.build_lib, self.asset_json_path))
 
 
-VERSION = "0.1.0.dev0"
+VERSION = os.environ.get("MAMORI_VERSION", "0.1.0.dev0")
 IS_LIGHT_BUILD = os.environ.get("MAMORI_LIGHT_BUILD") == "1"
 
 
