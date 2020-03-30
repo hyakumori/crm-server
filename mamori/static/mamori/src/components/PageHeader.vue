@@ -13,9 +13,13 @@
         <div class="menu caption pa-7">
           <router-link to="/forests">森林情報一覧</router-link>
 
-          <router-link to="/clients" class="ml-4 mr-4">顧客情報一覧</router-link>
+          <router-link to="/clients" class="ml-4 mr-4">
+            顧客情報一覧
+          </router-link>
 
-          <router-link to="/tradingHistory" class="mr-4">交渉履歴一覧</router-link>
+          <router-link to="/tradingHistory" class="mr-4">
+            交渉履歴一覧
+          </router-link>
 
           <router-link to="/settings">設定</router-link>
         </div>

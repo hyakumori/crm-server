@@ -1,5 +1,3 @@
-const path = require("path");
-
 module.exports = {
   moduleFileExtensions: ["js", "json", "vue"],
   moduleNameMapper: {
