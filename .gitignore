@@ -203,3 +203,5 @@ docker/.env
 
 *.dump
 wpdevserver.lock
+
+.idea
