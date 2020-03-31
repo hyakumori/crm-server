@@ -3,7 +3,7 @@ import os.path
 from subprocess import check_output
 
 try:
-    VERSION = __import__("pkg_resources").get_distribution("mamori").version
+    VERSION = __import__("pkg_resources").get_distribution("hyakumori_crm").version
 except Exception:
     VERSION = "unknown"
 

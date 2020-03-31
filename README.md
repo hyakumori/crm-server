@@ -1,4 +1,4 @@
-# MAMORI crm
+# Hyakumori crm
 
 ![pipeline](https://gitlab.com/datafluct/hyakumori_crm/badges/develop/pipeline.svg)
 
@@ -29,9 +29,9 @@ $ docker service create --name postgres11 \
 ```
 $ docker exec -ti [containerid] psql -U postgres
 
-postgres=# CREATE ROLE mamori WITH PASSWORD 'mypassword' LOGIN CREATEDB;
+postgres=# CREATE ROLE hyakumori_crm WITH PASSWORD 'mypassword' LOGIN CREATEDB;
 
-postgres=# CREATE DATABASE mamori OWNER mamori;
+postgres=# CREATE DATABASE hyakumori_crm OWNER hyakumori_crm;
 ```
 
 ### Python
@@ -46,10 +46,10 @@ postgres=# CREATE DATABASE mamori OWNER mamori;
 
 ### Run on local
 
-1. Install once with `MAMORI_LIGHT_BUILD=1 pip install -e .[dev]`
+1. Install once with `HYAKUMORI_LIGHT_BUILD=1 pip install -e .[dev]`
 2. Copy `.env.example` to `.env` and fill necessary variables for both backend and fontend.
-3. [FRONTEND] Move to `mamori/static/mamori` run `yarn`
-4. Run dev server with `STATIC_DIR="" mamori runserver`. You might want to set `STATIC_DIR=""` in `.env`.
+3. [FRONTEND] Move to `hyakumori_crm/static/hyakumori_crm` run `yarn`
+4. Run dev server with `STATIC_DIR="" hyakumori_crm runserver`. You might want to set `STATIC_DIR=""` in `.env`.
 
 ### Dependency management
 
@@ -75,17 +75,20 @@ Using `pip-tools`
 
 Remember to reinstall package.
 
-
 ### Using Docker build
+
 - See `docker-compose.infra.yml` for local infrastructure reference
 - Assume `.env`
+
 ```
 DEBUG=True
 SECRET_KEY=0fdafa9ea1f1436cb1d3ff56fcd95586
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/hyakumori_crm_local
-STATIC_DIR=mamori/static/mamori/dist
+STATIC_DIR=hyakumori_crm/static/hyakumori_crm/dist
 ```
+
 - Examples docker build
+
 ```
 docker build --build-arg MAMORI_VERSION=0.1.0 -t mamori_crm:0.1.0 .
 docker run --rm -it --env-file .env --network=host --name=mamori_crm_test mamori_crm:latest

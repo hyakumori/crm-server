@@ -188,8 +188,8 @@ Sessionx.vim
 # Persistent undo
 [._]*.un~
 
-mamori/static/test/unit/coverage/
-mamori/static/test/e2e/reports/
+hyakumori_crm/static/test/unit/coverage/
+hyakumori_crm/static/test/e2e/reports/
 assets.json
 npm-debug.log*
 yarn-debug.log*

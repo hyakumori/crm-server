@@ -5,7 +5,7 @@ import sys
 
 
 def entrypoint():
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mamori.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hyakumori_crm.settings")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

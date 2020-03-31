@@ -1,5 +1,5 @@
 """
-WSGI config for mamori project.
+WSGI config for hyakumori_crm project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mamori.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hyakumori_crm.settings")
 
 application = get_wsgi_application()

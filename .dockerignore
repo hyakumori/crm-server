@@ -2,7 +2,7 @@ venv
 .vscode
 dist
 docker
-mamori/static/mamori/node_modules
+hyakumori_crm/static/hyakumori_crm/node_modules
 .env
 .env.example
 docker-compose.infra.yml
@@ -10,6 +10,6 @@ Dockerfile
 .dockerignore
 .gitignore
 .gitlab-ci.yml
-mamori.egg-info
+hyakumori_crm.egg-info
 docker
 yarn.lock
