@@ -9,9 +9,9 @@ test-frontend:
   image: node:12-alpine
   cache:
     paths:
-      - $CI_PROJECT_DIR/mamori/static/mamori/node_modules/
+      - $CI_PROJECT_DIR/hyakumori_crm/static/hyakumori_crm/node_modules/
   before_script:
-    - cd mamori/static/mamori
+    - cd hyakumori_crm/static/hyakumori_crm
     - yarn install
   script:
     - yarn lint
@@ -25,7 +25,7 @@ test-backend:
     paths:
       - .cache/pip
   script:
-    - export MAMORI_LIGHT_BUILD=1
+    - export HYAKUMORI_LIGHT_BUILD=1
     - pip install -U pip setuptools
-    - pip install -e '.[dev]'
+    - pip install '.[dev]'
     - ./manage.py test
