@@ -18,31 +18,52 @@ type ClientConnection {
   nextToken: String
 }
 
+type ClientResponse implements HyakumoriResponse {
+  ok: Boolean!
+  error: JSON
+  client: Client
+}
+
 type Mutation {
-  createClient(input: CreateClientInput!): Client
-  deleteClient(input: DeleteClientInput!): Client
-  updateClient(input: UpdateClientInput!): Client
+  create_client(data: CreateClientInput!): ClientResponse
+  delete_client(id: ID!): ClientResponse
+  update_client(data: UpdateClientInput!): ClientResponse
 }
 
 type Query {
-  getClient(id: ID!): Client
-  listClients(filter: TableClientFilterInput, limit: Int, nextToken: String): ClientConnection
+  get_client(id: ID!): ClientResponse
+  list_clients(
+    filter: TableClientFilterInput
+    limit: Int
+    nextToken: String
+  ): ClientConnection
 }
 
 type Subscription {
-  onCreateClient(attributes: JSON, id: ID, internal_id: String, profile: JSON): Client @subscribe(mutations : ["createClient"])
-  onDeleteClient(attributes: JSON, id: ID, internal_id: String, profile: JSON): Client @subscribe(mutations : ["deleteClient"])
-  onUpdateClient(attributes: JSON, id: ID, internal_id: String, profile: JSON): Client @subscribe(mutations : ["updateClient"])
+  onCreateClient(
+    attributes: JSON
+    id: ID
+    internal_id: String
+    profile: JSON
+  ): Client @subscribe(mutations: ["createClient"])
+  onDeleteClient(
+    attributes: JSON
+    id: ID
+    internal_id: String
+    profile: JSON
+  ): Client @subscribe(mutations: ["deleteClient"])
+  onUpdateClient(
+    attributes: JSON
+    id: ID
+    internal_id: String
+    profile: JSON
+  ): Client @subscribe(mutations: ["updateClient"])
 }
 
 input CreateClientInput {
-  attributes: JSON
   internal_id: String
   profile: JSON
-}
-
-input DeleteClientInput {
-  id: ID!
+  attributes: JSON
 }
 
 input TableClientFilterInput {
@@ -51,8 +72,8 @@ input TableClientFilterInput {
 }
 
 input UpdateClientInput {
-  attributes: JSON
   id: ID!
   internal_id: String
   profile: JSON
+  attributes: JSON
 }
