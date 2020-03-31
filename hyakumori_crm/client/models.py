@@ -2,11 +2,13 @@ from typing import Optional
 import uuid
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-from pydantic import BaseModel
-from hyakumori_crm.core.models import (
+from pydantic import BaseModel, validator
+
+from ..core.models import (
     TimestampMixin,
     InternalMixin,
     HyakumoriDanticModel,
+    HyakumoriDanticUpdateModel,
 )
 
 
@@ -28,9 +30,13 @@ class ClientProfileCreate(BaseModel):
 
 
 class ClientCreate(HyakumoriDanticModel):
-    internal_id: str
+    internal_id: Optional[str]
     profile: ClientProfileCreate
-    attributes: dict = {}
+    attributes: Optional[dict]
+
+
+class ClientUpdate(HyakumoriDanticUpdateModel, ClientCreate):
+    pass
 
 
 class ClientRead(HyakumoriDanticModel):

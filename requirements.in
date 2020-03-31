@@ -5,3 +5,4 @@ python-dotenv
 whitenoise>=5
 python-dateutil  # via ariadne
 ariadne
+pydantic
