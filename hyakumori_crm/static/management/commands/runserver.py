@@ -10,7 +10,7 @@ class Command(RunServerCommand):
             import atexit
             from subprocess import Popen
 
-            p = Popen(["yarn", "serve"], cwd="mamori/static/mamori")
+            p = Popen(["yarn", "serve"], cwd="hyakumori_crm/static/hyakumori_crm")
 
             def release():
                 p.terminate()

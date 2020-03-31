@@ -1,4 +1,4 @@
-"""mamori URL Configuration
+"""hyakumori_crm URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -15,8 +15,8 @@ Including another URLconf
 """
 from django.urls import path, re_path
 
-from mamori.static.views import index_view, test_view
-from mamori.graphql import view as graphql_view
+from hyakumori_crm.static.views import index_view, test_view
+from hyakumori_crm.graphql import view as graphql_view
 
 urlpatterns = [
     path("check", test_view, name="check"),
