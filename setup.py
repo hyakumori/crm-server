@@ -221,7 +221,7 @@ class BuildAssetsCommand(BaseBuildCommand):
 
     def initialize_options(self):
         BaseBuildCommand.initialize_options(self)
-        self.work_path = os.path.join(ROOT_PATH, "mamori/static/mamori")
+        self.work_path = os.path.join(ROOT_PATH, "hyakumori_crm/static/hyakumori_crm")
         self.asset_json_path = os.path.join(self.work_path, "assets.json")
 
     def get_dist_paths(self):
@@ -232,22 +232,22 @@ class BuildAssetsCommand(BaseBuildCommand):
 
     def _get_package_version(self):
         """
-        Attempt to get the most correct current version of Mamori.
+        Attempt to get the most correct current version of Hyakumori.
         """
         pkg_path = ROOT_PATH
 
         sys.path.insert(0, pkg_path)
         try:
-            import mamori
+            import hyakumori_crm
         except Exception:
             version = None
             build = None
         else:
             log.info(
-                f"pulled version information from 'mamori' module. {mamori.__file__}"
+                f"pulled version information from 'hyakumori_crm' module. {hyakumori_crm.__file__}"
             )
             version = self.distribution.get_version()
-            build = mamori.__build__
+            build = hyakumori_crm.__build__
         finally:
             sys.path.pop(0)
 
@@ -293,14 +293,14 @@ class BuildAssetsCommand(BaseBuildCommand):
             )
         )
         if not version_info["version"] or not version_info["build"]:
-            log.fatal("Could not determine mamori version or build")
+            log.fatal("Could not determine hyakumori_crm version or build")
             sys.exit(1)
 
         try:
             self._build_static()
         except Exception:
             traceback.print_exc()
-            log.fatal("unable to build Mamori's static assets!")
+            log.fatal("unable to build Hyakumori's static assets!")
             sys.exit(1)
 
         log.info("writing version manifest")
@@ -334,7 +334,7 @@ class BuildAssetsCommand(BaseBuildCommand):
 
 
 VERSION = os.environ.get("MAMORI_VERSION", "0.1.0.dev0")
-IS_LIGHT_BUILD = os.environ.get("MAMORI_LIGHT_BUILD") == "1"
+IS_LIGHT_BUILD = os.environ.get("HYAKUMORI_LIGHT_BUILD") == "1"
 
 
 def get_requirements(env):
@@ -354,21 +354,21 @@ install_requires = get_requirements("base")
 dev_requires = get_requirements("dev")
 
 
-class MamoriSDistCommand(SDistCommand):
+class HyakumoriSDistCommand(SDistCommand):
     # If we are not a light build we want to also execute build_assets as
     # part of our source build pipeline.
     if not IS_LIGHT_BUILD:
         sub_commands = SDistCommand.sub_commands + [("build_assets", None)]
 
 
-class MamoriBuildCommand(BuildCommand):
+class HyakumoriBuildCommand(BuildCommand):
     def run(self):
         if not IS_LIGHT_BUILD:
             self.run_command("build_assets")
         BuildCommand.run(self)
 
 
-class MamoriDevelopCommand(DevelopCommand):
+class HyakumoriDevelopCommand(DevelopCommand):
     def run(self):
         DevelopCommand.run(self)
         if not IS_LIGHT_BUILD:
@@ -376,9 +376,9 @@ class MamoriDevelopCommand(DevelopCommand):
 
 
 cmdclass = {
-    "sdist": MamoriSDistCommand,
-    "develop": MamoriDevelopCommand,
-    "build": MamoriBuildCommand,
+    "sdist": HyakumoriSDistCommand,
+    "develop": HyakumoriDevelopCommand,
+    "build": HyakumoriBuildCommand,
     "build_assets": BuildAssetsCommand,
 }
 
@@ -387,7 +387,7 @@ with open(os.path.join(ROOT_PATH, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
-    name="mamori",
+    name="hyakumori_crm",
     version=VERSION,
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -406,5 +406,5 @@ setup(
     extras_require={"dev": dev_requires},
     cmdclass=cmdclass,
     include_package_data=True,
-    entry_points={"console_scripts": ["mamori = mamori.cli:entrypoint"],},
+    entry_points={"console_scripts": ["hyakumori = hyakumori_crm.cli:entrypoint"],},
 )

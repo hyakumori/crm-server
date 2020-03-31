@@ -2,7 +2,7 @@ from ariadne import make_executable_schema, load_schema_from_path, QueryType
 from ariadne.contrib.django.scalars import date_scalar, datetime_scalar
 from ariadne.contrib.django.views import GraphQLView
 
-type_defs = load_schema_from_path("mamori/schema.graphql")
+type_defs = load_schema_from_path("hyakumori_crm/schema.graphql")
 
 query1 = QueryType()
 
