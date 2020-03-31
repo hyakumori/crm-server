@@ -90,6 +90,6 @@ STATIC_DIR=hyakumori_crm/static/hyakumori_crm/dist
 - Examples docker build
 
 ```
-docker build --build-arg MAMORI_VERSION=0.1.0 -t mamori_crm:0.1.0 .
-docker run --rm -it --env-file .env --network=host --name=mamori_crm_test mamori_crm:latest
+docker build --build-arg HYAKUMORI_VERSION=0.1.0 -t hyakumori_crm:0.1.0 .
+docker run --rm -it --env-file .env --network=host --name=hyakumori_crm_test hyakumori_crm:latest
 ```
