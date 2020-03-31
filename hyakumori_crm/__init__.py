@@ -24,8 +24,8 @@ def get_revision():
     :returns: Revision number of this branch/checkout, if available. None if
         no revision number can be determined.
     """
-    if "MAMORI_BUILD" in os.environ:
-        return os.environ["MAMORI_BUILD"]
+    if "HYAKUMORI_BUILD" in os.environ:
+        return os.environ["HYAKUMORI_BUILD"]
     package_dir = os.path.dirname(__file__)
     checkout_dir = os.path.normpath(os.path.join(package_dir, os.pardir))
     path = os.path.join(checkout_dir)
@@ -43,9 +43,9 @@ def get_version():
 def is_docker():
     # One of these environment variables are guaranteed to exist
     # from our official docker images.
-    # MAMORI_VERSION is from a tagged release, and MAMORI_BUILD is from a
+    # HYAKUMORI_VERSION is from a tagged release, and HYAKUMORI_BUILD is from a
     # a git based image.
-    return "MAMORI_VERSION" in os.environ or "MAMORI_BUILD" in os.environ
+    return "HYAKUMORI_VERSION" in os.environ or "HYAKUMORI_BUILD" in os.environ
 
 
 __version__ = VERSION
