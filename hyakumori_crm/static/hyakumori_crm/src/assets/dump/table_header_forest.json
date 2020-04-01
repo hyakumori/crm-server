@@ -1,12 +1,12 @@
 [
     {
         "text": "土地管理ID",
-        "align": "center"
+        "align": "right"
     },
     {
         "text": "所在地",
         "align": "center",
-        "sortable": false
+        "sortable": true
     },
     {
         "text": "地目",

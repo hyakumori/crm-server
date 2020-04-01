@@ -1,15 +1,11 @@
 <template>
-  <v-row class="main-section pl-5 pt-2 pr-5">
+  <v-row class="px-7 pt-2">
     <v-col cols="3">
       <search-card />
     </v-col>
 
     <v-col cols="9">
-      <div class="list-header d-flex align-center">
-        <p class="ml-4 mb-0 font-weight-bold caption">４件を選択済み</p>
-        <p class="ml-12 mb-0 caption">アクションを選択</p>
-        <v-icon>mdi-chevron-down</v-icon>
-      </div>
+      <table-action />
 
       <data-list
         class="mt-4"
@@ -26,15 +22,17 @@
 <script>
 import DataList from "../components/DataList";
 import SearchCard from "../components/SearchCard";
-import headers from "../assets/dump_table_header.json";
-import datas from "../assets/dump_table_data.json";
+import TableAction from "../components/TableAction";
+import headers from "../assets/dump/table_header_forest.json";
+import datas from "../assets/dump/table_data_forest.json";
 
 export default {
   name: "forest",
 
   components: {
     DataList,
-    SearchCard
+    SearchCard,
+    TableAction
   },
 
   methods: {
@@ -54,23 +52,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped>
-.main-section {
-  background-color: #dddddd;
-}
-
-.list-header {
-  background: #f7eaa5;
-  border-radius: 4px;
-  height: 56px;
-
-  & p {
-    color: #825929;
-  }
-
-  & .v-icon {
-    cursor: pointer;
-  }
-}
-</style>
