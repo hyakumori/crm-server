@@ -1,34 +1,45 @@
 <template>
   <div class="page-header">
-    <v-img src="../assets/app-bar.png" height="150"></v-img>
+    <v-img src="../assets/img/app-bar.webp" height="150"></v-img>
 
     <div class="page-header-content">
       <div class="d-flex justify-space-between">
         <div class="logo-section">
-          <img src="../assets/logo.png" height="20" />
+          <img src="../assets/img/logo.webp" alt="Logo big text" height="18" />
 
-          <img class="ml-1" src="../assets/crm.png" height="15" />
+          <img
+            class="ml-3"
+            src="../assets/img/crm.webp"
+            alt="Logo small text"
+            height="12"
+          />
         </div>
 
         <div class="menu caption pa-7">
-          <router-link to="/forests">森林情報一覧</router-link>
+          <router-link to="/forests">
+            {{ $t("page_header.forest_list") }}
+          </router-link>
 
           <router-link to="/clients" class="ml-4 mr-4">
-            顧客情報一覧
+            {{ $t("page_header.client_list") }}
           </router-link>
 
-          <router-link to="/tradingHistory" class="mr-4">
-            交渉履歴一覧
+          <router-link to="/archives" class="mr-4">
+            {{ $t("page_header.archive_list") }}
           </router-link>
 
-          <router-link to="/settings">設定</router-link>
+          <router-link to="/settings">
+            {{ $t("page_header.setting") }}
+          </router-link>
         </div>
       </div>
 
       <div>
-        <v-icon class="icon-mode">mdi-image-filter-hdr</v-icon>
+        <v-icon class="icon-mode">{{ getPageIcon }}</v-icon>
 
-        <span class="ml-4 white--text">森林管理</span>
+        <span class="ml-3 white--text">
+          {{ getPageTitle }}
+        </span>
       </div>
     </div>
   </div>
@@ -36,7 +47,43 @@
 
 <script>
 export default {
-  name: "page-header"
+  name: "page-header",
+
+  data() {
+    return {
+      mode: {
+        FOREST: "forests",
+        CLIENT: "clients",
+        ARCHIVE: "archives"
+      }
+    };
+  },
+
+  computed: {
+    getPageIcon() {
+      const routePath = this.$route.path;
+      if (routePath.includes(this.mode.FOREST)) {
+        return this.$t("icon.forest_icon");
+      } else if (routePath.includes(this.mode.CLIENT)) {
+        return this.$t("icon.client_icon");
+      } else {
+        return this.$t("icon.archive_icon");
+      }
+    },
+
+    getPageTitle() {
+      const routePath = this.$route.path;
+      if (routePath.includes(this.mode.FOREST)) {
+        return this.$t("page_header.forest_list");
+      } else if (routePath.includes(this.mode.CLIENT)) {
+        return this.$t("page_header.client_list");
+      } else if (routePath.includes(this.mode.ARCHIVE)) {
+        return this.$t("page_header.archive_list");
+      } else {
+        return this.$t("page_header.setting");
+      }
+    }
+  }
 };
 </script>
 
