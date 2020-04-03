@@ -47,12 +47,12 @@ export default {
     data: Array,
     headers: Array,
     negotiationCols: Array,
-    serverItemsLength: Number
+    serverItemsLength: Number,
   },
 
   data() {
     return {
-      selected: []
+      selected: [],
     };
   },
 
@@ -83,7 +83,7 @@ export default {
         }
       }
       return this.headers;
-    }
+    },
   },
 
   methods: {
@@ -109,8 +109,8 @@ export default {
 
     isNegotiation(val) {
       return val === "negotiation";
-    }
-  }
+    },
+  },
 };
 </script>
 

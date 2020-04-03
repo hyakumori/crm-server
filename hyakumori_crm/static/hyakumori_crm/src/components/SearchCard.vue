@@ -55,16 +55,16 @@ export default {
   name: "search-card",
 
   components: {
-    SelectList
+    SelectList,
   },
 
   data() {
     return {
       conditions: [
         {
-          input: null
-        }
-      ]
+          input: null,
+        },
+      ],
     };
   },
 
@@ -81,14 +81,14 @@ export default {
       if (this.conditions.length > 1) {
         this.conditions.splice(index, 1);
       }
-    }
+    },
   },
 
   computed: {
     getActions() {
       return actions;
-    }
-  }
+    },
+  },
 };
 </script>
 
