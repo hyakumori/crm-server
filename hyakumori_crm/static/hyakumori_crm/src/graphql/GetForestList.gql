@@ -1,0 +1,22 @@
+query {
+  list_forests {
+    ok
+    total
+    forests {
+      id,
+      geo_data,
+      basic_info {
+        acreage,
+        status
+      }
+      owner {
+        id
+        profile
+      }
+      customer {
+      	id
+        profile
+      }
+    }
+  }
+}

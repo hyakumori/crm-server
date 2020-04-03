@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "ariadne.contrib.django",
     "hyakumori_crm.client",
+    "hyakumori_crm.forest"
 ]
 
 MIDDLEWARE = [

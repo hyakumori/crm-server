@@ -1,17 +1,21 @@
 {
   "icon": {
     "archive_icon": "mdi-calendar-text",
-    "client_icon": "mdi-account-outline",
+    "customer_icon": "mdi-account-outline",
     "forest_icon": "mdi-image-filter-hdr"
   },
   "page_header": {
     "archive_list": "交渉履歴一覧",
-    "client_list": "顧客情報一覧",
-    "client_mgmt": "顧客管理",
+    "customer_list": "顧客情報一覧",
+    "customer_mgmt": "顧客管理",
     "forest_list": "林情報一覧",
     "forest_mgmt": "森林管理",
     "negotiate_mgm": "ユーザー管理",
     "setting": "設定"
+  },
+  "raw_text": {
+    "search": "探す",
+    "in_negotiation": "商談中"
   },
   "search": {
     "add_search_condition": "検索条件を追加",

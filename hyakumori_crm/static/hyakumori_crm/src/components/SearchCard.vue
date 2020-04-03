@@ -39,7 +39,7 @@
         </span>
       </div>
 
-      <v-btn class="mt-md-2" dark depressed color="#1B756A">
+      <v-btn class="mt-md-2 mt-lg-0 mt-xl-0" dark depressed>
         {{ $t("raw_text.search") }}
         <v-icon dark>mdi-magnify</v-icon>
       </v-btn>
@@ -131,8 +131,12 @@ $text-field--min-height: 0;
     cursor: pointer;
     margin-top: 0 !important;
 
-    & .v-btn i {
-      color: white;
+    & .v-btn {
+      background-color: #1b756a !important;
+
+      i {
+        color: white;
+      }
     }
 
     & .v-icon {
