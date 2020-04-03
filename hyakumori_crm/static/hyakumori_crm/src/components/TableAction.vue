@@ -20,26 +20,26 @@ export default {
   name: "table-action",
 
   components: {
-    SelectList
+    SelectList,
   },
 
   data() {
     return {
-      selectedAction: null
+      selectedAction: null,
     };
   },
 
   methods: {
     onSelected(val) {
       this.selectedAction = val.text;
-    }
+    },
   },
 
   computed: {
     getActions() {
       return actions;
-    }
-  }
+    },
+  },
 };
 </script>
 

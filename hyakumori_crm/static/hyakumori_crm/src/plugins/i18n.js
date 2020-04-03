@@ -7,13 +7,13 @@ Vue.use(VueI18n);
 
 const messages = {
   jp: jpMessages,
-  en: enMessages
+  en: enMessages,
 };
 
 const i18n = new VueI18n({
   locale: "en",
   messages,
-  fallbackLocale: "jp"
+  fallbackLocale: "jp",
 });
 
 export default i18n;

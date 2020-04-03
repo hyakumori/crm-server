@@ -1,12 +1,12 @@
-query {
+query GetForestList{
   list_forests {
     ok
     total
     forests {
-      id,
-      geo_data,
+      id
+      geo_data
       basic_info {
-        acreage,
+        acreage
         status
       }
       owner {

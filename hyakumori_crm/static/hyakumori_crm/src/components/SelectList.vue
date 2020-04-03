@@ -19,7 +19,7 @@ export default {
 
   props: {
     actions: Array,
-    placeHolder: String
+    placeHolder: String,
   },
 
   mounted() {
@@ -42,8 +42,8 @@ export default {
     onChangeSelectedItem(val) {
       this.resizeInputWidth();
       this.$emit("selectedAction", val);
-    }
-  }
+    },
+  },
 };
 </script>
 

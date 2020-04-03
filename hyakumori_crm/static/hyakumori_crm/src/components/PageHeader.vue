@@ -35,10 +35,9 @@
       </div>
 
       <div>
-        <v-icon class="icon-mode">{{ getPageIcon }}</v-icon>
-
+        <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
         <span class="ml-3 white--text">
-          {{ getPageTitle }}
+          {{ $store.state.pageHeader }}
         </span>
       </div>
     </div>
@@ -48,42 +47,6 @@
 <script>
 export default {
   name: "page-header",
-
-  data() {
-    return {
-      mode: {
-        FOREST: "forests",
-        CUSTOMER: "customers",
-        ARCHIVE: "archives"
-      }
-    };
-  },
-
-  computed: {
-    getPageIcon() {
-      const routePath = this.$route.path;
-      if (routePath.includes(this.mode.FOREST)) {
-        return this.$t("icon.forest_icon");
-      } else if (routePath.includes(this.mode.CUSTOMER)) {
-        return this.$t("icon.customer_icon");
-      } else {
-        return this.$t("icon.archive_icon");
-      }
-    },
-
-    getPageTitle() {
-      const routePath = this.$route.path;
-      if (routePath.includes(this.mode.FOREST)) {
-        return this.$t("page_header.forest_list");
-      } else if (routePath.includes(this.mode.CUSTOMER)) {
-        return this.$t("page_header.customer_list");
-      } else if (routePath.includes(this.mode.ARCHIVE)) {
-        return this.$t("page_header.archive_list");
-      } else {
-        return this.$t("page_header.setting");
-      }
-    }
-  }
 };
 </script>
 

@@ -19,13 +19,22 @@ test-frontend:
 
 test-backend:
   image: python:3.7
+  services:
+    - postgres:11-alpine
+
   variables:
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+    POSTGRES_DB: hyakumori
+    POSTGRES_USER: runner
+    POSTGRES_PASSWORD: "youC4nP4ass"
+    POSTGRES_HOST_AUTH_METHOD: trust
   cache:
     paths:
       - .cache/pip
   script:
     - export HYAKUMORI_LIGHT_BUILD=1
+    - export DATABASE_URL=postgres://runner:youC4nP4ass@postgres:5432/hyakumori
     - pip install -U pip setuptools
     - pip install '.[dev]'
-    - ./manage.py test
+    - coverage run -m pytest tests
+    - coverage report -m
