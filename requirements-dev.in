@@ -5,3 +5,5 @@ black
 flake8
 requests
 filelock
+pytest-django
+coverage

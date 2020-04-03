@@ -12,8 +12,8 @@ export default {
   name: "App",
 
   components: {
-    PageHeader
-  }
+    PageHeader,
+  },
 };
 </script>
 

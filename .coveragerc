@@ -1,0 +1,8 @@
+[run]
+source = hyakumori_crm
+omit =
+    */migrations/*
+    */types.py
+    */urls.py
+    hyakumori_crm/asgi.py
+    hyakumori_crm/wsgi.py
