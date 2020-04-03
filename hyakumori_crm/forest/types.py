@@ -1,14 +1,15 @@
 from ariadne import gql
 
-types = gql("""
+types = gql(
+    """
     type Forest implements Timestamp & Editor {
         id: ID!
         internal_id: String
         geo_data: JSON
         basic_info: ForestBasicInfo
         attributes: JSON
-        owner: Client
-        customer: Client
+        owner: Customer
+        customer: Customer
         updated_by: User
         updated_at: DateTime
         created_at: DateTime
@@ -29,4 +30,6 @@ types = gql("""
         forests: [Forest!]
         total: Int
     }
-""")
+"""
+)
+

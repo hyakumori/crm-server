@@ -19,7 +19,7 @@ export default {
 
   components: {
     SearchCard,
-    DataList
-  }
+    DataList,
+  },
 };
 </script>

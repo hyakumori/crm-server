@@ -11,19 +11,19 @@ const router = new VueRouter({
     {
       path: "/forests",
       name: "forests",
-      component: Forest
+      component: Forest,
     },
     {
       path: "/customers",
       name: "customers",
-      component: Customer
+      component: Customer,
     },
     {
       path: "/archives",
       name: "archives",
-      component: Archive
-    }
-  ]
+      component: Archive,
+    },
+  ],
 });
 
 export default router;
