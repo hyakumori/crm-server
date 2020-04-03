@@ -9,9 +9,13 @@
     "test": "jest"
   },
   "dependencies": {
+    "apollo-boost": "^0.4.7",
     "core-js": "^3.6.4",
     "d3": "^5.15.0",
+    "graphql": "^14.6.0",
+    "graphql-tag": "^2.10.3",
     "vue": "^2.6.11",
+    "vue-apollo": "^3.0.3",
     "vue-i18n": "^8.16.0",
     "vue-router": "^3.1.6",
     "vuetify": "^2.2.11"

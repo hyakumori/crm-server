@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Forest from "./screens/Forest.vue";
-import Client from "./screens/Client.vue";
+import Customer from "./screens/Customer.vue";
 import Archive from "./screens/Archive.vue";
 
 Vue.use(VueRouter);
@@ -14,9 +14,9 @@ const router = new VueRouter({
       component: Forest
     },
     {
-      path: "/clients",
-      name: "clients",
-      component: Client
+      path: "/customers",
+      name: "customers",
+      component: Customer
     },
     {
       path: "/archives",
