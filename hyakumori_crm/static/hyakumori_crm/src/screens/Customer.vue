@@ -15,7 +15,7 @@ import SearchCard from "../components/SearchCard";
 import DataList from "../components/DataList";
 
 export default {
-  name: "client",
+  name: "customer",
 
   components: {
     SearchCard,

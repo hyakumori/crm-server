@@ -20,8 +20,8 @@
             {{ $t("page_header.forest_list") }}
           </router-link>
 
-          <router-link to="/clients" class="ml-4 mr-4">
-            {{ $t("page_header.client_list") }}
+          <router-link to="/customers" class="ml-4 mr-4">
+            {{ $t("page_header.customer_list") }}
           </router-link>
 
           <router-link to="/archives" class="mr-4">
@@ -53,7 +53,7 @@ export default {
     return {
       mode: {
         FOREST: "forests",
-        CLIENT: "clients",
+        CUSTOMER: "customers",
         ARCHIVE: "archives"
       }
     };
@@ -64,8 +64,8 @@ export default {
       const routePath = this.$route.path;
       if (routePath.includes(this.mode.FOREST)) {
         return this.$t("icon.forest_icon");
-      } else if (routePath.includes(this.mode.CLIENT)) {
-        return this.$t("icon.client_icon");
+      } else if (routePath.includes(this.mode.CUSTOMER)) {
+        return this.$t("icon.customer_icon");
       } else {
         return this.$t("icon.archive_icon");
       }
@@ -75,8 +75,8 @@ export default {
       const routePath = this.$route.path;
       if (routePath.includes(this.mode.FOREST)) {
         return this.$t("page_header.forest_list");
-      } else if (routePath.includes(this.mode.CLIENT)) {
-        return this.$t("page_header.client_list");
+      } else if (routePath.includes(this.mode.CUSTOMER)) {
+        return this.$t("page_header.customer_list");
       } else if (routePath.includes(this.mode.ARCHIVE)) {
         return this.$t("page_header.archive_list");
       } else {

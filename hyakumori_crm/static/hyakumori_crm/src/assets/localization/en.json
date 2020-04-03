@@ -1,20 +1,21 @@
 {
   "icon": {
     "archive_icon": "mdi-calendar-text",
-    "client_icon": "mdi-account-outline",
+    "customer_icon": "mdi-account-outline",
     "forest_icon": "mdi-image-filter-hdr"
   },
   "page_header": {
     "archive_list": "Archive List",
-    "client_list": "Client List",
-    "client_mgmt": "Client Management",
+    "customer_list": "Customer List",
+    "customer_mgmt": "Customer Management",
     "forest_list": "Forest List",
     "forest_mgmt": "Forest Management",
     "negotiate_mgm": "Negotiate Management",
     "setting": "Setting"
   },
   "raw_text": {
-    "search": "Search"
+    "search": "Search",
+    "in_negotiation": "In negotiation"
   },
   "search": {
     "add_search_condition": "Add condition",
