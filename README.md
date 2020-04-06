@@ -49,7 +49,7 @@ postgres=# CREATE DATABASE hyakumori_crm OWNER hyakumori_crm;
 1. Install once with `HYAKUMORI_LIGHT_BUILD=1 pip install -e .[dev]`
 2. Copy `.env.example` to `.env` and fill necessary variables for both backend and fontend.
 3. [FRONTEND] Move to `hyakumori_crm/static/hyakumori_crm` run `yarn`
-4. Run dev server with `STATIC_DIR="" hyakumori_crm runserver`. You might want to set `STATIC_DIR=""` in `.env`.
+4. Run dev server with `STATIC_DIR="" hyakumori runserver`. You might want to set `STATIC_DIR=""` in `.env`.
 
 ### Dependency management
 
