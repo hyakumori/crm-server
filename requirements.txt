@@ -16,14 +16,37 @@ dj-database-url==0.5.0 \
     --hash=sha256:4aeaeb1f573c74835b0686a2b46b85990571159ffc21aa57ecd4d1e1cb334163 \
     --hash=sha256:851785365761ebe4994a921b433062309eb882fedd318e1b0fcecc607ed02da9 \
     # via hyakumori_crm (setup.py)
+django-behaviors==0.5.0 \
+    --hash=sha256:2e0180944e5529624bd543144611964189fb5e02aea43f24045f69f6704d2860 \
+    --hash=sha256:913c235b55e20698820ca2664b624d62c7b4f6fd2834aca658fdfb22d5cb4f79 \
+    # via hyakumori_crm (setup.py)
+django-model-utils==4.0.0 \
+    --hash=sha256:9cf882e5b604421b62dbe57ad2b18464dc9c8f963fc3f9831badccae66c1139c \
+    --hash=sha256:adf09e5be15122a7f4e372cb5a6dd512bbf8d78a23a90770ad0983ee9d909061 \
+    # via hyakumori_crm (setup.py)
 django==3.0.4 \
     --hash=sha256:50b781f6cbeb98f673aa76ed8e572a019a45e52bdd4ad09001072dfd91ab07c8 \
     --hash=sha256:89e451bfbb815280b137e33e454ddd56481fdaa6334054e6e031041ee1eda360 \
+    # via django-model-utils, djangorestframework, hyakumori_crm (setup.py)
+djangorestframework==3.11.0 \
+    --hash=sha256:05809fc66e1c997fd9a32ea5730d9f4ba28b109b9da71fccfa5ff241201fd0a4 \
+    --hash=sha256:e782087823c47a26826ee5b6fa0c542968219263fb3976ec3c31edab23a4001f \
     # via hyakumori_crm (setup.py)
+dnspython==1.16.0 \
+    --hash=sha256:36c5e8e38d4369a08b6780b7f27d790a292b2b08eea01607865bf0936c558e01 \
+    --hash=sha256:f69c21288a962f4da86e56c4905b49d11aba7938d3d740e80d9e366ee4f1632d \
+    # via email-validator
+email-validator==1.0.5 \
+    --hash=sha256:e3e6ede1765d7c1e580d2050d834b2689361f7da2d50ce74df6a5968fca7cb13 \
+    # via pydantic
 graphql-core==3.0.3 \
     --hash=sha256:31e9e62967cc3cb1afc0d4752e2576633adebbdcb14b4c62b9055413c239a48d \
     --hash=sha256:e586db99173ffbfbc520a468246c2e1af83267f01ae6ee8a0ed9112453fa3a32 \
     # via ariadne
+idna==2.9 \
+    --hash=sha256:7588d1c14ae4c77d74036e8c22ff447b26d0fde8f007354fd48a7814db15b7cb \
+    --hash=sha256:a068a21ceac8a4d63dbfd964670474107f541babbd2250d61922f029858365fa \
+    # via email-validator
 psycopg2-binary==2.8.4 \
     --hash=sha256:040234f8a4a8dfd692662a8308d78f63f31a97e1c42d2480e5e6810c48966a29 \
     --hash=sha256:086f7e89ec85a6704db51f68f0dcae432eff9300809723a6e8782c41c2f48e03 \
@@ -57,8 +80,8 @@ psycopg2-binary==2.8.4 \
     --hash=sha256:dbc5cd56fff1a6152ca59445178652756f4e509f672e49ccdf3d79c1043113a4 \
     --hash=sha256:eac8a3499754790187bb00574ab980df13e754777d346f85e0ff6df929bcd964 \
     --hash=sha256:eaed1c65f461a959284649e37b5051224f4db6ebdc84e40b5e65f2986f101a08 \
-    # via mamori (setup.py)
-pydantic==1.4 \
+    # via hyakumori_crm (setup.py)
+pydantic[email]==1.4 \
     --hash=sha256:012c422859bac2e03ab3151ea6624fecf0e249486be7eb8c6ee69c91740c6752 \
     --hash=sha256:07911aab70f3bc52bb845ce1748569c5e70478ac977e106a150dd9d0465ebf04 \
     --hash=sha256:47b8db7024ba3d46c3d4768535e1cf87b6c8cf92ccd81e76f4e1cb8ee47688b3 \
@@ -73,7 +96,7 @@ pydantic==1.4 \
     --hash=sha256:e27559cedbd7f59d2375bfd6eea29a330ea1a5b0589c34d6b4e0d7bec6027bbf \
     --hash=sha256:f17ec336e64d4583311249fb179528e9a2c27c8a2eaf590ec6ec2c6dece7cb3f \
     --hash=sha256:f863456d3d4bf817f2e5248553dee3974c5dc796f48e6ddb599383570f4215ac \
-    # via mamori (setup.py)
+    # via hyakumori_crm (setup.py)
 python-dateutil==2.8.1 \
     --hash=sha256:73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c \
     --hash=sha256:75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a \
@@ -102,7 +125,7 @@ typing-extensions==3.7.4.1 \
     --hash=sha256:091ecc894d5e908ac75209f10d5b4f118fbdb2eb1ede6a63544054bb1edb41f2 \
     --hash=sha256:910f4656f54de5993ad9304959ce9bb903f90aadc7c67a0bef07e678014e892d \
     --hash=sha256:cf8b63fedea4d89bab840ecbb93e75578af28f76f66c35889bd7065f5af88575 \
-    # via ariadne
+    # via ariadne, hyakumori_crm (setup.py)
 whitenoise==5.0.1 \
     --hash=sha256:0f9137f74bd95fa54329ace88d8dc695fbe895369a632e35f7a136e003e41d73 \
     --hash=sha256:62556265ec1011bd87113fb81b7516f52688887b7a010ee899ff1fd18fd22700 \
