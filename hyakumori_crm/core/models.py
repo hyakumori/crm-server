@@ -1,6 +1,12 @@
-from typing import Any, List, Sequence, Optional, List, ClassVar
+from typing import Any, Sequence, Optional, List, ClassVar
 import datetime
-from uuid import UUID
+import uuid
+
+from behaviors.behaviors import Authored as AuthoredMixin
+from behaviors.behaviors import Editored as EditoredMixin
+from behaviors.behaviors import StoreDeleted as StoreDeletedMixin
+from behaviors.querysets import StoreDeletedQuerySet, AuthoredQuerySet, EditoredQuerySet
+from django.contrib.postgres.fields.jsonb import JSONField
 from django.db import models
 from pydantic import BaseModel, validator, Field, root_validator
 
@@ -13,11 +19,62 @@ class TimestampMixin(models.Model):
         abstract = True
 
 
+class UUIDPrimary(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    class Meta:
+        abstract = True
+
+
 class InternalMixin(models.Model):
     internal_id = models.CharField(max_length=255, null=True)
 
     class Meta:
         abstract = True
+
+
+class AttributesMixin(models.Model):
+    attributes = JSONField(default=dict)
+
+    class Meta:
+        abstract = True
+
+
+class BaseRelationModel(
+    UUIDPrimary,
+    AttributesMixin,
+    TimestampMixin,
+    EditoredMixin,
+    AuthoredMixin,
+    StoreDeletedMixin,
+):
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return f"Relation ID: {self.id}"
+
+
+class BaseResourceModel(
+    UUIDPrimary,
+    AttributesMixin,
+    InternalMixin,
+    TimestampMixin,
+    AuthoredMixin,
+    EditoredMixin,
+    StoreDeletedMixin,
+):
+    store_deleted_manager = StoreDeletedQuerySet.as_manager()
+    authors = AuthoredQuerySet.as_manager()
+    editors = EditoredQuerySet.as_manager()
+
+    objects = StoreDeletedQuerySet.as_manager()
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return f"Resource ID: {self.id}, InternalID: {self.internal_id}"
 
 
 class HyakumoriDanticModel(BaseModel):
@@ -27,7 +84,7 @@ class HyakumoriDanticModel(BaseModel):
 
     @validator("id", pre=True, check_fields=False)
     def get_str_from_uuid(cls, v):
-        if isinstance(v, UUID):
+        if isinstance(v, uuid.UUID):
             return str(v)
         return v
 

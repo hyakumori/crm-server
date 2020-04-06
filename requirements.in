@@ -6,3 +6,8 @@ whitenoise>=5
 python-dateutil  # via ariadne
 ariadne
 pydantic
+pydantic[email]
+typing_extensions
+django-model-utils
+django-behaviors
+djangorestframework
