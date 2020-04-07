@@ -5,6 +5,7 @@
 #    pip-compile requirements-dev.in
 #
 appdirs==1.4.3            # via black
+asgiref==3.2.6            # via -c requirements.txt, django
 attrs==19.3.0             # via black, pytest
 backcall==0.1.0           # via ipython
 black==19.10b0            # via -r requirements-dev.in
@@ -13,6 +14,11 @@ chardet==3.0.4            # via requests
 click==7.1.1              # via black
 coverage==5.0.4           # via -r requirements-dev.in
 decorator==4.4.2          # via ipython, traitlets
+django-behaviors==0.5.0   # via -c requirements.txt, -r requirements-dev.in
+django-extensions==2.2.9  # via -r requirements-dev.in
+django-model-utils==4.0.0  # via -c requirements.txt, -r requirements-dev.in
+django==3.0.4             # via -c requirements.txt, django-model-utils, djangorestframework
+djangorestframework==3.11.0  # via -c requirements.txt, -r requirements-dev.in
 dnspython==1.16.0         # via -c requirements.txt, email-validator
 email-validator==1.0.5    # via -c requirements.txt, pydantic
 entrypoints==0.3          # via flake8
@@ -41,9 +47,11 @@ pygments==2.6.1           # via ipython
 pyparsing==2.4.6          # via packaging
 pytest-django==3.9.0      # via -r requirements-dev.in
 pytest==5.4.1             # via pytest-django
+pytz==2019.3              # via -c requirements.txt, django
 regex==2020.2.20          # via black
 requests==2.23.0          # via -r requirements-dev.in
-six==1.14.0               # via -c requirements.txt, packaging, traitlets
+six==1.14.0               # via -c requirements.txt, django-extensions, packaging, traitlets
+sqlparse==0.3.1           # via -c requirements.txt, django
 toml==0.10.0              # via black
 traitlets==4.3.3          # via ipython
 typed-ast==1.4.1          # via black

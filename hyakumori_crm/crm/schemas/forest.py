@@ -53,8 +53,14 @@ class Tag(BaseModel):
     manage_type: Union[str, None] = EMPTY
 
 
+class LandAttribute(BaseModel):
+    key: Literal["地番本番", "地番支番", "地目", "林班", "小班", "区画"]
+    value: Any
+
+
 class ForestAttribute(BaseModel):
     key: Literal[
+        "地番面積_ha",
         "面積_ha",
         "面積_m2",
         "平均傾斜度",
@@ -107,9 +113,10 @@ class ForestAttribute(BaseModel):
 class ForestSchema(BaseModel):
     internal_id: str = EMPTY
     cadastral: Cadastral = Cadastral()
-    owner: ForestOwner = ForestOwner()
-    contract: Contract = Contract()
+    owners: List[ForestOwner] = []
+    contracts: List[Contract] = []
     tag: Tag = Tag()
+    land_attributes: List[LandAttribute] = []
     attributes: List[ForestAttribute] = []
 
 

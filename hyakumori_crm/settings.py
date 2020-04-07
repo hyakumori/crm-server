@@ -53,6 +53,10 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
     "ariadne.contrib.django",
+    # ─── THIRD PARTIES APP ──────────────────────────────────────────────────────────
+    "django_extensions",
+    "rest_framework",
+    "behaviors.apps.BehaviorsConfig",
     # ─── HYAKUMORI APPS ─────────────────────────────────────────────────────────────
     "hyakumori_crm.users",
     "hyakumori_crm.crm",
