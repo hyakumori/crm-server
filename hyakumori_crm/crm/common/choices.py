@@ -25,11 +25,6 @@ from model_utils import Choices
 from django.db import models
 
 
-class CustomerRegisterStatuses(models.TextChoices):
-    REGISTERED = 'registered', '登録済'
-    UNREGISTERED = 'unregistered', '未登録'
-
-
 class ContractStatuses(models.TextChoices):
     NEGOTIATING = 'negotiating', '交渉中'
     UNDER_CONCLUSION = 'under_conclusion', '締結中'
