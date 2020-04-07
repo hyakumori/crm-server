@@ -9,6 +9,9 @@ from .forest import Forest
 class CustomerContact(BaseRelationModel):
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     contact = models.ForeignKey(Contact, on_delete=models.DO_NOTHING)
+    is_basic = models.BooleanField(
+        default=False
+    )  # if True, will show in the list of Owners for select direct owners
 
     @property
     def is_default(self):
