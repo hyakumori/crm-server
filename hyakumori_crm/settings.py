@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import urllib.parse
 from distutils.util import strtobool
 
 import dj_database_url
@@ -99,7 +100,9 @@ WSGI_APPLICATION = "hyakumori_crm.wsgi.application"
 
 DATABASES = {
     "default": dict(
-        **dj_database_url.config(default=os.getenv("DATABASE_URL")),
+        **dj_database_url.parse(
+            urllib.parse.quote(os.environ.get("DATABASE_URL"), ":/@")
+        ),
         TEST={"NAME": "hyakumori_crm_test"}
     )
 }
