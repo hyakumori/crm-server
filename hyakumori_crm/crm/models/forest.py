@@ -35,4 +35,5 @@ class Forest(BaseResourceModel):
     contracts = JSONField(default=DefaultForest.contracts, db_index=True)
     tag = JSONField(default=DefaultForest.tag)
     land_attributes = JSONField(default=dict)
+    forest_attributes = JSONField(default=dict)
     geodata = JSONField(default=DefaultForest.geodata)

@@ -117,7 +117,7 @@ class ForestSchema(BaseModel):
     contracts: List[Contract] = []
     tag: Tag = Tag()
     land_attributes: List[LandAttribute] = []
-    attributes: List[ForestAttribute] = []
+    forest_attributes: List[ForestAttribute] = []
 
 
 class GeoData(BaseModel):
