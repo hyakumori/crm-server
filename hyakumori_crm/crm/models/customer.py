@@ -1,8 +1,6 @@
 from django.contrib.postgres.fields.jsonb import JSONField
-from django.db import models
 
 from ...core.models import BaseResourceModel
-from ..common.choices import CustomerRegisterStatuses
 from ..schemas.customer import Address, Banking
 from ..schemas.customer import Contact as ContactSchema
 from ..schemas.customer import Name
@@ -10,7 +8,11 @@ from ..schemas.customer import Name
 
 class DefaultCustomer:
     @staticmethod
-    def name():
+    def name_kanji():
+        return Name().dict()
+
+    @staticmethod
+    def name_kana():
         return Name().dict()
 
     @staticmethod
@@ -22,25 +24,22 @@ class DefaultCustomer:
         return Banking().dict()
 
 
+class DefaultContact:
+    @staticmethod
+    def contact_info():
+        return ContactSchema().dict()
+
+
 class Customer(BaseResourceModel):
     """
     所有者ID    土地所有者名    土地所有者住所	連絡先情報  口座情報	タグ
     """
 
-    name = JSONField(default=DefaultCustomer.name)
-    address = JSONField(default=DefaultCustomer.address)
+    name_kanji = JSONField(default=DefaultCustomer.name_kanji, db_index=True)
+    name_kana = JSONField(default=DefaultCustomer.name_kana, db_index=True)
+    address = JSONField(default=DefaultCustomer.address, db_index=True)
     banking = JSONField(default=DefaultCustomer.banking)
-    status = models.CharField(
-        max_length=20,
-        choices=CustomerRegisterStatuses.choices,
-        default=CustomerRegisterStatuses.UNREGISTERED,
-    )
-
-
-class DefaultContact:
-    @staticmethod
-    def contact_info():
-        return ContactSchema().dict()
+    tags = JSONField(default=list)
 
 
 class Contact(BaseResourceModel):

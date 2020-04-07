@@ -1,14 +1,14 @@
-from typing import Any, Sequence, Optional, List, ClassVar
 import datetime
 import uuid
+from typing import Any, ClassVar, List, Optional, Sequence
 
 from behaviors.behaviors import Authored as AuthoredMixin
 from behaviors.behaviors import Editored as EditoredMixin
 from behaviors.behaviors import StoreDeleted as StoreDeletedMixin
-from behaviors.querysets import StoreDeletedQuerySet, AuthoredQuerySet, EditoredQuerySet
+from behaviors.querysets import AuthoredQuerySet, EditoredQuerySet, StoreDeletedQuerySet
 from django.contrib.postgres.fields.jsonb import JSONField
 from django.db import models
-from pydantic import BaseModel, validator, Field, root_validator
+from pydantic import BaseModel, Field, root_validator, validator
 
 
 class TimestampMixin(models.Model):

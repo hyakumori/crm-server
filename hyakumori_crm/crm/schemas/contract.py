@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from enum import Enum
 from typing import Union
 
 from pydantic import BaseModel
@@ -6,15 +7,20 @@ from pydantic import BaseModel
 from hyakumori_crm.crm.common.constants import EMPTY
 
 
+class ContractType(str, Enum):
+    long_term = "長期契約"
+    work_road = "作業道契約"
+    fsc = "FSC認証"
+
+
 class Contract(BaseModel):
     """
-    契約
-    長期契約	長期契約日	作業道契約	作業道契約日	FSC認証加入	FSC認証加入日
+    契約ステータス
+    長期契約	開始日	終了日
+    作業道契約	開始日	終了日
+    FSC認証加入	開始日	終了日
     """
-
-    long_term_contract: Union[bool, str, None] = EMPTY
-    long_term_contract_date: Union[date, datetime, None] = None
-    work_road_contract: Union[bool, str, None] = EMPTY
-    work_road_contract_date: Union[date, datetime, None] = None
-    fsc_certificate: Union[bool, str, None] = EMPTY
-    fsc_certificate_date: Union[date, datetime, None] = None
+    type: ContractType = ContractType.long_term
+    status: str = EMPTY
+    start_date: Union[date, datetime, None] = None
+    end_date: Union[date, datetime, None] = None

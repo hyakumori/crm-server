@@ -8,14 +8,8 @@ from ..common.constants import DEFAULT_EMAIL, EMPTY, UNKNOWN
 
 
 class Name(BaseModel):
-    """
-    土地所有者名
-    漢字	カナ
-    kanji   kana
-    """
-
-    kanji: Union[str, None] = EMPTY
-    kana: Union[str, None] = EMPTY
+    first_name: Union[str, None] = EMPTY
+    last_name: Union[str, None] = EMPTY
 
 
 class Address(BaseModel):
@@ -35,6 +29,8 @@ class Contact(BaseModel):
     郵便番号	電話番号	携帯電話	メールアドレス
     """
 
+    name_kanji: Name = Name()
+    name_kana: Name = Name()
     postal_code: Union[
         constr(regex=regexes.POSTAL_CODE, strip_whitespace=True), None
     ] = "000-0000"
@@ -44,7 +40,7 @@ class Contact(BaseModel):
     mobilephone: Union[
         constr(regex=regexes.MOBILEPHONE_NUMBER, strip_whitespace=True), None
     ] = None
-    email: EmailStr = DEFAULT_EMAIL
+    email: Union[EmailStr, None] = None
 
 
 class Banking(BaseModel):
@@ -66,9 +62,13 @@ class CustomerStatus(str, Enum):
 
 
 class CustomerSchema(BaseModel):
+    id: str
     internal_id: Union[str, None] = EMPTY
-    name: Name
+    name_kanji: Name = Name()
+    name_kana: Name = Name()
     address: Address
+    basic_contact: Contact = Contact()
     contacts: List[Contact] = []
     banking: Banking
+    tags: List[str] = []
     status: CustomerStatus = CustomerStatus.unregistered
