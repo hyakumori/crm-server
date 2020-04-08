@@ -7,6 +7,7 @@ from behaviors.behaviors import Editored as EditoredMixin
 from behaviors.behaviors import StoreDeleted as StoreDeletedMixin
 from behaviors.querysets import AuthoredQuerySet, EditoredQuerySet, StoreDeletedQuerySet
 from django.contrib.postgres.fields.jsonb import JSONField
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from pydantic import BaseModel, Field, root_validator, validator
 
@@ -34,7 +35,7 @@ class InternalMixin(models.Model):
 
 
 class AttributesMixin(models.Model):
-    attributes = JSONField(default=dict)
+    attributes = JSONField(default=dict, encoder=DjangoJSONEncoder)
 
     class Meta:
         abstract = True
