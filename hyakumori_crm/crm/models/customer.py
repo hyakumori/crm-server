@@ -1,4 +1,5 @@
 from django.contrib.postgres.fields.jsonb import JSONField
+from django.db import models
 
 from ...core.models import BaseResourceModel
 from ..schemas.customer import Address, Banking
@@ -43,4 +44,14 @@ class Customer(BaseResourceModel):
 
 
 class Contact(BaseResourceModel):
-    contact_info = JSONField(default=DefaultContact.contact_info)
+    contact_info = JSONField(
+        default=DefaultContact.contact_info
+    )  # TODO: keep for migration, will drop later
+
+    name_kanji = JSONField(default=DefaultCustomer.name_kanji, db_index=True)
+    name_kana = JSONField(default=DefaultCustomer.name_kana, db_index=True)
+    address = JSONField(default=DefaultCustomer.address, db_index=True)
+    postal_code = models.CharField(default=None, max_length=200, null=True)
+    telephone = models.CharField(default=None, max_length=200, null=True)
+    mobilephone = models.CharField(default=None, max_length=200, null=True)
+    email = models.EmailField(default=None, max_length=200, null=True)
