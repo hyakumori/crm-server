@@ -41,6 +41,7 @@ class Contact(BaseModel):
         constr(regex=regexes.MOBILEPHONE_NUMBER, strip_whitespace=True), None
     ] = None
     email: Union[EmailStr, None] = None
+    address: Address = Address()
 
 
 class Banking(BaseModel):
