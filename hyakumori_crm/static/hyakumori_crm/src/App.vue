@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app id="app" fullheight>
     <page-header />
     <router-view class="main-content"></router-view>
   </v-app>
@@ -17,8 +17,12 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.main-content {
+<style lang="scss">
+html {
+  overflow: auto !important;
+}
+
+#app {
   height: 100%;
   background-color: #dddddd;
 }

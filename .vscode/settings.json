@@ -5,11 +5,6 @@
   "python.linting.flake8Args": [
     "--enable=W0614",
     "--max-line-length=120",
-    "--ignore=E402,F841,F401,E302,E305"
-  ],
-  "[python]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": true
-    }
-  }
+    "--ignore=E402,F841,F401,E302,E305,E203"
+  ]
 }

@@ -1,4 +1,41 @@
 {
+  "buttons": {
+    "add_customer": "顧客を追加",
+    "cancel": "キャンセル",
+    "save": "保存"
+  },
+  "forms": {
+    "labels": {
+      "address": "住所",
+      "customer": {
+        "add_more_info": "より詳細な情報を表示",
+        "first_name_kana": "メイ",
+        "first_name_kanji": "名",
+        "last_name_kana": "セイ",
+        "last_name_kanji": "姓",
+        "mobile_number": "携帯番号",
+        "phone_number": "電話番号",
+        "postal_code": "郵便番号"
+      },
+      "email": "メールアドレス"
+    },
+    "placeholders": {
+      "customer": {
+        "first_name_kana": "例）タロウ",
+        "first_name_kanji": "例）太郎",
+        "last_name_kana": "例）ヤマダ",
+        "last_name_kanji": "例）山田",
+        "mobile_number": "電話番号を入力",
+        "phone_number": "電話番号を入力",
+        "postal_code": "郵便番号を入力（数字7桁）",
+        "email": "メールアドレスを入力",
+        "address": "住所を入力"
+      }
+    },
+    "titles": {
+      "create_customer": "顧客情報の追加"
+    }
+  },
   "icon": {
     "archive_icon": "mdi-calendar-text",
     "customer_icon": "mdi-account-outline",
