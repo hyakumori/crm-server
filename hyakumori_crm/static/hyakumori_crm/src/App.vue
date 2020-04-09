@@ -19,6 +19,7 @@ export default {
 
 <style lang="scss" scoped>
 .main-content {
+  height: 100%;
   background-color: #dddddd;
 }
 </style>
