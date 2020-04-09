@@ -1,13 +1,14 @@
 <template>
   <v-data-table
-    item-key="internal_id"
     ref="dataTable"
+    item-key="itemKey"
     v-model="selected"
+    :multi-sort="multiSort"
     :loading="isLoading"
     :headers="dynamicHeaders"
     :items="data"
     :show-select="showSelect"
-    :options.sync="options"
+    :options.sync="innerOptions"
     :server-items-length="serverItemsLength"
     :footer-props="{
       itemsPerPageOptions: [10, 20, 50, 100],
@@ -19,10 +20,9 @@
       <v-icon @click="viewMore">mdi-dots-vertical</v-icon>
     </template>
 
-    <template v-slot:item.internal_id="{ item }">
+    <template v-if="tableRowIcon" v-slot:item.internal_id="{ item }">
       <div class="d-flex align-center justify-space-between">
-        <v-icon class="icon-mode mr-4" small>{{ iconMode }}</v-icon>
-
+        <v-icon class="icon-mode mr-4" small>{{ tableRowIcon }}</v-icon>
         <p class="mb-0">{{ item.internal_id }}</p>
       </div>
     </template>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { selectAll } from "d3";
+import { selectAll } from "d3-selection";
 
 export default {
   name: "data-list",
@@ -52,12 +52,26 @@ export default {
     headers: Array,
     negotiationCols: Array,
     serverItemsLength: Number,
+    options: Object,
+    tableRowIcon: String,
+    itemKey: {
+      type: String,
+      default: "id",
+    },
+    multiSort: {
+      type: Boolean,
+      default: false,
+    },
+    autoHeaders: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   data() {
     return {
       selected: [],
-      options: {},
+      innerOptions: {},
     };
   },
 
@@ -66,22 +80,15 @@ export default {
   },
 
   computed: {
-    iconMode() {
-      if (this.isForestMode) {
-        return this.$t("icon.forest_icon");
-      } else if (this.isCustomerMode) {
-        return this.$t("icon.customer_icon");
-      } else {
-        return this.$t("icon.archive_icon");
-      }
-    },
-
     dynamicHeaders() {
-      if (this.data && this.headers) {
+      if (this.data && this.headers && this.autoHeaders) {
+        const headers = [];
         for (let i = 0; i < this.headers.length; i++) {
-          const element = this.headers[i];
-          element.value = Object.keys(this.data[0])[i];
+          const header = { ...this.headers[i] };
+          header.value = Object.keys(this.data[0])[i];
+          headers.push(header);
         }
+        return headers;
       }
       return this.headers;
     },
@@ -100,26 +107,9 @@ export default {
       this.$emit("rowData", value.internal_id);
     },
 
-    isForestMode() {
-      return this.mode === "forest";
-    },
-
-    isCustomerMode() {
-      return this.mode === "customer";
-    },
-
     isNegotiation(val) {
       return val === "negotiation";
     },
-
-    // addOptionHeader(headers) {
-    //   const optionHeader = {
-    //     value: "options",
-    //     align: "center",
-    //     sortable: false,
-    //   };
-    //   headers.push(optionHeader);
-    // },
 
     viewMore() {
       // Add more column to the table
@@ -127,9 +117,9 @@ export default {
   },
 
   watch: {
-    options: {
+    innerOptions: {
       handler() {
-        this.$emit("optionsChange", this.options);
+        this.$emit("update:options", this.innerOptions);
       },
     },
   },

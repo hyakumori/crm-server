@@ -7,9 +7,4 @@ requests
 filelock
 pytest-django
 coverage
-pydantic
-pydantic[email]
-django-model-utils
-django-behaviors
-djangorestframework
-django-extensions
+orjson

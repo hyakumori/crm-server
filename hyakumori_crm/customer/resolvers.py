@@ -1,10 +1,11 @@
-from functools import wraps
+import uuid
+
 from ariadne import ObjectType
 
 from ..core.decorators import validate_model
 from ..core.models import Paginator
-from .models import CustomerCreate, CustomerRead, CustomerUpdate
-from .service import create, update, get, get_list
+from .schemas import CustomerInputSchema, CustomerRead, CustomerUpdate
+from .service import create, get, get_list, update
 
 query = ObjectType("Query")
 mutation = ObjectType("Mutation")
@@ -15,7 +16,7 @@ def get_customer_by_id(_, info, id: str = None) -> dict:
     return {
         "ok": True,
         "customer": {
-            "id": "asdaqw1273ajshdkc",
+            "id": uuid.uuid4(),
             "internal_id": "ajshdq8w123",
             "profile": {"first_name": "Ha", "last_name": "Tran", "middle_name": None},
             "attributes": None,
@@ -25,26 +26,27 @@ def get_customer_by_id(_, info, id: str = None) -> dict:
 
 @query.field("list_customers")
 @validate_model(Paginator)
-def list_customers(_, info, data: dict = None) -> dict:
+def list_customers(_, info, data=None) -> dict:
+    pager_input = data.dict()
     customers, total = get_list(
-        page_num=data["page_num"],
-        per_page=data["per_page"],
-        pre_per_page=data["pre_per_page"],
-        order_by=data["order_by"],
+        page_num=pager_input["page_num"],
+        per_page=pager_input["per_page"],
+        pre_per_page=pager_input["pre_per_page"],
+        order_by=pager_input["order_by"],
     )
     return {"items": customers, "total": total}
 
 
 @mutation.field("create_customer")
-@validate_model(CustomerCreate)
-def create_customer(_, info, data: dict = None) -> dict:
+@validate_model(CustomerInputSchema)
+def create_customer(_, info, data=None) -> dict:
     customer = create(data)
-    return {"customer": CustomerRead.from_orm(customer).dict()}
+    return {"customer": {"id": customer.id}}
 
 
 @mutation.field("update_customer")
 @validate_model(CustomerUpdate, get)
-def update_customer(_, info, instance=None, data: dict = None) -> dict:
+def update_customer(_, info, instance=None, data=None) -> dict:
     instance = update(instance, data)
     return {"customer": {"id": instance.id}}
 

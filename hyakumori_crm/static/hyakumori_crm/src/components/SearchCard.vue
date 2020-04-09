@@ -46,9 +46,14 @@
           }}</span>
         </div>
 
-        <v-btn class="mt-md-2 mt-lg-0 mt-xl-0" dark depressed @click="onSearch">
+        <v-btn
+          class="mt-md-2 mt-lg-0 mt-xl-0"
+          color="primary"
+          depressed
+          @click="onSearch"
+        >
           {{ $t("raw_text.search") }}
-          <v-icon dark>mdi-magnify</v-icon>
+          <v-icon>mdi-magnify</v-icon>
         </v-btn>
       </div>
     </v-form>
@@ -167,18 +172,6 @@ $text-field--min-height: 0;
     justify-content: space-between;
     cursor: pointer;
     margin-top: 0 !important;
-
-    & .v-btn {
-      background-color: #1b756a !important;
-
-      i {
-        color: white;
-      }
-    }
-
-    & .v-icon {
-      color: $action-color;
-    }
   }
 }
 

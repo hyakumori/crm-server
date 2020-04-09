@@ -1,6 +1,6 @@
 <template>
   <div class="page-header">
-    <v-img src="../assets/img/app-bar.webp" height="150"></v-img>
+    <v-img src="../assets/img/app-bar.webp" height="160"></v-img>
 
     <div class="page-header-content">
       <div class="d-flex justify-space-between">
@@ -34,19 +34,32 @@
         </div>
       </div>
 
-      <div>
-        <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
-        <span class="ml-3 white--text">
-          {{ $store.state.pageHeader }}
-        </span>
-      </div>
+      <v-container fluid class="px-7">
+        <v-row>
+          <v-col>
+            <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
+            <span class="ml-3 white--text">
+              {{ $store.state.pageHeader }}
+            </span>
+          </v-col>
+          <v-col>
+            <div class="float-right">
+              <CustomerCreateForm v-if="$route.name === 'customers'" />
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
     </div>
   </div>
 </template>
 
 <script>
+import CustomerCreateForm from "./CustomerCreateForm";
 export default {
   name: "page-header",
+  components: {
+    CustomerCreateForm,
+  },
 };
 </script>
 
@@ -77,7 +90,6 @@ export default {
 
     .icon-mode {
       background-color: white;
-      margin-left: 28px;
       height: 40px;
       width: 40px;
       padding: 15px;
