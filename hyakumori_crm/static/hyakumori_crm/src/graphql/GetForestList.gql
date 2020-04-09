@@ -1,22 +1,24 @@
-query GetForestList{
-  list_forests {
+query getForestList($filter: ForestListFilterInput!){
+  list_forests(data: $filter) {
     ok
     total
     forests {
       id
-      geo_data
-      basic_info {
-        acreage
-        status
-      }
-      owner {
+      internal_id
+      geodata
+      attributes
+      cadastral
+      owner
+      contracts
+      tag
+      land_attributes
+      forest_attributes
+      geodata
+      updated_by {
         id
-        profile
       }
-      customer {
-      	id
-        profile
-      }
+      updated_at
+      created_at
     }
   }
 }
