@@ -1,52 +1,124 @@
 <template>
-  <v-row class="px-7 pt-2">
-    <v-col cols="3">
-      <search-card />
-    </v-col>
+  <div class="forest d-flex px-7 pt-5">
+    <search-card
+      class="forest__search-card"
+      :searchCriteria="getSearchCriteria"
+      @onSearch="onSearch"
+      @unableDelete="unableDelErr"
+      @conditionOutOfBounds="conditionOutOfBoundsErr"
+    />
 
-    <v-col cols="9">
+    <div class="ml-7 forest__data-section">
       <table-action />
 
       <data-list
         class="mt-4"
         mode="forest"
-        v-on:rowData="rowData"
         :headers="getHeaders"
         :data="getData"
         :showSelect="true"
-        :negotiationCols="['status']"
+        :isLoading="isLoading"
         :serverItemsLength="getTotalForests"
+        @rowData="rowData"
+        @optionsChange="optionsChange"
       ></data-list>
-    </v-col>
-  </v-row>
+    </div>
+
+    <snack-bar
+      color="error"
+      :isShow="isShowErr"
+      :msg="errMsg"
+      :timeout="sbTimeout"
+      @dismiss="onDismissSb"
+    />
+  </div>
 </template>
 
 <script>
 import DataList from "../components/DataList";
 import SearchCard from "../components/SearchCard";
 import TableAction from "../components/TableAction";
-import headers from "../assets/dump/table_header_forest.json";
+import headers from "../assets/dump/table_header_forest_jp.json";
 import GetForestList from "../graphql/GetForestList.gql";
+import SnackBar from "../components/SnackBar";
+import ScreenMixin from "./ScreenMixin";
 
 export default {
   name: "forest",
+
+  mixins: [ScreenMixin],
 
   components: {
     DataList,
     SearchCard,
     TableAction,
+    SnackBar,
+  },
+
+  data() {
+    return {
+      pageIcon: this.$t("icon.forest_icon"),
+      pageHeader: this.$t("page_header.forest_list"),
+      searchCriteria: [],
+      isShowErr: false,
+      errMsg: null,
+      sbTimeout: 5000,
+      filter: {},
+    };
   },
 
   apollo: {
     forestsInfo: {
       query: GetForestList,
       update: data => data.list_forests,
+      variables() {
+        return {
+          filter: this.filter,
+        };
+      },
     },
   },
 
   methods: {
     rowData() {
       // console.log(val);
+    },
+
+    onSearch(err, data) {
+      if (err) {
+        this.isShowErr = true;
+        this.errMsg = this.$t("search.duplicate_criteria_msg");
+      } else {
+        // Handling search data
+      }
+    },
+
+    onDismissSb(val) {
+      this.isShowErr = val;
+    },
+
+    unableDelErr(err) {
+      if (err) {
+        this.isShowErr = true;
+        this.errMsg = this.$t("search.unable_to_remove_search_msg");
+      }
+    },
+
+    conditionOutOfBoundsErr(err) {
+      if (err) {
+        this.isShowErr = true;
+        this.errMsg = this.$t("search.condition_is_maximum");
+      }
+    },
+
+    optionsChange(val) {
+      const { sortBy, sortDesc, page, itemsPerPage } = val;
+      this.filter = {
+        sortBy,
+        sortDesc,
+        page,
+        itemsPerPage,
+      };
     },
   },
 
@@ -55,17 +127,41 @@ export default {
       return headers;
     },
 
+    isLoading() {
+      return this.$apollo.queries.forestsInfo.loading;
+    },
+
     getData() {
       if (this.forestsInfo) {
         return this.forestsInfo.forests.map(element => {
+          const fCadastral = element.cadastral;
+          const owner = element.owner;
+          const contract = element.contracts;
+          const tag = element.tag;
+
           return {
-            id: element.id,
-            address: element.geo_data.address,
-            ground: "",
-            acreage: element.basic_info.acreage,
-            status: element.basic_info.status,
-            ownerName: `${element.owner.profile.first_name} ${element.owner.profile.last_name}`,
-            customerId: element.customer.id,
+            internal_id: element.internal_id,
+            forestPrefecture: fCadastral.prefecture,
+            forestMunicipality: fCadastral.municipality,
+            forestSector: fCadastral.sector,
+            forestSubsector: fCadastral.subsector,
+            ownerKanji: owner.name_kana,
+            ownerKana: owner.name_kanji,
+            ownerPrefecture: owner.address.prefecture,
+            ownerMunicipality: owner.address.municipality,
+            ownerSector: owner.address.sector,
+            contractLongTerm: contract[0].status,
+            contractLongTermStart: contract[0].start_date,
+            contractLongTermEnd: contract[0].end_date,
+            contractWork: contract[1].status,
+            contractWorkStart: contract[1].start_date,
+            contractWorkEnd: contract[1].end_date,
+            contractFsc: contract[2].status,
+            contractFscStart: contract[2].start_date,
+            contractFscEnd: contract[2].end_date,
+            tagDanchi: tag.danchi,
+            tagManageType: tag.manage_type,
+            options: "",
           };
         });
       } else {
@@ -80,6 +176,23 @@ export default {
         return 0;
       }
     },
+
+    getSearchCriteria() {
+      return Array.from(this.getHeaders).map(header => header.text);
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.forest {
+  &__search-card {
+    min-width: 295px;
+    max-width: 295px;
+  }
+
+  &__data-section {
+    overflow: hidden;
+  }
+}
+</style>

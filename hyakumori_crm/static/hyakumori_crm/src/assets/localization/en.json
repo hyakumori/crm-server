@@ -14,15 +14,21 @@
     "setting": "Setting"
   },
   "raw_text": {
-    "search": "Search",
-    "in_negotiation": "In negotiation"
+    "agree": "I agree",
+    "in_negotiation": "In negotiation",
+    "rows_per_page": "Rows per page",
+    "search": "Search"
   },
   "search": {
     "add_search_condition": "Add condition",
+    "condition_is_maximum": "Search condition is maximum",
+    "duplicate_criteria_msg": "Can not search with duplicate condition criteria",
     "enter_condition": "Enter condition",
+    "required_field": "This field is required",
     "search_condition": "Search condition",
     "select_action": "Select action",
     "select_item": "Selected item",
-    "selected_action": "Selected"
+    "selected_action": "Selected",
+    "unable_to_remove_search_msg": "Can not remove anymore"
   }
 }
