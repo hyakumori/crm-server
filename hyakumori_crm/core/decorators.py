@@ -1,7 +1,19 @@
-from functools import wraps
 from datetime import datetime
+from functools import wraps
+
 import pytz
 from pydantic import ValidationError
+
+
+def errors_wrapper(errors):
+    error_dict = {}
+    for e in errors:
+        key = ".".join(e["loc"])
+        if key not in error_dict:
+            error_dict[key] = [e["msg"]]
+        else:
+            error_dict[key].append(e["msg"])
+    return error_dict
 
 
 def validate_model(input_model, get_func=None):
@@ -22,9 +34,9 @@ def validate_model(input_model, get_func=None):
                     del kwargs["pk"]
                     kwargs["instance"] = instance
 
-                validated_data = input_model(**data).dict()
+                validated_data = input_model(**data)
             except ValidationError as e:
-                return {"ok": False, "error": e.errors()}
+                return {"ok": False, "error": errors_wrapper(e.errors())}
 
             kwargs["data"] = validated_data
             try:

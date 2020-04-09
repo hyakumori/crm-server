@@ -9,7 +9,9 @@ from behaviors.querysets import AuthoredQuerySet, EditoredQuerySet, StoreDeleted
 from django.contrib.postgres.fields.jsonb import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from pydantic import BaseModel, Field, root_validator, validator
+from querybuilder.fields import SimpleField
 
 
 class TimestampMixin(models.Model):
@@ -82,6 +84,18 @@ class HyakumoriDanticModel(BaseModel):
     class Config:
         orm_mode = True
         validate_assignment = True
+        min_anystr_length = 1
+        anystr_strip_whitespace = True
+        error_msg_templates = {
+            "type_error.none.not_allowed": _("Required"),
+            "value_error.str.regex": _("Invalid"),
+        }
+
+    @validator("*", pre=True)
+    def parse_input(cls, v):
+        if v == "":
+            return None
+        return v
 
     @validator("id", pre=True, check_fields=False)
     def get_str_from_uuid(cls, v):
@@ -118,7 +132,7 @@ class Paginator(BaseModel):
     # we make sure they will be stay in the same offset
     pre_per_page: int = Field(None, alias="preItemsPerPage")
     sort_by: Sequence[str] = Field([], alias="sortBy")
-    sort_desc: Sequence[str] = Field([], alias="sortDesc")
+    sort_desc: Sequence[bool] = Field([], alias="sortDesc")
     order_by: Optional[Sequence[str]]
 
     MAX_ITEMS: ClassVar = 100
@@ -165,3 +179,29 @@ class Paginator(BaseModel):
         if is_desc:
             field = f"-{field}"
         return field
+
+
+class RawSQLField(SimpleField):
+    """
+    A field that is created from raw sql string
+    """
+
+    def __init__(self, field=None, alias=None, enclose=False):
+        """
+        Sets the name of the field to the passed in field value
+
+        :param field: A sql expression
+        :type field: str
+
+        :param alias: An alias to be used for this field
+        :type alias: str
+
+        """
+        super().__init__(field, None, alias, None, None)
+        self.name = field
+        self.enclose = enclose
+
+    def get_select_sql(self):
+        if self.enclose:
+            return "(%s)" % (self.field)
+        return "%s" % (self.field)

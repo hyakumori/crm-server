@@ -1,16 +1,35 @@
-from typing import Dict, Union, Iterator
+from typing import Dict, Iterator, Union
+
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, Value as V, F, OuterRef, Subquery
-from django.db.models.functions import Concat
+from django.db.models import (
+    Case,
+    CharField,
+    F,
+    OuterRef,
+    PositiveSmallIntegerField,
+    Q,
+    Subquery,
+)
+from django.db.models import Value as V
+from django.db.models import When
 from django.db.models.expressions import RawSQL
-from .models import Customer, Contact, CustomerContact
+from django.db.models.functions import Concat
+from querybuilder.query import Expression, Query
+
+from hyakumori_crm.core.models import RawSQLField
+from hyakumori_crm.crm.models.customer import Contact, Customer
+from hyakumori_crm.crm.models.relations import CustomerContact
+from hyakumori_crm.users.models import User
+
+from .schemas import CustomerInputSchema
 
 
 def get(pk):
-    try:
-        return Customer.objects.get(pk=pk)
-    except (Customer.DoesNotExist, ValidationError):
-        return None
+    # try:
+    #     return Customer.objects.get(pk=pk)
+    # except (Customer.DoesNotExist, ValidationError):
+    #     return None
+    return None
 
 
 def get_list(
@@ -22,55 +41,109 @@ def get_list(
     offset = (pre_per_page or per_page) * (page_num - 1)
     if not order_by:
         order_by = []
+
     representatives = (
-        Contact.objects.annotate(
-            fullname=RawSQL(
-                "concat(profile->>'last_name', ' ', profile->>'first_name')", [],
-            )
+        Query()
+        .from_table(
+            {"contact": Contact},
+            [
+                {
+                    "fullname_kana": RawSQLField(
+                        "concat(contact.name_kana->>'last_name', ' ', contact.name_kana->>'first_name')"
+                    )
+                }
+            ],
         )
-        .filter(customer=OuterRef("pk"))
-        .order_by("-created_at")
+        .join(
+            {"contact_rel": CustomerContact},
+            condition="contact.id = contact_rel.contact_id",
+        )
+        .where(Q(customer_id=Expression("c.id")))
+        .where(~Q(is_basic=Expression("true")))
+        .order_by(
+            "attributes->>'default'", table="contact_rel", desc=True, nulls_last=True
+        )
     )
+
     query = (
-        Customer.objects.annotate(
-            fullname=RawSQL(
-                "concat(profile->>'last_name', ' ', profile->>'first_name')", [],
-            )
+        Query()
+        .from_table(
+            {"c": Customer},
+            fields=[
+                "id",
+                "internal_id",
+                {
+                    "representative": RawSQLField(
+                        representatives.get_sql(), enclose=True
+                    )
+                },
+            ],
         )
-        .annotate(phone=RawSQL("concat(profile->>'mobile_number')", []))
-        .annotate(address=RawSQL("concat(profile->>'address')", []))
-        .annotate(representative=Subquery(representatives.values("fullname")[:1]))
-        .values("fullname", "phone", "address", "representative")
+        .join(
+            {"self_contact_rel": CustomerContact},
+            condition="c.id=self_contact_rel.customer_id and self_contact_rel.is_basic is true",
+        )
+        .join(
+            {"self_contact": Contact},
+            condition="self_contact_rel.contact_id=self_contact.id",
+            fields=[
+                {
+                    "fullname_kana": RawSQLField(
+                        "concat(self_contact.name_kana->>'last_name', ' ', self_contact.name_kana->>'first_name')"
+                    )
+                },
+                {
+                    "fullname_kanji": RawSQLField(
+                        "concat(self_contact.name_kanji->>'last_name', ' ', self_contact.name_kanji->>'first_name')"
+                    )
+                },
+                "mobilephone",
+                "telephone",
+                "postal_code",
+                {"address": "address->>'sector'"},
+            ],
+        )
     )
-    total = query.count()
-    customers = query.order_by(*order_by)[offset:per_page]
-    return customers, total
+    total = query.copy().wrap().count()
+    for order_field in order_by:
+        query.order_by(order_field)
+    query.limit(per_page, offset)
+    return query.select(), total
 
 
-def create(data):
-    customer = Customer(**data)
-    customer.save()
-    return customer
-
-
-def add_contacts(customer, contact_data):
+def create(customer_in: CustomerInputSchema):
+    admin = User.objects.filter(is_superuser=True, is_active=True).first()
+    customer = Customer()
+    customer.author = admin
+    customer.editor = admin
     contacts = []
     customer_contacts = []
-    for data in contact_data:
-        try:
-            relationship_type = data.pop("relationship_type")
-        except KeyError:
-            relationship_type = ""
-        contact = Contact(**data)
-        contacts.append(contact)
-        customer_contact = CustomerContact(
-            customer=customer, contact=contact, relationship_type=relationship_type
-        )
-        customer_contacts.append(customer_contact)
+
+    self_contact = Contact(
+        **customer_in.basic_contact.dict(), author=admin, editor=admin
+    )
+    contacts.append(self_contact)
+    contact_rel = CustomerContact(
+        customer=customer,
+        contact=self_contact,
+        is_basic=True,
+        author=admin,
+        editor=admin,
+    )
+    customer_contacts.append(contact_rel)
+
+    if hasattr(customer_in, "contacts"):
+        for data in customer_in.contacts:
+            contact = Contact(**data.dict(), author=admin, editor=admin)
+            contacts.append(contact)
+            contact_rel = CustomerContact(
+                customer=customer, contact=contact, author=admin, editor=admin
+            )
+            customer_contacts.append(contact_rel)
+    customer.save()
     Contact.objects.bulk_create(contacts)
     CustomerContact.objects.bulk_create(customer_contacts)
-    customer.save(update_fields=["updated_at"])
-    return contacts
+    return customer
 
 
 def update(customer, data):
