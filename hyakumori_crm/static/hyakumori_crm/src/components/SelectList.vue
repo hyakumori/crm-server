@@ -7,6 +7,7 @@
     :full-width="false"
     :items="actions"
     :placeholder="placeHolder"
+    :rules="rules"
     @change="onChangeSelectedItem"
   ></v-select>
 </template>
@@ -20,6 +21,8 @@ export default {
   props: {
     actions: Array,
     placeHolder: String,
+    index: Number,
+    rules: Array,
   },
 
   mounted() {
@@ -36,12 +39,12 @@ export default {
 
     resizeInputWidth() {
       const input = select(this.$refs.selectList)._groups[0][0].$refs.input;
-      input.style.width = "2px";
+      input.style.width = "1ch";
     },
 
     onChangeSelectedItem(val) {
       this.resizeInputWidth();
-      this.$emit("selectedAction", val);
+      this.$emit("selectedAction", val, this.index);
     },
   },
 };

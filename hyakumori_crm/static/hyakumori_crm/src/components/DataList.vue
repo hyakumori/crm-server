@@ -1,26 +1,29 @@
 <template>
   <v-data-table
-    item-key="id"
+    item-key="internal_id"
     ref="dataTable"
     v-model="selected"
+    :loading="isLoading"
     :headers="dynamicHeaders"
     :items="data"
-    :loading="isLoading"
-    :sort-by="['id']"
-    :sort-desc="[true]"
     :show-select="showSelect"
+    :options.sync="options"
     :server-items-length="serverItemsLength"
+    :footer-props="{
+      itemsPerPageOptions: [10, 20, 50, 100],
+      itemsPerPageText: $t('raw_text.rows_per_page'),
+    }"
     @click:row="clickRow"
   >
     <template v-slot:header.options>
-      <v-icon>mdi-dots-vertical</v-icon>
+      <v-icon @click="viewMore">mdi-dots-vertical</v-icon>
     </template>
 
-    <template v-slot:item.id="{ item }">
+    <template v-slot:item.internal_id="{ item }">
       <div class="d-flex align-center justify-space-between">
-        <v-icon class="icon-mode mr-2" small>{{ iconMode }}</v-icon>
+        <v-icon class="icon-mode mr-4" small>{{ iconMode }}</v-icon>
 
-        <p class="mb-0">{{ item.id }}</p>
+        <p class="mb-0">{{ item.internal_id }}</p>
       </div>
     </template>
 
@@ -43,6 +46,7 @@ export default {
   name: "data-list",
   props: {
     mode: String,
+    isLoading: Boolean,
     showSelect: Boolean,
     data: Array,
     headers: Array,
@@ -53,6 +57,7 @@ export default {
   data() {
     return {
       selected: [],
+      options: {},
     };
   },
 
@@ -71,10 +76,6 @@ export default {
       }
     },
 
-    isLoading() {
-      return !this.data;
-    },
-
     dynamicHeaders() {
       if (this.data && this.headers) {
         for (let i = 0; i < this.headers.length; i++) {
@@ -90,13 +91,13 @@ export default {
     changeSortIcon() {
       if (this.$refs.dataTable) {
         selectAll("i.mdi-arrow-up")
-          .classed("mdi-chevron-up", true)
+          .classed("mdi-chevron-down", true)
           .classed("mdi-arrow-up", false);
       }
     },
 
     clickRow(value) {
-      this.$emit("rowData", value.id);
+      this.$emit("rowData", value.internal_id);
     },
 
     isForestMode() {
@@ -110,13 +111,33 @@ export default {
     isNegotiation(val) {
       return val === "negotiation";
     },
+
+    // addOptionHeader(headers) {
+    //   const optionHeader = {
+    //     value: "options",
+    //     align: "center",
+    //     sortable: false,
+    //   };
+    //   headers.push(optionHeader);
+    // },
+
+    viewMore() {
+      // Add more column to the table
+    },
+  },
+
+  watch: {
+    options: {
+      handler() {
+        this.$emit("optionsChange", this.options);
+      },
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 %text-overflow-shared {
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -139,8 +160,6 @@ export default {
   }
 
   & ::v-deep tr {
-    cursor: pointer;
-
     td {
       text-align: center;
       @extend %text-overflow-shared;
