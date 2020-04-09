@@ -207,7 +207,7 @@ class BuildAssetsCommand(BaseBuildCommand):
             "inplace",
             "i",
             "ignore build-lib and put compiled javascript files into the source "
-            + "directory alongside your pure Python modules",
+            "directory alongside your pure Python modules",
         ),
         (
             "force",
@@ -406,5 +406,5 @@ setup(
     extras_require={"dev": dev_requires},
     cmdclass=cmdclass,
     include_package_data=True,
-    entry_points={"console_scripts": ["hyakumori = hyakumori_crm.cli:entrypoint"],},
+    entry_points={"console_scripts": ["hyakumori = hyakumori_crm.cli:entrypoint"]},
 )

@@ -10,8 +10,10 @@ test-frontend:
   cache:
     paths:
       - $CI_PROJECT_DIR/hyakumori_crm/static/hyakumori_crm/node_modules/
+      - $CI_PROJECT_DIR/.cache/yarn
   before_script:
     - cd hyakumori_crm/static/hyakumori_crm
+    - yarn config set cache-folder $CI_PROJECT_DIR/.cache/yarn
     - yarn install
   script:
     - yarn lint

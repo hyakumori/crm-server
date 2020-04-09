@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { select } from "d3";
+import { select } from "d3-selection";
 
 export default {
   name: "select-list",

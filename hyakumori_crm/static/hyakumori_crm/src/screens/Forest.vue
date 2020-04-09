@@ -1,28 +1,32 @@
 <template>
-  <div class="forest d-flex px-7 pt-5">
-    <search-card
-      class="forest__search-card"
-      :searchCriteria="getSearchCriteria"
-      @onSearch="onSearch"
-      @unableDelete="unableDelErr"
-      @conditionOutOfBounds="conditionOutOfBoundsErr"
-    />
+  <v-container fluid class="pa-7">
+    <v-row>
+      <v-col md="3">
+        <search-card
+          :searchCriteria="getSearchCriteria"
+          @onSearch="onSearch"
+          @unableDelete="unableDelErr"
+          @conditionOutOfBounds="conditionOutOfBoundsErr"
+        />
+      </v-col>
+      <v-col cols="12" md="9">
+        <table-action />
 
-    <div class="ml-7 forest__data-section">
-      <table-action />
-
-      <data-list
-        class="mt-4"
-        mode="forest"
-        :headers="getHeaders"
-        :data="getData"
-        :showSelect="true"
-        :isLoading="isLoading"
-        :serverItemsLength="getTotalForests"
-        @rowData="rowData"
-        @optionsChange="optionsChange"
-      ></data-list>
-    </div>
+        <data-list
+          class="mt-4"
+          mode="forest"
+          itemKey="internal_id"
+          :headers="getHeaders"
+          :data="getData"
+          :showSelect="true"
+          :isLoading="$apollo.queries.forestsInfo.loading"
+          :serverItemsLength="getTotalForests"
+          @rowData="rowData"
+          :tableRowIcon="tableRowIcon"
+          :options.sync="options"
+        ></data-list>
+      </v-col>
+    </v-row>
 
     <snack-bar
       color="error"
@@ -31,7 +35,7 @@
       :timeout="sbTimeout"
       @dismiss="onDismissSb"
     />
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -59,11 +63,13 @@ export default {
     return {
       pageIcon: this.$t("icon.forest_icon"),
       pageHeader: this.$t("page_header.forest_list"),
+      tableRowIcon: this.$t("icon.forest_icon"),
       searchCriteria: [],
       isShowErr: false,
       errMsg: null,
       sbTimeout: 5000,
       filter: {},
+      options: {},
     };
   },
 
@@ -110,15 +116,20 @@ export default {
         this.errMsg = this.$t("search.condition_is_maximum");
       }
     },
-
-    optionsChange(val) {
-      const { sortBy, sortDesc, page, itemsPerPage } = val;
-      this.filter = {
-        sortBy,
-        sortDesc,
-        page,
-        itemsPerPage,
-      };
+  },
+  watch: {
+    options: {
+      handler(val, old) {
+        const { sortBy, sortDesc, page, itemsPerPage } = val;
+        this.filter = {
+          sortBy,
+          sortDesc,
+          page,
+          itemsPerPage,
+          preItemsPerPage: old.itemsPerPage || null,
+        };
+      },
+      deep: true,
     },
   },
 
@@ -126,11 +137,6 @@ export default {
     getHeaders() {
       return headers;
     },
-
-    isLoading() {
-      return this.$apollo.queries.forestsInfo.loading;
-    },
-
     getData() {
       if (this.forestsInfo) {
         return this.forestsInfo.forests.map(element => {
@@ -186,11 +192,6 @@ export default {
 
 <style lang="scss" scoped>
 .forest {
-  &__search-card {
-    min-width: 295px;
-    max-width: 295px;
-  }
-
   &__data-section {
     overflow: hidden;
   }
