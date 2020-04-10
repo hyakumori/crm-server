@@ -72,6 +72,8 @@ def get_list(
             fields=[
                 "id",
                 "internal_id",
+                {"status": "tags->>1"},
+                {"ranking": "tags->>2"},
                 {
                     "representative": RawSQLField(
                         representatives.get_sql(), enclose=True
@@ -99,8 +101,11 @@ def get_list(
                 },
                 "mobilephone",
                 "telephone",
+                "email",
                 "postal_code",
                 {"address": "address->>'sector'"},
+                {"prefecture": "address->>'prefecture'"},
+                {"municipality": "address->>'municipality'"},
             ],
         )
     )

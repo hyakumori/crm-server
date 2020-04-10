@@ -28,9 +28,14 @@ type CustomerItem {
   fullname_kana: String!
   fullname_kanji: String!
   postal_code: String
+  prefecture: String
+  municipality: String
   address: String
   telephone: String
   mobilephone: String
+  email: String
+  status: String
+  ranking: String
   representative: String
 }
 
