@@ -21,6 +21,6 @@ class Contract(BaseModel):
     FSC認証加入	開始日	終了日
     """
     type: ContractType = ContractType.long_term
-    status: str = EMPTY
+    status: Union[str, None] = EMPTY
     start_date: Union[date, datetime, None] = None
     end_date: Union[date, datetime, None] = None
