@@ -51,6 +51,7 @@ fleming==0.5.0 \
     --hash=sha256:98c34a4a616e04db0b90f7ff8f056eedbd2e9a81989881aa6316189c4e17e5ff \
     --hash=sha256:b0b062becfcdaf314f8e6b870294baaf9fc191d55b11eb6f2f192a858e2b04b6 \
     # via django-query-builder
+    # via hyakumori_crm (setup.py)
 graphql-core==3.0.3 \
     --hash=sha256:31e9e62967cc3cb1afc0d4752e2576633adebbdcb14b4c62b9055413c239a48d \
     --hash=sha256:e586db99173ffbfbc520a468246c2e1af83267f01ae6ee8a0ed9112453fa3a32 \
@@ -93,7 +94,7 @@ psycopg2-binary==2.8.4 \
     --hash=sha256:eac8a3499754790187bb00574ab980df13e754777d346f85e0ff6df929bcd964 \
     --hash=sha256:eaed1c65f461a959284649e37b5051224f4db6ebdc84e40b5e65f2986f101a08 \
     # via hyakumori_crm (setup.py)
-pydantic[email]==1.4 \
+pydantic==1.4 \
     --hash=sha256:012c422859bac2e03ab3151ea6624fecf0e249486be7eb8c6ee69c91740c6752 \
     --hash=sha256:07911aab70f3bc52bb845ce1748569c5e70478ac977e106a150dd9d0465ebf04 \
     --hash=sha256:47b8db7024ba3d46c3d4768535e1cf87b6c8cf92ccd81e76f4e1cb8ee47688b3 \
