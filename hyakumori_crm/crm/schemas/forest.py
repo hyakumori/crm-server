@@ -37,9 +37,8 @@ class ForestOwner(BaseModel):
     土地所有者住所
     郵便番号	都道府県	市町村	大字/字
     """
-
-    name: Name = Name()
-    postal_code: Union[str, None] = EMPTY
+    name_kanji: Union[Name, str, None] = Name()
+    name_kana: Union[Name, str, None] = Name()
     address: Address = Address()
 
 
@@ -113,6 +112,7 @@ class ForestAttribute(BaseModel):
 class ForestSchema(BaseModel):
     internal_id: str = EMPTY
     cadastral: Cadastral = Cadastral()
+    original_owner: ForestOwner
     owners: List[ForestOwner] = []
     contracts: List[Contract] = []
     tag: Tag = Tag()
