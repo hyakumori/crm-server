@@ -8,6 +8,7 @@
       <v-col cols="12" md="9">
         <data-list
           :headers="headers"
+          :autoHeaders="false"
           :multiSort="true"
           :data="customers"
           :showSelect="true"
@@ -44,22 +45,57 @@ export default {
       tableRowIcon: this.$t("icon.customer_icon"),
       headers: [
         {
-          text: "Internal ID",
+          text: this.$t("tables.headers.customerlist.internal_id"),
           value: "internal_id",
         },
         {
-          text: "Fullname Kana",
+          text: this.$t("tables.headers.customerlist.fullname_kanji"),
+          value: "fullname_kanji",
+        },
+        {
+          text: this.$t("tables.headers.customerlist.fullname_kana"),
           value: "fullname_kana",
         },
         {
-          text: "Fullname Kanji",
-          value: "fullname_kanji",
+          text: this.$t("tables.headers.customerlist.postal_code"),
+          value: "postal_code",
         },
-        { text: "Postal Code", value: "postal_code" },
-        { text: "Address", value: "address" },
-        { text: "Telephone", value: "telephone" },
-        { text: "Mobilephone", value: "mobilephone" },
-        { text: "Representative", value: "representative" },
+        {
+          text: this.$t("tables.headers.customerlist.address"),
+          value: "address",
+        },
+        {
+          text: this.$t("tables.headers.customerlist.prefecture"),
+          value: "prefecture",
+        },
+        {
+          text: this.$t("tables.headers.customerlist.municipality"),
+          value: "municipality",
+        },
+        {
+          text: this.$t("tables.headers.customerlist.ranking"),
+          value: "ranking",
+        },
+        {
+          text: this.$t("tables.headers.customerlist.status"),
+          value: "status",
+        },
+        {
+          text: this.$t("tables.headers.customerlist.telephone"),
+          value: "telephone",
+        },
+        {
+          text: this.$t("tables.headers.customerlist.mobilephone"),
+          value: "mobilephone",
+        },
+        {
+          text: this.$t("tables.headers.customerlist.email"),
+          value: "email",
+        },
+        {
+          text: this.$t("tables.headers.customerlist.representative"),
+          value: "representative",
+        },
       ],
     };
   },
@@ -102,9 +138,14 @@ export default {
               fullname_kana
               fullname_kanji
               postal_code
+              prefecture
+              municipality
               address
               telephone
               mobilephone
+              email
+              status
+              ranking
               representative
             }
             total
