@@ -5,7 +5,8 @@ python-dotenv
 whitenoise>=5
 python-dateutil  # via ariadne
 ariadne
-pydantic[email]
+email-validator
+pydantic
 typing_extensions
 django-model-utils
 django-behaviors
