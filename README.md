@@ -1,6 +1,8 @@
 # Hyakumori crm
 
-![pipeline](https://gitlab.com/datafluct/hyakumori_crm/badges/develop/pipeline.svg)
+[![pipeline status](https://gitlab.com/datafluct/hyakumori_crm/badges/develop/pipeline.svg)](https://gitlab.com/datafluct/hyakumori_crm/-/commits/develop)
+[![coverage report](https://gitlab.com/datafluct/hyakumori_crm/badges/develop/coverage.svg)](https://gitlab.com/datafluct/hyakumori_crm/-/commits/develop)
+
 
 ## Requirements
 
@@ -17,22 +19,16 @@
 - Start postgres service with docker
 
 ```
-$ docker service create --name postgres11 \
+$ docker run --name postgres \
     --mount type=volume,source=postgres11,destination=/var/lib/postgresql/data \
-    -e POSTGRES_PASSWORD=masterpassword \
+    -e POSTGRES_PASSWORD=postgres \
+    -e POSTGRES_USER=postgres \
+    -e POSTGRES_DB=hyakumori_local \
     --publish 5432:5432 \
     postgres:11-alpine
 ```
 
-- Run `psql` client in postgres container to create user and database
-
-```
-$ docker exec -ti [containerid] psql -U postgres
-
-postgres=# CREATE ROLE hyakumori_crm WITH PASSWORD 'mypassword' LOGIN CREATEDB;
-
-postgres=# CREATE DATABASE hyakumori_crm OWNER hyakumori_crm;
-```
+- Or use `docker-compose` with provided `docker-compose.infra.yml`
 
 ### Python
 
@@ -76,7 +72,8 @@ Using `pip-tools`
 Remember to reinstall package.
 
 ### Using Docker build
-
+- `Dockerfile.full` is for building all in one image, included compiling Front-end
+- `Dockerfile` is used mainly for CI to build serve-able image using previous job artifacts
 - See `docker-compose.infra.yml` for local infrastructure reference
 - Assume `.env`
 
@@ -87,9 +84,11 @@ DATABASE_URL=postgres://postgres:postgres@localhost:5432/hyakumori_crm_local
 STATIC_DIR=hyakumori_crm/static/hyakumori_crm/dist
 ```
 
+IMPORTANT: Set `STATIC_DIR` correctly as above.
+
 - Examples docker build
 
 ```
-docker build --build-arg HYAKUMORI_VERSION=0.1.0 -t hyakumori_crm:0.1.0 .
+docker build -f Dockerfile.full --build-arg HYAKUMORI_VERSION=0.1.0 -t hyakumori_crm:0.1.0 .
 docker run --rm -it --env-file .env --network=host --name=hyakumori_crm_test hyakumori_crm:latest
 ```

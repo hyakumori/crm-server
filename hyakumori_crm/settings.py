@@ -34,6 +34,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "change this please")
 DEBUG = strtobool(os.getenv("DEBUG", "no"))
 
 ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS += os.getenv("ALLOWED_HOSTS", "").split(",")
 
 
 # Application definition
@@ -49,8 +50,8 @@ if not STATIC_ROOT:
     static_app = ["hyakumori_crm.static"]
 
 orjson_experiment = []
-if not DEBUG:
-    orjson_experiment = ["hyakumori_crm.core"]
+if DEBUG:
+    orjson_experiment = ["hyakumori_crm.core.response"]
 
 INSTALLED_APPS = [
     *orjson_experiment,
@@ -109,10 +110,14 @@ DATABASES = {
     "default": dict(
         **dj_database_url.parse(
             urllib.parse.quote(os.environ.get("DATABASE_URL"), ":/@")
-        ),
-        TEST={"NAME": "hyakumori_crm_test"}
+        )
     )
 }
+
+# Specify test database name
+DATABASES["default"]["TEST"] = dict(
+    NAME=os.getenv("DB_TEST_NAME", DATABASES["default"]["NAME"] + "__test")
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

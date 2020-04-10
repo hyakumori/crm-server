@@ -1,11 +1,14 @@
 stages:
   - test
+  - packaging
+  - build-image
 
 default:
   cache:
     key: ${CI_COMMIT_REF_SLUG}
 
 test-frontend:
+  stage: test
   image: node:12-alpine
   cache:
     paths:
@@ -20,6 +23,7 @@ test-frontend:
     - yarn test --passWithNoTests
 
 test-backend:
+  stage: test
   image: python:3.7
   services:
     - postgres:11-alpine
@@ -35,8 +39,52 @@ test-backend:
       - .cache/pip
   script:
     - export HYAKUMORI_LIGHT_BUILD=1
-    - export DATABASE_URL=postgres://runner:youC4nP4ass@postgres:5432/hyakumori
+    - export DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres:5432/$POSTGRES_DB
     - pip install -U pip setuptools
     - pip install '.[dev]'
     - coverage run -m pytest tests
     - coverage report -m
+
+packing:
+  stage: packaging
+  only:
+    - tags
+  image: nikolaik/python-nodejs:python3.7-nodejs12
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+    HYAKUMORI_VERSION: "$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+  cache:
+    paths:
+      - .cache/pip
+      - $CI_PROJECT_DIR/hyakumori_crm/static/hyakumori_crm/node_modules/
+  script:
+    - export HYAKUMORI_LIGHT_BUILD=1
+    - pip install -U pip setuptools
+    - python setup.py build_assets --inplace && python setup.py sdist
+  artifacts:
+    paths:
+      - $CI_PROJECT_DIR/dist/hyakumori_crm-$HYAKUMORI_VERSION.tar.gz
+    expire_in: 7 days
+
+docker_image:
+  stage: build-image
+  only:
+    - tags
+  image: docker:19.03.1
+  services:
+    - docker:19.03.1-dind
+  dependencies:
+    - packing
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+    HYAKUMORI_VERSION: "$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - echo "!dist/hyakumori_crm-$HYAKUMORI_VERSION.tar.gz" >> .dockerignore
+    - export CI_REGISTRY_IMAGE=registry.gitlab.com/datafluct/hyakumori_crm
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - docker build --build-arg HYAKUMORI_VERSION=$HYAKUMORI_VERSION -t $CI_REGISTRY_IMAGE:$HYAKUMORI_VERSION -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$HYAKUMORI_VERSION
+    - docker push $CI_REGISTRY_IMAGE:latest
