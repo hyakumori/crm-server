@@ -4,7 +4,7 @@ from typing import List, Union
 from pydantic import BaseModel, EmailStr, constr
 
 from ..common import regexes
-from ..common.constants import DEFAULT_EMAIL, EMPTY, UNKNOWN
+from ..common.constants import EMPTY, UNKNOWN
 
 
 class Name(BaseModel):
@@ -63,7 +63,7 @@ class CustomerStatus(str, Enum):
 
 
 class CustomerSchema(BaseModel):
-    id: str
+    id: Union[str, None] = EMPTY
     internal_id: Union[str, None] = EMPTY
     name_kanji: Name = Name()
     name_kana: Name = Name()
@@ -71,5 +71,4 @@ class CustomerSchema(BaseModel):
     basic_contact: Contact = Contact()
     contacts: List[Contact] = []
     banking: Banking
-    tags: List[str] = []
-    status: CustomerStatus = CustomerStatus.unregistered
+    tags: dict = {}
