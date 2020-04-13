@@ -1,6 +1,7 @@
 from typing import Dict, Iterator, Union
 
 from django.core.exceptions import ValidationError
+from django.db import connection
 from django.db.models import (
     Case,
     CharField,
@@ -22,6 +23,7 @@ from hyakumori_crm.crm.models.relations import CustomerContact
 from hyakumori_crm.users.models import User
 
 from .schemas import CustomerInputSchema
+from ..crm.common.constants import CUSTOMER_TAG_KEYS
 
 
 def get(pk):
@@ -30,6 +32,22 @@ def get(pk):
     # except (Customer.DoesNotExist, ValidationError):
     #     return None
     return None
+
+
+def get_customer_tags_keys():
+    with connection.cursor() as c:
+        raw_query = "select distinct (jsonb_object_keys(tags)) from crm_customer"
+        c.execute(raw_query)
+        result = [row[0] for row in c.fetchall()]
+        return result
+
+
+def get_tag_fields_for_query():
+    tags_keys = get_customer_tags_keys()
+    # only mapping keys available in DB
+    tags = [(k, v) for k, v in CUSTOMER_TAG_KEYS.items() if v in tags_keys]
+    tags_fields = [{tag[0]: f"tags->>'{tag[1]}'"} for tag in tags]
+    return tags_fields
 
 
 def get_list(
@@ -44,7 +62,7 @@ def get_list(
 
     representatives = (
         Query()
-        .from_table(
+            .from_table(
             {"contact": Contact},
             [
                 {
@@ -54,38 +72,42 @@ def get_list(
                 }
             ],
         )
-        .join(
+            .join(
             {"contact_rel": CustomerContact},
             condition="contact.id = contact_rel.contact_id",
         )
-        .where(Q(customer_id=Expression("c.id")))
-        .where(~Q(is_basic=Expression("true")))
-        .order_by(
+            .where(Q(customer_id=Expression("c.id")))
+            .where(~Q(is_basic=Expression("true")))
+            .order_by(
             "attributes->>'default'", table="contact_rel", desc=True, nulls_last=True
         )
     )
 
+    tags_fields = get_tag_fields_for_query()
+
+    fields = [
+        "id",
+        "internal_id",
+        {
+            "representative": RawSQLField(
+                representatives.get_sql(), enclose=True
+            )
+        },
+    ]
+
+    fields += tags_fields
+
     query = (
         Query()
-        .from_table(
+            .from_table(
             {"c": Customer},
-            fields=[
-                "id",
-                "internal_id",
-                {"status": "tags->>1"},
-                {"ranking": "tags->>2"},
-                {
-                    "representative": RawSQLField(
-                        representatives.get_sql(), enclose=True
-                    )
-                },
-            ],
+            fields=fields,
         )
-        .join(
+            .join(
             {"self_contact_rel": CustomerContact},
             condition="c.id=self_contact_rel.customer_id and self_contact_rel.is_basic is true",
         )
-        .join(
+            .join(
             {"self_contact": Contact},
             condition="self_contact_rel.contact_id=self_contact.id",
             fields=[

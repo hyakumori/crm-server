@@ -1,18 +1,15 @@
 <template>
-  <v-row class="px-7 pt-2">
-    <v-col cols="3">
-      <search-card />
-    </v-col>
+  <main-section #section>
+    <search-card />
 
-    <v-col cols="9">
-      <data-list />
-    </v-col>
-  </v-row>
+    <data-list class="ml-7"></data-list>
+  </main-section>
 </template>
 
 <script>
 import SearchCard from "../components/SearchCard";
 import DataList from "../components/DataList";
+import MainSection from "../components/MainSection";
 
 export default {
   name: "archive",
@@ -20,6 +17,7 @@ export default {
   components: {
     SearchCard,
     DataList,
+    MainSection,
   },
 };
 </script>

@@ -1,6 +1,8 @@
 from uuid import uuid4
 
 import pandas as pd
+
+from hyakumori_crm.crm.common.constants import CUSTOMER_TAG_KEYS
 from hyakumori_crm.crm.schemas.customer import (
     Address,
     Banking,
@@ -76,7 +78,7 @@ class CustomerImporter(BaseImporter):
             account_number=row["口座番号"],
             account_name=row["口座名義"],
         )
-        tags_name = ["未登録/登録", "所有者順位", "同姓同名"]
+        tags_name = CUSTOMER_TAG_KEYS.values() # ["未登録/登録", "所有者順位", "同姓同名"]
         tags = dict(zip(tags_name, [get_or_default(row[tag], None) for tag in tags_name]))
         internal_id = process_nan_id(row["internal_id"])
 
