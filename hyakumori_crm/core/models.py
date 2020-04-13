@@ -1,6 +1,6 @@
 import datetime
 import uuid
-from typing import Any, ClassVar, List, Optional, Sequence
+from typing import Any, ClassVar, List, Optional, Sequence, Dict
 
 from behaviors.behaviors import Authored as AuthoredMixin
 from behaviors.behaviors import Editored as EditoredMixin
@@ -43,6 +43,10 @@ class AttributesMixin(models.Model):
         abstract = True
 
 
+class BaseQuerySet(AuthoredQuerySet, EditoredQuerySet, StoreDeletedQuerySet):
+    pass
+
+
 class BaseRelationModel(
     UUIDPrimary,
     AttributesMixin,
@@ -51,6 +55,8 @@ class BaseRelationModel(
     AuthoredMixin,
     StoreDeletedMixin,
 ):
+    objects = models.Manager.from_queryset(BaseQuerySet)()
+
     class Meta:
         abstract = True
 
@@ -67,11 +73,7 @@ class BaseResourceModel(
     EditoredMixin,
     StoreDeletedMixin,
 ):
-    store_deleted_manager = StoreDeletedQuerySet.as_manager()
-    authors = AuthoredQuerySet.as_manager()
-    editors = EditoredQuerySet.as_manager()
-
-    objects = StoreDeletedQuerySet.as_manager()
+    objects = models.Manager.from_queryset(BaseQuerySet)()
 
     class Meta:
         abstract = True
@@ -134,6 +136,7 @@ class Paginator(BaseModel):
     sort_by: Sequence[str] = Field([], alias="sortBy")
     sort_desc: Sequence[bool] = Field([], alias="sortDesc")
     order_by: Optional[Sequence[str]]
+    filters: Optional[Dict[str, Any]]
 
     MAX_ITEMS: ClassVar = 100
 
@@ -179,6 +182,16 @@ class Paginator(BaseModel):
         if is_desc:
             field = f"-{field}"
         return field
+
+    @validator("filters", pre=True)
+    def prepare_filter(cls, v):
+        if not v:
+            return {}
+        return {
+            f["criteria"]: f["keyword"]
+            for f in v
+            if f and f["criteria"] and f["keyword"]
+        }
 
 
 class RawSQLField(SimpleField):

@@ -3,6 +3,9 @@ from functools import wraps
 
 import pytz
 from pydantic import ValidationError
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def errors_wrapper(errors):
@@ -42,6 +45,8 @@ def validate_model(input_model, get_func=None):
             try:
                 output = resolver(_, info, **kwargs)
             except Exception as e:
+                logger.exception(e)
+                # sentry logs etc.
                 return {"ok": False, "error": dict(message=str(e))}
             return {"ok": True, **output}
 
