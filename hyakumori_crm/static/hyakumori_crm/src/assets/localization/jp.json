@@ -69,22 +69,6 @@
     "unable_to_remove_search_msg": "これ以上削除できません。"
   },
   "tables": {
-    "headers": {
-      "customerlist": {
-        "address": "住所",
-        "email": "メールアドレス",
-        "fullname_kana": "土地所有者名（ｶﾅ）",
-        "fullname_kanji": "土地所有者名",
-        "internal_id": "新規ID発行",
-        "mobilephone": "携帯番号",
-        "municipality": "市町村",
-        "postal_code": "郵便番号",
-        "prefecture": "都道府県",
-        "ranking": "所有者順位",
-        "representative": "代表",
-        "status": "未登録/登録",
-        "telephone": "電話番号"
-      }
-    }
+    "headers": {}
   }
 }

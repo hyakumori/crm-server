@@ -13,3 +13,5 @@ django-behaviors
 djangorestframework
 django-extensions
 django-query-builder
+django-filter
+django-cors-headers

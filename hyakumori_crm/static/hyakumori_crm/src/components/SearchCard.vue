@@ -8,15 +8,15 @@
       <div
         class="search-card__search"
         v-for="(condition, index) in conditions"
-        :key="index"
+        :key="`${index}:${condition.criteria}`"
       >
         <div class="d-flex justify-space-between">
           <select-list
             class="search-card__search--spacing"
             :placeHolder="$t('search.select_item')"
-            :actions="searchCriteria"
+            :actions="condition.fields"
             :index="index"
-            :rules="conditionRules"
+            :value="condition.criteria"
             @selectedAction="onSelected"
           />
 
@@ -34,8 +34,8 @@
           class="mt-1"
           clearable
           outlined
+          dense
           :placeholder="$t('search.enter_condition')"
-          :rules="dataRules"
         ></v-text-field>
       </div>
 
@@ -55,6 +55,7 @@
           color="primary"
           depressed
           @click="onSearch"
+          :disabled="!searchable"
         >
           {{ $t("raw_text.search") }}
           <v-icon>mdi-magnify</v-icon>
@@ -65,6 +66,7 @@
 </template>
 
 <script>
+import { uniq, map } from "lodash";
 import SelectList from "./SelectList";
 
 export default {
@@ -76,57 +78,83 @@ export default {
 
   props: {
     searchCriteria: Array,
+    onSearch: Function,
   },
 
   data() {
     return {
-      dataRules: [val => !!val || this.$t("search.required_field")],
-      conditionRules: [val => !!val || this.$t("search.required_field")],
+      usedFields: new Set(),
       conditions: [
         {
-          keyword: null,
+          fields: [],
           criteria: null,
+          keyword: null,
         },
       ],
     };
   },
-
+  computed: {
+    searchable() {
+      const criteria = uniq(map(this.conditions, "criteria"));
+      const keywords = uniq(map(this.conditions, "keyword"));
+      if (
+        (criteria.length === 1 && criteria[0] === null) ||
+        (keywords.length === 1 && keywords[0] === null)
+      )
+        return false;
+      return true;
+    },
+  },
+  watch: {
+    searchCriteria(val, old) {
+      if (old.length === 0) this.conditions[0].fields = [...val];
+      else return;
+    },
+    usedFields(val, old) {
+      for (let con of this.conditions) {
+        this.$set(
+          con,
+          "fields",
+          this.searchCriteria.filter(
+            f => !val.has(f.value) || f.value === con.criteria,
+          ),
+        );
+      }
+    },
+  },
   methods: {
     addSearchField() {
       if (this.conditions.length == this.searchCriteria.length) {
         this.$emit("conditionOutOfBounds", true);
       } else {
-        this.conditions.push({ keyword: null, criteria: null });
+        this.conditions.push({
+          keyword: null,
+          criteria: null,
+          fields: this.searchCriteria.filter(
+            f => !this.usedFields.has(f.value),
+          ),
+        });
       }
     },
 
     onSelected(item, index) {
+      const oldField = this.conditions[index].criteria;
+      this.usedFields.has(oldField) && this.usedFields.delete(oldField);
       this.conditions[index].criteria = item;
+      this.usedFields.add(item);
+      this.usedFields = new Set(this.usedFields);
     },
 
     deleteSearchField(index) {
       if (this.conditions.length > 1) {
+        const oldField = this.conditions[index].criteria;
         this.conditions.splice(index, 1);
+        if (this.usedFields.has(oldField)) {
+          this.usedFields.delete(oldField);
+          this.usedFields = new Set(this.usedFields);
+        }
       } else {
         this.$emit("unableDelete", true);
-      }
-    },
-
-    isUniqueArr(arr) {
-      return arr.length === new Set(arr).size;
-    },
-
-    onSearch() {
-      const criterias = Array.from(this.conditions).map(
-        condition => condition.criteria,
-      );
-      const isDuplicateCriteria = true;
-      if (this.$refs.form.validate()) {
-        if (criterias && this.isUniqueArr(criterias)) {
-          this.$emit("onSearch", !isDuplicateCriteria, this.conditions);
-        } else {
-          this.$emit("onSearch", isDuplicateCriteria);
-        }
       }
     },
   },

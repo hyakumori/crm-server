@@ -3,12 +3,11 @@
     ref="selectList"
     append-icon="mdi-chevron-down"
     loading="false"
-    return-object
     :full-width="false"
     :items="actions"
     :placeholder="placeHolder"
-    :rules="rules"
     @change="onChangeSelectedItem"
+    :value="value"
   ></v-select>
 </template>
 
@@ -22,13 +21,12 @@ export default {
     actions: Array,
     placeHolder: String,
     index: Number,
-    rules: Array,
+    value: String,
   },
 
   mounted() {
     this.reiszeInputPlaceHolderWidth();
   },
-
   methods: {
     reiszeInputPlaceHolderWidth() {
       const additionWidthSize = 2;
