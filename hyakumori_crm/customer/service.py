@@ -55,6 +55,7 @@ def get_list(
     per_page: int = 10,
     pre_per_page: Union[int, None] = None,
     order_by: Union[Iterator, None] = None,
+    filters: Union[dict, None] = None,
 ):
     offset = (pre_per_page or per_page) * (page_num - 1)
     if not order_by:
@@ -62,7 +63,7 @@ def get_list(
 
     representatives = (
         Query()
-            .from_table(
+        .from_table(
             {"contact": Contact},
             [
                 {
@@ -72,13 +73,13 @@ def get_list(
                 }
             ],
         )
-            .join(
+        .join(
             {"contact_rel": CustomerContact},
             condition="contact.id = contact_rel.contact_id",
         )
-            .where(Q(customer_id=Expression("c.id")))
-            .where(~Q(is_basic=Expression("true")))
-            .order_by(
+        .where(Q(customer_id=Expression("c.id")))
+        .where(~Q(is_basic=Expression("true")))
+        .order_by(
             "attributes->>'default'", table="contact_rel", desc=True, nulls_last=True
         )
     )
@@ -88,26 +89,19 @@ def get_list(
     fields = [
         "id",
         "internal_id",
-        {
-            "representative": RawSQLField(
-                representatives.get_sql(), enclose=True
-            )
-        },
+        {"representative": RawSQLField(representatives.get_sql(), enclose=True)},
     ]
 
     fields += tags_fields
 
     query = (
         Query()
-            .from_table(
-            {"c": Customer},
-            fields=fields,
-        )
-            .join(
+        .from_table({"c": Customer}, fields=fields,)
+        .join(
             {"self_contact_rel": CustomerContact},
             condition="c.id=self_contact_rel.customer_id and self_contact_rel.is_basic is true",
         )
-            .join(
+        .join(
             {"self_contact": Contact},
             condition="self_contact_rel.contact_id=self_contact.id",
             fields=[
@@ -131,9 +125,14 @@ def get_list(
             ],
         )
     )
-    total = query.copy().wrap().count()
+    query = query.wrap()
+    if filters:
+        query.where(**filters)
+    total = query.copy().count()
+
     for order_field in order_by:
         query.order_by(order_field)
+
     query.limit(per_page, offset)
     return query.select(), total
 

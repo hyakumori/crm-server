@@ -2,6 +2,7 @@
   <v-data-table
     ref="dataTable"
     v-model="selected"
+    :mobile-breakpoint="0"
     :item-key="itemKey"
     :multi-sort="multiSort"
     :loading="isLoading"
@@ -42,6 +43,8 @@
 <script>
 import { selectAll } from "d3-selection";
 
+const headerSelection = { value: "options", align: "center", sortable: false };
+
 export default {
   name: "data-list",
   props: {
@@ -81,17 +84,17 @@ export default {
 
   computed: {
     dynamicHeaders() {
-      if (this.data && this.headers && this.autoHeaders) {
+      if (this.data && this.headers.length > 1 && this.autoHeaders) {
         const headers = [];
         for (let i = 0; i < this.headers.length; i++) {
           const header = { ...this.headers[i] };
           header.value = Object.keys(this.data[0])[i];
           headers.push(header);
         }
-        headers.push({ value: "options", align: "center", sortable: false });
+        headers.push(headerSelection);
         return headers;
       }
-      return this.headers;
+      return [...this.headers, headerSelection];
     },
   },
 
