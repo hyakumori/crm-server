@@ -2,6 +2,7 @@ UNKNOWN = "Unknown"
 EMPTY = ""
 DEFAULT_EMAIL = "name@example.com"
 FOREST_ATTRIBUTES = [
+    "地番面積_ha",
     "面積_ha",
     "面積_m2",
     "平均傾斜度",
@@ -48,3 +49,14 @@ FOREST_ATTRIBUTES = [
     "第3相対幹",
     "第3形状比",
 ]
+FOREST_LAND_ATTRIBUTES = [
+    "地番本番", "地番支番", "地目", "林班", "小班", "区画"
+]
+
+# Predefined key mapping for customer tags
+# If this growing, consider a mapping table in DB
+CUSTOMER_TAG_KEYS = dict(
+    status="未登録/登録",
+    ranking="所有者順位",
+    same_name="同姓同名",
+)

@@ -1,25 +1,22 @@
 <template>
-  <v-container fluid class="pa-7">
-    <v-row>
-      <v-col md="3">
-        <search-card />
-      </v-col>
+  <main-section #section class="customer">
+    <template>
+      <search-card />
 
-      <v-col cols="12" md="9">
-        <data-list
-          :headers="headers"
-          :autoHeaders="false"
-          :multiSort="true"
-          :data="customers"
-          :showSelect="true"
-          :options.sync="options"
-          :serverItemsLength="totalCustomers"
-          :tableRowIcon="tableRowIcon"
-          :isLoading="$apollo.queries.result.loading"
-        ></data-list>
-      </v-col>
-    </v-row>
-  </v-container>
+      <data-list
+        class="ml-7"
+        :headers="headers"
+        :multiSort="true"
+        :data="customers"
+        :showSelect="true"
+        :options.sync="options"
+        :serverItemsLength="totalCustomers"
+        :tableRowIcon="tableRowIcon"
+        :autoHeaders="false"
+        :isLoading="$apollo.queries.result.loading"
+      ></data-list>
+    </template>
+  </main-section>
 </template>
 
 <script>
@@ -27,12 +24,14 @@ import gql from "graphql-tag";
 import ScreenMixin from "./ScreenMixin";
 import SearchCard from "../components/SearchCard";
 import DataList from "../components/DataList";
+import MainSection from "../components/MainSection";
 import BusEvent from "../BusEvent";
 
 export default {
   components: {
     SearchCard,
     DataList,
+    MainSection,
   },
   mixins: [ScreenMixin],
   data() {
