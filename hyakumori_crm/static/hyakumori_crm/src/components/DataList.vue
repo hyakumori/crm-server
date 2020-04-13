@@ -1,8 +1,8 @@
 <template>
   <v-data-table
     ref="dataTable"
-    item-key="itemKey"
     v-model="selected"
+    :item-key="itemKey"
     :multi-sort="multiSort"
     :loading="isLoading"
     :headers="dynamicHeaders"
@@ -11,7 +11,7 @@
     :options.sync="innerOptions"
     :server-items-length="serverItemsLength"
     :footer-props="{
-      itemsPerPageOptions: [10, 20, 50, 100],
+      itemsPerPageOptions: [50, 100, 150],
       itemsPerPageText: $t('raw_text.rows_per_page'),
     }"
     @click:row="clickRow"
@@ -88,6 +88,7 @@ export default {
           header.value = Object.keys(this.data[0])[i];
           headers.push(header);
         }
+        headers.push({ value: "options", align: "center", sortable: false });
         return headers;
       }
       return this.headers;
@@ -98,7 +99,7 @@ export default {
     changeSortIcon() {
       if (this.$refs.dataTable) {
         selectAll("i.mdi-arrow-up")
-          .classed("mdi-chevron-down", true)
+          .classed("mdi-chevron-up", true)
           .classed("mdi-arrow-up", false);
       }
     },
@@ -122,6 +123,12 @@ export default {
         this.$emit("update:options", this.innerOptions);
       },
     },
+
+    selected(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.$emit("selectedRow", newVal);
+      }
+    },
   },
 };
 </script>
@@ -134,6 +141,10 @@ export default {
 
 .v-data-table {
   padding: 10px;
+  width: 100%;
+  height: fit-content;
+  overflow: hidden;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
 
   & .icon-mode {
     padding: 10px;
