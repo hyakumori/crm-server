@@ -40,7 +40,7 @@ class Customer(BaseResourceModel):
     name_kana = JSONField(default=DefaultCustomer.name_kana, db_index=True)
     address = JSONField(default=DefaultCustomer.address, db_index=True)
     banking = JSONField(default=DefaultCustomer.banking)
-    tags = JSONField(default=list)
+    tags = JSONField(default=dict)
 
 
 class Contact(BaseResourceModel):

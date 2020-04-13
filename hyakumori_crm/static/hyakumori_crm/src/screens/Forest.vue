@@ -1,19 +1,21 @@
 <template>
-  <v-container fluid class="pa-7">
-    <v-row>
-      <v-col md="3">
-        <search-card
-          :searchCriteria="getSearchCriteria"
-          @onSearch="onSearch"
-          @unableDelete="unableDelErr"
-          @conditionOutOfBounds="conditionOutOfBoundsErr"
+  <main-section class="forest">
+    <template #section>
+      <search-card
+        :searchCriteria="getSearchCriteria"
+        @onSearch="onSearch"
+        @unableDelete="unableDelErr"
+        @conditionOutOfBounds="conditionOutOfBoundsErr"
+      />
+
+      <div class="ml-7 forest__data-section">
+        <table-action
+          class="mb-4"
+          v-if="tableSelectedRow.length > 0"
+          :selectedCount="tableSelectedRow.length"
         />
-      </v-col>
-      <v-col cols="12" md="9">
-        <table-action />
 
         <data-list
-          class="mt-4"
           mode="forest"
           itemKey="internal_id"
           :headers="getHeaders"
@@ -21,21 +23,22 @@
           :showSelect="true"
           :isLoading="$apollo.queries.forestsInfo.loading"
           :serverItemsLength="getTotalForests"
-          @rowData="rowData"
           :tableRowIcon="tableRowIcon"
           :options.sync="options"
+          @rowData="rowData"
+          @selectedRow="selectedRow"
         ></data-list>
-      </v-col>
-    </v-row>
+      </div>
 
-    <snack-bar
-      color="error"
-      :isShow="isShowErr"
-      :msg="errMsg"
-      :timeout="sbTimeout"
-      @dismiss="onDismissSb"
-    />
-  </v-container>
+      <snack-bar
+        color="error"
+        :isShow="isShowErr"
+        :msg="errMsg"
+        :timeout="sbTimeout"
+        @dismiss="onDismissSb"
+      />
+    </template>
+  </main-section>
 </template>
 
 <script>
@@ -46,6 +49,7 @@ import headers from "../assets/dump/table_header_forest_jp.json";
 import GetForestList from "../graphql/GetForestList.gql";
 import SnackBar from "../components/SnackBar";
 import ScreenMixin from "./ScreenMixin";
+import MainSection from "../components/MainSection";
 
 export default {
   name: "forest",
@@ -57,6 +61,7 @@ export default {
     SearchCard,
     TableAction,
     SnackBar,
+    MainSection,
   },
 
   data() {
@@ -70,6 +75,7 @@ export default {
       sbTimeout: 5000,
       filter: {},
       options: {},
+      tableSelectedRow: [],
     };
   },
 
@@ -116,7 +122,12 @@ export default {
         this.errMsg = this.$t("search.condition_is_maximum");
       }
     },
+
+    selectedRow(val) {
+      this.tableSelectedRow = val;
+    },
   },
+
   watch: {
     options: {
       handler(val, old) {
@@ -137,6 +148,7 @@ export default {
     getHeaders() {
       return headers;
     },
+
     getData() {
       if (this.forestsInfo) {
         return this.forestsInfo.forests.map(element => {
@@ -151,8 +163,8 @@ export default {
             forestMunicipality: fCadastral.municipality,
             forestSector: fCadastral.sector,
             forestSubsector: fCadastral.subsector,
-            ownerKanji: owner.name_kana,
-            ownerKana: owner.name_kanji,
+            ownerKanji: owner.name_kanji,
+            ownerKana: owner.name_kana,
             ownerPrefecture: owner.address.prefecture,
             ownerMunicipality: owner.address.municipality,
             ownerSector: owner.address.sector,
@@ -193,6 +205,7 @@ export default {
 <style lang="scss" scoped>
 .forest {
   &__data-section {
+    width: 100%;
     overflow: hidden;
   }
 }

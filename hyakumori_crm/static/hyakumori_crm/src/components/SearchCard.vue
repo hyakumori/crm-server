@@ -20,13 +20,17 @@
             @selectedAction="onSelected"
           />
 
-          <v-btn @click="deleteSearchField(index)" icon>
+          <v-btn
+            v-if="conditions.length > 1"
+            @click="deleteSearchField(index)"
+            icon
+          >
             <v-icon>mdi-delete-circle</v-icon>
           </v-btn>
         </div>
 
         <v-text-field
-          v-model="condition.data"
+          v-model="condition.keyword"
           class="mt-1"
           clearable
           outlined
@@ -38,7 +42,7 @@
       <div
         class="d-flex flex-xl-row flex-lg-row flex-md-column search-card__btn"
       >
-        <div @click="addSearchField">
+        <div class="d-flex align-center" @click="addSearchField">
           <v-icon>mdi-plus</v-icon>
 
           <span class="ml-1 caption">{{
@@ -80,7 +84,7 @@ export default {
       conditionRules: [val => !!val || this.$t("search.required_field")],
       conditions: [
         {
-          data: null,
+          keyword: null,
           criteria: null,
         },
       ],
@@ -92,7 +96,7 @@ export default {
       if (this.conditions.length == this.searchCriteria.length) {
         this.$emit("conditionOutOfBounds", true);
       } else {
-        this.conditions.push({ data: null, criteria: null });
+        this.conditions.push({ keyword: null, criteria: null });
       }
     },
 
@@ -133,15 +137,18 @@ export default {
 $action-color: #12c7a6;
 $text-color: #999999;
 $text-field--min-height: 0;
+$text-font-size: 14px;
 
 .search-card {
   padding: 18px;
   height: 625px;
   overflow: auto;
-  border-radius: 4px;
+  min-width: 295px;
+  max-width: 295px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
 
   &__title {
-    font-size: 14px;
+    font-size: $text-font-size;
     font-weight: bold;
     color: #444444;
     padding: 0;
@@ -171,11 +178,24 @@ $text-field--min-height: 0;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    margin-top: 0 !important;
+    margin-top: 5px !important;
+
+    & i {
+      color: $action-color;
+    }
   }
 }
 
 .v-input ::v-deep {
+  input {
+    color: $text-color;
+    font-size: $text-font-size;
+  }
+
+  fieldset {
+    border: 1px solid #e1e1e1;
+  }
+
   & .v-text-field__details {
     margin-bottom: 0 !important;
     min-height: $text-field--min-height;

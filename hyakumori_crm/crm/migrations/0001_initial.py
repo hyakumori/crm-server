@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
                 ('name_kana', django.contrib.postgres.fields.jsonb.JSONField(db_index=True, default=hyakumori_crm.crm.models.customer.DefaultCustomer.name_kana)),
                 ('address', django.contrib.postgres.fields.jsonb.JSONField(db_index=True, default=hyakumori_crm.crm.models.customer.DefaultCustomer.address)),
                 ('banking', django.contrib.postgres.fields.jsonb.JSONField(default=hyakumori_crm.crm.models.customer.DefaultCustomer.banking)),
-                ('tags', django.contrib.postgres.fields.jsonb.JSONField(default=list)),
+                ('tags', django.contrib.postgres.fields.jsonb.JSONField(default=dict)),
                 ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='crm_customer_author', to=settings.AUTH_USER_MODEL)),
                 ('editor', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='crm_customer_editor', to=settings.AUTH_USER_MODEL)),
             ],

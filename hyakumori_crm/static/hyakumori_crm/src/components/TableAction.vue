@@ -1,8 +1,9 @@
 <template>
   <div class="d-flex align-center table-action">
     <p class="ml-4 mb-0 table-action__text">
-      {{ selectedAction }} {{ $t("search.selected_action") }}
+      {{ selectedCount }} {{ $t("search.selected_action") }}
     </p>
+
     <select-list
       class="ml-12 table-action__select"
       :actions="getActions"
@@ -23,15 +24,13 @@ export default {
     SelectList,
   },
 
-  data() {
-    return {
-      selectedAction: null,
-    };
+  props: {
+    selectedCount: Number,
   },
 
   methods: {
-    onSelected(val) {
-      this.selectedAction = val.text;
+    onSelected() {
+      // console.log(val)
     },
   },
 

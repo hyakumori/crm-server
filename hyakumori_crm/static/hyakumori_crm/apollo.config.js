@@ -1,5 +1,6 @@
 const path = require("path");
 
+// This file is redundant for now but keep it for reference
 // Load .env files
 const { loadEnv } = require("vue-cli-plugin-apollo/utils/load-env");
 const env = loadEnv([
