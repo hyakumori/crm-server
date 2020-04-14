@@ -6,6 +6,7 @@ from django.db import connections
 from django.db.utils import OperationalError
 
 from ..crm.models.forest import Forest
+from .schemas import ForestFilter
 
 
 def get_forests_by_condition(
@@ -13,14 +14,16 @@ def get_forests_by_condition(
     per_page: int = 10,
     pre_per_page: Union[int, None] = None,
     order_by: Union[Iterator, None] = None,
+    filters: Union[ForestFilter, None] = None,
 ):
     offset = (pre_per_page or per_page) * (page_num - 1)
     if not order_by:
         order_by = []
-    query = Forest.objects.all()
+    if filters and not filters.is_valid():
+        return [], 0
+    query = filters.qs if filters else Forest.objects.all()
     total = query.count()
     forests = query.order_by(*order_by)[offset : offset + per_page]
-    total = Forest.objects.count()
     return forests, total
 
 

@@ -2,10 +2,9 @@
   <main-section class="forest">
     <template #section>
       <search-card
-        :searchCriteria="getSearchCriteria"
-        @onSearch="onSearch"
-        @unableDelete="unableDelErr"
-        @conditionOutOfBounds="conditionOutOfBoundsErr"
+        :searchCriteria="filterFields"
+        :onSearch="onSearch"
+        ref="filter"
       />
 
       <div class="ml-7 forest__data-section">
@@ -18,7 +17,7 @@
         <data-list
           mode="forest"
           itemKey="internal_id"
-          :headers="getHeaders"
+          :headers="headers"
           :data="getData"
           :showSelect="true"
           :isLoading="$apollo.queries.forestsInfo.loading"
@@ -42,10 +41,10 @@
 </template>
 
 <script>
+import gql from "graphql-tag";
 import DataList from "../components/DataList";
 import SearchCard from "../components/SearchCard";
 import TableAction from "../components/TableAction";
-import headers from "../assets/dump/table_header_forest_jp.json";
 import GetForestList from "../graphql/GetForestList.gql";
 import SnackBar from "../components/SnackBar";
 import ScreenMixin from "./ScreenMixin";
@@ -76,10 +75,23 @@ export default {
       filter: {},
       options: {},
       tableSelectedRow: [],
+      headers: [],
     };
   },
 
   apollo: {
+    headers: {
+      query: gql`
+        query ForestTableHeaders {
+          foresttable_headers {
+            headers
+          }
+        }
+      `,
+      update(data) {
+        return data.foresttable_headers.headers;
+      },
+    },
     forestsInfo: {
       query: GetForestList,
       update: data => data.list_forests,
@@ -88,21 +100,15 @@ export default {
           filter: this.filter,
         };
       },
+      skip() {
+        return !this.filter || this.headers.length === 0;
+      },
     },
   },
 
   methods: {
     rowData() {
       // console.log(val);
-    },
-
-    onSearch(err, data) {
-      if (err) {
-        this.isShowErr = true;
-        this.errMsg = this.$t("search.duplicate_criteria_msg");
-      } else {
-        // Handling search data
-      }
     },
 
     onDismissSb(val) {
@@ -125,6 +131,10 @@ export default {
 
     selectedRow(val) {
       this.tableSelectedRow = val;
+    },
+    onSearch() {
+      this.filter = { ...this.filter, filters: this.$refs.filter.conditions };
+      this.$apollo.queries.result.refetch();
     },
   },
 
@@ -159,27 +169,26 @@ export default {
 
           return {
             internal_id: element.internal_id,
-            forestPrefecture: fCadastral.prefecture,
-            forestMunicipality: fCadastral.municipality,
-            forestSector: fCadastral.sector,
-            forestSubsector: fCadastral.subsector,
-            ownerKanji: owner.name_kanji,
-            ownerKana: owner.name_kana,
-            ownerPrefecture: owner.address.prefecture,
-            ownerMunicipality: owner.address.municipality,
-            ownerSector: owner.address.sector,
-            contractLongTerm: contract[0].status,
-            contractLongTermStart: contract[0].start_date,
-            contractLongTermEnd: contract[0].end_date,
-            contractWork: contract[1].status,
-            contractWorkStart: contract[1].start_date,
-            contractWorkEnd: contract[1].end_date,
-            contractFsc: contract[2].status,
-            contractFscStart: contract[2].start_date,
-            contractFscEnd: contract[2].end_date,
-            tagDanchi: tag.danchi,
-            tagManageType: tag.manage_type,
-            options: "",
+            cadastral__prefecture: fCadastral.prefecture,
+            cadastral__municipality: fCadastral.municipality,
+            cadastral__sector: fCadastral.sector,
+            cadastral__subsector: fCadastral.subsector,
+            owner__name_kana: owner.name_kana,
+            owner__name_kanji: owner.name_kanji,
+            owner__address__prefecture: owner.address.prefecture,
+            owner__address__municipality: owner.address.municipality,
+            owner__address__sector: owner.address.sector,
+            contracts__0__status: contract[0].status,
+            contracts__0__start_date: contract[0].start_date,
+            contracts__0__end_date: contract[0].end_date,
+            contracts__1__status: contract[1].status,
+            contracts__1__start_date: contract[1].start_date,
+            contracts__1__end_date: contract[1].end_date,
+            contracts__2__status: contract[2].status,
+            contracts__2__start_date: contract[2].start_date,
+            contracts__2__end_date: contract[2].end_date,
+            tag__danchi: tag.danchi,
+            tag__manage_type: tag.manage_type,
           };
         });
       } else {
@@ -197,6 +206,11 @@ export default {
 
     getSearchCriteria() {
       return Array.from(this.getHeaders).map(header => header.text);
+    },
+    filterFields() {
+      return this.headers
+        .map(h => ({ text: h.text, value: h.filter_name }))
+        .filter(f => f.value !== undefined);
     },
   },
 };

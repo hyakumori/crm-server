@@ -110,7 +110,7 @@ export default {
       if (old.length === 0) this.conditions[0].fields = [...val];
       else return;
     },
-    usedFields(val, old) {
+    usedFields(val) {
       for (let con of this.conditions) {
         this.$set(
           con,
