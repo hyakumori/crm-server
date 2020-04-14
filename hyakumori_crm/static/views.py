@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import TemplateView
 from django.views.decorators.cache import never_cache
 from django.conf import settings
@@ -9,6 +9,7 @@ else:
     import requests
     from django.http import StreamingHttpResponse, HttpResponseNotModified
 
+
     def index_view(request):
         req_headers = dict(request.headers)
         req_headers.pop("Content-Length")
@@ -17,6 +18,7 @@ else:
             "http://localhost:8080" + request.get_full_path_info(),
             headers=req_headers,
             stream=True,
+            max_retries=0
         )
         if fe_resp.status_code == 304:
             resp = HttpResponseNotModified()
@@ -35,3 +37,4 @@ else:
 @never_cache
 def test_view(request):
     return HttpResponse("OK", content_type="text/plain")
+
