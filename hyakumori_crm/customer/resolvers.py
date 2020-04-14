@@ -47,7 +47,6 @@ def get_customertable_headers(obj: Any, info: GraphQLResolveInfo) -> dict:
         {"text": _("Telephone"), "value": "telephone"},
         {"text": _("Mobilephone"), "value": "mobilephone"},
         {"text": _("Email"), "value": "email"},
-        {"text": _("Representative"), "value": "representative"},
     ]
     filters = CustomerFilter.get_filters()
     for header_define in headers:
