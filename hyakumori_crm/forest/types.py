@@ -20,6 +20,7 @@ type Forest implements Timestamp & Editor {
 
 extend type Query {
     list_forests(data: ForestListFilterInput): ForestListResponse
+    foresttable_headers: ForestTableHeaderResponse
 }
 
 type ForestListResponse implements HyakumoriResponse {
@@ -35,6 +36,13 @@ input ForestListFilterInput {
     preItemsPerPage: Int
     sortBy: [String]
     sortDesc: [Boolean]
+    filters: JSON
+}
+
+type ForestTableHeaderResponse implements HyakumoriResponse {
+  ok: Boolean!
+  error: JSON
+  headers: JSON
 }
 """
 )

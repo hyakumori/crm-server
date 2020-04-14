@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-13 14:53+0700\n"
+"POT-Creation-Date: 2020-04-14 00:57+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,69 +18,145 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: core/models.py:92
+#: core/models.py:93
 msgid "Required"
 msgstr "必須"
 
-#: core/models.py:93
+#: core/models.py:94
 msgid "Invalid"
 msgstr "無効"
 
-#: customer/resolvers.py:36
+#: customer/resolvers.py:37
 msgid "Internal Id"
 msgstr "新規ID発行"
 
-#: customer/resolvers.py:37
+#: customer/resolvers.py:38
 msgid "Fullname Kanji"
 msgstr "土地所有者名"
 
-#: customer/resolvers.py:38
+#: customer/resolvers.py:39
 msgid "Fullname Kana"
 msgstr "土地所有者名（ｶﾅ）"
 
-#: customer/resolvers.py:39
+#: customer/resolvers.py:40
 msgid "Postal Code"
 msgstr "郵便番号"
 
-#: customer/resolvers.py:40
+#: customer/resolvers.py:41
 msgid "Address"
 msgstr "住所"
 
-#: customer/resolvers.py:41
+#: customer/resolvers.py:42 forest/resolvers.py:18
 msgid "Prefecture"
 msgstr "都道府県"
 
-#: customer/resolvers.py:42
+#: customer/resolvers.py:43 forest/resolvers.py:24
 msgid "Municipality"
 msgstr "市町村"
 
-#: customer/resolvers.py:43
+#: customer/resolvers.py:44
 msgid "Ranking"
 msgstr "所有者順位"
 
-#: customer/resolvers.py:44
+#: customer/resolvers.py:45
 msgid "Status"
 msgstr "未登録/登録"
 
-#: customer/resolvers.py:45
+#: customer/resolvers.py:46
 msgid "Same name"
 msgstr "同姓同名"
 
-#: customer/resolvers.py:46
+#: customer/resolvers.py:47
 msgid "Telephone"
 msgstr "電話番号"
 
-#: customer/resolvers.py:47
+#: customer/resolvers.py:48
 msgid "Mobilephone"
 msgstr "携帯番号"
 
-#: customer/resolvers.py:48
+#: customer/resolvers.py:49
 msgid "Email"
 msgstr "メールアドレス"
 
-#: customer/resolvers.py:49
+#: customer/resolvers.py:50
 msgid "Representative"
 msgstr "代表"
+
+#: forest/resolvers.py:16
+msgid "Forest ID"
+msgstr "土地管理ID"
+
+#: forest/resolvers.py:30
+msgid "Sector"
+msgstr "地籍_大字"
+
+#: forest/resolvers.py:36
+msgid "Subsector"
+msgstr "地籍_字"
+
+#: forest/resolvers.py:42
+msgid "Owner name Kanji"
+msgstr "土地所有者名_漢字"
+
+#: forest/resolvers.py:48
+msgid "Owner name Kana"
+msgstr "土地所有者名_カナ"
+
+#: forest/resolvers.py:54
+msgid "Owner address prefecture"
+msgstr "土地所有者住所_都道府県"
+
+#: forest/resolvers.py:60
+msgid "Owner address municipality"
+msgstr "土地所有者住所_市町村"
+
+#: forest/resolvers.py:66
+msgid "Owner address sector"
+msgstr "土地所有者住所_大字"
+
+#: forest/resolvers.py:72
+msgid "Long term contract"
+msgstr "長期契約"
+
+#: forest/resolvers.py:78
+msgid "Long term start"
+msgstr "開始日"
+
+#: forest/resolvers.py:84
+msgid "Long term end"
+msgstr "終了日"
+
+#: forest/resolvers.py:90
+msgid "Work load contract"
+msgstr "作業道契約"
+
+#: forest/resolvers.py:96
+msgid "Work load start"
+msgstr "開始日"
+
+#: forest/resolvers.py:102
+msgid "Work load end"
+msgstr "終了日"
+
+#: forest/resolvers.py:108
+msgid "FSC certification participation"
+msgstr "FSC認証加入"
+
+#: forest/resolvers.py:114
+msgid "FSC start"
+msgstr "開始日"
+
+#: forest/resolvers.py:120
+msgid "FSC end"
+msgstr "終了日"
+
+#: forest/resolvers.py:126
+msgid "Tag danchi"
+msgstr "団地"
+
+#: forest/resolvers.py:132
+msgid "Tag Manage Type"
+msgstr "管理形態"
 
 #: settings.py:159
 msgid "Japan"
