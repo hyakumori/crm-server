@@ -1,6 +1,6 @@
 import datetime
 import uuid
-from typing import Any, ClassVar, List, Optional, Sequence, Dict
+from typing import Any, Union, ClassVar, List, Optional, Sequence, Dict
 
 from behaviors.behaviors import Authored as AuthoredMixin
 from behaviors.behaviors import Editored as EditoredMixin
@@ -12,6 +12,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from pydantic import BaseModel, Field, root_validator, validator
 from querybuilder.fields import SimpleField
+from django_filters import FilterSet
 
 
 class TimestampMixin(models.Model):
@@ -136,7 +137,7 @@ class Paginator(BaseModel):
     sort_by: Sequence[str] = Field([], alias="sortBy")
     sort_desc: Sequence[bool] = Field([], alias="sortDesc")
     order_by: Optional[Sequence[str]]
-    filters: Optional[Dict[str, Any]]
+    filters: Optional[Union[Dict[str, Any], FilterSet]]
 
     MAX_ITEMS: ClassVar = 100
 
@@ -192,6 +193,9 @@ class Paginator(BaseModel):
             for f in v
             if f and f["criteria"] and f["keyword"]
         }
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class RawSQLField(SimpleField):
