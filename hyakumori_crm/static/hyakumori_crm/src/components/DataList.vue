@@ -86,9 +86,10 @@ export default {
     dynamicHeaders() {
       if (this.data && this.headers.length > 1 && this.autoHeaders) {
         const headers = [];
-        for (let i = 0; i < this.headers.length; i++) {
+        // pass id to data but ignore it when mapping header value
+        for (let i = 0; i < this.data.length; i++) {
           const header = { ...this.headers[i] };
-          header.value = Object.keys(this.data[0])[i];
+          header.value = Object.keys(this.data[0])[i + 1];
           headers.push(header);
         }
         headers.push(headerSelection);
@@ -108,7 +109,7 @@ export default {
     },
 
     clickRow(value) {
-      this.$emit("rowData", value.internal_id);
+      this.$emit("rowData", value.id);
     },
 
     isNegotiation(val) {

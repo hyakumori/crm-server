@@ -16,8 +16,8 @@
 
         <data-list
           mode="forest"
-          itemKey="internal_id"
-          :headers="headers"
+          itemKey="id"
+          :headers="getHeaders"
           :data="getData"
           :showSelect="true"
           :isLoading="$apollo.queries.forestsInfo.loading"
@@ -168,6 +168,7 @@ export default {
           const tag = element.tag;
 
           return {
+            id: element.id,
             internal_id: element.internal_id,
             cadastral__prefecture: fCadastral.prefecture,
             cadastral__municipality: fCadastral.municipality,
