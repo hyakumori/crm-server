@@ -6,47 +6,12 @@
           content="基本情報 (登記情報)"
           editBtnContent="所有地を追加・編集"
           :update="isUpdate.basicInfo"
-          @update="updateBasicInfo"
+          @update="(val) => isUpdate.basicInfo = val"
         />
         <div class="my-4">
-          <v-row>
-            <v-col cols="6">
-              <text-info
-                title="住所"
-                info="岡山県倉敷市大谷4-1-3"
-                :isUpdate="isUpdate.basicInfo"
-              />
-              <text-info
-                title="地番"
-                info="1111"
-                :isUpdate="isUpdate.basicInfo"
-              />
-              <text-info
-                title="契約期間"
-                info="2013/12/3 - 2020/12/3"
-                :isUpdate="isUpdate.basicInfo"
-              />
-            </v-col>
-            <v-col cols="6">
-              <text-info
-                title="大字"
-                info="長尾"
-                :isUpdate="isUpdate.basicInfo"
-              />
-              <text-info
-                title="契約形態"
-                info="10年契約"
-                :isUpdate="isUpdate.basicInfo"
-              />
-              <text-info
-                title="施業履歴"
-                info="山田花子"
-                :isUpdate="isUpdate.basicInfo"
-              />
-            </v-col>
-          </v-row>
+          <forest-basic-info :info="getInfo" :isUpdate="isUpdate.basicInfo" />
           <update-button
-            class="mt-n3 mb-5"
+            class="mt-n3 mb-12"
             v-if="isUpdate.basicInfo"
             :cancel="cancel.bind(this, 'basicInfo')"
           />
@@ -56,7 +21,7 @@
           content="所有林情報"
           editBtnContent="所有者を追加・編集"
           :update="isUpdate.contact"
-          @update="updateContact"
+          @update="(val) => isUpdate.contact = val"
         />
         <contact-tab
           class="mt-5"
@@ -67,7 +32,7 @@
         />
         <addition-button v-if="isUpdate.contact" content="連絡者を追加" />
         <update-button
-          class="mb-9"
+          class="mb-9 mt-2"
           v-if="isUpdate.contact"
           :cancel="cancel.bind(this, 'contact')"
         />
@@ -76,7 +41,7 @@
           content="協議履歴"
           editBtnContent="協議記録を追加・編集"
           :update="isUpdate.discussion"
-          @update="updateDiscussion"
+          @update="(val) => isUpdate.discussion = val"
         />
         <template v-if="isExpand">
           <history-discussion
@@ -109,18 +74,26 @@
         <content-header
           content="書類郵送記録"
           editBtnContent="書類郵送記録を追加・編集"
-          :update="isUpdate.attach"
-          @update="updateAttach"
+          :update="isUpdate.archive"
+          @update="(val) => isUpdate.archive = val"
         />
         <history-discussion
           class="mt-4"
+          :class="{ 'pb-9': !isUpdate.archive }"
           :discussions="getDiscussionsNotExpand"
-          :isUpdate="isUpdate.attach"
+          :isUpdate="isUpdate.archive"
         />
         <update-button
-          v-if="isUpdate.attach"
-          :cancel="cancel.bind(this, 'attach')"
+          v-if="isUpdate.archive"
+          :cancel="cancel.bind(this, 'archive')"
         />
+
+        <content-header
+          class="mt-9"
+          content="森林情報"
+          :displayAdditionBtn="false"
+        />
+        <forest-attribute-table :attributes="generateForestAttributeData" />
       </div>
     </template>
 
@@ -150,13 +123,15 @@
 import MainSection from "../components/MainSection";
 import ContentHeader from "../components/detail/ContentHeader";
 import ContactTab from "../components/detail/ContactTab";
+import info from "../assets/dump/forest_detail.json";
 import contacts from "../assets/dump/contact_card.json";
 import discussions from "../assets/dump/history_discussion.json";
 import HistoryDiscussion from "../components/detail/HistoryDiscussionCard";
-import TextInfo from "../components/detail/TextInfo";
 import LogCard from "../components/detail/LogCard";
 import UpdateButton from "../components/detail/UpdateButton";
 import AdditionButton from "../components/AdditionButton";
+import ForestBasicInfo from "../components/detail/ForestBasicInfo";
+import ForestAttributeTable from "../components/detail/ForestAttributeTable";
 
 export default {
   name: "forest-detail",
@@ -166,10 +141,11 @@ export default {
     ContentHeader,
     ContactTab,
     HistoryDiscussion,
-    TextInfo,
     LogCard,
     UpdateButton,
     AdditionButton,
+    ForestBasicInfo,
+    ForestAttributeTable,
   },
 
   data() {
@@ -179,7 +155,7 @@ export default {
         basicInfo: false,
         contact: false,
         discussion: false,
-        attach: false,
+        archive: false,
       },
     };
   },
@@ -187,22 +163,6 @@ export default {
   methods: {
     expandDiscussionList() {
       this.isExpand = !this.isExpand;
-    },
-
-    updateBasicInfo(val) {
-      this.isUpdate.basicInfo = val;
-    },
-
-    updateDiscussion(val) {
-      this.isUpdate.discussion = val;
-    },
-
-    updateAttach(val) {
-      this.isUpdate.attach = val;
-    },
-
-    updateContact(val) {
-      this.isUpdate.contact = val;
     },
 
     cancel(val) {
@@ -227,19 +187,110 @@ export default {
     getDiscussionsExpand() {
       return discussions;
     },
+
+    getInfo() {
+      return info;
+    },
+
+    generateForestAttributeData() {
+      const attr = info.forest_attributes;
+      return [
+        {
+          area: "面積",
+          unit: "ha",
+          first_area: attr["第1面積_ha"],
+          second_area: attr["第2面積_ha"],
+          third_area: attr["第3面積_ha"],
+        },
+        {
+          area: "樹種",
+          unit: "",
+          first_area: "",
+          second_area: "",
+          third_area: "",
+        },
+        {
+          area: "立木本数",
+          unit: "",
+          first_area: "",
+          second_area: "",
+          third_area: "",
+        },
+        {
+          area: "立木密度",
+          unit: "本/ha",
+          first_area: "",
+          second_area: "",
+          third_area: "",
+        },
+        {
+          area: "平均樹高",
+          unit: "m",
+          first_area: "",
+          second_area: "",
+          third_area: "",
+        },
+        {
+          area: "樹冠長率",
+          unit: "%",
+          first_area: "",
+          second_area: "",
+          third_area: "",
+        },
+        {
+          area: "平均胸高直径",
+          unit: "cm",
+          first_area: "",
+          second_area: "",
+          third_area: "",
+        },
+        {
+          area: "合計材積",
+          unit: "m2",
+          first_area: "",
+          second_area: "",
+          third_area: "",
+        },
+        {
+          area: "ha材積",
+          unit: "m2/ha",
+          first_area: attr["第1ha材積"],
+          second_area: attr["第2ha材積"],
+          third_area: attr["第3ha材積"],
+        },
+        {
+          area: "収量比数",
+          unit: "",
+          first_area: "",
+          second_area: "",
+          third_area: "",
+        },
+        {
+          area: "相対幹距比",
+          unit: "",
+          first_area: "",
+          second_area: "",
+          third_area: "",
+        },
+        {
+          area: "形状比",
+          unit: "",
+          first_area: attr["第1形状比"],
+          second_area: attr["第2形状比"],
+          third_area: attr["第3形状比"],
+        },
+      ];
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+@import "../styles/variables";
+
 .forest-detail {
   &__section {
-    width: 785px;
-    background-color: white;
-    padding-top: 45px;
-    padding-bottom: 45px;
-    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
-    border-radius: 4px;
+    @extend %detail-section-shared;
   }
 
   &__expand {

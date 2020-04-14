@@ -6,7 +6,11 @@
         <v-icon right>mdi-file</v-icon>
       </div>
       <v-spacer></v-spacer>
-      <addition-button :content="editBtnContent" :click="onUpdate.bind(this)" />
+      <addition-button
+        v-if="displayAdditionBtn"
+        :content="editBtnContent"
+        :click="onUpdate.bind(this)"
+      />
     </div>
     <v-divider class="content-header__divider mt-3"></v-divider>
   </div>
@@ -26,6 +30,10 @@ export default {
     content: String,
     editBtnContent: String,
     update: Boolean,
+    displayAdditionBtn: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   methods: {

@@ -9,7 +9,7 @@
           <span class="caption">{{ subTitle }}</span>
         </h4>
 
-        <p class="green--text mb-0 ml-2 caption">{{ relationship }}</p>
+        <p class="green--text mb-0 ml-2 caption">{{ getRelationship }}</p>
       </div>
 
       <div v-if="address">
@@ -37,17 +37,16 @@
       <div
         class="contact-card__related-info caption black--text mt-1"
         v-if="relatedInfo"
-      >
-        {{ relatedInfo }}
-      </div>
+      >{{ relatedInfo }}</div>
 
       <v-select
-        v-if="isUpdate"
-        class="mt-2"
+        v-if="isUpdate && isCustomer"
+        class="contact-card__select-relationship mt-2"
         outlined
+        dense
         placeholder="続き柄を選択"
-        height="32"
         :items="RELATIONSHIP"
+        @change="selectedRelationship"
       ></v-select>
     </div>
 
@@ -57,10 +56,7 @@
       </v-btn>
     </div>
 
-    <div
-      class="contact-card__tag"
-      v-bind:class="{ owner: isOwner, contactor: isContactor }"
-    ></div>
+    <div class="contact-card__tag" v-bind:class="{ owner: isOwner, contactor: isContactor }"></div>
   </v-card>
 </template>
 
@@ -81,6 +77,10 @@ export default {
     isOwner: Boolean,
     isContactor: Boolean,
     isUpdate: Boolean,
+    isCustomer: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -96,6 +96,7 @@ export default {
         this.$t("detail.tabs.relationship.relatives"),
         this.$t("detail.tabs.relationship.others"),
       ],
+      innerRelationship: "",
     };
   },
 
@@ -106,6 +107,10 @@ export default {
 
     onClickCard() {
       // Do click card
+    },
+
+    selectedRelationship(val) {
+      this.innerRelationship = val;
     },
   },
 
@@ -123,6 +128,14 @@ export default {
         return "mdi-close";
       } else {
         return "mdi-chevron-right";
+      }
+    },
+
+    getRelationship() {
+      if (this.relationship) {
+        return this.relationship;
+      } else {
+        return this.innerRelationship;
       }
     },
   },
@@ -186,6 +199,23 @@ $background-color: #f5f5f5;
     padding: 4px;
     width: fit-content;
     border-radius: 2px;
+  }
+
+  &__select-relationship ::v-deep {
+    width: 220px;
+
+    fieldset {
+      border: 1px solid #eeeeee;
+      border-radius: 4px;
+    }
+
+    .v-icon {
+      margin-top: 0 !important;
+    }
+
+    .v-select__selection {
+      color: #999999;
+    }
   }
 }
 </style>
