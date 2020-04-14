@@ -13,8 +13,8 @@ router.register("forests", ForestViewSets, basename="forest")
 
 urlpatterns = [
     path("api/v1/", include(router.urls)),
-    path("api/v1/", include('hyakumori_crm.users.urls')),
-    path("api/v1/", include('hyakumori_crm.permissions.urls')),
+    path("api/v1/", include("hyakumori_crm.users.urls")),
+    path("api/v1/", include("hyakumori_crm.permissions.urls")),
     re_path("api/v1/.*", notfound_view, name="notfound"),
     path("check", test_view, name="check"),
     path("graphql", graphql_view, name="graphql"),
