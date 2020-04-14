@@ -1,6 +1,6 @@
 <template>
   <div class="page-header">
-    <v-img src="../assets/img/app-bar.webp" height="160"></v-img>
+    <v-img src="../assets/img/app-bar.jpg" height="160"></v-img>
 
     <div class="page-header__content">
       <div class="page-header__content--center">

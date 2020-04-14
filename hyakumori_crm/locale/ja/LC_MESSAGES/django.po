@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-09 13:16+0700\n"
+"POT-Creation-Date: 2020-04-13 14:53+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,71 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: core/models.py:90
+#: core/models.py:92
 msgid "Required"
 msgstr "必須"
 
-#: core/models.py:91
+#: core/models.py:93
 msgid "Invalid"
 msgstr "無効"
 
-#: settings.py:152
+#: customer/resolvers.py:36
+msgid "Internal Id"
+msgstr "新規ID発行"
+
+#: customer/resolvers.py:37
+msgid "Fullname Kanji"
+msgstr "土地所有者名"
+
+#: customer/resolvers.py:38
+msgid "Fullname Kana"
+msgstr "土地所有者名（ｶﾅ）"
+
+#: customer/resolvers.py:39
+msgid "Postal Code"
+msgstr "郵便番号"
+
+#: customer/resolvers.py:40
+msgid "Address"
+msgstr "住所"
+
+#: customer/resolvers.py:41
+msgid "Prefecture"
+msgstr "都道府県"
+
+#: customer/resolvers.py:42
+msgid "Municipality"
+msgstr "市町村"
+
+#: customer/resolvers.py:43
+msgid "Ranking"
+msgstr "所有者順位"
+
+#: customer/resolvers.py:44
+msgid "Status"
+msgstr "未登録/登録"
+
+#: customer/resolvers.py:45
+msgid "Same name"
+msgstr "同姓同名"
+
+#: customer/resolvers.py:46
+msgid "Telephone"
+msgstr "電話番号"
+
+#: customer/resolvers.py:47
+msgid "Mobilephone"
+msgstr "携帯番号"
+
+#: customer/resolvers.py:48
+msgid "Email"
+msgstr "メールアドレス"
+
+#: customer/resolvers.py:49
+msgid "Representative"
+msgstr "代表"
+
+#: settings.py:159
 msgid "Japan"
 msgstr "Japan"
 

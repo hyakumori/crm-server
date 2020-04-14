@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "rest_framework",
     "behaviors.apps.BehaviorsConfig",
+    "django_filters",
     # ─── HYAKUMORI APPS ─────────────────────────────────────────────────────────────
     "hyakumori_crm.users",
     "hyakumori_crm.crm",
@@ -76,6 +77,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.locale.LocaleMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -157,3 +159,5 @@ AUTH_USER_MODEL = "users.User"
 LANGUAGES = [("ja", _("Japan"))]
 
 LOCALE_PATHS = [os.path.join(BASE_DIR, "hyakumori_crm", "locale")]
+
+CORS_ORIGIN_WHITELIST = ["http://localhost:8080", "http://127.0.0.1:8080"]

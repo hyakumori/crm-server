@@ -11,6 +11,7 @@
       single-line
       dense
       outlined
+      :hide-details="hideDetails"
       :type="type"
       :placeholder="placeholder"
       :error-messages="errors"
@@ -44,6 +45,10 @@ export default {
     placeholder: {
       type: String,
       default: "",
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
     },
     type: {
       type: String,

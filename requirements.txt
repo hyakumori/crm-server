@@ -20,9 +20,17 @@ django-behaviors==0.5.0 \
     --hash=sha256:2e0180944e5529624bd543144611964189fb5e02aea43f24045f69f6704d2860 \
     --hash=sha256:913c235b55e20698820ca2664b624d62c7b4f6fd2834aca658fdfb22d5cb4f79 \
     # via hyakumori_crm (setup.py)
+django-cors-headers==3.2.1 \
+    --hash=sha256:a5960addecc04527ab26617e51b8ed42f0adab4594b24bb0f3c33e2bd3857c3f \
+    --hash=sha256:a785b5f446f6635810776d9f5f5d23e6a2a2f728ea982648370afaf0dfdf2627 \
+    # via hyakumori_crm (setup.py)
 django-extensions==2.2.9 \
     --hash=sha256:2f81b618ba4d1b0e58603e25012e5c74f88a4b706e0022a3b21f24f0322a6ce6 \
     --hash=sha256:b19182d101a441fe001c5753553a901e2ef3ff60e8fbbe38881eb4a61fdd17c4 \
+    # via hyakumori_crm (setup.py)
+django-filter==2.2.0 \
+    --hash=sha256:558c727bce3ffa89c4a7a0b13bc8976745d63e5fd576b3a9a851650ef11c401b \
+    --hash=sha256:c3deb57f0dd7ff94d7dce52a047516822013e2b441bed472b722a317658cfd14 \
     # via hyakumori_crm (setup.py)
 django-model-utils==4.0.0 \
     --hash=sha256:9cf882e5b604421b62dbe57ad2b18464dc9c8f963fc3f9831badccae66c1139c \
@@ -35,7 +43,7 @@ django-query-builder==1.2.0 \
 django==3.0.4 \
     --hash=sha256:50b781f6cbeb98f673aa76ed8e572a019a45e52bdd4ad09001072dfd91ab07c8 \
     --hash=sha256:89e451bfbb815280b137e33e454ddd56481fdaa6334054e6e031041ee1eda360 \
-    # via django-model-utils, django-query-builder, djangorestframework, hyakumori_crm (setup.py)
+    # via django-cors-headers, django-filter, django-model-utils, django-query-builder, djangorestframework, hyakumori_crm (setup.py)
 djangorestframework==3.11.0 \
     --hash=sha256:05809fc66e1c997fd9a32ea5730d9f4ba28b109b9da71fccfa5ff241201fd0a4 \
     --hash=sha256:e782087823c47a26826ee5b6fa0c542968219263fb3976ec3c31edab23a4001f \
