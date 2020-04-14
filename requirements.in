@@ -15,3 +15,7 @@ django-extensions
 django-query-builder
 django-filter
 django-cors-headers
+djoser
+djangorestframework-simplejwt
+django-guardian
+drf-typed-views

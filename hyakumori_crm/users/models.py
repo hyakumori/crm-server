@@ -8,10 +8,14 @@ from django.utils.translation import ugettext_lazy as _
 from .managers import UserManager
 
 
+def default_username():
+    return f"u{uuid.uuid4().hex[0:8]}"
+
+
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    username = None
-    email = models.EmailField(_("email address"), unique=True)
+    username = models.CharField(default=default_username, max_length=200, db_index=True, null=True, unique=True)
+    email = models.EmailField(_("email address"), unique=True, db_index=True)
     profile = JSONField(blank=True, default=dict)
     settings = JSONField(blank=True, default=dict)
 

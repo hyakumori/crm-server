@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import urllib.parse
+from datetime import timedelta
 from distutils.util import strtobool
 
 import dj_database_url
@@ -22,7 +23,6 @@ load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -36,7 +36,6 @@ DEBUG = strtobool(os.getenv("DEBUG", "no"))
 ALLOWED_HOSTS = ["localhost"]
 ALLOWED_HOSTS += os.getenv("ALLOWED_HOSTS", "").split(",")
 
-
 # Application definition
 STATIC_ROOT = os.path.join(
     BASE_DIR, os.getenv("STATIC_DIR", "hyakumori_crm/static/hyakumori_crm/dist")
@@ -46,7 +45,7 @@ if os.getenv("STATIC_DIR") == "":
     STATIC_ROOT = None
 
 static_app = []
-if not STATIC_ROOT:
+if not STATIC_ROOT and DEBUG:
     static_app = ["hyakumori_crm.static"]
 
 orjson_experiment = []
@@ -65,10 +64,11 @@ INSTALLED_APPS = [
     "django_extensions",
     "rest_framework",
     "behaviors.apps.BehaviorsConfig",
+    "guardian",
     "django_filters",
     # ─── HYAKUMORI APPS ─────────────────────────────────────────────────────────────
-    "hyakumori_crm.users",
     "hyakumori_crm.crm",
+    "hyakumori_crm.users",
     "hyakumori_crm.customer",
     "hyakumori_crm.forest",
 ]
@@ -104,7 +104,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "hyakumori_crm.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -133,7 +132,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -146,7 +144,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -161,3 +158,80 @@ LANGUAGES = [("ja", _("Japan"))]
 LOCALE_PATHS = [os.path.join(BASE_DIR, "hyakumori_crm", "locale")]
 
 CORS_ORIGIN_WHITELIST = ["http://localhost:8080", "http://127.0.0.1:8080"]
+CORS_ORIGIN_WHITELIST += os.getenv("CORS_ORIGIN_WHITELIST", "").split(",")
+
+# ---------------------------------------------------------------------------- #
+#                                    CACHES                                    #
+# ---------------------------------------------------------------------------- #
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "hyakumori_crm_caches",
+    }
+}
+
+# ---------------------------------------------------------------------------- #
+#                                    AUTH                                      #
+# ---------------------------------------------------------------------------- #
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "guardian.backends.ObjectPermissionBackend",
+)
+
+# Djoser
+DJOSER = {
+    "PASSWORD_RESET_CONFIRM_URL": os.getenv("FRONTEND_URL", "")
+    + "/auth/reset_password/{uid}/{token}",
+    "USERNAME_RESET_CONFIRM_URL": os.getenv("FRONTEND_URL", "")
+    + "/auth/reset_username/{uid}/{token}",
+    "ACTIVATION_URL": os.getenv("FRONTEND_URL", "") + "/auth/activate/{uid}/{token}",
+    "SEND_ACTIVATION_EMAIL": False,
+    "SEND_CONFIRMATION_EMAIL": False,
+    "SERIALIZERS": {
+        "user": "hyakumori_crm.users.serializers.UserSerializer",
+        "current_user": "hyakumori_crm.users.serializers.UserSerializer",
+        "user_create": "hyakumori_crm.users.serializers.UserCreateSerializer",
+    },
+    "PERMISSIONS": {
+        "user_list": ["rest_framework.permissions.IsAuthenticated",],
+        "user": ["rest_framework.permissions.IsAuthenticated",],
+    },
+    "LOGIN_FIELD": "email",
+    "HIDE_USERS": True,
+}
+
+# Simple JWT
+SIMPLE_JWT = {
+    "AUTH_HEADER_TYPES": ("JWT",),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "ALGORITHM": "HS256",
+    "VERIFYING_KEY": None,
+    "AUDIENCE": "Hyakumori",
+    "ISSUER": "Hyakumori",
+}
+
+# Django Rest Framework
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": int(os.getenv("DJANGO_PAGINATION_LIMIT", 10)),
+    "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S%z",
+    "DEFAULT_RENDERER_CLASSES": (
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated",],
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ),
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {"anon": "60/minute", "user": "300/minute"},
+}
