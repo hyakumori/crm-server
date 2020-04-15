@@ -1,6 +1,11 @@
-from django_filters import FilterSet, CharFilter, DateFilter
-from pydantic import validator
+from typing import Optional, List
+from datetime import date
 
+from django_filters import FilterSet, CharFilter, DateFilter
+from pydantic import BaseModel, validator
+
+from hyakumori_crm.core.models import HyakumoriDanticModel
+from hyakumori_crm.crm.schemas.contract import ContractType
 from ..core.models import Paginator
 from ..crm.models import Forest
 
@@ -60,3 +65,22 @@ class ForestPaginator(Paginator):
     @validator("filters")
     def validate_filters(cls, filter_input):
         return ForestFilter(filter_input)
+
+
+class Cadastral(HyakumoriDanticModel):
+    prefecture: str
+    municipality: str
+    sector: str
+    subsector: Optional[str]
+
+
+class Contract(HyakumoriDanticModel):
+    type: ContractType
+    status: Optional[str]
+    start_date: Optional[date]
+    end_date: Optional[date]
+
+
+class ForestInput(HyakumoriDanticModel):
+    cadastral: Cadastral
+    contracts: List[Contract]
