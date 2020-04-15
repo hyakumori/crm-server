@@ -1,8 +1,9 @@
 from rest_framework.request import Request
-from rest_typed_views import typed_api_view, CurrentUser
+from rest_typed_views import CurrentUser
 
 from hyakumori_crm.users.models import User
 from .services import PermissionService
+from ..api.decorators import typed_api_view
 from ..core.utils import make_success_json
 
 
