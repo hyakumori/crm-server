@@ -12,10 +12,10 @@ class CustomerSerializer(ModelSerializer):
 class ContactSerializer(ModelSerializer):
     class Meta:
         model = Contact
-        exclude = ['contact_info', 'deleted', 'author', 'editor']
+        exclude = ['contact_info', 'deleted']
 
 
 class ForestSerializer(ModelSerializer):
     class Meta:
         model = Forest
-        exclude = ['deleted', 'author', 'editor']
+        exclude = ['deleted']
