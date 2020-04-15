@@ -39,3 +39,6 @@ class Forest(BaseResourceModel):
     land_attributes = JSONField(default=dict)
     forest_attributes = JSONField(default=dict)
     geodata = JSONField(default=DefaultForest.geodata)
+
+    class Meta:
+        permissions = [("manage_forest", "All permissions for forest"), ]

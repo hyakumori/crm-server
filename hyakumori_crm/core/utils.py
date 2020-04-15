@@ -1,6 +1,7 @@
 from itertools import chain
 
 from rest_framework.pagination import PageNumberPagination
+from django.http import JsonResponse, HttpResponseBadRequest
 
 
 def model_to_dict(instance, fields=None, exclude=None):
@@ -35,3 +36,13 @@ def default_paginator():
     paginator.max_page_size = 150
 
     return paginator
+
+
+def make_error_json(message: str):
+    return JsonResponse(
+        status=HttpResponseBadRequest.status_code, data=dict(detail=message)
+    )
+
+
+def make_success_json(data: any):
+    return JsonResponse(data=data)

@@ -19,11 +19,11 @@ class RelationDbImporter(BaseDbImporter):
         self.user = get_user_model().objects.first()
 
     def _create_dump(self, data):
-        pickle.dump(data, open(self.dump_file, 'wb'))
+        pickle.dump(data, open(self.dump_file, "wb"))
 
     def _load_dump(self):
         if self.dump_file.exists():
-            return pickle.load(open(self.dump_file, 'rb'))
+            return pickle.load(open(self.dump_file, "rb"))
 
     def search_customers(self):
         found_customers = dict()
@@ -48,7 +48,9 @@ class RelationDbImporter(BaseDbImporter):
 
         print(len(found_customers), len(notfound_customers))
 
-        data = dict(found_customers=found_customers, notfound_customers=notfound_customers)
+        data = dict(
+            found_customers=found_customers, notfound_customers=notfound_customers
+        )
 
         self._create_dump(data)
 
@@ -69,13 +71,16 @@ class RelationDbImporter(BaseDbImporter):
         for forest_id in data.keys():
             customers = [customer for customer in data.get(forest_id)]
             for customer in customers:
-                customer_id = customer.pk \
-                    if customer.internal_id is None \
-                       or len(customer.internal_id) == 0 \
+                customer_id = (
+                    customer.pk
+                    if customer.internal_id is None or len(customer.internal_id) == 0
                     else customer.internal_id
+                )
 
                 print(f"Linking forest {forest_id} with customer {customer_id}")
-                ForestService.create_forest_customer_relation(self.user, forest_id, customer.pk, forest_internal=True)
+                ForestService.create_forest_customer_relation(
+                    forest_id, customer.pk, forest_internal=True
+                )
 
     def insert_notfound_customers(self, data: dict):
         # mark forest attributes["related_owners_count"]
@@ -89,7 +94,9 @@ class RelationDbImporter(BaseDbImporter):
                 related = item.get("related")
                 related_count = parse_name_extra(owner.name_kanji.last_name)
                 if related_count is not None and related_count > 0:
-                    ForestService.mark_related_count(forest_id, related_count, forest_internal=True)
+                    ForestService.mark_related_count(
+                        forest_id, related_count, forest_internal=True
+                    )
                 else:
                     contact = CustomerService.get_basic_contact(related.pk)
                     customer = CustomerSchema(
@@ -99,4 +106,4 @@ class RelationDbImporter(BaseDbImporter):
                         address=owner.address,
                         banking=Banking.parse_obj(related.banking),
                     )
-                    CustomerService.create_customer(customer, author=self.user, link_contact=contact)
+                    CustomerService.create_customer(customer, link_contact=contact)

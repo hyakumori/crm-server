@@ -194,8 +194,8 @@ DJOSER = {
         "user_create": "hyakumori_crm.users.serializers.UserCreateSerializer",
     },
     "PERMISSIONS": {
-        "user_list": ["rest_framework.permissions.IsAuthenticated",],
-        "user": ["rest_framework.permissions.IsAuthenticated",],
+        "user_list": ["rest_framework.permissions.IsAdminUser",],
+        # "user": ["rest_framework.permissions.IsAuthenticated",],
     },
     "LOGIN_FIELD": "email",
     "HIDE_USERS": True,
@@ -203,7 +203,7 @@ DJOSER = {
 
 # Simple JWT
 SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ("JWT",),
+    "AUTH_HEADER_TYPES": ("JWT", "Bearer"),
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "ROTATE_REFRESH_TOKENS": False,
@@ -235,3 +235,5 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_THROTTLE_RATES": {"anon": "60/minute", "user": "300/minute"},
 }
+
+DRF_TYPED_VIEWS = {"schema_packages": ["pydantic"]}

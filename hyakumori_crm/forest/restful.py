@@ -1,12 +1,15 @@
+from uuid import UUID
+
 from rest_framework import viewsets
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_typed_views import typed_action
+from rest_typed_views import typed_action, Body
 
 from hyakumori_crm.core.utils import default_paginator
 from hyakumori_crm.crm.models import Forest
 from hyakumori_crm.crm.restful.serializers import ContactSerializer, ForestSerializer
+from .schemas import ForestInput
+from ..api.decorators import typed_api_view
 
 
 class ForestViewSets(viewsets.ModelViewSet):
@@ -21,7 +24,9 @@ class ForestViewSets(viewsets.ModelViewSet):
         obj = self.get_object()
 
         paginator = default_paginator()
-        paged_list = paginator.paginate_queryset(request=request, queryset=obj.forestcustomer_set.all(), view=self)
+        paged_list = paginator.paginate_queryset(
+            request=request, queryset=obj.forestcustomer_set.all(), view=self
+        )
 
         customers = []
         for forest_customer in paged_list:
@@ -34,3 +39,16 @@ class ForestViewSets(viewsets.ModelViewSet):
     @typed_action(detail=True, methods=["GET"])
     def related_archives(self, request):
         return Response()
+
+
+@typed_api_view(methods=["PUT", "PATCH"])
+def update(pk: UUID, forest_in: ForestInput = Body()):
+    return Response({"id": pk})
+    # try:
+    #     forest = Forest.objects.get(pk=pk)
+    # except Forest.DoesNotExist:
+    #     raise Http404
+    # forest.cadastral = forest_in["cadastral"]
+    # forest.contracts = forest_in["contracts"]
+    # forest.save()
+    # return Response({"id": forest.id})
