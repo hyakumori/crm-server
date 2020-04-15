@@ -194,8 +194,8 @@ DJOSER = {
         "user_create": "hyakumori_crm.users.serializers.UserCreateSerializer",
     },
     "PERMISSIONS": {
-        "user_list": ["rest_framework.permissions.IsAuthenticated",],
-        "user": ["rest_framework.permissions.IsAuthenticated",],
+        "user_list": ["rest_framework.permissions.IsAdminUser",],
+        # "user": ["rest_framework.permissions.IsAuthenticated",],
     },
     "LOGIN_FIELD": "email",
     "HIDE_USERS": True,

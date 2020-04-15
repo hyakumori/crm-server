@@ -1,12 +1,11 @@
-from django.urls import include, path
-from djoser.views import UserViewSet, TokenDestroyView
+from django.urls import path
 from rest_framework.routers import SimpleRouter
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
-from .views import TokenObtainPairView
+from .views import CustomUserViewSet, TokenObtainPairView
 
 router = SimpleRouter(trailing_slash=False)
-router.register("users", UserViewSet, basename="user")
+router.register("users", CustomUserViewSet, basename="user")
 
 api_urls = router.urls
 api_urls += [
