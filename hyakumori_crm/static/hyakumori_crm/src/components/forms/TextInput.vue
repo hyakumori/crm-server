@@ -22,6 +22,7 @@
 <script>
 import { ValidationProvider } from "vee-validate";
 export default {
+  name: "text-input",
   components: {
     ValidationProvider,
   },

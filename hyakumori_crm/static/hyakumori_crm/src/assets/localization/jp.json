@@ -4,6 +4,23 @@
     "cancel": "キャンセル",
     "save": "保存"
   },
+  "detail": {
+    "tabs": {
+      "contactor": "連絡先一覧",
+      "owner": "所有者情報",
+      "relationship": {
+        "daughter": "娘",
+        "friend": "友人",
+        "grand_child": "孫",
+        "husband": "夫",
+        "others": "その他",
+        "owner": "本人",
+        "relatives": "親族",
+        "son": "息子",
+        "wife": "妻"
+      }
+    }
+  },
   "forms": {
     "labels": {
       "address": "住所",
