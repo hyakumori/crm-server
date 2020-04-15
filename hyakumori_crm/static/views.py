@@ -17,7 +17,6 @@ else:
             "http://localhost:8080" + request.get_full_path_info(),
             headers=req_headers,
             stream=True,
-            max_retries=0,
         )
         if fe_resp.status_code == 304:
             resp = HttpResponseNotModified()
