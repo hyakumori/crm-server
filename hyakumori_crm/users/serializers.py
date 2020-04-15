@@ -1,3 +1,4 @@
+from django.utils.timezone import now
 from djoser.serializers import (
     UserCreatePasswordRetypeSerializer as DjUserCreateSerializer,
 )
@@ -29,8 +30,19 @@ class UserCreateSerializer(DjUserCreateSerializer):
         fields = DjUserCreateSerializer.Meta.fields
 
     def __init__(self, *args, **kwargs):
+        # self.fields["username"].required = False
         super().__init__(*args, **kwargs)
-        self.fields["username"].required = False
+
+
+class CustomerTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        if self.user is not None and self.user.is_active:
+            self.user.last_login = now()
+            self.user.save()
+
+        return data
 
 
 # noinspection PyAbstractClass
@@ -40,6 +52,6 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
 
 # noinspection PyAbstractClass
 class CustomTokenObtainPairSerializer(
-    CustomTokenObtainSerializer, TokenObtainPairSerializer
+    CustomerTokenObtainPairSerializer, CustomTokenObtainSerializer
 ):
     pass
