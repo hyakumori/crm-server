@@ -80,7 +80,7 @@ class BaseResourceModel(
         abstract = True
 
     def __str__(self):
-        return f"Resource ID: {self.id}, InternalID: {self.internal_id}"
+        return f"{self.__class__.__name__} - Resource ID: {self.id}, InternalID: {self.internal_id}"
 
 
 class HyakumoriDanticModel(BaseModel):

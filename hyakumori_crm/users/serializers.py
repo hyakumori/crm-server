@@ -1,15 +1,27 @@
-from djoser.serializers import (UserCreatePasswordRetypeSerializer as DjUserCreateSerializer,
-                                UserSerializer as DjUserSerializer)
-from rest_framework_simplejwt.serializers import (TokenObtainPairSerializer,
-                                                  TokenObtainSerializer)
+from djoser.serializers import (
+    UserCreatePasswordRetypeSerializer as DjUserCreateSerializer,
+)
+from djoser.serializers import UserSerializer as DjUserSerializer
+from rest_framework_simplejwt.serializers import (
+    TokenObtainPairSerializer,
+    TokenObtainSerializer,
+)
 
 from .models import User
 
 
 class UserSerializer(DjUserSerializer):
     class Meta(DjUserSerializer.Meta):
-        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'profile', 'settings')
-        read_only_fields = ('username', 'email')
+        fields = (
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "profile",
+            "settings",
+        )
+        read_only_fields = ("username", "email")
 
 
 class UserCreateSerializer(DjUserCreateSerializer):
@@ -18,7 +30,7 @@ class UserCreateSerializer(DjUserCreateSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['username'].required = False
+        self.fields["username"].required = False
 
 
 # noinspection PyAbstractClass
@@ -27,5 +39,7 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
 
 
 # noinspection PyAbstractClass
-class CustomTokenObtainPairSerializer(CustomTokenObtainSerializer, TokenObtainPairSerializer):
+class CustomTokenObtainPairSerializer(
+    CustomTokenObtainSerializer, TokenObtainPairSerializer
+):
     pass
