@@ -42,6 +42,9 @@ class Customer(BaseResourceModel):
     banking = JSONField(default=DefaultCustomer.banking)
     tags = JSONField(default=dict)
 
+    class Meta:
+        permissions = [("manage_customer", "All permissions for customer"), ]
+
 
 class Contact(BaseResourceModel):
     contact_info = JSONField(
@@ -55,3 +58,6 @@ class Contact(BaseResourceModel):
     telephone = models.CharField(default=None, max_length=200, null=True)
     mobilephone = models.CharField(default=None, max_length=200, null=True)
     email = models.EmailField(default=None, max_length=200, null=True)
+
+    class Meta:
+        permissions = [("manage_contact", "All permissions for contact"), ]
