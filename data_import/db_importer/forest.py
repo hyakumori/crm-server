@@ -8,13 +8,12 @@ class ForestDbImporter(BaseDbImporter):
     @staticmethod
     def insert_db(results: dict):
         # TODO: should we provide way to customize this?
-        user = get_user_model().objects.first()
         processed_count = 0
         total = len(results.keys())
         batch = int(total / 50)
 
         for _, forest in results.items():
-            ForestService.create_forest(forest, user)
+            ForestService.create_forest(forest)
 
             if processed_count % batch == 0:
                 print(

@@ -1,5 +1,4 @@
 from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_typed_views import typed_api_view, CurrentUser
 
 from hyakumori_crm.users.models import User

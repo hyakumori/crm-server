@@ -140,31 +140,21 @@ def get_list(
 def create(customer_in: CustomerInputSchema):
     admin = User.objects.filter(is_superuser=True, is_active=True).first()
     customer = Customer()
-    customer.author = admin
-    customer.editor = admin
     contacts = []
     customer_contacts = []
 
-    self_contact = Contact(
-        **customer_in.basic_contact.dict(), author=admin, editor=admin
-    )
+    self_contact = Contact(**customer_in.basic_contact.dict())
     contacts.append(self_contact)
     contact_rel = CustomerContact(
-        customer=customer,
-        contact=self_contact,
-        is_basic=True,
-        author=admin,
-        editor=admin,
+        customer=customer, contact=self_contact, is_basic=True,
     )
     customer_contacts.append(contact_rel)
 
     if hasattr(customer_in, "contacts"):
         for data in customer_in.contacts:
-            contact = Contact(**data.dict(), author=admin, editor=admin)
+            contact = Contact(**data.dict())
             contacts.append(contact)
-            contact_rel = CustomerContact(
-                customer=customer, contact=contact, author=admin, editor=admin
-            )
+            contact_rel = CustomerContact(customer=customer, contact=contact)
             customer_contacts.append(contact_rel)
     customer.save()
     Contact.objects.bulk_create(contacts)
