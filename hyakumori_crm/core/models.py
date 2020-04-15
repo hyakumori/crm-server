@@ -92,6 +92,7 @@ class HyakumoriDanticModel(BaseModel):
         error_msg_templates = {
             "type_error.none.not_allowed": _("Required"),
             "value_error.str.regex": _("Invalid"),
+            "value_error.missing": _("Required"),
         }
 
     @validator("*", pre=True)
