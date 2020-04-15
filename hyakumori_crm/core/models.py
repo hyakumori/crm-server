@@ -1,18 +1,16 @@
 import datetime
 import uuid
-from typing import Any, Union, ClassVar, List, Optional, Sequence, Dict
+from typing import Any, Union, ClassVar, Optional, Sequence, Dict
 
-from behaviors.behaviors import Authored as AuthoredMixin
-from behaviors.behaviors import Editored as EditoredMixin
 from behaviors.behaviors import StoreDeleted as StoreDeletedMixin
-from behaviors.querysets import AuthoredQuerySet, EditoredQuerySet, StoreDeletedQuerySet
+from behaviors.querysets import StoreDeletedQuerySet
 from django.contrib.postgres.fields.jsonb import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_filters import FilterSet
 from pydantic import BaseModel, Field, root_validator, validator
 from querybuilder.fields import SimpleField
-from django_filters import FilterSet
 
 
 class TimestampMixin(models.Model):
@@ -44,17 +42,12 @@ class AttributesMixin(models.Model):
         abstract = True
 
 
-class BaseQuerySet(AuthoredQuerySet, EditoredQuerySet, StoreDeletedQuerySet):
+class BaseQuerySet(StoreDeletedQuerySet):
     pass
 
 
 class BaseRelationModel(
-    UUIDPrimary,
-    AttributesMixin,
-    TimestampMixin,
-    EditoredMixin,
-    AuthoredMixin,
-    StoreDeletedMixin,
+    UUIDPrimary, AttributesMixin, TimestampMixin, StoreDeletedMixin,
 ):
     objects = models.Manager.from_queryset(BaseQuerySet)()
 
@@ -66,13 +59,7 @@ class BaseRelationModel(
 
 
 class BaseResourceModel(
-    UUIDPrimary,
-    AttributesMixin,
-    InternalMixin,
-    TimestampMixin,
-    AuthoredMixin,
-    EditoredMixin,
-    StoreDeletedMixin,
+    UUIDPrimary, AttributesMixin, InternalMixin, TimestampMixin, StoreDeletedMixin,
 ):
     objects = models.Manager.from_queryset(BaseQuerySet)()
 
