@@ -107,8 +107,8 @@ export default {
   },
 
   methods: {
-    rowData() {
-      // console.log(val);
+    rowData(val) {
+      this.$router.push(`forests/${val}`);
     },
 
     onDismissSb(val) {
