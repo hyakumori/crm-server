@@ -3,6 +3,7 @@ import AuthLayout from "./components/AuthLayout.vue";
 import Customer from "./screens/Customer.vue";
 import Forest from "./screens/Forest.vue";
 import ForestDetail from "./screens/ForestDetail";
+import CustomerDetail from "./screens/CustomerDetail";
 import Vue from "vue";
 import VueRouter from "vue-router";
 
@@ -105,6 +106,11 @@ const router = new VueRouter({
         isPublic: false,
         scopes: ["manage_customer"],
       },
+    },
+    {
+      path: "/customers/:id",
+      name: "customer-detail",
+      component: CustomerDetail,
     },
     {
       path: "/archives",
