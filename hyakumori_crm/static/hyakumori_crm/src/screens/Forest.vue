@@ -16,8 +16,8 @@
 
         <data-list
           mode="forest"
-          itemKey="internal_id"
-          :headers="headers"
+          itemKey="id"
+          :headers="getHeaders"
           :data="getData"
           :showSelect="true"
           :isLoading="$apollo.queries.forestsInfo.loading"
@@ -66,7 +66,7 @@ export default {
   data() {
     return {
       pageIcon: this.$t("icon.forest_icon"),
-      pageHeader: this.$t("page_header.forest_list"),
+      pageHeader: this.$t("page_header.forest_mgmt"),
       tableRowIcon: this.$t("icon.forest_icon"),
       searchCriteria: [],
       isShowErr: false,
@@ -107,8 +107,8 @@ export default {
   },
 
   methods: {
-    rowData() {
-      // console.log(val);
+    rowData(val) {
+      this.$router.push(`forests/${val}`);
     },
 
     onDismissSb(val) {
@@ -156,7 +156,7 @@ export default {
 
   computed: {
     getHeaders() {
-      return headers;
+      return this.headers;
     },
 
     getData() {
@@ -168,6 +168,7 @@ export default {
           const tag = element.tag;
 
           return {
+            id: element.id,
             internal_id: element.internal_id,
             cadastral__prefecture: fCadastral.prefecture,
             cadastral__municipality: fCadastral.municipality,

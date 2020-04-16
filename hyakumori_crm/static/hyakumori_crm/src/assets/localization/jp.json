@@ -1,8 +1,26 @@
 {
   "buttons": {
+    "add_and_edit": "追加＆編集",
     "add_customer": "顧客を追加",
     "cancel": "キャンセル",
     "save": "保存"
+  },
+  "detail": {
+    "tabs": {
+      "contactor": "連絡先一覧",
+      "owner": "所有者情報",
+      "relationship": {
+        "daughter": "娘",
+        "friend": "友人",
+        "grand_child": "孫",
+        "husband": "夫",
+        "others": "その他",
+        "owner": "本人",
+        "relatives": "親族",
+        "son": "息子",
+        "wife": "妻"
+      }
+    }
   },
   "forms": {
     "labels": {
@@ -37,15 +55,18 @@
     }
   },
   "icon": {
+    "add": "mdi-plus",
     "archive_icon": "mdi-calendar-text",
     "customer_icon": "mdi-account-outline",
     "forest_icon": "mdi-image-filter-hdr"
   },
   "page_header": {
     "archive_list": "交渉履歴一覧",
-    "customer_list": "顧客情報一覧",
+    "customer_info_list": "顧客情報一覧",
+    "customer_list": "顧客一覧",
     "customer_mgmt": "顧客管理",
-    "forest_list": "林情報一覧",
+    "forest_info_list": "森林情報一覧",
+    "forest_list": "森林一覧",
     "forest_mgmt": "森林管理",
     "negotiate_mgm": "ユーザー管理",
     "setting": "設定"
