@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import connections
 from django.db.utils import OperationalError
 
-from ..crm.models.forest import Forest
+from ..crm.models import Forest, ForestCustomer, Customer, CustomerContact
 from .schemas import ForestFilter
 
 
@@ -27,14 +27,47 @@ def get_forests_by_condition(
     return forests, total
 
 
-# def get(pk):
-#     try:
-#         return Forest.objects.get(pk=pk)
-#     except (Forest.DoesNotExist, ValidationError):
-#         return None
+def update(forest: Forest, forest_in: dict):
+    forest.cadastral = forest_in["cadastral"]
+    forest.contracts = forest_in["contracts"]
+    forest.save()
+    return forest
 
 
-# def create(data):
-#     forest = Forest(**data)
-#     forest.save()
-#     return forest
+def update_owners(forest: Forest, owner_pks_in: dict):
+    ForestCustomer.objects.filter(
+        customer_id__in=owner_pks_in["deleted"], forest_id=forest.pk
+    ).delete()
+    added_forest_customers = []
+    customers = (
+        Customer.objects.basic_contact_id()
+        .filter(pk__in=owner_pks_in["added"])
+        .values_list("id", "basic_contact_id")
+    )
+    customers_map = {c[0]: c[1] for c in customers}
+    for added_owner_pk in owner_pks_in["added"]:
+        forest_customer = ForestCustomer(
+            customer_id=added_owner_pk,
+            forest_id=forest.pk,
+            contact_id=customers_map[added_owner_pk],
+        )
+        added_forest_customers.append(forest_customer)
+    ForestCustomer.objects.bulk_create(added_forest_customers)
+    forest.save(update_fields=["updated_at"])
+    return forest
+
+
+def set_forest_owner_contact(forest: Forest, forest_owner_contact_in: dict):
+    customer = forest_owner_contact_in.customer
+    contact = forest_owner_contact_in.contact
+    CustomerContact.objects.get_or_create(
+        customer_id=customer.id, contact_id=contact.id,
+    )
+    forest_customer = ForestCustomer.objects.get(
+        forest_id=forest.id, customer_id=customer.id,
+    )
+    forest_customer.contact_id = contact.id
+    forest_customer.save(update_fields=["contact_id", "updated_at"])
+    customer.save(update_fields=["updated_at"])
+    forest.save(update_fields=["updated_at"])
+    return forest
