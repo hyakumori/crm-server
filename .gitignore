@@ -208,3 +208,4 @@ wpdevserver.lock
 !.env.*.sample
 !.env.sample
 data_import/**/*.pickle
+!data_import/**/lib
