@@ -1,5 +1,5 @@
 <template>
-  <v-card class="log-card" flat>
+  <v-card class="log-card" flat @click="onClickCard">
     <div class="d-flex pa-4">
       <v-icon class="align-self-start">mdi-calendar-text</v-icon>
 
@@ -31,7 +31,11 @@ export default {
 
   methods: {
     onClick() {
-      // Handle click log card
+      // Handle click navigate
+    },
+
+    onClickCard() {
+      // Handle click card
     },
   },
 

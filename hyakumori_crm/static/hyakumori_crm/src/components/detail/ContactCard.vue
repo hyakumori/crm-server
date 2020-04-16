@@ -37,7 +37,9 @@
       <div
         class="contact-card__related-info caption black--text mt-1"
         v-if="relatedInfo"
-      >{{ relatedInfo }}</div>
+      >
+        {{ relatedInfo }}
+      </div>
 
       <v-select
         v-if="isUpdate && isCustomer"
@@ -56,7 +58,10 @@
       </v-btn>
     </div>
 
-    <div class="contact-card__tag" v-bind:class="{ owner: isOwner, contactor: isContactor }"></div>
+    <div
+      class="contact-card__tag"
+      v-bind:class="{ owner: isOwner, contactor: isContactor }"
+    ></div>
   </v-card>
 </template>
 

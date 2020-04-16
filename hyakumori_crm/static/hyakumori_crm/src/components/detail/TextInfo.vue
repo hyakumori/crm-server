@@ -1,8 +1,8 @@
 <template>
   <div class="text-info">
-    <h5>{{ title }}</h5>
-    <text-input v-if="isUpdate" />
-    <p v-else>{{ info }}</p>
+    <h5>{{ label }}</h5>
+    <text-input v-if="isUpdate" :value="value" />
+    <p v-else>{{ value }}</p>
   </div>
 </template>
 
@@ -17,8 +17,8 @@ export default {
   },
 
   props: {
-    title: String,
-    info: String,
+    label: String,
+    value: String,
     isUpdate: Boolean,
   },
 };

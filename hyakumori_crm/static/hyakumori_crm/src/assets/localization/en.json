@@ -23,8 +23,10 @@
   },
   "page_header": {
     "archive_list": "Archive List",
+    "customer_info_list": "Customer Info List",
     "customer_list": "Customer List",
     "customer_mgmt": "Customer Management",
+    "forest_info_list": "Forest Info List",
     "forest_list": "Forest List",
     "forest_mgmt": "Forest Management",
     "negotiate_mgm": "Negotiate Management",
