@@ -2,7 +2,10 @@
 import axios from "axios";
 import eventBus from "../BusEvent";
 
-axios.defaults.baseURL = process.env.VUE_APP_REST_HTTP || (window._env && window._env.VUE_APP_REST_HTTP) || "/api/v1";
+axios.defaults.baseURL =
+  process.env.VUE_APP_REST_HTTP ||
+  (window._env && window._env.VUE_APP_REST_HTTP) ||
+  "/api/v1";
 
 axios.interceptors.request.use(
   request => {
@@ -22,7 +25,7 @@ axios.interceptors.request.use(
 );
 
 axios.interceptors.response.use(
-  response => response,
+  response => response && response.data,
   error => {
     if (error.response.status === 401) {
       return eventBus.$emit("auth:relogin");
