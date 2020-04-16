@@ -162,7 +162,7 @@ export default {
   data() {
     return {
       pageIcon: this.$t("icon.forest_icon"),
-      backBtnContent: this.$t("page_header.customer_list"),
+      backBtnContent: this.$t("page_header.forest_list"),
       headerTagColor: "#FFC83B",
       isExpand: false,
       isUpdate: {

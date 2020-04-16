@@ -1,9 +1,11 @@
 <template>
   <v-dialog v-model="shown" scrollable max-width="720">
     <template v-slot:activator="{ on }">
-      <v-btn rounded dark outlined v-on="on">
-        <v-icon>mdi-plus</v-icon>{{ $t("buttons.add_customer") }}
-      </v-btn>
+      <outline-round-btn
+        :icon="$t('icon.add')"
+        :content="$t('buttons.add_customer')"
+        :on="on"
+      />
     </template>
     <v-card>
       <v-card-actions class="px-6 py-4">
@@ -148,6 +150,7 @@ import { ValidationObserver, setInteractionMode } from "vee-validate";
 import gql from "graphql-tag";
 import TextInput from "./forms/TextInput";
 import BusEvent from "../BusEvent";
+import OutlineRoundBtn from "../components/OutlineRoundBtn";
 
 setInteractionMode("eager");
 
@@ -155,6 +158,7 @@ export default {
   components: {
     ValidationObserver,
     TextInput,
+    OutlineRoundBtn,
   },
   data() {
     return {

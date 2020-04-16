@@ -77,6 +77,12 @@
               $store.state.pageHeader
             }}</span>
           </div>
+          <outline-round-btn
+            class="align-self-center"
+            v-if="$route.name === 'customer-detail'"
+            :icon="$t('icon.add')"
+            :content="$t('buttons.add_customer')"
+          />
           <CustomerCreateForm v-if="$route.name === 'customers'" />
         </v-container>
       </div>
@@ -88,12 +94,14 @@
 import CustomerCreateForm from "./CustomerCreateForm";
 import AppBarImg from "../assets/img/app-bar.webp";
 import AppBarDetailImg from "../assets/img/app-bar-detail.webp";
+import OutlineRoundBtn from "./OutlineRoundBtn";
 
 export default {
   name: "page-header",
 
   components: {
     CustomerCreateForm,
+    OutlineRoundBtn,
   },
 
   methods: {
