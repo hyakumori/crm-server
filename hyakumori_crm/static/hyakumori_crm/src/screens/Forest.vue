@@ -66,7 +66,7 @@ export default {
   data() {
     return {
       pageIcon: this.$t("icon.forest_icon"),
-      pageHeader: this.$t("page_header.forest_list"),
+      pageHeader: this.$t("page_header.forest_mgmt"),
       tableRowIcon: this.$t("icon.forest_icon"),
       searchCriteria: [],
       isShowErr: false,
@@ -156,7 +156,7 @@ export default {
 
   computed: {
     getHeaders() {
-      return headers;
+      return this.headers;
     },
 
     getData() {

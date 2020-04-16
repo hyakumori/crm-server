@@ -47,7 +47,11 @@ export default {
 $font-weight: 500;
 
 .attribute-table ::v-deep {
-  margin-top: 20px;
+  th {
+    font-size: 14px;
+    font-weight: bold;
+    color: #444444 !important;
+  }
 
   .attribute-table__item-area {
     font-size: 16px;
