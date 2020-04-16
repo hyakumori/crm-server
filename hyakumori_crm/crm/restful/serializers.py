@@ -6,7 +6,7 @@ from ..models import Customer, Contact, Forest
 class CustomerSerializer(ModelSerializer):
     class Meta:
         model = Customer
-        fields = ["id", "internal_id", "attributes", "tags"]
+        fields = ["id", "internal_id", "attributes", "tags", "banking"]
 
 
 class ContactSerializer(ModelSerializer):
