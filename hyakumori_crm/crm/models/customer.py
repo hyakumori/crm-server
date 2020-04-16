@@ -1,10 +1,12 @@
 from django.contrib.postgres.fields.jsonb import JSONField
 from django.db import models
+from django.db.models import OuterRef, Subquery
 
-from ...core.models import BaseResourceModel
+from ...core.models import BaseResourceModel, BaseQuerySet
 from ..schemas.customer import Address, Banking
 from ..schemas.customer import Contact as ContactSchema
 from ..schemas.customer import Name
+from .relations import CustomerContact
 
 
 class DefaultCustomer:
@@ -31,6 +33,14 @@ class DefaultContact:
         return ContactSchema().dict()
 
 
+class CustomerQueryset(BaseQuerySet):
+    def basic_contact_id(self):
+        cc = CustomerContact.objects.filter(customer=OuterRef("pk")).filter(
+            is_basic=True
+        )
+        return self.annotate(basic_contact_id=Subquery(cc.values("contact_id")[:1]))
+
+
 class Customer(BaseResourceModel):
     """
     所有者ID    土地所有者名    土地所有者住所	連絡先情報  口座情報	タグ
@@ -42,8 +52,12 @@ class Customer(BaseResourceModel):
     banking = JSONField(default=DefaultCustomer.banking)
     tags = JSONField(default=dict)
 
+    objects = CustomerQueryset.as_manager()
+
     class Meta:
-        permissions = [("manage_customer", "All permissions for customer"), ]
+        permissions = [
+            ("manage_customer", "All permissions for customer"),
+        ]
 
 
 class Contact(BaseResourceModel):
@@ -60,4 +74,6 @@ class Contact(BaseResourceModel):
     email = models.EmailField(default=None, max_length=200, null=True)
 
     class Meta:
-        permissions = [("manage_contact", "All permissions for contact"), ]
+        permissions = [
+            ("manage_contact", "All permissions for contact"),
+        ]
