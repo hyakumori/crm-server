@@ -41,7 +41,7 @@ export default {
     return {
       result: {},
       pageIcon: "mdi-account-outline",
-      pageHeader: this.$t("page_header.customer_list"),
+      pageHeader: this.$t("page_header.customer_info_list"),
       options: {},
       filter: null,
       tableRowIcon: this.$t("icon.customer_icon"),

@@ -60,9 +60,11 @@
   },
   "page_header": {
     "archive_list": "交渉履歴一覧",
-    "customer_list": "顧客情報一覧",
+    "customer_info_list": "顧客情報一覧",
+    "customer_list": "顧客一覧",
     "customer_mgmt": "顧客管理",
-    "forest_list": "林情報一覧",
+    "forest_info_list": "森林情報一覧",
+    "forest_list": "森林一覧",
     "forest_mgmt": "森林管理",
     "negotiate_mgm": "ユーザー管理",
     "setting": "設定"
