@@ -1,2 +1,9 @@
 $background-color: #f5f5f5;
 $content-width: 1400px;
+%detail-section-shared {
+    width: 785px;
+    background-color: white;
+    padding: 45px 0 45px 0;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}

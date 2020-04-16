@@ -1,6 +1,6 @@
 <template>
   <div class="page-header">
-    <v-img src="../assets/img/app-bar.jpg" height="160"></v-img>
+    <v-img :src="getAppBar" :height="isDetail ? 169 : 151"></v-img>
 
     <div class="page-header__content">
       <div class="page-header__content--center">
@@ -22,7 +22,7 @@
 
           <div class="menu caption pa-7">
             <router-link to="/forests">{{
-              $t("page_header.forest_list")
+              $t("page_header.forest_info_list")
             }}</router-link>
 
             <router-link to="/customers" class="ml-4 mr-4">{{
@@ -39,20 +39,51 @@
           </div>
         </div>
 
-        <v-container fluid class="px-7">
-          <v-row>
-            <v-col>
-              <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
-              <span class="ml-3 white--text">{{
-                $store.state.pageHeader
-              }}</span>
-            </v-col>
-            <v-col>
-              <div class="float-right">
-                <CustomerCreateForm v-if="$route.name === 'customers'" />
+        <v-container
+          fluid
+          class="d-flex justify-space-between px-7"
+          :class="{ 'py-0': isDetail }"
+        >
+          <div class="d-flex align-center">
+            <div v-if="isDetail" class="d-flex flex-column">
+              <v-btn
+                class="btn-back mb-2 ml-n4"
+                text
+                color="white"
+                small
+                @click="onBack"
+                ><v-icon small>mdi-arrow-left</v-icon
+                >{{ $store.state.backBtnContent }}</v-btn
+              >
+              <div class="d-flex align-center">
+                <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
+                <div class="white--text body-2 pl-2">
+                  <p class="mb-0">
+                    {{ headerInfo.title
+                    }}<span
+                      class="tag"
+                      :style="{ backgroundColor: headerTagColor }"
+                      >{{ headerInfo.tag }}</span
+                    >
+                  </p>
+                  <p class="mb-0 caption">{{ headerInfo.subTitle }}</p>
+                </div>
               </div>
-            </v-col>
-          </v-row>
+            </div>
+            <template v-else>
+              <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
+            </template>
+            <span v-if="!isDetail" class="ml-3 white--text">{{
+              $store.state.pageHeader
+            }}</span>
+          </div>
+          <outline-round-btn
+            class="align-self-center"
+            v-if="$route.name === 'customer-detail'"
+            :icon="$t('icon.add')"
+            :content="$t('buttons.add_customer')"
+          />
+          <CustomerCreateForm v-if="$route.name === 'customers'" />
         </v-container>
       </div>
     </div>
@@ -61,11 +92,40 @@
 
 <script>
 import CustomerCreateForm from "./CustomerCreateForm";
+import AppBarImg from "../assets/img/app-bar.webp";
+import AppBarDetailImg from "../assets/img/app-bar-detail.webp";
+import OutlineRoundBtn from "./OutlineRoundBtn";
 
 export default {
   name: "page-header",
+
   components: {
     CustomerCreateForm,
+    OutlineRoundBtn,
+  },
+
+  methods: {
+    onBack() {
+      this.$router.go(-1);
+    },
+  },
+
+  computed: {
+    isDetail() {
+      return this.$route.name && this.$route.name.includes("detail");
+    },
+
+    getAppBar() {
+      return this.isDetail ? AppBarDetailImg : AppBarImg;
+    },
+
+    headerInfo() {
+      return this.$store.state.headerInfo;
+    },
+
+    headerTagColor() {
+      return this.$store.state.headerTagColor;
+    },
   },
 };
 </script>
@@ -102,12 +162,25 @@ export default {
         text-decoration: none;
       }
 
+      .btn-back {
+        width: fit-content;
+      }
+
       .icon-mode {
         background-color: white;
         height: 40px;
         width: 40px;
         padding: 15px;
         border-radius: 50%;
+      }
+
+      .tag {
+        font-size: 10px;
+        font-weight: bold;
+        border-radius: 2px;
+        padding: 4px 8px 4px 8px;
+        margin-left: 8px;
+        margin-bottom: -4px;
       }
     }
   }
