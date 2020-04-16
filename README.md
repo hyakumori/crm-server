@@ -92,3 +92,9 @@ IMPORTANT: Set `STATIC_DIR` correctly as above.
 docker build -f Dockerfile.full --build-arg HYAKUMORI_VERSION=0.1.0 -t hyakumori_crm:0.1.0 .
 docker run --rm -it --env-file .env --network=host --name=hyakumori_crm_test hyakumori_crm:latest
 ```
+
+### Mailhog
+
+```
+docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
+```

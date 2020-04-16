@@ -181,13 +181,11 @@ AUTHENTICATION_BACKENDS = (
 
 # Djoser
 DJOSER = {
-    "PASSWORD_RESET_CONFIRM_URL": os.getenv("FRONTEND_URL", "")
-    + "/auth/reset_password/{uid}/{token}",
-    "USERNAME_RESET_CONFIRM_URL": os.getenv("FRONTEND_URL", "")
-    + "/auth/reset_username/{uid}/{token}",
-    "ACTIVATION_URL": os.getenv("FRONTEND_URL", "") + "/auth/activate/{uid}/{token}",
-    "SEND_ACTIVATION_EMAIL": False,
-    "SEND_CONFIRMATION_EMAIL": False,
+    "PASSWORD_RESET_CONFIRM_URL": "auth/reset-password/{uid}/{token}",
+    "USERNAME_RESET_CONFIRM_URL": "auth/reset-username/{uid}/{token}",
+    "ACTIVATION_URL": "auth/activate/{uid}/{token}",
+    "SEND_ACTIVATION_EMAIL": True,
+    "SEND_CONFIRMATION_EMAIL": True,
     "SERIALIZERS": {
         "user": "hyakumori_crm.users.serializers.UserSerializer",
         "current_user": "hyakumori_crm.users.serializers.UserSerializer",
@@ -237,3 +235,13 @@ REST_FRAMEWORK = {
 }
 
 DRF_TYPED_VIEWS = {"schema_packages": ["pydantic"]}
+
+# Email
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND", "hyakumori_crm.mailing.backends.hyakumori.EmailBackend"
+)
+EMAIL_HOST = os.getenv("EMAIL_HOST", "0.0.0.0")
+EMAIL_PORT = os.getenv("EMAIL_PORT", 1025)
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = strtobool(os.getenv("EMAIL_USE_TLS", "no"))
