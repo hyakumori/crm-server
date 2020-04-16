@@ -3,7 +3,7 @@
     <div class="d-flex">
       <div class="d-flex align-center content-header__content">
         {{ content }}
-        <v-icon right>mdi-file</v-icon>
+        <v-icon right>mdi-folder</v-icon>
       </div>
       <v-spacer></v-spacer>
       <addition-button
