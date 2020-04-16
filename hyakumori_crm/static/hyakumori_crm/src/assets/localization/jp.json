@@ -1,5 +1,6 @@
 {
   "buttons": {
+    "add_and_edit": "追加＆編集",
     "add_customer": "顧客を追加",
     "cancel": "キャンセル",
     "save": "保存"
@@ -54,6 +55,7 @@
     }
   },
   "icon": {
+    "add": "mdi-plus",
     "archive_icon": "mdi-calendar-text",
     "customer_icon": "mdi-account-outline",
     "forest_icon": "mdi-image-filter-hdr"
