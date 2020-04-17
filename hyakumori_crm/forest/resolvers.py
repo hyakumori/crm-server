@@ -41,13 +41,13 @@ def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo) -> dict:
         {
             "text": _("Owner name Kanji"),
             "align": "center",
-            "value": "owner__name_kana",
+            "value": "owner__name_kanji",
             "sortable": False,
         },
         {
             "text": _("Owner name Kana"),
             "align": "center",
-            "value": "owner__name_kanji",
+            "value": "owner__name_kana",
             "sortable": False,
         },
         {
