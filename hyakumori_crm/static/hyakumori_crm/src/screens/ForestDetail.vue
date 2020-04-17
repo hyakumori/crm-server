@@ -207,7 +207,7 @@ export default {
       const headerInfo = {
         title: info.internal_id,
         subTitle: info.owner.name_kanji,
-        tag: info.tag.danchi,
+        tag: [info.tag.danchi],
       };
       this.$store.dispatch("setHeaderInfo", headerInfo);
     },
@@ -236,11 +236,11 @@ export default {
         contact_id: info.id,
         customer_id: info.customer_id,
         title:
-          this.fallbackText(info.name_kanji.first_name) +
-          this.fallbackText(info.name_kanji.last_name),
+          this.fallbackText(info.name_kanji.last_name) +
+          this.fallbackText(info.name_kanji.first_name),
         phone: info.telephone,
         cellphone: info.mobilephone,
-        address: `${this.fallbackText(info.postal_code)} 
+        address: `${this.fallbackText(info.postal_code)}
           ${this.fallbackText(addr.prefecture)}
           ${this.fallbackText(addr.municipality)}
           ${this.fallbackText(addr.sector)}`,
@@ -449,6 +449,7 @@ export default {
     margin-top: 20px;
     margin-bottom: 50px;
     width: fit-content;
+    font-size: 14px;
     color: #999999;
 
     &:hover {
