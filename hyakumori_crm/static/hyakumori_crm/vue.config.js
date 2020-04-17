@@ -6,6 +6,11 @@ module.exports = {
         ws: false,
         changeOrigin: true,
       },
+      "^/graphql": {
+        target: "http://localhost:8000",
+        ws: false,
+        changeOrigin: true,
+      },
     },
     historyApiFallback: true,
     overlay: {

@@ -1,6 +1,6 @@
 <template>
   <div class="update-btn">
-    <v-btn color="primary" elevation="0">保存</v-btn>
+    <v-btn color="primary" elevation="0" class="mr-2">保存</v-btn>
     <v-btn class="update-btn__cancel" text @click="onCancel">キャンセル</v-btn>
   </div>
 </template>

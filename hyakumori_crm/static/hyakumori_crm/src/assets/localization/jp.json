@@ -3,7 +3,10 @@
     "add_and_edit": "追加＆編集",
     "add_customer": "顧客を追加",
     "cancel": "キャンセル",
-    "save": "保存"
+    "save": "保存",
+    "login": "ログイン",
+    "send": "送信",
+    "back": "前のページに戻る"
   },
   "detail": {
     "tabs": {
@@ -63,16 +66,56 @@
     "customer_icon": "mdi-account-outline",
     "forest_icon": "mdi-image-filter-hdr"
   },
+  "login_form": {
+    "activation_guide": "An activation email will be sent to your registered email address.</br> Click the URL in the email to complete registration.",
+    "email": "メールアドレス",
+    "errors": {
+      "auth_failed": "入力した認証情報でログインできませんでした"
+    },
+    "forgot_password_hint": "パスワードを忘れた方はこちら",
+    "go_to_login": "ログイン画面に戻る",
+    "go_to_register": "Don't have an account?",
+    "password": "パスワード",
+    "password_confirmation": "Password confirmation",
+    "please_login": "Please login to continue",
+    "register_form_title": "Register new account",
+    "register_successfully": "Register successfully!",
+    "subscribed_message": "Currently consider opening a store within six months",
+    "subscribed_warning": "If you check, we will provide your information to suppliers.",
+    "term_of_service": "I accept to the <a class='blue--text' target='_blank' href='/terms-of-service'>Terms of Service</a> and <a class='blue--text' target='_blank' href='/privacy-policy'>Privacy Policy</a>",
+    "username": "Username",
+    "validation_match_error": "The username and password you entered don't match"
+  },
+  "reset_password_form": {
+    "new_password": "新しいパスワード",
+    "new_password_retype": "新しいパスワード（確認）",
+    "password_not_match": "パスワードの確認が一致しません"
+  },
+  "messages": {
+    "no_permission": "許可がありません",
+    "forgot_password_help_text": "パスワードを再発行するには、メールアドレスを入力し、届いたメールのURLをクリックしてください",
+    "reset_password_url_sent": "再発行用のURLをご登録のメールアドレス宛てに送信しました。",
+    "reset_password_confirm_help_text": "パスワードを再発行するには、新しいパスワードを2ド入力してください。",
+    "not_found_text": "要求したページは見つかりませんでした",
+    "logging_out": "ログアウト中 .  .  ."
+  },
   "page_header": {
-    "archive_list": "交渉履歴一覧",
-    "customer_info_list": "顧客情報一覧",
-    "customer_list": "顧客一覧",
-    "customer_mgmt": "顧客管理",
-    "forest_info_list": "森林情報一覧",
-    "forest_list": "森林一覧",
-    "forest_mgmt": "森林管理",
+    "archive_mgmt": "協議履歴一覧",
+    "archive_detail": "協議履歴",
+    "customer_mgmt": "顧客情報一覧",
+    "customer_detail": "顧客情報詳細",
+    "forest_mgmt": "森林一覧",
+    "forest_detail": "森林詳細",
+    "user_mgmt": "アカウント管理一覧",
+    "user_detail": "アカウント管理",
+    "forgot_password": "パスワードの再発行",
+    "login": "ログイン",
     "negotiate_mgm": "ユーザー管理",
-    "setting": "設定"
+    "no_permission": "無許可",
+    "setting": "設定",
+    "not_found": "見つかりません",
+    "logout": "ログアウト",
+    "user_profile": "ユーザープロファイル"
   },
   "raw_text": {
     "agree": "同意する",
@@ -92,6 +135,7 @@
     "selected_action": "件を選択済み",
     "unable_to_remove_search_msg": "これ以上削除できません。"
   },
+  "site_name": "Hyakumori CRM",
   "tables": {
     "headers": {}
   }

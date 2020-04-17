@@ -10,7 +10,7 @@ import VueApollo from "vue-apollo";
 Vue.use(VueApollo);
 
 // Name of the localStorage item
-const AUTH_TOKEN = "apollo-token";
+const AUTH_TOKEN = "accessToken";
 
 // Http endpoint
 const httpEndpoint =
