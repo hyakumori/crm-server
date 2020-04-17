@@ -7,7 +7,7 @@ router.register("forests", ForestViewSets, basename="forest")
 
 api_urls = [
     path(
-        "forests/<uuid:pk>/customers",
+        "forests/<uuid:pk>/customers/update",
         view=update_owners_view,
         name="forests-customers-update",
     ),

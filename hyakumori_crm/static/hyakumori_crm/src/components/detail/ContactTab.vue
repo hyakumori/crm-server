@@ -3,27 +3,38 @@
     <v-tab
       class="contact-tabs__owner"
       active-class="contact-tabs__owner--active"
+      @click="ownerTabClick"
       >{{ $t("detail.tabs.owner") }}</v-tab
     >
 
     <v-tab
       class="contact-tabs__contactor ml-1"
       active-class="contact-tabs__contactor--active"
+      @click="contactorTabClick"
       >{{ $t("detail.tabs.contactor") }}</v-tab
     >
 
+    <v-spacer></v-spacer>
+    <v-switch
+      class="contact-tabs__switch mt-0 pr-4"
+      label="代表連絡者"
+      :ripple="false"
+      :color="switchColor"
+    ></v-switch>
+
     <v-tab-item>
-      <v-row>
+      <v-row no-gutters>
         <template v-for="(contact, index) in ownerContacts">
-          <v-col :key="index">
+          <v-col cols="6" :key="index">
             <contact-card
               mode="customer"
-              :title="contact.name"
+              :customer_id="contact.customer_id"
+              :title="contact.title"
               :address="contact.address"
               :email="contact.email"
               :subTitle="contact.forest_count"
               :phone="contact.phone"
-              :cellphone="contact.cell_phone"
+              :cellphone="contact.cellphone"
               :isOwner="true"
               :isUpdate="isUpdate"
             />
@@ -33,17 +44,18 @@
     </v-tab-item>
 
     <v-tab-item>
-      <v-row>
+      <v-row no-gutters>
         <template v-for="(contact, index) in contactorContacts">
-          <v-col :key="index">
+          <v-col cols="6" :key="index">
             <contact-card
               mode="customer"
-              :title="contact.name"
+              :customer_id="contact.customer_id"
+              :title="contact.title"
               :address="contact.address"
               :email="contact.email"
               :subTitle="contact.forest_count"
               :phone="contact.phone"
-              :cellphone="contact.cell_phone"
+              :cellphone="contact.cellphone"
               :isContactor="true"
               :isUpdate="isUpdate"
             />
@@ -64,10 +76,32 @@ export default {
     ContactCard,
   },
 
+  data() {
+    return {
+      selectedTab: "",
+    };
+  },
+
   props: {
     ownerContacts: Array,
     contactorContacts: Array,
     isUpdate: Boolean,
+  },
+
+  methods: {
+    ownerTabClick() {
+      this.selectedTab = "owner";
+    },
+
+    contactorTabClick() {
+      this.selectedTab = "contactor";
+    },
+  },
+
+  computed: {
+    switchColor() {
+      return this.selectedTab === "owner" ? "#12c7a6" : "#f36c69";
+    },
   },
 };
 </script>
@@ -88,6 +122,12 @@ $border-tabs: 18px;
   border-radius: 18px;
   color: white !important;
   line-height: 14px;
+}
+
+.contact-tabs ::v-deep {
+  .v-tabs-items {
+    margin-top: 20px;
+  }
 }
 
 .contact-tabs {
@@ -112,6 +152,7 @@ $border-tabs: 18px;
 
   &__contactor {
     @include tab-default($contactor-color);
+    margin-left: 6px;
 
     &::before {
       border-radius: $border-tabs;
@@ -123,6 +164,13 @@ $border-tabs: 18px;
 
     &--active {
       @include tab-active($contactor-color);
+    }
+  }
+
+  &__switch ::v-deep {
+    label {
+      font-size: 14px;
+      color: #444444;
     }
   }
 }
