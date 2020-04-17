@@ -3,7 +3,13 @@
     <div class="d-flex">
       <div class="d-flex align-center content-header__content">
         {{ content }}
-        <v-img class="ml-2" src="../../assets/img/detail-header-icon.png" height="10" width="13"></v-img>
+        <v-img
+          class="ml-2"
+          src="../../assets/img/detail-header-icon.png"
+          height="10"
+          width="13"
+        >
+        </v-img>
       </div>
       <v-spacer></v-spacer>
       <addition-button

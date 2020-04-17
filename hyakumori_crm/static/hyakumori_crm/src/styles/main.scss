@@ -24,3 +24,11 @@
 .f14 {
   font-size: 14px !important;
 }
+
+.d-hover {
+  border: 1px solid #e1e1e1;
+}
+.d-hover:hover {
+  border: 1px solid #12c7a6 !important;
+  transition: all ease-in-out 0.25s;
+}

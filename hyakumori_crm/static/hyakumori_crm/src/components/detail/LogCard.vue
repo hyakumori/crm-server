@@ -1,21 +1,22 @@
 <template>
-  <v-card class="log-card" flat @click="onClickCard">
-    <div class="d-flex pa-4">
-      <v-icon class="align-self-start">mdi-calendar-text</v-icon>
+  <div>
+    <v-card class="log-card d-hover" flat @click="onClickCard">
+      <div class="d-flex pa-4">
+        <v-icon class="align-self-start">mdi-calendar-text</v-icon>
 
-      <div class="log-card__info">
-        <h5>{{ action }}</h5>
-
-        <p>{{ info }}</p>
+        <div class="log-card__info">
+          <h5>{{ action }}</h5>
+          <p>{{ info }}</p>
+        </div>
       </div>
-    </div>
 
-    <div class="align-self-center pr-4">
-      <v-btn icon @click="onClick">
-        <v-icon>mdi-chevron-right</v-icon>
-      </v-btn>
-    </div>
-  </v-card>
+      <div class="align-self-center pr-4">
+        <v-btn icon @click="onClick">
+          <v-icon>mdi-chevron-right</v-icon>
+        </v-btn>
+      </div>
+    </v-card>
+  </div>
 </template>
 
 <script>

@@ -5,8 +5,16 @@
 </template>
 
 <script>
+import eventBus from "./BusEvent";
+
 export default {
   name: "App",
+  mounted() {
+    eventBus.$on("auth:relogin", () => {
+      localStorage.clear();
+      this.$router.push({ name: "auth-login" });
+    });
+  },
 };
 </script>
 

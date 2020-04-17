@@ -3,7 +3,7 @@
     <v-card
       v-for="(discuss, index) in discussions"
       :key="index"
-      class="history-discussion d-flex align-center"
+      class="history-discussion d-flex align-center d-hover"
       outlined
       @click="onClick"
     >
@@ -76,7 +76,6 @@ $border-radius: 4px;
   padding: 8px;
   margin-bottom: 12px;
   border-radius: $border-radius;
-  border: 1px solid #e1e1e1 !important;
 
   & .col {
     padding: 0;

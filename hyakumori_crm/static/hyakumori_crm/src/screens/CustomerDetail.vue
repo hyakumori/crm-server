@@ -120,7 +120,7 @@
           :cancel="cancel.bind(this, 'archive')"
         />
         <p class="customer-detail__expand" @click="expandDiscussionList">
-          すべて表示する
+          {{ isExpand ? "一部表示する" : "すべて表示する" }}
         </p>
 
         <content-header
@@ -283,6 +283,7 @@ export default {
   props: ["id"],
   data() {
     return {
+      headerInfo: { title: "", subtitle: "", tag: "" },
       pageIcon: this.$t("icon.customer_icon"),
       backBtnContent: this.$t("page_header.customer_mgmt"),
       headerTagColor: "#12C7A6",
@@ -308,12 +309,6 @@ export default {
   },
 
   mounted() {
-    const headerInfo = {
-      title: "山田 太郎",
-      subTitle: "4件の森林を所有",
-      tag: "登録済",
-    };
-    this.$store.dispatch("setHeaderInfo", headerInfo);
     axios.get(`/customers/${this.id}`).then(data => {
       this.customer = data;
       this.customerLoading = false;
@@ -321,6 +316,7 @@ export default {
     axios.get(`/customers/${this.id}/forests`).then(async data => {
       let forests = data.results;
       let next = data.next;
+      //TODO: implement UI pagination
       while (!!next) {
         let nextForests = await axios.get(data.next);
         forests.push(...nextForests.results);
@@ -332,6 +328,7 @@ export default {
     axios.get(`/customers/${this.id}/contacts`).then(async data => {
       let contacts = data.results;
       let next = data.next;
+      //TODO: implement UI pagination
       while (!!next) {
         let nextContacts = await axios.get(data.next);
         contacts.push(...nextContacts.results);
@@ -351,7 +348,11 @@ export default {
       this.isUpdate[val] = false;
     },
     getPersonFullname(nameObj) {
-      return nameObj ? `${nameObj.last_name}\u3000${nameObj.first_name}` : "";
+      if (nameObj && nameObj.last_name && nameObj.first_name) {
+        return `${nameObj.last_name} ${nameObj.first_name}`;
+      }
+
+      return (nameObj && (nameObj.last_name || nameObj.first_name)) || "";
     },
   },
 
@@ -464,6 +465,43 @@ export default {
       ];
     },
   },
+
+  watch: {
+    customer: {
+      deep: true,
+      handler: function() {
+        const tags = [];
+
+        Object.keys(this.customer?.tags).forEach(k => {
+          const tagValue = this.customer?.tags[k];
+          tagValue && tags.push(`${tagValue}`);
+        });
+        this.headerInfo = {
+          ...this.headerInfo,
+          title: this.getPersonFullname(this.customer?.self_contact.name_kanji),
+          tag: tags,
+        };
+      },
+    },
+    forests: {
+      deep: true,
+      handler: function() {
+        this.headerInfo = {
+          ...this.headerInfo,
+          subTitle: `${(this.forests && this.forests.length) ||
+            0}件の森林を所有`,
+        };
+      },
+    },
+    headerInfo: {
+      deep: true,
+      handler: function() {
+        if (this.headerInfo.title && this.headerInfo.subTitle) {
+          this.$store.dispatch("setHeaderInfo", this.headerInfo);
+        }
+      },
+    },
+  },
 };
 </script>
 
@@ -478,6 +516,8 @@ export default {
   &__expand {
     margin-top: 20px;
     margin-bottom: 50px;
+    font-size: 14px;
+    color: #999;
     width: fit-content;
 
     &:hover {

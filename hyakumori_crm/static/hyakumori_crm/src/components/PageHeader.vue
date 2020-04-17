@@ -7,16 +7,9 @@
         <div class="d-flex justify-space-between">
           <div class="logo-section">
             <img
-              src="../assets/img/logo.webp"
+              src="../assets/img/crm-logo.png"
               alt="Logo big text"
-              height="18"
-            />
-
-            <img
-              class="ml-3"
-              src="../assets/img/crm.webp"
-              alt="Logo small text"
-              height="12"
+              height="20"
             />
           </div>
 
@@ -71,11 +64,14 @@
                   <p class="mb-0 page-header__detail__data__title">
                     {{ headerInfo.title }}
                     <span
+                      v-for="tag in headerInfo.tag"
+                      :key="tag"
                       class="tag"
                       :class="{ 'px-2': headerInfo.title }"
                       :style="{ backgroundColor: headerTagColor }"
-                      >{{ headerInfo.tag }}</span
                     >
+                      {{ tag }}
+                    </span>
                   </p>
                   <p class="mb-0 page-header__detail__data__sub-title">
                     {{ headerInfo.subTitle }}
@@ -217,12 +213,14 @@ export default {
       }
 
       .tag {
-        position: absolute;
+        position: relative;
+        top: -3px;
         height: 20px;
         width: fit-content;
         font-size: 10px;
         border-radius: 2px;
         margin-left: 9px;
+        padding: 4px 8px;
         font-weight: bold;
       }
     }
@@ -241,7 +239,6 @@ export default {
     &__sub-title {
       font-size: 14px;
       line-height: 14px;
-      margin-top: 5px;
     }
   }
 }
