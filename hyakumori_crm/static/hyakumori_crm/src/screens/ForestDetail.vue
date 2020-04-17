@@ -11,7 +11,7 @@
         <div class="my-4">
           <basic-info :infos="getBasicInfo" :isUpdate="isUpdate.basicInfo" />
           <update-button
-            class="mt-n3 mb-12"
+            class="mb-12"
             v-if="isUpdate.basicInfo"
             :cancel="cancel.bind(this, 'basicInfo')"
           />
@@ -67,7 +67,7 @@
           :cancel="cancel.bind(this, 'discussion')"
         />
         <p class="forest-detail__expand" @click="expandDiscussionList">
-          {{ isExpand ? '一部表示する' : 'すべて表示する' }}
+          {{ isExpand ? "一部表示する" : "すべて表示する" }}
         </p>
 
         <content-header
@@ -162,7 +162,7 @@ export default {
   data() {
     return {
       pageIcon: this.$t("icon.forest_icon"),
-      backBtnContent: this.$t("page_header.forest_list"),
+      backBtnContent: this.$t("page_header.forest_mgmt"),
       headerTagColor: "#FFC83B",
       isExpand: false,
       isUpdate: {

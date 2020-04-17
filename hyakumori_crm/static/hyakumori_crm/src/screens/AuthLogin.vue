@@ -1,16 +1,21 @@
 <template>
-  <div>
-    <h1>Login</h1>
-    <v-btn @click="doLogin">Login</v-btn>
-  </div>
+  <v-content>
+    <v-container grid-list-xs class="pa-0">
+      <login-form></login-form>
+    </v-container>
+  </v-content>
 </template>
 
 <script>
+import LoginForm from "../components/forms/LoginForm";
+
 export default {
-  methods: {
-    doLogin() {
-      localStorage.setItem("accessToken", "dummytoken");
-    },
+  components: { LoginForm },
+  mounted() {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken && accessToken !== "undefined") {
+      this.$router.replace("/");
+    }
   },
 };
 </script>

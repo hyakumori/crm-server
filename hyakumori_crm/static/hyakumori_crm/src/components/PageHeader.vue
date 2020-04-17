@@ -22,20 +22,29 @@
 
           <div class="menu caption pa-7">
             <router-link to="/forests">{{
-              $t("page_header.forest_info_list")
+              $t("page_header.forest_mgmt")
             }}</router-link>
 
             <router-link to="/customers" class="ml-4 mr-4">{{
-              $t("page_header.customer_list")
+              $t("page_header.customer_mgmt")
             }}</router-link>
 
             <router-link to="/archives" class="mr-4">{{
-              $t("page_header.archive_list")
+              $t("page_header.archive_mgmt")
             }}</router-link>
 
-            <router-link to="/settings">{{
-              $t("page_header.setting")
+            <router-link to="/users" class="mr-4">{{
+              $t("page_header.user_mgmt")
             }}</router-link>
+
+            <router-link to="/me" class="me">
+              <v-icon class="white--text">mdi-account-circle</v-icon>
+              {{ userDisplayName }}
+            </router-link>
+
+            <router-link to="/auth/logout" class="ml-2">
+              <span class="mr-2">|</span> {{ $t("page_header.logout") }}
+            </router-link>
           </div>
         </div>
 
@@ -59,9 +68,10 @@
                 <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
                 <div class="white--text body-2 pl-2">
                   <p class="mb-0">
-                    {{ headerInfo.title }}<span
+                    {{ headerInfo.title
+                    }}<span
                       class="tag"
-                      :class="{'px-2 py-1': headerInfo.title}"
+                      :class="{ 'px-2 py-1': headerInfo.title }"
                       :style="{ backgroundColor: headerTagColor }"
                       >{{ headerInfo.tag }}</span
                     >
@@ -104,6 +114,12 @@ export default {
     OutlineRoundBtn,
   },
 
+  data() {
+    return {
+      user: null,
+    };
+  },
+
   methods: {
     onBack() {
       this.$router.go(-1);
@@ -126,6 +142,28 @@ export default {
     headerTagColor() {
       return this.$store.state.headerTagColor;
     },
+
+    userDisplayName() {
+      if (!this.user || Object.keys(this.user).length == 0) {
+        return "";
+      }
+
+      if (this.user.first_name.length > 0 && this.user.last_name.length > 0) {
+        return `${this.user.last_name} ${this.user.first_name}`;
+      }
+
+      return this.user.username;
+    },
+  },
+
+  created() {
+    try {
+      this.user =
+        localStorage.getItem("user") &&
+        JSON.parse(localStorage.getItem("user"));
+    } catch {
+      this.user = null;
+    }
   },
 };
 </script>

@@ -1,0 +1,26 @@
+.theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)
+  > .v-input__control
+  > .v-input__slot
+  fieldset {
+  color: #eaeaea;
+}
+
+.v-btn:not(.v-btn--round).v-size--default {
+  height: 40px;
+}
+
+.v-alert__content {
+  font-size: 14px;
+}
+
+.relative {
+  position: relative;
+}
+
+.no-underline {
+  text-decoration: none;
+}
+
+.f14 {
+  font-size: 14px !important;
+}
