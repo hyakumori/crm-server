@@ -11,7 +11,7 @@
         <p class="green--text mb-0 ml-2 caption">{{ getRelationship }}</p>
       </div>
 
-      <div v-if="address" class="text-truncate" >
+      <div v-if="address" class="text-truncate">
         <v-icon small>mdi-map-marker</v-icon>
         <span class="ml-1 caption">{{ address }}</span>
       </div>
@@ -36,7 +36,9 @@
       <div
         class="contact-card__related-info caption black--text mt-1"
         v-if="relatedInfo"
-      >{{ relatedInfo }}</div>
+      >
+        {{ relatedInfo }}
+      </div>
 
       <v-select
         v-if="isUpdate && isCustomer"
@@ -53,7 +55,10 @@
       <v-icon>{{ toggleUpdateIcon }}</v-icon>
     </v-btn>
 
-    <div class="contact-card__tag" v-bind:class="{ owner: isOwner, contactor: isContactor }"></div>
+    <div
+      class="contact-card__tag"
+      v-bind:class="{ owner: isOwner, contactor: isContactor }"
+    ></div>
   </v-card>
 </template>
 
@@ -63,6 +68,7 @@ export default {
 
   props: {
     mode: String,
+    customer_id: String,
     title: String,
     subTitle: String,
     address: String,
@@ -146,7 +152,6 @@ $background-color: #f5f5f5;
 
 .contact-card::before {
   border-radius: $border-radius;
-  border: 1px solid #e1e1e1;
 }
 
 .contact-card {
