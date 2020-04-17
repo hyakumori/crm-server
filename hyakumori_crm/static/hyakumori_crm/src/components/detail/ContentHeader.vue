@@ -3,7 +3,12 @@
     <div class="d-flex">
       <div class="d-flex align-center content-header__content">
         {{ content }}
-        <v-img class="ml-2" src="../../assets/img/detail-header-icon.png" height="10" width="13"></v-img>
+        <v-img
+          class="ml-2"
+          src="../../assets/img/detail-header-icon.png"
+          height="10"
+          width="13"
+        ></v-img>
       </div>
       <v-spacer></v-spacer>
       <addition-button
@@ -12,7 +17,7 @@
         :click="onUpdate.bind(this)"
       />
     </div>
-    <v-progress-linear v-if="isLoading" height="2" />
+    <v-progress-linear v-if="loading" height="2" indeterminate />
     <v-divider v-else class="content-header__divider mt-3"></v-divider>
   </div>
 </template>
@@ -28,7 +33,7 @@ export default {
   },
 
   props: {
-    isLoading: Boolean,
+    loading: Boolean,
     content: String,
     editBtnContent: String,
     update: Boolean,

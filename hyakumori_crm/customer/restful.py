@@ -1,3 +1,4 @@
+from django.db.models import F
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -5,8 +6,12 @@ from rest_framework.response import Response
 from rest_typed_views import typed_action
 
 from hyakumori_crm.core.utils import default_paginator
-from hyakumori_crm.crm.models import Customer
-from hyakumori_crm.crm.restful.serializers import ContactSerializer, CustomerSerializer, ForestSerializer
+from hyakumori_crm.crm.models import Customer, ForestCustomer, Contact
+from hyakumori_crm.crm.restful.serializers import (
+    ContactSerializer,
+    CustomerSerializer,
+)
+from .schemas import ForestSerializer
 
 
 class CustomerViewSets(viewsets.ModelViewSet):
@@ -21,23 +26,29 @@ class CustomerViewSets(viewsets.ModelViewSet):
         obj = self.get_object()
 
         paginator = default_paginator()
-        paged_list = paginator.paginate_queryset(request=request, queryset=obj.customercontact_set.all(), view=self)
+        paged_list = paginator.paginate_queryset(
+            request=request,
+            queryset=Contact.objects.filter(
+                customercontact__customer_id=obj.id, customercontact__is_basic=False
+            ).annotate(forest_id=F("forestcustomer__forest_id")),
+            view=self,
+        )
 
-        contacts = []
-        for customer_contact in paged_list:
-            # _contact = model_to_dict(customer_contact.contact, exclude="contact_info,deleted,author,editor")
-            _contact = ContactSerializer(customer_contact.contact).data
-            _contact["is_basic"] = customer_contact.is_basic
-            contacts.append(_contact)
-
-        return paginator.get_paginated_response(contacts)
+        contacts = ContactSerializer(paged_list, many=True)
+        return paginator.get_paginated_response(contacts.data)
 
     @typed_action(detail=True, methods=["GET"], permission_classes=[IsAuthenticated])
     def forests(self, request):
         obj = self.get_object()
 
         paginator = default_paginator()
-        paged_list = paginator.paginate_queryset(request=request, queryset=obj.forestcustomer_set.all(), view=self)
+        paged_list = paginator.paginate_queryset(
+            request=request,
+            queryset=ForestCustomer.objects.filter(customer_id=obj.pk).prefetch_related(
+                "forest", "forest__forestcustomer_set", "contact"
+            ),
+            view=self,
+        )
 
         forests = []
         for forest_customer in paged_list:

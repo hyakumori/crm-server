@@ -24,6 +24,7 @@ type Customer implements Timestamp & Editor {
 }
 
 type CustomerItem {
+  id: String!
   internal_id: String
   fullname_kana: String!
   fullname_kanji: String!

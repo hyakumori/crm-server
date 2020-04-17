@@ -34,11 +34,19 @@ class DefaultForest:
 class Forest(BaseResourceModel):
     cadastral = JSONField(default=DefaultForest.cadastral, db_index=True)
     owner = JSONField(default=DefaultForest.owner, db_index=True)
-    contracts = JSONField(default=DefaultForest.contracts, db_index=True, encoder=DjangoJSONEncoder)
+    contracts = JSONField(
+        default=DefaultForest.contracts, db_index=True, encoder=DjangoJSONEncoder
+    )
     tag = JSONField(default=DefaultForest.tag)
     land_attributes = JSONField(default=dict)
     forest_attributes = JSONField(default=dict)
     geodata = JSONField(default=DefaultForest.geodata)
 
     class Meta:
-        permissions = [("manage_forest", "All permissions for forest"), ]
+        permissions = [
+            ("manage_forest", "All permissions for forest"),
+        ]
+
+    @property
+    def customers_count(self):
+        return self.forestcustomer_set.all().count()

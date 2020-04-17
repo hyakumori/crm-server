@@ -111,6 +111,7 @@ const router = new VueRouter({
       path: "/customers/:id",
       name: "customer-detail",
       component: CustomerDetail,
+      props: true,
     },
     {
       path: "/archives",
