@@ -8,7 +8,7 @@ export default new Vuex.Store({
     pageHeader: "",
     pageIcon: "",
     headerInfo: {},
-    headerTagColor: "",
+    headerTagColor: "transparent",
     backBtnContent: "",
   },
   mutations: {
