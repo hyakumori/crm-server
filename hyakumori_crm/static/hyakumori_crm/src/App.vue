@@ -1,19 +1,12 @@
 <template>
-  <v-app id="app">
-    <page-header />
+  <div id="app">
     <router-view></router-view>
-  </v-app>
+  </div>
 </template>
 
 <script>
-import PageHeader from "./components/PageHeader";
-
 export default {
   name: "App",
-
-  components: {
-    PageHeader,
-  },
 };
 </script>
 
@@ -27,7 +20,7 @@ html {
 }
 
 #app {
-  height: 100%;
+  height: 100vh;
   background-color: $background-color;
   margin-left: auto;
   margin-right: auto;

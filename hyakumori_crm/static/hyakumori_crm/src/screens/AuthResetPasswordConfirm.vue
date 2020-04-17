@@ -1,8 +1,15 @@
 <template>
-  <div>
-    <h1>Enter new password</h1>
-    <p>uid: {{ $route.params.uid }}</p>
-    <p>token: {{ $route.params.token }}</p>
-    <v-btn>Update</v-btn>
-  </div>
+  <v-content>
+    <v-container grid-list-xs class="pa-0">
+      <reset-password-confirm-form></reset-password-confirm-form>
+    </v-container>
+  </v-content>
 </template>
+<script>
+import ResetPasswordConfirmForm from "../components/forms/ResetPasswordConfirmForm";
+export default {
+  components: {
+    ResetPasswordConfirmForm,
+  },
+};
+</script>

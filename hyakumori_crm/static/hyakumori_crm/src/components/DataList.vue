@@ -110,6 +110,7 @@ export default {
 
     clickRow(value) {
       this.$emit("rowData", value.id);
+      window.scrollTo(0, 0);
     },
 
     isNegotiation(val) {
@@ -168,6 +169,9 @@ export default {
     td {
       text-align: center;
       @extend %text-overflow-shared;
+      &:hover {
+        cursor: pointer;
+      }
     }
 
     th {

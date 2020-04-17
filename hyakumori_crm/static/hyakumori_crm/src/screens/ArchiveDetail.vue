@@ -1,18 +1,17 @@
 <template>
-  <main-section #section>
-    <search-card :onSearch="() => {}" />
+  <main-section>
+    <template #section> archive id: {{ $route.params.id }} </template>
+    <template #right></template>
   </main-section>
 </template>
 
 <script>
-import SearchCard from "../components/SearchCard";
 import MainSection from "../components/MainSection";
 
 export default {
-  name: "archive",
+  name: "archive-detail",
 
   components: {
-    SearchCard,
     MainSection,
   },
 };

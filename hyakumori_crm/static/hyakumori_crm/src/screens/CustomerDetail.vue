@@ -12,7 +12,7 @@
         <div class="my-4">
           <basic-info :infos="basicInfo" :isUpdate="isUpdate.basicInfo" />
           <update-button
-            class="mt-n3 mb-12"
+            class="mb-12"
             v-if="isUpdate.basicInfo"
             :cancel="cancel.bind(this, 'basicInfo')"
           />
@@ -284,7 +284,7 @@ export default {
   data() {
     return {
       pageIcon: this.$t("icon.customer_icon"),
-      backBtnContent: this.$t("page_header.customer_list"),
+      backBtnContent: this.$t("page_header.customer_mgmt"),
       headerTagColor: "#12C7A6",
       isExpand: false,
       isUpdate: {
