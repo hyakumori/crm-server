@@ -5,11 +5,12 @@
         <content-header
           content="基本情報 (登記情報)"
           editBtnContent="所有地を追加・編集"
+          :loading="basicInfo.length === 0"
           :update="isUpdate.basicInfo"
           @update="val => (isUpdate.basicInfo = val)"
         />
         <div class="my-4">
-          <basic-info :infos="getBasicInfo" :isUpdate="isUpdate.basicInfo" />
+          <basic-info :infos="basicInfo" :isUpdate="isUpdate.basicInfo" />
           <update-button
             class="mb-12"
             v-if="isUpdate.basicInfo"
@@ -20,14 +21,14 @@
         <content-header
           content="所有林情報"
           editBtnContent="所有者を追加・編集"
+          :loading="ownerContacts.length === 0"
           :update="isUpdate.contact"
           @update="val => (isUpdate.contact = val)"
         />
         <contact-tab
           class="mt-5"
-          :class="{ 'mb-9': !isUpdate.contact }"
-          :ownerContacts="getContacts"
-          :contactorContacts="getContacts"
+          :class="{ 'mb-10': !isUpdate.contact }"
+          :ownerContacts="ownerContacts"
           :isUpdate="isUpdate.contact"
         />
         <addition-button v-if="isUpdate.contact" content="連絡者を追加" />
@@ -107,7 +108,10 @@
             </v-col>
           </template>
         </v-row>
-        <forest-attribute-table :attributes="generateForestAttributeData" />
+        <forest-attribute-table
+          :attributes="forrestAttributes"
+          :isLoading="forrestAttributes.length === 0"
+        />
       </div>
     </template>
 
@@ -131,8 +135,6 @@ import MainSection from "../components/MainSection";
 import ScreenMixin from "./ScreenMixin";
 import ContentHeader from "../components/detail/ContentHeader";
 import ContactTab from "../components/detail/ContactTab";
-import info from "../assets/dump/forest_detail.json";
-import contacts from "../assets/dump/contact_card.json";
 import discussions from "../assets/dump/history_discussion.json";
 import actionLogs from "../assets/dump/action_log.json";
 import HistoryDiscussion from "../components/detail/HistoryDiscussionCard";
@@ -141,6 +143,8 @@ import UpdateButton from "../components/detail/UpdateButton";
 import AdditionButton from "../components/AdditionButton";
 import BasicInfo from "../components/detail/BasicInfo";
 import ForestAttributeTable from "../components/detail/ForestAttributeTable";
+import { fetchBasicInfo, fetchForestOwner } from "../api/forest";
+import axios from "../plugins/http";
 
 export default {
   name: "forest-detail",
@@ -161,6 +165,9 @@ export default {
 
   data() {
     return {
+      forestId: this.$route.params.id,
+      forestInfo: null,
+      forestOwners: null,
       pageIcon: this.$t("icon.forest_icon"),
       backBtnContent: this.$t("page_header.forest_mgmt"),
       headerTagColor: "#FFC83B",
@@ -175,15 +182,16 @@ export default {
   },
 
   mounted() {
-    const forestInfo = this.getInfo;
-    if (forestInfo) {
-      const headerInfo = {
-        title: forestInfo.internal_id,
-        subTitle: forestInfo.owner.name_kanji,
-        tag: forestInfo.tag.danchi,
-      };
-      this.$store.dispatch("setHeaderInfo", headerInfo);
-    }
+    axios
+      .all([fetchBasicInfo(this.forestId), fetchForestOwner(this.forestId)])
+      .then(
+        axios.spread((basicInfo, owners) => {
+          this.forestInfo = basicInfo;
+          this.forestOwners = owners.results;
+          this.setHeaderInfo(basicInfo);
+        }),
+      )
+      .catch(() => this.$router.push({ name: "not-found" }));
   },
 
   methods: {
@@ -193,6 +201,15 @@ export default {
 
     cancel(val) {
       this.isUpdate[val] = false;
+    },
+
+    setHeaderInfo(info) {
+      const headerInfo = {
+        title: info.internal_id,
+        subTitle: info.owner.name_kanji,
+        tag: info.tag.danchi,
+      };
+      this.$store.dispatch("setHeaderInfo", headerInfo);
     },
 
     forestContractDateRange(info) {
@@ -211,11 +228,38 @@ export default {
         return "";
       }
     },
+
+    mapContact(info) {
+      const addr = info.address;
+      return {
+        mode: "customer",
+        contact_id: info.id,
+        customer_id: info.customer_id,
+        title:
+          this.fallbackText(info.name_kanji.first_name) +
+          this.fallbackText(info.name_kanji.last_name),
+        phone: info.telephone,
+        cellphone: info.mobilephone,
+        address: `${this.fallbackText(info.postal_code)} 
+          ${this.fallbackText(addr.prefecture)}
+          ${this.fallbackText(addr.municipality)}
+          ${this.fallbackText(addr.sector)}`,
+        email: info.email,
+      };
+    },
+
+    fallbackText(text) {
+      return text || "";
+    },
   },
 
   computed: {
-    getContacts() {
-      return contacts;
+    ownerContacts() {
+      let owners = [];
+      if (this.forestOwners) {
+        return this.forestOwners.map(owner => this.mapContact(owner));
+      }
+      return owners;
     },
 
     getDiscussionsNotExpand() {
@@ -227,25 +271,27 @@ export default {
       return discussions;
     },
 
-    getInfo() {
-      return info;
-    },
-
-    getBasicInfo() {
-      return [
-        {
-          label: "住所",
-          value: info.cadastral.prefecture + info.cadastral.municipality,
-        },
-        {
-          label: "契約期間",
-          value: this.forestContractDateRange(info),
-        },
-        {
-          label: "地番",
-          value: info.cadastral.subsector,
-        },
-      ];
+    basicInfo() {
+      let basicInfo = [];
+      const forestInfo = this.forestInfo;
+      if (forestInfo) {
+        const cadas = forestInfo.cadastral;
+        basicInfo = [
+          {
+            label: "住所",
+            value: cadas.prefecture + cadas.municipality + cadas.sector,
+          },
+          {
+            label: "契約期間",
+            value: this.forestContractDateRange(forestInfo),
+          },
+          {
+            label: "地番",
+            value: cadas.subsector,
+          },
+        ];
+      }
+      return basicInfo;
     },
 
     getActionLogs() {
@@ -253,129 +299,139 @@ export default {
     },
 
     headerData() {
-      const attr = info.forest_attributes;
-      return [
-        {
-          name: "地番面積_ha",
-          data: attr["地番面積_ha"],
-        },
-        {
-          name: "面積_ha",
-          data: attr["面積_ha"],
-        },
-        {
-          name: "面積_m2",
-          data: attr["面積_m2"],
-        },
-        {
-          name: "平均傾斜度",
-          data: attr["平均傾斜度"],
-        },
-      ];
+      let headerData = [];
+      const forestInfo = this.forestInfo;
+      if (forestInfo) {
+        const attr = forestInfo.forest_attributes;
+        return [
+          {
+            name: "地番面積_ha",
+            data: attr["地番面積_ha"],
+          },
+          {
+            name: "面積_ha",
+            data: attr["面積_ha"],
+          },
+          {
+            name: "面積_m2",
+            data: attr["面積_m2"],
+          },
+          {
+            name: "平均傾斜度",
+            data: attr["平均傾斜度"],
+          },
+        ];
+      }
+      return headerData;
     },
 
-    generateForestAttributeData() {
-      const attr = info.forest_attributes;
-      return [
-        {
-          area: "林相ID",
-          unit: "",
-          first_area: attr["第1林相ID"],
-          second_area: attr["第2林相ID"],
-          third_area: attr["第3林相ID"],
-        },
-        {
-          area: "林相名",
-          unit: "ha",
-          first_area: attr["第1林相名"],
-          second_area: attr["第2林相名"],
-          third_area: attr["第3林相名"],
-        },
-        {
-          area: "Area",
-          unit: "",
-          first_area: attr["第1Area"],
-          second_area: attr["第2Area"],
-          third_area: attr["第3Area"],
-        },
-        {
-          area: "面積_ha",
-          unit: "",
-          first_area: attr["第1面積_ha"],
-          second_area: attr["第2面積_ha"],
-          third_area: attr["第3面積_ha"],
-        },
-        {
-          area: "立木本",
-          unit: "",
-          first_area: attr["第1立木本"],
-          second_area: attr["第2立木本"],
-          third_area: attr["第3立木本"],
-        },
-        {
-          area: "立木密",
-          unit: "本/ha",
-          first_area: attr["第1立木密"],
-          second_area: attr["第2立木密"],
-          third_area: attr["第3立木密"],
-        },
-        {
-          area: "平均樹",
-          unit: "m",
-          first_area: attr["第1平均樹"],
-          second_area: attr["第2平均樹"],
-          third_area: attr["第3平均樹"],
-        },
-        {
-          area: "樹冠長 ",
-          unit: "%",
-          first_area: attr["第1樹冠長"],
-          second_area: attr["第2樹冠長"],
-          third_area: attr["第3樹冠長"],
-        },
-        {
-          area: "平均DBH",
-          unit: "cm",
-          first_area: attr["第1平均DBH"],
-          second_area: attr["第2平均DBH"],
-          third_area: attr["第3平均DBH"],
-        },
-        {
-          area: "合計材",
-          unit: "m2",
-          first_area: attr["第1合計材"],
-          second_area: attr["第2合計材"],
-          third_area: attr["第3合計材"],
-        },
-        {
-          area: "ha材積 ",
-          unit: "m2/ha",
-          first_area: attr["第1ha材積"],
-          second_area: attr["第2ha材積"],
-          third_area: attr["第3ha材積"],
-        },
-        {
-          area: "収量比",
-          unit: "",
-          first_area: attr["第1収量比"],
-          second_area: attr["第2収量比"],
-          third_area: attr["第3収量比"],
-        },
-        {
-          area: "相対幹",
-          unit: "",
-          first_area: attr["第1相対幹"],
-          second_area: attr["第2相対幹"],
-          third_area: attr["第3相対幹"],
-        },
-        {
-          area: "形状比",
-          unit: "%",
-          first_area: attr["第1形状比"],
-          second_area: attr["第2形状比"],
-          third_area: attr["第3形状比"],
-        },
-      ];
+    forrestAttributes() {
+      let attributes = [];
+      const forestInfo = this.forestInfo;
+      if (forestInfo) {
+        const attr = forestInfo.forest_attributes;
+        return [
+          {
+            area: "林相ID",
+            unit: "",
+            first_area: attr["第1林相ID"],
+            second_area: attr["第2林相ID"],
+            third_area: attr["第3林相ID"],
+          },
+          {
+            area: "林相名",
+            unit: "ha",
+            first_area: attr["第1林相名"],
+            second_area: attr["第2林相名"],
+            third_area: attr["第3林相名"],
+          },
+          {
+            area: "Area",
+            unit: "",
+            first_area: attr["第1Area"],
+            second_area: attr["第2Area"],
+            third_area: attr["第3Area"],
+          },
+          {
+            area: "面積_ha",
+            unit: "",
+            first_area: attr["第1面積_ha"],
+            second_area: attr["第2面積_ha"],
+            third_area: attr["第3面積_ha"],
+          },
+          {
+            area: "立木本",
+            unit: "",
+            first_area: attr["第1立木本"],
+            second_area: attr["第2立木本"],
+            third_area: attr["第3立木本"],
+          },
+          {
+            area: "立木密",
+            unit: "本/ha",
+            first_area: attr["第1立木密"],
+            second_area: attr["第2立木密"],
+            third_area: attr["第3立木密"],
+          },
+          {
+            area: "平均樹",
+            unit: "m",
+            first_area: attr["第1平均樹"],
+            second_area: attr["第2平均樹"],
+            third_area: attr["第3平均樹"],
+          },
+          {
+            area: "樹冠長 ",
+            unit: "%",
+            first_area: attr["第1樹冠長"],
+            second_area: attr["第2樹冠長"],
+            third_area: attr["第3樹冠長"],
+          },
+          {
+            area: "平均DBH",
+            unit: "cm",
+            first_area: attr["第1平均DBH"],
+            second_area: attr["第2平均DBH"],
+            third_area: attr["第3平均DBH"],
+          },
+          {
+            area: "合計材",
+            unit: "m2",
+            first_area: attr["第1合計材"],
+            second_area: attr["第2合計材"],
+            third_area: attr["第3合計材"],
+          },
+          {
+            area: "ha材積 ",
+            unit: "m2/ha",
+            first_area: attr["第1ha材積"],
+            second_area: attr["第2ha材積"],
+            third_area: attr["第3ha材積"],
+          },
+          {
+            area: "収量比",
+            unit: "",
+            first_area: attr["第1収量比"],
+            second_area: attr["第2収量比"],
+            third_area: attr["第3収量比"],
+          },
+          {
+            area: "相対幹",
+            unit: "",
+            first_area: attr["第1相対幹"],
+            second_area: attr["第2相対幹"],
+            third_area: attr["第3相対幹"],
+          },
+          {
+            area: "形状比",
+            unit: "%",
+            first_area: attr["第1形状比"],
+            second_area: attr["第2形状比"],
+            third_area: attr["第3形状比"],
+          },
+        ];
+      }
+      return attributes;
     },
   },
 };
