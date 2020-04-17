@@ -12,12 +12,12 @@
         <p class="green--text mb-0 ml-2 caption">{{ getRelationship }}</p>
       </div>
 
-      <div v-if="address">
+      <div v-if="address" class="text-truncate" >
         <v-icon small>mdi-map-marker</v-icon>
         <span class="ml-1 caption">{{ address }}</span>
       </div>
 
-      <div class="d-flex" v-if="email">
+      <div class="d-flex text-truncate" v-if="email">
         <v-icon small>mdi-email</v-icon>
         <span class="ml-1 caption">{{ email }}</span>
       </div>
@@ -37,9 +37,7 @@
       <div
         class="contact-card__related-info caption black--text mt-1"
         v-if="relatedInfo"
-      >
-        {{ relatedInfo }}
-      </div>
+      >{{ relatedInfo }}</div>
 
       <v-select
         v-if="isUpdate && isCustomer"
@@ -52,16 +50,11 @@
       ></v-select>
     </div>
 
-    <div class="align-self-center">
-      <v-btn icon @click="onClick">
-        <v-icon>{{ toggleUpdateIcon }}</v-icon>
-      </v-btn>
-    </div>
+    <v-btn class="align-self-center" icon @click="onClick">
+      <v-icon>{{ toggleUpdateIcon }}</v-icon>
+    </v-btn>
 
-    <div
-      class="contact-card__tag"
-      v-bind:class="{ owner: isOwner, contactor: isContactor }"
-    ></div>
+    <div class="contact-card__tag" v-bind:class="{ owner: isOwner, contactor: isContactor }"></div>
   </v-card>
 </template>
 
@@ -92,6 +85,7 @@ export default {
     return {
       RELATIONSHIP: [
         this.$t("detail.tabs.relationship.owner"),
+        this.$t("detail.tabs.relationship.parent"),
         this.$t("detail.tabs.relationship.husband"),
         this.$t("detail.tabs.relationship.wife"),
         this.$t("detail.tabs.relationship.son"),
@@ -161,7 +155,7 @@ $background-color: #f5f5f5;
   height: auto;
   padding: 10px;
   border-radius: $border-radius !important;
-  border: 1px solid #e1e1e1;
+  border: 1px solid #e1e1e1 !important;
   position: relative;
 
   &__icon {
@@ -174,6 +168,7 @@ $background-color: #f5f5f5;
   &__name {
     height: inherit;
     width: 100%;
+    max-width: 234px;
 
     span {
       color: #999999;

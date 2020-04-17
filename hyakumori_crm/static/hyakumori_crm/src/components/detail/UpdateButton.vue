@@ -1,7 +1,7 @@
 <template>
   <div class="update-btn">
     <v-btn color="primary" elevation="0">保存</v-btn>
-    <v-btn text @click="onCancel">キャンセル</v-btn>
+    <v-btn class="update-btn__cancel" text @click="onCancel">キャンセル</v-btn>
   </div>
 </template>
 
@@ -25,5 +25,10 @@ export default {
 <style lang="scss" scoped>
 .update-btn {
   display: flex;
+  font-weight: bold;
+
+  &__cancel {
+    color: #999999;
+  }
 }
 </style>

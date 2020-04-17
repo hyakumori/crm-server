@@ -67,7 +67,7 @@
           :cancel="cancel.bind(this, 'discussion')"
         />
         <p class="forest-detail__expand" @click="expandDiscussionList">
-          すべて表示する
+          {{ isExpand ? '一部表示する' : 'すべて表示する' }}
         </p>
 
         <content-header
@@ -393,6 +393,7 @@ export default {
     margin-top: 20px;
     margin-bottom: 50px;
     width: fit-content;
+    color: #999999;
 
     &:hover {
       cursor: pointer;
