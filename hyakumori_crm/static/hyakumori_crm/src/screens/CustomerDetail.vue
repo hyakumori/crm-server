@@ -7,9 +7,10 @@
           editBtnContent="所有地を追加・編集"
           :update="isUpdate.basicInfo"
           @update="val => (isUpdate.basicInfo = val)"
+          :loading="customerLoading"
         />
         <div class="my-4">
-          <basic-info :infos="getBasicInfo" :isUpdate="isUpdate.basicInfo" />
+          <basic-info :infos="basicInfo" :isUpdate="isUpdate.basicInfo" />
           <update-button
             class="mt-n3 mb-12"
             v-if="isUpdate.basicInfo"
@@ -22,15 +23,18 @@
           editBtnContent="フォレストの追加/編集"
           :update="isUpdate.ownersForest"
           @update="val => (isUpdate.ownersForest = val)"
+          :loading="forestsLoading"
         />
         <v-row class="mt-4">
-          <template v-for="(ownerF, index) in getOwnersForest">
+          <template v-for="(forest, index) in forests">
             <v-col cols="6" :key="index">
               <contact-card
                 mode="forest"
-                :title="ownerF.title"
-                :subTitle="ownerF.sub_title"
-                :address="ownerF.address"
+                :title="forest.internal_id"
+                :subTitle="`${forest.customers_count}人の所有者`"
+                :address="
+                  `${forest.cadastral.subsector} ${forest.cadastral.sector} ${forest.cadastral.municipality} ${forest.cadastral.prefecture}`
+                "
               />
             </v-col>
           </template>
@@ -51,18 +55,23 @@
           editBtnContent="連絡者を追加・編集"
           :update="isUpdate.contactors"
           @update="val => (isUpdate.contactors = val)"
+          :loading="contactsLoading"
         />
         <v-row class="mt-4">
-          <template v-for="(contactor, index) in getContactors">
+          <template v-for="(contactor, index) in forestContacts">
             <v-col cols="6" :key="index">
               <contact-card
                 mode="customer"
-                :title="contactor.name"
-                :address="contactor.address"
+                :title="
+                  `${contactor.name_kanji.last_name} ${contactor.name_kanji.first_name}`
+                "
+                :address="
+                  `${contactor.postal_code} ${contactor.address.sector}`
+                "
                 :email="contactor.email"
-                :subTitle="contactor.forest_count"
-                :phone="contactor.phone"
-                :cellphone="contactor.cell_phone"
+                subTitle=""
+                :phone="contactor.telephone"
+                :cellphone="contactor.mobilephone"
                 :isUpdate="isUpdate.contactors"
                 :isCustomer="true"
               />
@@ -85,6 +94,7 @@
           editBtnContent="家族を追加・編集"
           :update="isUpdate.archive"
           @update="val => (isUpdate.archive = val)"
+          :loading="false"
         />
         <template v-if="isExpand">
           <history-discussion
@@ -119,20 +129,24 @@
           editBtnContent="連絡者を追加・編集"
           :update="isUpdate.family"
           @update="val => (isUpdate.family = val)"
+          :loading="contactsLoading"
         />
         <v-row class="mt-4">
-          <template v-for="(contactor, index) in getContactors">
+          <template v-for="(contactor, index) in familyContacts">
             <v-col cols="6" :key="index">
               <contact-card
                 mode="customer"
-                :title="contactor.name"
-                :address="contactor.address"
+                :title="
+                  `${contactor.name_kanji.last_name} ${contactor.name_kanji.first_name}`
+                "
+                :address="
+                  `${contactor.postal_code} ${contactor.address.sector}`
+                "
                 :email="contactor.email"
-                :subTitle="contactor.forest_count"
-                :phone="contactor.phone"
-                :relationship="contactor.relationship"
-                :cellphone="contactor.cell_phone"
-                :isUpdate="isUpdate.family"
+                subTitle=""
+                :phone="contactor.telephone"
+                :cellphone="contactor.mobilephone"
+                :isUpdate="isUpdate.contactors"
                 :isCustomer="true"
               />
             </v-col>
@@ -154,20 +168,24 @@
           editBtnContent="その他関係者を追加・編集"
           :update="isUpdate.otherRelated"
           @update="val => (isUpdate.otherRelated = val)"
+          :loading="contactsLoading"
         />
         <v-row class="mt-4">
-          <template v-for="(contactor, index) in getContactors">
+          <template v-for="(contactor, index) in otherContacts">
             <v-col cols="6" :key="index">
               <contact-card
                 mode="customer"
-                :title="contactor.name"
-                :address="contactor.address"
+                :title="
+                  `${contactor.name_kanji.last_name} ${contactor.name_kanji.first_name}`
+                "
+                :address="
+                  `${contactor.postal_code} ${contactor.address.sector}`
+                "
                 :email="contactor.email"
-                :subTitle="contactor.forest_count"
-                :phone="contactor.phone"
-                :relationship="contactor.relationship"
-                :cellphone="contactor.cell_phone"
-                :isUpdate="isUpdate.otherRelated"
+                subTitle=""
+                :phone="contactor.telephone"
+                :cellphone="contactor.mobilephone"
+                :isUpdate="isUpdate.contactors"
                 :isCustomer="true"
               />
             </v-col>
@@ -187,6 +205,7 @@
           class="mt-12"
           content="顧客連絡者登録 森林"
           :displayAdditionBtn="false"
+          :loading="false"
         />
         <v-row class="mt-4">
           <template v-for="(ownerF, index) in getOwnersForest">
@@ -207,8 +226,9 @@
           editBtnContent="アカウント情報の追加/編集"
           :update="isUpdate.accountInfo"
           @update="val => (isUpdate.accountInfo = val)"
+          :loading="customerLoading"
         />
-        <basic-info :infos="getAccountInfo" :isUpdate="isUpdate.accountInfo" />
+        <basic-info :infos="bankingInfo" :isUpdate="isUpdate.accountInfo" />
         <update-button
           v-if="isUpdate.accountInfo"
           :cancel="cancel.bind(this, 'accountInfo')"
@@ -238,17 +258,16 @@ import ContentHeader from "../components/detail/ContentHeader";
 import BasicInfo from "../components/detail/BasicInfo";
 import UpdateButton from "../components/detail/UpdateButton";
 import ownersForest from "../assets/dump/owners_forest_info.json";
-import contactors from "../assets/dump/contact_card.json";
 import discussions from "../assets/dump/history_discussion.json";
 import actionLogs from "../assets/dump/action_log.json";
 import ContactCard from "../components/detail/ContactCard";
 import AdditionButton from "../components/AdditionButton";
 import HistoryDiscussion from "../components/detail/HistoryDiscussionCard";
 import LogCard from "../components/detail/LogCard";
+import axios from "../plugins/http";
+import { filter } from "lodash";
 
 export default {
-  name: "forest-detail",
-
   mixins: [ScreenMixin],
 
   components: {
@@ -261,7 +280,7 @@ export default {
     HistoryDiscussion,
     LogCard,
   },
-
+  props: ["id"],
   data() {
     return {
       pageIcon: this.$t("icon.customer_icon"),
@@ -278,6 +297,13 @@ export default {
         registrationForest: false,
         accountInfo: false,
       },
+      customer: null,
+      customerLoading: true,
+      forests: [],
+      forestsLoading: true,
+      contacts: [],
+      contactsLoading: true,
+      selectedForestId: null,
     };
   },
 
@@ -288,6 +314,32 @@ export default {
       tag: "登録済",
     };
     this.$store.dispatch("setHeaderInfo", headerInfo);
+    axios.get(`/customers/${this.id}`).then(data => {
+      this.customer = data;
+      this.customerLoading = false;
+    });
+    axios.get(`/customers/${this.id}/forests`).then(async data => {
+      let forests = data.results;
+      let next = data.next;
+      while (!!next) {
+        let nextForests = await axios.get(data.next);
+        forests.push(...nextForests.results);
+        next = nextForests.next;
+      }
+      this.forests = forests;
+      this.forestsLoading = false;
+    });
+    axios.get(`/customers/${this.id}/contacts`).then(async data => {
+      let contacts = data.results;
+      let next = data.next;
+      while (!!next) {
+        let nextContacts = await axios.get(data.next);
+        contacts.push(...nextContacts.results);
+        next = nextContacts.next;
+      }
+      this.contacts = contacts;
+      this.contactsLoading = false;
+    });
   },
 
   methods: {
@@ -298,80 +350,116 @@ export default {
     cancel(val) {
       this.isUpdate[val] = false;
     },
+    getPersonFullname(nameObj) {
+      return nameObj ? `${nameObj.last_name}\u3000${nameObj.first_name}` : "";
+    },
   },
 
   computed: {
     getOwnersForest() {
+      // TODO: remove this
       return ownersForest;
     },
 
-    getContactors() {
-      return contactors;
+    forestContacts() {
+      if (!this.selectedForestId)
+        return filter(
+          this.contacts,
+          c =>
+            c.forest_id ||
+            (c.attributes && c.attributes.relationship_type === "本人"),
+        );
+      return filter(this.contacts, { forest_id: this.selectedForestId });
+    },
+
+    familyContacts() {
+      return filter(
+        this.contacts,
+        () =>
+          attributes &&
+          !["本人", "その他"].includes(attributes.relationship_type),
+      );
+    },
+    otherContacts() {
+      return filter(this.contacts, {
+        attributes: { relationship_type: "その他" },
+      });
     },
 
     getDiscussionsNotExpand() {
+      // TODO: remove this
       const discuss = discussions.slice(0, 3);
       return discuss;
     },
 
     getDiscussionsExpand() {
+      // TODO: remove this
       return discussions;
     },
 
     getActionLogs() {
+      // TODO: remove this
       return actionLogs;
     },
 
-    getBasicInfo() {
+    basicInfo() {
       return [
         {
-          label: "郵便番号",
-          value: "100-1111",
+          label: this.$t("forms.labels.customer.fullname_kanji"),
+          value: this.getPersonFullname(this.customer?.self_contact.name_kanji),
         },
         {
-          label: "住所",
-          value: "ヤマダタロウ",
+          label: this.$t("forms.labels.customer.fullname_kana"),
+          value: this.getPersonFullname(this.customer?.self_contact.name_kana),
         },
         {
-          label: "電話番号",
-          value: "04-2555-000",
+          label: this.$t("forms.labels.customer.postal_code"),
+          value: this.customer?.self_contact.postal_code || "",
         },
         {
-          label: "住所",
-          value: "ヤマダタロウ",
+          label: this.$t("forms.labels.address"),
+          value: this.customer?.self_contact.address.sector || "",
         },
         {
-          label: "郵便番号",
-          value: "100-1111",
+          label: this.$t("forms.labels.customer.phone_number"),
+          value: this.customer?.self_contact.telephone || "",
+        },
+        {
+          label: this.$t("forms.labels.customer.mobile_number"),
+          value: this.customer?.self_contact.mobilephone || "",
+        },
+        {
+          label: this.$t("forms.labels.email"),
+          value: this.customer?.self_contact.email || "",
         },
       ];
     },
 
-    getAccountInfo() {
+    bankingInfo() {
       return [
         {
           label: "口座指定者",
-          value: "山田 花子",
+          value: "",
         },
         {
-          label: "銀行名|検索",
-          value: "三井住友銀行",
+          label: "銀行名",
+          value: this.customer?.banking?.bank_name || "",
         },
         {
-          label: "支店名|検索",
-          value: "424-0023",
+          label: "支店名",
+          value: this.customer?.banking?.branch_name || "",
         },
         {
-          label: "預金種類|選択式",
-          value: "岡山県倉敷市大谷4-1-3",
+          label: "預金種類",
+          value: this.customer?.banking?.account_type || "",
         },
         {
           label: "口座番号",
-          value: "090-1242-2122",
+          value: this.customer?.banking?.account_number || "",
         },
         {
           label: "口座名義",
-          value: "03-1212-4131",
+          value: this.customer?.banking?.account_name || "",
         },
       ];
     },

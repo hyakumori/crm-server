@@ -1,7 +1,6 @@
 <template>
-  <v-card class="contact-card d-flex" outlined @click="onClickCard">
+  <v-card class="contact-card d-flex" outlined @click.self="onClickCard">
     <v-icon class="contact-card__icon">{{ iconMode }}</v-icon>
-
     <div class="contact-card__name d-flex ml-4 flex-column">
       <div v-if="title" class="d-flex justify-space-between">
         <h4 class="body-2">

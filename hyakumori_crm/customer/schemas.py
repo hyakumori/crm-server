@@ -3,11 +3,12 @@ from typing import List, Optional, Union
 
 from django_filters import FilterSet, CharFilter
 from pydantic import BaseModel, EmailStr, constr, validator
+from rest_framework.serializers import ModelSerializer
 
 from ..core.models import HyakumoriDanticModel, HyakumoriDanticUpdateModel, Paginator
 from ..crm.common import regexes
 from ..crm.common.constants import DEFAULT_EMAIL, EMPTY, UNKNOWN
-from ..crm.models import Customer
+from ..crm.models import Customer, Forest
 
 
 class Name(HyakumoriDanticModel):
@@ -89,3 +90,9 @@ class CustomerPaginator(Paginator):
             for field, value in v.items()
             if field in defined_filters
         }
+
+
+class ForestSerializer(ModelSerializer):
+    class Meta:
+        model = Forest
+        fields = ["id", "cadastral", "internal_id", "customers_count"]

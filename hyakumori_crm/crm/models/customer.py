@@ -59,6 +59,12 @@ class Customer(BaseResourceModel):
             ("manage_customer", "All permissions for customer"),
         ]
 
+    @property
+    def self_contact(self):
+        return next(
+            filter(lambda cc: cc.is_basic, self.customercontact_set.all())
+        ).contact
+
 
 class Contact(BaseResourceModel):
     contact_info = JSONField(

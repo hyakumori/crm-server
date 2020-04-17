@@ -8,6 +8,7 @@
       />
       <data-list
         class="ml-7"
+        itemKey="id"
         :headers="headers"
         :multiSort="true"
         :data="customers"
@@ -16,6 +17,7 @@
         :serverItemsLength="totalCustomers"
         :tableRowIcon="tableRowIcon"
         :autoHeaders="false"
+        @rowData="rowData"
         :isLoading="$apollo.queries.result.loading"
       ></data-list>
     </template>
@@ -67,6 +69,12 @@ export default {
     },
   },
   methods: {
+    rowData(val) {
+      this.$router.push({
+        name: "customer-detail",
+        params: { id: val },
+      });
+    },
     onSearch() {
       this.filter = { ...this.filter, filters: this.$refs.filter.conditions };
       this.$apollo.queries.result.refetch();
@@ -107,6 +115,7 @@ export default {
           list_customers(data: $filter) {
             ok
             items {
+              id
               internal_id
               fullname_kana
               fullname_kanji
