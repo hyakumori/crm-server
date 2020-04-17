@@ -59,9 +59,9 @@
                 <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
                 <div class="white--text body-2 pl-2">
                   <p class="mb-0">
-                    {{ headerInfo.title
-                    }}<span
+                    {{ headerInfo.title }}<span
                       class="tag"
+                      :class="{'px-2 py-1': headerInfo.title}"
                       :style="{ backgroundColor: headerTagColor }"
                       >{{ headerInfo.tag }}</span
                     >
@@ -178,7 +178,6 @@ export default {
         font-size: 10px;
         font-weight: bold;
         border-radius: 2px;
-        padding: 4px 8px 4px 8px;
         margin-left: 8px;
         margin-bottom: -4px;
       }

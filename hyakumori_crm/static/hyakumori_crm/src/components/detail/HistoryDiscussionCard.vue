@@ -76,6 +76,7 @@ $border-radius: 4px;
   padding: 8px;
   margin-bottom: 12px;
   border-radius: $border-radius;
+  border: 1px solid #e1e1e1 !important;
 
   & .col {
     padding: 0;

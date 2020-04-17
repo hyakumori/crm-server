@@ -3,7 +3,7 @@
     <div class="d-flex">
       <div class="d-flex align-center content-header__content">
         {{ content }}
-        <v-icon right>mdi-folder</v-icon>
+        <v-img class="ml-2" src="../../assets/img/detail-header-icon.png" height="10" width="13"></v-img>
       </div>
       <v-spacer></v-spacer>
       <addition-button
@@ -12,7 +12,8 @@
         :click="onUpdate.bind(this)"
       />
     </div>
-    <v-divider class="content-header__divider mt-3"></v-divider>
+    <v-progress-linear v-if="isLoading" height="2" />
+    <v-divider v-else class="content-header__divider mt-3"></v-divider>
   </div>
 </template>
 
@@ -27,6 +28,7 @@ export default {
   },
 
   props: {
+    isLoading: Boolean,
     content: String,
     editBtnContent: String,
     update: Boolean,
@@ -52,10 +54,6 @@ export default {
   &__content {
     font-size: 17px;
     font-weight: bold;
-  }
-
-  &__divider {
-    border: 1px solid #e1e1e1;
   }
 }
 </style>

@@ -3,10 +3,15 @@
     class="attribute-table"
     hide-default-footer
     disable-sort
+    :loading="isLoading"
     :items-per-page="12"
     :headers="getHeaders"
     :items="attributes"
   >
+    <template v-slot:item.area="{ item }">
+      <h4 class="attribute-table__item-area">{{ item.area }}</h4>
+    </template>
+
     <template v-slot:item.unit="{ item }">
       <h4 class="attribute-table__item-unit">{{ item.unit }}</h4>
     </template>
@@ -32,6 +37,7 @@ export default {
   name: "forest-attribute-table",
 
   props: {
+    isLoading: Boolean,
     attributes: Array,
   },
 

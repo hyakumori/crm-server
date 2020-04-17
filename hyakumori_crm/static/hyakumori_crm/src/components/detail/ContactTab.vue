@@ -7,7 +7,7 @@
     >
 
     <v-tab
-      class="contact-tabs__contactor"
+      class="contact-tabs__contactor ml-1"
       active-class="contact-tabs__contactor--active"
       >{{ $t("detail.tabs.contactor") }}</v-tab
     >
