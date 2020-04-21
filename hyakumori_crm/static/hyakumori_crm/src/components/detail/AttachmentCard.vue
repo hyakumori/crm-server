@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card
-      v-for="(discuss, index) in discussions"
+      v-for="(attach, index) in attaches"
       :key="index"
       class="history-discussion d-flex align-center d-hover"
       outlined
@@ -14,17 +14,17 @@
           >
         </v-col>
         <v-col cols="2">
-          <p class="ml-4 mr-6">{{ discuss.date }}</p>
+          <p class="ml-4 mr-6">{{ attach.date }}</p>
         </v-col>
         <v-col cols="4" class="d-flex pr-4">
-          <p class="history-discussion__attach">{{ discuss.attach_name }}</p>
+          <p class="history-discussion__attach">{{ attach.attach_name }}</p>
           <v-icon small>mdi-paperclip</v-icon>
         </v-col>
         <v-col cols="2" class="pr-2">
-          <p>{{ discuss.participant }}</p>
+          <p>{{ attach.participant }}</p>
         </v-col>
         <v-col col="2" class="pr-2">
-          <p class="history-discussion__host">{{ discuss.host }}</p>
+          <p class="history-discussion__host">{{ attach.host }}</p>
         </v-col>
         <v-col cols="1">
           <v-btn icon @click="onClick">
@@ -38,10 +38,10 @@
 
 <script>
 export default {
-  name: "history-discussion",
+  name: "attachment-card",
 
   props: {
-    discussions: Array,
+    attaches: Array,
     isUpdate: Boolean,
     cancel: Function,
   },

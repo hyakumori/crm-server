@@ -1,43 +1,52 @@
 <template>
-  <v-data-table
-    ref="dataTable"
-    v-model="selected"
-    :mobile-breakpoint="0"
-    :item-key="itemKey"
-    :multi-sort="multiSort"
-    :loading="isLoading"
-    :headers="dynamicHeaders"
-    :items="data"
-    :show-select="showSelect"
-    :options.sync="innerOptions"
-    :server-items-length="serverItemsLength"
-    :footer-props="{
-      itemsPerPageOptions: [50, 100, 150],
-      itemsPerPageText: $t('raw_text.rows_per_page'),
-    }"
-    @click:row="clickRow"
-  >
-    <template v-slot:header.options>
-      <v-icon @click="viewMore">mdi-dots-vertical</v-icon>
-    </template>
-
-    <template v-if="tableRowIcon" v-slot:item.internal_id="{ item }">
-      <div class="d-flex align-center justify-space-between">
-        <v-icon class="icon-mode mr-4" small>{{ tableRowIcon }}</v-icon>
-        <p class="mb-0">{{ item.internal_id }}</p>
-      </div>
-    </template>
-
-    <template
-      v-for="(nego, index) in negotiationCols"
-      v-slot:[`item.${nego}`]="{ item }"
+  <v-layout v-resize="onResize">
+    <v-data-table
+      ref="dataTable"
+      v-model="selected"
+      dense
+      light
+      :height="tableHeight"
+      :fixed-header="true"
+      :mobile-breakpoint="0"
+      :item-key="itemKey"
+      :multi-sort="multiSort"
+      :loading="isLoading"
+      :headers="dynamicHeaders"
+      :items="data"
+      :no-data-text="$t('tables.no_data')"
+      :show-select="showSelect"
+      :options.sync="innerOptions"
+      :server-items-length="serverItemsLength"
+      :footer-props="{
+        itemsPerPageOptions: [50, 100, 150],
+        itemsPerPageText: $t('raw_text.rows_per_page'),
+      }"
+      @click:row="clickRow"
     >
-      <p class="negotiation" v-if="isNegotiation(item[nego])" :key="index">
-        {{ $t("raw_text.in_negotiation") }}
-      </p>
-      <p class="d-inline" v-else :key="index">{{ item[nego] }}</p>
-    </template>
-  </v-data-table>
+      <template v-slot:header.options>
+        <v-icon @click="viewMore">mdi-dots-vertical</v-icon>
+      </template>
+
+      <template v-if="tableRowIcon" v-slot:item.internal_id="{ item }">
+        <div class="d-flex align-center justify-space-between">
+          <v-icon class="icon-mode mr-4 f14 mt-1 mb-1" small>{{
+            tableRowIcon
+          }}</v-icon>
+          <p class="mb-0">{{ item.internal_id }}</p>
+        </div>
+      </template>
+
+      <template
+        v-for="(nego, index) in negotiationCols"
+        v-slot:[`item.${nego}`]="{ item }"
+      >
+        <p class="negotiation" v-if="isNegotiation(item[nego])" :key="index">
+          {{ $t("raw_text.in_negotiation") }}
+        </p>
+        <p class="d-inline" v-else :key="index">{{ item[nego] }}</p>
+      </template>
+    </v-data-table>
+  </v-layout>
 </template>
 
 <script>
@@ -48,7 +57,6 @@ const headerSelection = { value: "options", align: "center", sortable: false };
 export default {
   name: "data-list",
   props: {
-    mode: String,
     isLoading: Boolean,
     showSelect: Boolean,
     data: Array,
@@ -75,6 +83,7 @@ export default {
     return {
       selected: [],
       innerOptions: {},
+      tableHeight: window.innerHeight,
     };
   },
 
@@ -119,6 +128,10 @@ export default {
 
     viewMore() {
       // Add more column to the table
+    },
+
+    onResize() {
+      this.tableHeight = window.innerHeight - 320;
     },
   },
 

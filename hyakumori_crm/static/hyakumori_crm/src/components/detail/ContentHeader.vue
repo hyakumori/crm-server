@@ -19,7 +19,7 @@
       />
     </div>
     <v-progress-linear v-if="loading" height="2" indeterminate />
-    <v-divider v-else class="content-header__divider mt-3"></v-divider>
+    <v-divider v-else class="content-header__divider mt-1"></v-divider>
   </div>
 </template>
 

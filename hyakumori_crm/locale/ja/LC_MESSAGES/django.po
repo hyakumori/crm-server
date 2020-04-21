@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-14 00:57+0700\n"
+"POT-Creation-Date: 2020-04-18 17:26+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: core/models.py:93
+#: core/http.py:12
+msgid "Not found"
+msgstr "見つかりません"
+
+#: core/models.py:81 core/models.py:83
 msgid "Required"
 msgstr "必須"
 
-#: core/models.py:94
+#: core/models.py:82
 msgid "Invalid"
 msgstr "無効"
 
@@ -78,9 +82,9 @@ msgstr "携帯番号"
 msgid "Email"
 msgstr "メールアドレス"
 
-#: customer/resolvers.py:50
-msgid "Representative"
-msgstr "代表"
+#: customer/service.py:39 forest/service.py:31
+msgid "Customer not found"
+msgstr "顧客が見つかりません"
 
 #: forest/resolvers.py:16
 msgid "Forest ID"
@@ -158,7 +162,20 @@ msgstr "団地"
 msgid "Tag Manage Type"
 msgstr "管理形態"
 
-#: settings.py:159
+#: forest/schemas.py:113 forest/schemas.py:122
+#, python-brace-format
+msgid "Customer Id {v} not found"
+msgstr "カスタマーID {v}が見つかりません"
+
+#: forest/schemas.py:140
+msgid "Contact not found"
+msgstr "連絡先が見つかりません"
+
+#: forest/service.py:16
+msgid "Forest not found"
+msgstr "森が見つかりません"
+
+#: settings.py:156
 msgid "Japan"
 msgstr "Japan"
 
@@ -174,6 +191,166 @@ msgstr "Superuser must have is_staff=True."
 msgid "Superuser must have is_superuser=True."
 msgstr "Superuser must have is_superuser=True."
 
-#: users/models.py:14
+#: users/models.py:18
 msgid "email address"
 msgstr "メールアドレス"
+
+#: users/templates/email/activation.html:4
+#: users/templates/email/activation.html:22
+#, python-format
+msgid "Account activation on %(site_name)s"
+msgstr ""
+
+#: users/templates/email/activation.html:8
+#, python-format
+msgid ""
+"\n"
+"    You're receiving this email because you need to finish activation "
+"process on %(site_name)s.\n"
+msgstr ""
+
+#: users/templates/email/activation.html:12
+#: users/templates/email/activation.html:401
+msgid "Please go to the following page to activate account"
+msgstr ""
+
+#: users/templates/email/activation.html:375
+msgid "Please activate your account"
+msgstr ""
+
+#: users/templates/email/activation.html:396
+#, python-format
+msgid ""
+"\n"
+"                                                You're receiving this email "
+"because you need to finish\n"
+"                                                activation process on "
+"%(site_name)s.\n"
+"                                            "
+msgstr ""
+
+#: users/templates/email/activation.html:415
+msgid "Activate account"
+msgstr ""
+
+#: users/templates/email/activation.html:425
+msgid ""
+"Or copy following url and paste into your browser address to activate your "
+"account:"
+msgstr ""
+
+#: users/templates/email/confirmation.html:4
+#, python-format
+msgid ""
+"%(site_name)s - Your account has been successfully created and activated!"
+msgstr ""
+
+#: users/templates/email/confirmation.html:8
+#: users/templates/email/confirmation.html:16
+msgid "Your account has been created and is ready to use!"
+msgstr ""
+
+#: users/templates/email/confirmation.html:10
+#: users/templates/email/confirmation.html:18
+#: users/templates/email/password_reset.html:14
+#: users/templates/email/username_reset.html:14
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: users/templates/email/confirmation.html:12
+#: users/templates/email/confirmation.html:20
+#: users/templates/email/password_reset.html:16
+#: users/templates/email/username_reset.html:16
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: users/templates/email/password_reset.html:4
+#: users/templates/email/password_reset.html:24
+#, python-format
+msgid "Password reset on %(site_name)s"
+msgstr ""
+
+#: users/templates/email/password_reset.html:8
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+
+#: users/templates/email/password_reset.html:10
+#: users/templates/email/password_reset.html:398
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: users/templates/email/password_reset.html:12
+#: users/templates/email/username_reset.html:12
+msgid "Your username, in case you've forgotten:"
+msgstr ""
+
+#: users/templates/email/password_reset.html:377
+msgid "Reset password for your account"
+msgstr ""
+
+#: users/templates/email/password_reset.html:397
+#, python-format
+msgid ""
+" You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+
+#: users/templates/email/password_reset.html:400
+#: users/templates/email/username_reset.html:400
+msgid "Your email, in case you've forgotten:"
+msgstr ""
+
+#: users/templates/email/password_reset.html:413
+#: users/templates/email/username_reset.html:413
+msgid "Reset password"
+msgstr ""
+
+#: users/templates/email/password_reset.html:424
+#: users/templates/email/username_reset.html:424
+msgid ""
+"Or copy following url and paste into your browser address to reset your "
+"password:"
+msgstr ""
+
+#: users/templates/email/username_reset.html:4
+#, python-format
+msgid "Username reset on %(site_name)s"
+msgstr ""
+
+#: users/templates/email/username_reset.html:8
+#, python-format
+msgid ""
+"You're receiving this email because you requested a username reset for your "
+"user account at %(site_name)s."
+msgstr ""
+
+#: users/templates/email/username_reset.html:10
+msgid "Please go to the following page and choose a new username:"
+msgstr ""
+
+#: users/templates/email/username_reset.html:24
+#, python-format
+msgid "Request changing email on %(site_name)s"
+msgstr ""
+
+#: users/templates/email/username_reset.html:377
+msgid "Change email for your account"
+msgstr ""
+
+#: users/templates/email/username_reset.html:397
+#, python-format
+msgid ""
+" You're receiving this email because you requested changing your email for "
+"your user account at %(site_name)s."
+msgstr ""
+
+#: users/templates/email/username_reset.html:398
+msgid "Please go to the following page and define reset email:"
+msgstr ""
+
+#~ msgid "Representative"
+#~ msgstr "代表"

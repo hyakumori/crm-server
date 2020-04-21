@@ -4,6 +4,7 @@ from typing import Any, Union, ClassVar, Optional, Sequence, Dict
 
 from behaviors.behaviors import StoreDeleted as StoreDeletedMixin
 from behaviors.querysets import StoreDeletedQuerySet
+from behaviors.managers import StoreDeletedManager
 from django.contrib.postgres.fields.jsonb import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
@@ -49,7 +50,7 @@ class BaseQuerySet(StoreDeletedQuerySet):
 class BaseRelationModel(
     UUIDPrimary, AttributesMixin, TimestampMixin, StoreDeletedMixin,
 ):
-    objects = models.Manager.from_queryset(BaseQuerySet)()
+    objects = StoreDeletedManager.from_queryset(BaseQuerySet)()
 
     class Meta:
         abstract = True
@@ -61,7 +62,7 @@ class BaseRelationModel(
 class BaseResourceModel(
     UUIDPrimary, AttributesMixin, InternalMixin, TimestampMixin, StoreDeletedMixin,
 ):
-    objects = models.Manager.from_queryset(BaseQuerySet)()
+    objects = StoreDeletedManager.from_queryset(BaseQuerySet)()
 
     class Meta:
         abstract = True

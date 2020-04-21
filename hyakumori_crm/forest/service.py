@@ -1,12 +1,41 @@
 from typing import Iterator, Union
 
-from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.db import connections
 from django.db.utils import OperationalError
 
-from ..crm.models import Forest, ForestCustomer, Customer, CustomerContact
+from ..crm.models import (
+    Forest,
+    ForestCustomer,
+    Customer,
+    CustomerContact,
+    ForestCustomerContact,
+)
 from .schemas import ForestFilter
+
+
+def get_forest_by_pk(pk):
+    try:
+        return Forest.objects.get(pk=pk)
+    except (Forest.DoesNotExist, ValidationError):
+        raise ValueError(_("Forest not found"))
+
+
+def get_customer_of_forest(pk, customer_pk):
+    try:
+        return (
+            ForestCustomer.objects.select_related("customer")
+            .get(customer_id=customer_pk, forest_id=pk)
+            .customer
+        )
+    except (
+        ForestCustomer.DoesNotExist,
+        Customer.DoesNotExist,
+        ValidationError,
+    ):
+        raise ValueError(_("Customer not found"))
 
 
 def get_forests_by_condition(
@@ -34,22 +63,15 @@ def update(forest: Forest, forest_in: dict):
     return forest
 
 
-def update_owners(forest: Forest, owner_pks_in: dict):
+def update_owners(owner_pks_in):
+    forest = owner_pks_in.forest
     ForestCustomer.objects.filter(
-        customer_id__in=owner_pks_in["deleted"], forest_id=forest.pk
+        customer_id__in=owner_pks_in.deleted, forest_id=forest.pk
     ).delete()
     added_forest_customers = []
-    customers = (
-        Customer.objects.basic_contact_id()
-        .filter(pk__in=owner_pks_in["added"])
-        .values_list("id", "basic_contact_id")
-    )
-    customers_map = {c[0]: c[1] for c in customers}
-    for added_owner_pk in owner_pks_in["added"]:
+    for added_owner_pk in owner_pks_in.added:
         forest_customer = ForestCustomer(
-            customer_id=added_owner_pk,
-            forest_id=forest.pk,
-            contact_id=customers_map[added_owner_pk],
+            customer_id=added_owner_pk, forest_id=forest.pk,
         )
         added_forest_customers.append(forest_customer)
     ForestCustomer.objects.bulk_create(added_forest_customers)
@@ -57,17 +79,23 @@ def update_owners(forest: Forest, owner_pks_in: dict):
     return forest
 
 
-def set_forest_owner_contact(forest: Forest, forest_owner_contact_in: dict):
+def set_forest_owner_contacts(forest: Forest, forest_owner_contact_in: dict):
     customer = forest_owner_contact_in.customer
-    contact = forest_owner_contact_in.contact
-    CustomerContact.objects.get_or_create(
-        customer_id=customer.id, contact_id=contact.id,
-    )
-    forest_customer = ForestCustomer.objects.get(
-        forest_id=forest.id, customer_id=customer.id,
-    )
-    forest_customer.contact_id = contact.id
-    forest_customer.save(update_fields=["contact_id", "updated_at"])
+    contacts = forest_owner_contact_in.contacts
+    forestcustomer = customer.forestcustomer_set.get(forest_id=forest.pk)
+    for contact in contacts:
+        customer_contact, _ = CustomerContact.objects.get_or_create(
+            customer_id=customer.id, contact_id=contact.contact.pk
+        )
+        if contact.set_forest:
+            ForestCustomerContact.objects.get_or_create(
+                forestcustomer=forestcustomer, customercontact=customer_contact
+            )
+        customer_contact.attributes = {
+            **(customer_contact.attributes or {}),
+            "relationship_type": contact.relationship_type,
+        }
+        customer_contact.save(update_fields=["attributes", "updated_at"])
     customer.save(update_fields=["updated_at"])
     forest.save(update_fields=["updated_at"])
     return forest
