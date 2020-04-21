@@ -1,5 +1,5 @@
 <template>
-  <v-btn text color="primary" @click="onClick">
+  <v-btn text color="primary" medium @click="onClick" class="f14">
     <v-icon left>mdi-plus</v-icon>
     {{ content }}
   </v-btn>
@@ -16,7 +16,9 @@ export default {
 
   methods: {
     onClick() {
-      this.click();
+      if (this.click) {
+        this.click();
+      }
     },
   },
 };

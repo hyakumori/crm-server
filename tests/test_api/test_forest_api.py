@@ -1,6 +1,7 @@
 from uuid import uuid4
 
 import pytest
+from django.utils.translation import gettext_lazy as _
 from rest_framework.test import force_authenticate
 
 from hyakumori_crm.crm.models import (
@@ -11,20 +12,13 @@ from hyakumori_crm.crm.models import (
     ForestCustomer,
 )
 from hyakumori_crm.crm.schemas.contract import ContractType
+from hyakumori_crm.forest.schemas import RelationshipType
 from hyakumori_crm.forest.restful import (
     update,
     update_owners_view,
-    set_contact_to_owner_view,
+    set_contacts_to_owner_view,
     ForestViewSets,
 )
-
-
-@pytest.fixture
-def forest(admin_user):
-    return Forest.objects.create(
-        cadastral={"prefecture": "foo", "municipality": "foo", "sector": "foo"},
-        contracts=[{"type": ContractType.long_term}],
-    )
 
 
 def test_get_customers_of_forest_unauthorize(api_rf):
@@ -48,7 +42,7 @@ def test_get_customers_of_forest(api_rf, admin_user):
 @pytest.mark.django_db
 def test_update_forest_basic_info(api_rf, admin_user, forest):
     req = api_rf.put(
-        f"/api/v1/forests/{forest.pk}",
+        f"/api/v1/forests/{forest.pk}/basic-info",
         {
             "cadastral": {"prefecture": "foo", "municipality": "foo", "sector": "bar"},
             "contracts": [{"type": ContractType.long_term.value}],
@@ -58,9 +52,20 @@ def test_update_forest_basic_info(api_rf, admin_user, forest):
     view = ForestViewSets.as_view({"put": "basic_info"})
     force_authenticate(req, user=admin_user)
     resp = view(req, pk=forest.pk)
+    assert resp.status_code == 200
     forest.refresh_from_db()
     assert forest.cadastral["sector"] == "bar"
-    assert resp.status_code == 200
+
+
+@pytest.mark.django_db
+def test_update_forest_basic_info_not_found(api_rf, admin_user):
+    pk = uuid4()
+    req = api_rf.put(f"/api/v1/forests/{pk}/basic-info", {}, format="json",)
+    view = ForestViewSets.as_view({"put": "basic_info"})
+    force_authenticate(req, user=admin_user)
+    resp = view(req, pk=pk)
+    assert resp.status_code == 404
+    assert resp.render().data["detail"] == _("Forest not found")
 
 
 @pytest.mark.django_db
@@ -83,13 +88,11 @@ def test_update_owners_view(api_rf, admin_user, forest):
     CustomerContact.objects.create(
         customer=customer2, contact=contact_customer2, is_basic=True,
     )
-    ForestCustomer.objects.create(
-        forest=forest, customer=customer1, contact=contact_customer1,
-    )
+    ForestCustomer.objects.create(forest=forest, customer=customer1)
 
     req = api_rf.put(
         f"/api/v1/forests/{forest.pk}/customers",
-        {"forest_pk": str(forest.id), "added": [customer2.pk], "deleted": []},
+        {"added": [customer2.pk], "deleted": []},
         format="json",
     )
     force_authenticate(req, user=admin_user)
@@ -119,31 +122,24 @@ def test_set_contact_to_owner_view(api_rf, admin_user, forest):
     CustomerContact.objects.create(
         customer=customer2, contact=contact_customer2, is_basic=True,
     )
-    ForestCustomer.objects.create(
-        forest=forest, customer=customer1, contact=contact_customer1,
-    )
+    ForestCustomer.objects.create(forest=forest, customer=customer1)
     req = api_rf.put(
-        f"/api/v1/forests/{forest.pk}/customers/set-contact",
+        f"/api/v1/forests/{forest.pk}/customers/{customer1.pk}/set-contact",
         {
-            "forest": str(forest.pk),
-            "customer": str(customer1.pk),
-            "contact": str(contact_customer2.pk),
+            "contacts": [
+                {
+                    "contact": str(contact_customer2.pk),
+                    "relationship_type": RelationshipType.self,
+                }
+            ]
         },
         format="json",
     )
     force_authenticate(req, user=admin_user)
-    resp = set_contact_to_owner_view(req, pk=forest.pk)
-    forest.refresh_from_db()
+    resp = set_contacts_to_owner_view(req, pk=forest.pk, customer_pk=customer1.pk)
     assert resp.status_code == 200
+    forest.refresh_from_db()
+    assert ForestCustomer.objects.filter(forest=forest, customer=customer1).count() == 1
     assert (
-        ForestCustomer.objects.filter(
-            forest=forest, customer=customer1, contact=contact_customer2,
-        ).count()
-        == 1
-    )
-    assert (
-        ForestCustomer.objects.filter(
-            forest=forest, customer=customer1, contact=contact_customer1,
-        ).count()
-        == 0
+        CustomerContact.objects.filter(customer=customer1, is_basic=False).count() == 1
     )

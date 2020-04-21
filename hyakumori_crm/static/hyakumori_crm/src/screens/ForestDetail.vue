@@ -2,119 +2,60 @@
   <main-section class="forest-detail">
     <template #section>
       <div class="forest-detail__section px-7">
-        <content-header
-          content="基本情報 (登記情報)"
+        <basic-info-container
+          headerContent="基本情報 (登記情報)"
           editBtnContent="所有地を追加・編集"
-          :loading="basicInfo.length === 0"
-          :update="isUpdate.basicInfo"
-          @update="val => (isUpdate.basicInfo = val)"
+          :isLoading="basicInfo.length === 0"
+          :info="basicInfo"
         />
-        <div class="my-4">
-          <basic-info :infos="basicInfo" :isUpdate="isUpdate.basicInfo" />
-          <update-button
-            class="mb-12"
-            v-if="isUpdate.basicInfo"
-            :cancel="cancel.bind(this, 'basicInfo')"
+
+        <forest-contact-tab-container
+          headerContent="所有林情報"
+          editBtnContent="所有者を追加・編集"
+          addBtnContent="連絡者を追加"
+          :ownerContacts="ownerContacts"
+        />
+
+        <attachment-container
+          class="consultation-history"
+          headerContent="協議履歴"
+          editBtnContent="協議記録を追加・編集"
+          addBtnContent="協議履歴を追加"
+          :attaches="attaches"
+        />
+
+        <attachment-container
+          class="document-mailing-record"
+          headerContent="書類郵送記録"
+          editBtnContent="書類郵送記録を追加・編集"
+          addBtnContent="協議履歴を追加"
+          :attaches="attaches"
+          :isRequiredExpand="false"
+        />
+
+        <div id="forest-attributes">
+          <content-header
+            class="mt-9"
+            content="森林情報"
+            :displayAdditionBtn="false"
+          />
+          <v-row class="forest-detail__header d-flex mx-0 mt-5">
+            <template v-for="(header, index) in headerData">
+              <v-col class="forest-detail__header--text" cols="3" :key="index">
+                <td class="pr-2">{{ header.name }}</td>
+                <td class="forest-detail__header--text__data--color">
+                  {{ header.data }}
+                </td>
+              </v-col>
+            </template>
+          </v-row>
+          <forest-attribute-table
+            :attributes="forrestAttributes"
+            :isLoading="forrestAttributes.length === 0"
           />
         </div>
-
-        <content-header
-          content="所有林情報"
-          editBtnContent="所有者を追加・編集"
-          :loading="ownerContacts.length === 0"
-          :update="isUpdate.contact"
-          @update="val => (isUpdate.contact = val)"
-        />
-        <contact-tab
-          class="mt-5"
-          :class="{ 'mb-10': !isUpdate.contact }"
-          :ownerContacts="ownerContacts"
-          :isUpdate="isUpdate.contact"
-        />
-        <addition-button v-if="isUpdate.contact" content="連絡者を追加" />
-        <update-button
-          class="mb-9 mt-2"
-          v-if="isUpdate.contact"
-          :cancel="cancel.bind(this, 'contact')"
-        />
-
-        <content-header
-          content="協議履歴"
-          editBtnContent="協議記録を追加・編集"
-          :update="isUpdate.discussion"
-          @update="val => (isUpdate.discussion = val)"
-        />
-        <template v-if="isExpand">
-          <history-discussion
-            class="mt-4"
-            :isUpdate="isUpdate.discussion"
-            :discussions="getDiscussionsExpand"
-          />
-        </template>
-        <template v-else>
-          <history-discussion
-            class="mt-4"
-            :isUpdate="isUpdate.discussion"
-            :discussions="getDiscussionsNotExpand"
-          />
-        </template>
-        <addition-button
-          class="mb-3"
-          v-if="isUpdate.discussion"
-          content="協議履歴を追加"
-        />
-        <update-button
-          v-if="isUpdate.discussion"
-          :cancel="cancel.bind(this, 'discussion')"
-        />
-        <p class="forest-detail__expand" @click="expandDiscussionList">
-          {{ isExpand ? "一部表示する" : "すべて表示する" }}
-        </p>
-
-        <content-header
-          content="書類郵送記録"
-          editBtnContent="書類郵送記録を追加・編集"
-          :update="isUpdate.archive"
-          @update="val => (isUpdate.archive = val)"
-        />
-        <history-discussion
-          class="mt-4"
-          :class="{ 'pb-9': !isUpdate.archive }"
-          :discussions="getDiscussionsNotExpand"
-          :isUpdate="isUpdate.archive"
-        />
-        <addition-button
-          class="mb-3"
-          v-if="isUpdate.archive"
-          content="協議履歴を追加"
-        />
-        <update-button
-          v-if="isUpdate.archive"
-          :cancel="cancel.bind(this, 'archive')"
-        />
-
-        <content-header
-          class="mt-9"
-          content="森林情報"
-          :displayAdditionBtn="false"
-        />
-        <v-row class="forest-detail__header d-flex mx-0 mt-5">
-          <template v-for="(header, index) in headerData">
-            <v-col class="forest-detail__header--text" cols="3" :key="index">
-              <td class="pr-2">{{ header.name }}</td>
-              <td class="forest-detail__header--text__data--color">
-                {{ header.data }}
-              </td>
-            </v-col>
-          </template>
-        </v-row>
-        <forest-attribute-table
-          :attributes="forrestAttributes"
-          :isLoading="forrestAttributes.length === 0"
-        />
       </div>
-    </template>
-
+    </template>moduleName
     <template #right>
       <div class="forest-detail__log ml-6">
         <h4 class="mb-1">更新履歴</h4>
@@ -134,17 +75,14 @@
 import MainSection from "../components/MainSection";
 import ScreenMixin from "./ScreenMixin";
 import ContentHeader from "../components/detail/ContentHeader";
-import ContactTab from "../components/detail/ContactTab";
 import discussions from "../assets/dump/history_discussion.json";
 import actionLogs from "../assets/dump/action_log.json";
-import HistoryDiscussion from "../components/detail/HistoryDiscussionCard";
 import LogCard from "../components/detail/LogCard";
-import UpdateButton from "../components/detail/UpdateButton";
-import AdditionButton from "../components/AdditionButton";
-import BasicInfo from "../components/detail/BasicInfo";
+import ForestContactTabContainer from "../components/detail/ForestContactTabContainer";
+import BasicInfoContainer from "../components/detail/BasicInfoContainer";
+import AttachmentContainer from "../components/detail/AttachmentContainer";
 import ForestAttributeTable from "../components/detail/ForestAttributeTable";
 import { fetchBasicInfo, fetchForestOwner } from "../api/forest";
-import axios from "../plugins/http";
 
 export default {
   name: "forest-detail",
@@ -154,13 +92,11 @@ export default {
   components: {
     MainSection,
     ContentHeader,
-    ContactTab,
-    HistoryDiscussion,
     LogCard,
-    UpdateButton,
-    AdditionButton,
-    BasicInfo,
     ForestAttributeTable,
+    BasicInfoContainer,
+    AttachmentContainer,
+    ForestContactTabContainer,
   },
 
   data() {
@@ -171,21 +107,14 @@ export default {
       pageIcon: this.$t("icon.forest_icon"),
       backBtnContent: this.$t("page_header.forest_mgmt"),
       headerTagColor: "#FFC83B",
-      isExpand: false,
-      isUpdate: {
-        basicInfo: false,
-        contact: false,
-        discussion: false,
-        archive: false,
-      },
     };
   },
 
   mounted() {
-    axios
+    this.$rest
       .all([fetchBasicInfo(this.forestId), fetchForestOwner(this.forestId)])
       .then(
-        axios.spread((basicInfo, owners) => {
+        this.$rest.spread((basicInfo, owners) => {
           this.forestInfo = basicInfo;
           this.forestOwners = owners.results;
           this.setHeaderInfo(basicInfo);
@@ -195,19 +124,12 @@ export default {
   },
 
   methods: {
-    expandDiscussionList() {
-      this.isExpand = !this.isExpand;
-    },
-
-    cancel(val) {
-      this.isUpdate[val] = false;
-    },
-
     setHeaderInfo(info) {
       const headerInfo = {
         title: info.internal_id,
         subTitle: info.owner.name_kanji,
         tag: [info.tag.danchi],
+        backUrl: { name: "forests" },
       };
       this.$store.dispatch("setHeaderInfo", headerInfo);
     },
@@ -229,25 +151,6 @@ export default {
       }
     },
 
-    mapContact(info) {
-      const addr = info.address;
-      return {
-        mode: "customer",
-        contact_id: info.id,
-        customer_id: info.customer_id,
-        title:
-          this.fallbackText(info.name_kanji.last_name) +
-          this.fallbackText(info.name_kanji.first_name),
-        phone: info.telephone,
-        cellphone: info.mobilephone,
-        address: `${this.fallbackText(info.postal_code)}
-          ${this.fallbackText(addr.prefecture)}
-          ${this.fallbackText(addr.municipality)}
-          ${this.fallbackText(addr.sector)}`,
-        email: info.email,
-      };
-    },
-
     fallbackText(text) {
       return text || "";
     },
@@ -262,12 +165,7 @@ export default {
       return owners;
     },
 
-    getDiscussionsNotExpand() {
-      const discuss = discussions.slice(0, 3);
-      return discuss;
-    },
-
-    getDiscussionsExpand() {
+    attaches() {
       return discussions;
     },
 
@@ -443,18 +341,6 @@ export default {
 .forest-detail {
   &__section {
     @extend %detail-section-shared;
-  }
-
-  &__expand {
-    margin-top: 20px;
-    margin-bottom: 50px;
-    width: fit-content;
-    font-size: 14px;
-    color: #999999;
-
-    &:hover {
-      cursor: pointer;
-    }
   }
 
   &__header {

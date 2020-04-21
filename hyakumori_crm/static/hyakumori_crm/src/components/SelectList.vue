@@ -1,5 +1,6 @@
 <template>
   <v-select
+    dense
     ref="selectList"
     append-icon="mdi-chevron-down"
     loading="false"
