@@ -1,15 +1,19 @@
 <template>
   <v-card
-    class="contact-card d-flex d-hover"
+    class="customer-contact-card d-flex d-hover"
     outlined
+    :ripple="false"
     @click.self="onClickCard"
   >
-    <v-icon class="contact-card__icon">{{ iconMode }}</v-icon>
-    <div class="contact-card__name d-flex ml-4 flex-column">
-      <div v-if="title" class="d-flex justify-space-between">
+    <v-icon class="customer-contact-card__icon">{{
+      $t("icon.customer_icon")
+    }}</v-icon>
+
+    <div class="customer-contact-card__name d-flex ml-4 flex-column">
+      <div v-if="fullname" class="d-flex justify-space-between">
         <h4 class="body-2">
-          {{ title }}
-          <span class="caption">{{ subTitle }}</span>
+          {{ fullname }}
+          <span class="caption">{{ forestCount || 0 }} 件の森林</span>
         </h4>
 
         <p class="green--text mb-0 ml-2 caption">{{ getRelationship }}</p>
@@ -38,15 +42,15 @@
       </div>
 
       <div
-        class="contact-card__related-info caption black--text mt-1"
+        class="customer-contact-card__related-info caption black--text mt-1"
         v-if="relatedInfo"
       >
         {{ relatedInfo }}
       </div>
 
       <v-select
-        v-if="isUpdate && isCustomer"
-        class="contact-card__select-relationship mt-2"
+        v-if="isUpdate"
+        class="customer-contact-card__select-relationship mt-2"
         outlined
         dense
         placeholder="続き柄を選択"
@@ -60,7 +64,7 @@
     </v-btn>
 
     <div
-      class="contact-card__tag"
+      class="customer-contact-card__tag"
       v-bind:class="{ owner: isOwner, contactor: isContactor }"
     ></div>
   </v-card>
@@ -68,13 +72,12 @@
 
 <script>
 export default {
-  name: "contact-card",
+  name: "customer-contact-card",
 
   props: {
-    mode: String,
-    customer_id: String,
-    title: String,
-    subTitle: String,
+    card_id: String,
+    fullname: String,
+    forestCount: Number,
     address: String,
     email: String,
     phone: String,
@@ -84,10 +87,6 @@ export default {
     isOwner: Boolean,
     isContactor: Boolean,
     isUpdate: Boolean,
-    isCustomer: {
-      type: Boolean,
-      default: false,
-    },
   },
 
   data() {
@@ -110,12 +109,17 @@ export default {
 
   methods: {
     onClick() {
-      // this.$emit("onClick", this.id);
+      // Do click card
+      if (this.card_id) {
+        this.$router.push({
+          name: "customer-detail",
+          params: { id: this.card_id },
+        });
+        window.scrollTo(0, 0);
+      }
     },
 
-    onClickCard() {
-      // Do click card
-    },
+    onClickCard() {},
 
     selectedRelationship(val) {
       this.innerRelationship = val;
@@ -123,14 +127,6 @@ export default {
   },
 
   computed: {
-    iconMode() {
-      if (this.mode === "forest") {
-        return this.$t("icon.forest_icon");
-      } else {
-        return this.$t("icon.customer_icon");
-      }
-    },
-
     toggleUpdateIcon() {
       if (this.isUpdate) {
         return "mdi-close";
@@ -154,13 +150,13 @@ export default {
 $border-radius: 8px;
 $background-color: #f5f5f5;
 
-.contact-card::before {
+.customer-contact-card::before {
   border-radius: $border-radius;
 }
 
-.contact-card {
+.customer-contact-card {
   width: 100%;
-  height: auto;
+  height: 100%;
   padding: 10px;
   border-radius: $border-radius !important;
   border: 1px solid #e1e1e1 !important;

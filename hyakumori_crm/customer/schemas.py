@@ -1,8 +1,10 @@
 from enum import Enum
 from typing import List, Optional, Union
 
+from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError as DjValidationError
 from django_filters import FilterSet, CharFilter
-from pydantic import BaseModel, EmailStr, constr, validator
+from pydantic import BaseModel, EmailStr, constr, validator, root_validator
 from rest_framework.serializers import ModelSerializer
 
 from ..core.models import HyakumoriDanticModel, HyakumoriDanticUpdateModel, Paginator
@@ -96,3 +98,44 @@ class ForestSerializer(ModelSerializer):
     class Meta:
         model = Forest
         fields = ["id", "cadastral", "internal_id", "customers_count"]
+
+
+class CustomerContactsDeleteInput(HyakumoriDanticModel):
+    customer: Customer
+    contacts: List[Contact]
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    @root_validator
+    def prepare_contacts(cls, values):
+        customer = values.get("customer")
+        contacts = values.get("contacts")
+        if not customer or not contacts:
+            return values
+        pks = list(map(lambda c: str(c.pk), contacts))
+        if len(set(pks)) < len(pks):
+            raise ValueError(_("Duplicate contacts"))
+        contact_instances = Contact.objects.filter(
+            id__in=pks,
+            customercontact__customer_id=customer.id,
+            customercontact__is_basic=False,
+        )
+        db_pks = set(map(lambda c: str(c.pk), contact_instances))
+        notfound_pks = set(pks) - set(db_pks)
+        if len(notfound_pks) > 0:
+            raise ValueError(
+                _("Contact {c} not belong to forest and customer").format(
+                    c=", ".join(notfound_pks)
+                )
+            )
+        return values
+
+    @validator("contacts", each_item=True, pre=True)
+    def check_contact(cls, v):
+        if not isinstance(v, Contact):
+            try:
+                return Contact.objects.get(pk=v)
+            except (Contact.DoesNotExist, DjValidationError):
+                raise ValueError(_("Contact {pk} not found").format(pk=v))
+        return v

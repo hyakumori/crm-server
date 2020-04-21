@@ -1,6 +1,7 @@
 <template>
   <div class="page-header">
-    <v-img :src="getAppBar" :height="isDetail ? 169 : 151"></v-img>
+    <v-img src="../assets/img/app-bar.png" height="151" v-if="!isDetail" />
+    <v-img src="../assets/img/app-bar-detail.jpg" height="169" v-else />
 
     <div class="page-header__content">
       <div class="page-header__content--center">
@@ -26,11 +27,12 @@
               $t("page_header.archive_mgmt")
             }}</router-link>
 
-            <router-link to="/users" class="mr-4">{{
+            <router-link to="/users" class="mr-2">{{
               $t("page_header.user_mgmt")
             }}</router-link>
 
             <router-link to="/me" class="me">
+              <span class="mr-2">|</span>
               <v-icon class="white--text">mdi-account-circle</v-icon>
               {{ userDisplayName }}
             </router-link>
@@ -101,8 +103,6 @@
 
 <script>
 import CustomerCreateForm from "./CustomerCreateForm";
-import AppBarImg from "../assets/img/app-bar.webp";
-import AppBarDetailImg from "../assets/img/app-bar-detail.webp";
 import OutlineRoundBtn from "./OutlineRoundBtn";
 
 export default {
@@ -121,17 +121,13 @@ export default {
 
   methods: {
     onBack() {
-      this.$router.go(-1);
+      this.$router.push(this.$store.state.headerInfo.backUrl || -1);
     },
   },
 
   computed: {
     isDetail() {
       return this.$route.name && this.$route.name.includes("detail");
-    },
-
-    getAppBar() {
-      return this.isDetail ? AppBarDetailImg : AppBarImg;
     },
 
     headerInfo() {

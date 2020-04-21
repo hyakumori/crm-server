@@ -9,7 +9,7 @@
 
       <div class="ml-7 forest__data-section">
         <table-action
-          class="mb-4"
+          class="forest__data-section__table-action mb-4"
           v-if="tableSelectedRow.length > 0"
           :selectedCount="tableSelectedRow.length"
         />
@@ -26,6 +26,7 @@
           :options.sync="options"
           @rowData="rowData"
           @selectedRow="selectedRow"
+          :autoHeaders="false"
         ></data-list>
       </div>
 
@@ -132,9 +133,10 @@ export default {
     selectedRow(val) {
       this.tableSelectedRow = val;
     },
+
     onSearch() {
       this.filter = { ...this.filter, filters: this.$refs.filter.conditions };
-      this.$apollo.queries.result.refetch();
+      this.$apollo.queries.forestsInfo.refetch();
     },
   },
 
@@ -208,6 +210,7 @@ export default {
     getSearchCriteria() {
       return Array.from(this.getHeaders).map(header => header.text);
     },
+
     filterFields() {
       return this.headers
         .map(h => ({ text: h.text, value: h.filter_name }))
@@ -222,6 +225,13 @@ export default {
   &__data-section {
     width: 100%;
     overflow: hidden;
+
+    &__table-action ::v-deep {
+      .table-action__select {
+        height: 100%;
+        top: 20%;
+      }
+    }
   }
 }
 </style>

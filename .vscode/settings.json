@@ -4,7 +4,7 @@
   "python.linting.flake8Enabled": true,
   "python.linting.flake8Args": [
     "--enable=W0614",
-    "--max-line-length=120",
-    "--ignore=E402,F841,F401,E302,E305,E203"
+    "--max-line-length=88",
+    "--ignore=E402,F841,F401,E302,E305,E203,W503"
   ]
 }

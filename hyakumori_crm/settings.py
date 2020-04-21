@@ -256,3 +256,6 @@ LOGGING = {
         },
     },
 }
+
+# Under proxy, need this configuration so that restframework can apply https instead of http
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

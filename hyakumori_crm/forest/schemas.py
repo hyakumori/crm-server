@@ -1,19 +1,19 @@
 from typing import Optional, List
 from datetime import date
 from uuid import UUID
-from django.core.exceptions import ValidationError
+from enum import Enum
+from django.core.exceptions import ValidationError as DjValidationError
 from django.utils.translation import gettext_lazy as _
 from django_filters import FilterSet, CharFilter, DateFilter
 from pydantic import validator, root_validator
 
-from hyakumori_crm.core.models import HyakumoriDanticModel
-from hyakumori_crm.crm.models import Contact
+from hyakumori_crm.core.models import HyakumoriDanticModel, Paginator
+from hyakumori_crm.crm.models import Contact, Forest, ForestCustomer, Customer
 from hyakumori_crm.crm.schemas.contract import ContractType
-from ..core.models import Paginator
-from ..crm.models import Forest, ForestCustomer, Customer
 
 
 class ForestFilter(FilterSet):
+    internal_id = CharFilter(lookup_expr="icontains", method="icontains_filter")
     cadastral__prefecture = CharFilter(
         lookup_expr="icontains", method="icontains_filter"
     )
@@ -61,7 +61,7 @@ class ForestFilter(FilterSet):
 
     class Meta:
         model = Forest
-        fields = {"internal_id": ["icontains"]}
+        fields = []
 
 
 class ForestPaginator(Paginator):
@@ -85,14 +85,21 @@ class Contract(HyakumoriDanticModel):
 
 
 class ForestInput(HyakumoriDanticModel):
+    forest: Forest
     cadastral: Cadastral
     contracts: List[Contract]
 
+    class Config:
+        arbitrary_types_allowed = True
+
 
 class OwnerPksInput(HyakumoriDanticModel):
-    forest_pk: UUID
+    forest: Forest
     added: List[UUID] = []
     deleted: List[UUID] = []
+
+    class Config:
+        arbitrary_types_allowed = True
 
     @validator("deleted")
     def check_deleted(cls, v):
@@ -115,38 +122,53 @@ class OwnerPksInput(HyakumoriDanticModel):
         return v
 
 
-class ForestOwnerContractInput(HyakumoriDanticModel):
-    forest: Forest
-    customer: Customer
+class RelationshipType(str, Enum):
+    self = "本人"
+    parents = "両親"
+    husband = "夫"
+    wife = "妻"
+    son = "息子"
+    daughter = "娘"
+    grandchild = "孫"
+    friend = "友人"
+    relative = "その他親族"
+    other = "その他"
+
+
+class SingleSelectContactInput(HyakumoriDanticModel):
     contact: Contact
+    relationship_type: RelationshipType
+    set_forest: bool = False
 
     class Config:
         arbitrary_types_allowed = True
 
-    @root_validator(pre=True)
-    def prepare_objects(cls, values):
-        if not isinstance(values.get("forest"), Forest):
+    @validator("contact", pre=True)
+    def prepare_contact(cls, v):
+        if not isinstance(v, Contact):
             try:
-                values["forest"] = Forest.objects.get(pk=values.get("forest"))
-            except (Forest.DoesNotExist, ValidationError):
-                raise ValueError(_("Forest not found"))
-
-        if not isinstance(values.get("customer"), Customer):
-            try:
-                ForestCustomer.objects.get(
-                    customer_id=values.get("customer"), forest_id=values["forest"].id
-                )
-                values["customer"] = Customer.objects.get(pk=values.get("customer"))
-            except (
-                ForestCustomer.DoesNotExist,
-                Customer.DoesNotExist,
-                ValidationError,
-            ):
-                raise ValueError(_("Customer not found"))
-
-        if not isinstance(values.get("contact"), Contact):
-            try:
-                values["contact"] = Contact.objects.get(pk=values.get("contact"))
-            except (Forest.DoesNotExist, ValidationError):
+                return Contact.objects.get(pk=v)
+            except (Contact.DoesNotExist, DjValidationError):
                 raise ValueError(_("Contact not found"))
+        return v
+
+
+class ForestOwnerContactsInput(HyakumoriDanticModel):
+    forest: Forest
+    customer: Customer
+    contacts: List[SingleSelectContactInput]
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    @root_validator
+    def prepare_contacts(cls, values):
+        forest = values.get("forest")
+        customer = values.get("customer")
+        contacts = values.get("contacts")
+        if not forest or not customer or not contacts:
+            return values
+        pks = list(map(lambda c: str(c.contact.pk), contacts))
+        if len(set(pks)) < len(pks):
+            raise ValueError(_("Duplicate contacts"))
         return values

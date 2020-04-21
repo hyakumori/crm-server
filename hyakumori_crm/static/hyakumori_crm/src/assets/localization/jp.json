@@ -2,11 +2,12 @@
   "buttons": {
     "add_and_edit": "追加＆編集",
     "add_customer": "顧客を追加",
+    "back": "前のページに戻る",
     "cancel": "キャンセル",
-    "save": "保存",
     "login": "ログイン",
-    "send": "送信",
-    "back": "前のページに戻る"
+    "reset": "リセット",
+    "save": "保存",
+    "send": "送信"
   },
   "detail": {
     "tabs": {
@@ -86,35 +87,30 @@
     "username": "Username",
     "validation_match_error": "The username and password you entered don't match"
   },
-  "reset_password_form": {
-    "new_password": "新しいパスワード",
-    "new_password_retype": "新しいパスワード（確認）",
-    "password_not_match": "パスワードの確認が一致しません"
-  },
   "messages": {
-    "no_permission": "許可がありません",
     "forgot_password_help_text": "パスワードを再発行するには、メールアドレスを入力し、届いたメールのURLをクリックしてください",
-    "reset_password_url_sent": "再発行用のURLをご登録のメールアドレス宛てに送信しました。",
-    "reset_password_confirm_help_text": "パスワードを再発行するには、新しいパスワードを2ド入力してください。",
+    "logging_out": "ログアウト中 .  .  .",
+    "no_permission": "許可がありません",
     "not_found_text": "要求したページは見つかりませんでした",
-    "logging_out": "ログアウト中 .  .  ."
+    "reset_password_confirm_help_text": "パスワードを再発行するには、新しいパスワードを2ド入力してください。",
+    "reset_password_url_sent": "再発行用のURLをご登録のメールアドレス宛てに送信しました。"
   },
   "page_header": {
-    "archive_mgmt": "協議履歴一覧",
     "archive_detail": "協議履歴",
-    "customer_mgmt": "顧客情報一覧",
+    "archive_mgmt": "協議履歴一覧",
     "customer_detail": "顧客情報詳細",
-    "forest_mgmt": "森林一覧",
+    "customer_mgmt": "顧客情報一覧",
     "forest_detail": "森林詳細",
-    "user_mgmt": "アカウント管理一覧",
-    "user_detail": "アカウント管理",
+    "forest_mgmt": "森林一覧",
     "forgot_password": "パスワードの再発行",
     "login": "ログイン",
+    "logout": "ログアウト",
     "negotiate_mgm": "ユーザー管理",
     "no_permission": "無許可",
-    "setting": "設定",
     "not_found": "見つかりません",
-    "logout": "ログアウト",
+    "setting": "設定",
+    "user_detail": "アカウント管理",
+    "user_mgmt": "アカウント管理一覧",
     "user_profile": "ユーザープロファイル"
   },
   "raw_text": {
@@ -122,6 +118,11 @@
     "in_negotiation": "商談中",
     "rows_per_page": "ページ当たりの行数",
     "search": "検索"
+  },
+  "reset_password_form": {
+    "new_password": "新しいパスワード",
+    "new_password_retype": "新しいパスワード（確認）",
+    "password_not_match": "パスワードの確認が一致しません"
   },
   "search": {
     "add_search_condition": "検索条件を追加",
@@ -137,6 +138,7 @@
   },
   "site_name": "Hyakumori CRM",
   "tables": {
-    "headers": {}
+    "headers": {},
+    "no_data": "テーブルに利用可能なデータがありません"
   }
 }
