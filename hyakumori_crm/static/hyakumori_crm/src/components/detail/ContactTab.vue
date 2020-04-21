@@ -23,57 +23,31 @@
     ></v-switch>
 
     <v-tab-item>
-      <v-row no-gutters>
-        <template v-for="(contact, index) in ownerContacts">
-          <v-col cols="6" :key="index">
-            <contact-card
-              mode="customer"
-              :customer_id="contact.customer_id"
-              :title="contact.title"
-              :address="contact.address"
-              :email="contact.email"
-              :subTitle="contact.forest_count"
-              :phone="contact.phone"
-              :cellphone="contact.cellphone"
-              :isOwner="true"
-              :isUpdate="isUpdate"
-            />
-          </v-col>
-        </template>
-      </v-row>
+      <customer-contact-list
+        :contacts="ownerContacts"
+        :isUpdate="isUpdate"
+        :isOwner="true"
+      />
     </v-tab-item>
 
     <v-tab-item>
-      <v-row no-gutters>
-        <template v-for="(contact, index) in contactorContacts">
-          <v-col cols="6" :key="index">
-            <contact-card
-              mode="customer"
-              :customer_id="contact.customer_id"
-              :title="contact.title"
-              :address="contact.address"
-              :email="contact.email"
-              :subTitle="contact.forest_count"
-              :phone="contact.phone"
-              :cellphone="contact.cellphone"
-              :isContactor="true"
-              :isUpdate="isUpdate"
-            />
-          </v-col>
-        </template>
-      </v-row>
+      <customer-contact-list
+        :contacts="contactorContacts"
+        :isUpdate="isUpdate"
+        :isContactor="true"
+      />
     </v-tab-item>
   </v-tabs>
 </template>
 
 <script>
-import ContactCard from "../detail/ContactCard";
+import CustomerContactList from "../detail/CustomerContactList";
 
 export default {
   name: "contact-tab",
 
   components: {
-    ContactCard,
+    CustomerContactList,
   },
 
   data() {
@@ -126,7 +100,7 @@ $border-tabs: 18px;
 
 .contact-tabs ::v-deep {
   .v-tabs-items {
-    margin-top: 20px;
+    margin-top: 8px;
   }
 }
 

@@ -67,6 +67,7 @@ $action-list-color: #825929;
 
     .mdi-chevron-down {
       color: $action-list-color !important;
+      margin-top: 4px !important;
     }
   }
 }

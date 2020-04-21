@@ -32,7 +32,7 @@ const setupRestClient = options => {
   axios.interceptors.response.use(
     response => response && response.data,
     error => {
-      if (error.response.status === 401) {
+      if (error.response && error.response.status === 401) {
         eventBus.$emit("auth:relogin");
       }
 
@@ -45,8 +45,6 @@ const setupRestClient = options => {
   return axios;
 };
 
-export default axios; //TODO: remove later, keeping as not breaking current usages
-
 const HttpClientPlugin = {
   install: (Vue, options) => {
     Vue.prototype.$rest = setupRestClient(options);
@@ -54,3 +52,4 @@ const HttpClientPlugin = {
 };
 
 export { HttpClientPlugin };
+export default axios;
