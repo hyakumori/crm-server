@@ -7,7 +7,11 @@
       @update="val => (isUpdate = val)"
     />
     <template v-if="isExpand">
-      <attachment-card class="mt-4" :isUpdate="isUpdate" :attaches="attachExpand" />
+      <attachment-card
+        class="mt-4"
+        :isUpdate="isUpdate"
+        :attaches="attachExpand"
+      />
     </template>
     <template v-else>
       <attachment-card

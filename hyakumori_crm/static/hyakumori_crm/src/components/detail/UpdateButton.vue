@@ -1,6 +1,13 @@
 <template>
   <div class="update-btn">
-    <v-btn color="primary" elevation="0" class="mr-2">保存</v-btn>
+    <v-btn
+      color="primary"
+      elevation="0"
+      class="mr-2"
+      :loading="isLoading"
+      @click="onSave"
+      >保存</v-btn
+    >
     <v-btn class="update-btn__cancel" text @click="onCancel">キャンセル</v-btn>
   </div>
 </template>
@@ -12,11 +19,16 @@ export default {
   props: {
     save: Function,
     cancel: Function,
+    isLoading: Boolean,
   },
 
   methods: {
     onCancel() {
       this.cancel();
+    },
+
+    onSave() {
+      this.save();
     },
   },
 };

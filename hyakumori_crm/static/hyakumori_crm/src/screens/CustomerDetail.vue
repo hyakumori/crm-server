@@ -95,7 +95,7 @@ import discussions from "../assets/dump/history_discussion.json";
 import actionLogs from "../assets/dump/action_log.json";
 import LogCard from "../components/detail/LogCard";
 import BasicInfoContainer from "../components/detail/BasicInfoContainer";
-import BankingInfoContainer from '../components/detail/BankingInfoContainer';
+import BankingInfoContainer from "../components/detail/BankingInfoContainer";
 import AttachmentContainer from "../components/detail/AttachmentContainer";
 import ForestListContainer from "../components/detail/ForestListContainer";
 import CustomerListContainer from "../components/detail/CustomerListContainer";
