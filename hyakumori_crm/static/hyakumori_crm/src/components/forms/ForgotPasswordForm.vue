@@ -8,6 +8,13 @@
 
         <v-card-text class="pa-6">
           <v-container fluid class="pa-0">
+            <v-row no-gutters v-if="formError">
+              <v-col cols="12">
+                <v-alert dense outlined type="error">
+                  {{ formError }}
+                </v-alert>
+              </v-col>
+            </v-row>
             <v-row no-gutters>
               <p class="grey--text text--darken-3">
                 {{ $t("messages.forgot_password_help_text") }}
@@ -19,6 +26,7 @@
                   $t("login_form.email")
                 }}</label>
                 <text-input
+                  :disabled="success"
                   v-model="form.email"
                   placeholder="abc@example.com"
                   hideDetails="auto"
@@ -40,7 +48,7 @@
                   depressed
                   width="100%"
                   @click="onSubmit"
-                  :disabled="invalid"
+                  :disabled="invalid || success"
                   >{{ $t("buttons.send") }}
                 </v-btn>
               </v-col>
@@ -84,7 +92,18 @@ export default {
     };
   },
   methods: {
-    onSubmit() {},
+    async onSubmit() {
+      try {
+        const response = await this.$rest.post(`/users/reset_password`, {
+          email: this.form.email,
+        });
+
+        this.success = true;
+        this.formError = "";
+      } catch (err) {
+        this.formError = this.$t("messages.email_not_found");
+      }
+    },
   },
   computed: {
     mailSent: function() {

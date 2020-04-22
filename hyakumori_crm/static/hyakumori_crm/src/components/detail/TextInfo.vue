@@ -29,6 +29,12 @@ export default {
     name: String,
     isUpdate: Boolean,
   },
+
+  data() {
+    return {
+      innerValue: "",
+    };
+  },
 };
 </script>
 

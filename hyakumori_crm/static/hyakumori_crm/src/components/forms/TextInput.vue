@@ -8,6 +8,7 @@
     slim
   >
     <v-text-field
+      :disabled="disabled"
       v-model="innerValue"
       single-line
       dense
@@ -50,6 +51,7 @@ export default {
       type: String,
       default: "",
     },
+    disabled: { type: Boolean, default: false },
     hideDetails: {
       type: [String, Boolean],
       default: "auto",
