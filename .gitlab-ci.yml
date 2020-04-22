@@ -10,6 +10,9 @@ default:
 test-frontend:
   stage: test
   image: node:12-alpine
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'develop'
+    - if: $CI_MERGE_REQUEST_ID
   cache:
     paths:
       - $CI_PROJECT_DIR/hyakumori_crm/static/hyakumori_crm/node_modules/
@@ -25,6 +28,9 @@ test-frontend:
 test-backend:
   stage: test
   image: python:3.7
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'develop'
+    - if: $CI_MERGE_REQUEST_ID
   services:
     - postgres:11-alpine
 
