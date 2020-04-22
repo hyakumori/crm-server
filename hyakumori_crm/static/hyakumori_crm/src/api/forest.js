@@ -7,3 +7,7 @@ export function fetchBasicInfo(forestId) {
 export function fetchForestOwner(forestId) {
   return axios.get(`forests/${forestId}/customers`);
 }
+
+export function updateBasicInfo(forestId, info) {
+  return axios.put(`forests/${forestId}`, info);
+}

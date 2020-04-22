@@ -5,11 +5,11 @@
       :editBtnContent="editBtnContent"
       :loading="isLoading"
       :update="isUpdate"
-      @update="val => (isUpdate = val)"
+      @update="setUpdate"
     />
-    <div class="my-4">
-      <basic-info
-        :infos="info"
+    <div class="mt-4">
+      <forest-basic-info
+        :info="mutableInfo"
         :isUpdate="isUpdate"
         :isSave="isSave"
         @updateInfo="updateData"
@@ -17,6 +17,8 @@
       <update-button
         class="mb-12"
         v-if="isUpdate"
+        :isLoading="isSave"
+        :save="save.bind(this)"
         :cancel="cancel.bind(this)"
       />
     </div>
@@ -24,33 +26,34 @@
 </template>
 
 <script>
-import BasicInfo from "./BasicInfo";
+import ForestBasicInfo from "./ForestBasicInfo";
 import ContentHeader from "./ContentHeader";
 import UpdateButton from "./UpdateButton";
 import ContainerMixin from "./ContainerMixin";
 import { updateBasicInfo } from "../../api/forest";
-import { zipObjectDeep } from "lodash";
+import { cloneDeep } from "lodash";
 
 export default {
-  name: "basic-info-container",
+  name: "forest-basic-info-container",
 
   mixins: [ContainerMixin],
 
   components: {
     ContentHeader,
-    BasicInfo,
+    ForestBasicInfo,
     UpdateButton,
   },
 
   props: {
-    id: String,
-    info: Array,
+    info: Object,
   },
 
   data() {
     return {
       isUpdate: false,
       isSave: false,
+      immutableInfo: {},
+      mutableInfo: null,
     };
   },
 
@@ -59,11 +62,32 @@ export default {
       this.isSave = true;
     },
 
+    cancel() {
+      this.mutableInfo = this.immutableInfo;
+      this.isUpdate = false;
+    },
+
+    setUpdate(val) {
+      this.isUpdate = val;
+      this.immutableInfo = cloneDeep(this.mutableInfo);
+    },
+
     updateData(updateInfo) {
-      const key = updateInfo.map(info => info.attr);
-      const val = updateInfo.map(info => info.value);
-      const info = zipObjectDeep(key, val);
-      updateBasicInfo(this.id, info);
+      updateBasicInfo(this.info.id, updateInfo)
+        .then(res => {
+          this.mutableInfo = res;
+          this.isSave = false;
+          this.isUpdate = false;
+        })
+        .catch(() => {
+          // TODO: Handle error later
+        });
+    },
+  },
+
+  watch: {
+    info(val) {
+      this.mutableInfo = val;
     },
   },
 };

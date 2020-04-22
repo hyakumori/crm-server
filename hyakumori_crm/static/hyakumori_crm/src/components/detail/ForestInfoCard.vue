@@ -5,9 +5,7 @@
     :ripple="false"
     @click.self="onClickCard"
   >
-    <v-icon class="forest-info-card__icon">{{
-      $t("icon.forest_icon")
-    }}</v-icon>
+    <v-icon class="forest-info-card__icon">{{ $t("icon.forest_icon") }}</v-icon>
 
     <div class="forest-info-card__name d-flex ml-4 flex-column">
       <div v-if="forestId" class="d-flex justify-space-between">
