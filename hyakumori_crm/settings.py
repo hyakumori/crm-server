@@ -183,6 +183,7 @@ AUTHENTICATION_BACKENDS = (
 DJOSER = {
     "PASSWORD_RESET_CONFIRM_URL": "auth/reset-password/{uid}/{token}",
     "USERNAME_RESET_CONFIRM_URL": "auth/reset-username/{uid}/{token}",
+    "PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": True,
     "ACTIVATION_URL": "auth/activate/{uid}/{token}",
     "SEND_ACTIVATION_EMAIL": True,
     "SEND_CONFIRMATION_EMAIL": True,
