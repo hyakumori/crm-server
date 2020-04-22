@@ -1,9 +1,10 @@
 <template>
   <v-layout v-resize="onResize">
     <v-data-table
+      class="pa-0"
       ref="dataTable"
       v-model="selected"
-      dense
+      :dense="dense"
       light
       :height="tableHeight"
       :fixed-header="true"
@@ -18,7 +19,7 @@
       :options.sync="innerOptions"
       :server-items-length="serverItemsLength"
       :footer-props="{
-        itemsPerPageOptions: [50, 100, 150],
+        itemsPerPageOptions: [10, 50, 100, 150],
         itemsPerPageText: $t('raw_text.rows_per_page'),
       }"
       @click:row="clickRow"
@@ -57,6 +58,8 @@ const headerSelection = { value: "options", align: "center", sortable: false };
 export default {
   name: "data-list",
   props: {
+    mode: String,
+    dense: { type: Boolean, default: true },
     isLoading: Boolean,
     showSelect: Boolean,
     data: Array,
@@ -131,7 +134,7 @@ export default {
     },
 
     onResize() {
-      this.tableHeight = window.innerHeight - 320;
+      this.tableHeight = window.innerHeight - 280;
     },
   },
 

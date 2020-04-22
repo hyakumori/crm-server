@@ -6,6 +6,7 @@
       class="mr-2"
       :loading="isLoading"
       @click="onSave"
+      :disabled="disabled"
       >保存</v-btn
     >
     <v-btn class="update-btn__cancel" text @click="onCancel">キャンセル</v-btn>
@@ -20,15 +21,20 @@ export default {
     save: Function,
     cancel: Function,
     isLoading: Boolean,
+    disabled: Boolean,
   },
 
   methods: {
     onCancel() {
-      this.cancel();
+      if (this.cancel) {
+        this.cancel();
+      }
     },
 
     onSave() {
-      this.save();
+      if (this.save) {
+        this.save();
+      }
     },
   },
 };

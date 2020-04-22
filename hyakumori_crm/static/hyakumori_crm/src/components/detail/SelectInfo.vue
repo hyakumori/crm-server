@@ -1,32 +1,30 @@
 <template>
   <div class="text-info">
     <h5>{{ label }}</h5>
-    <text-input
+    <select-input
       v-if="isUpdate"
-      :rules="rules"
       :value="value"
-      :name="name"
+      :items="items"
       @input="$emit('input', $event)"
     />
-    <p v-else>{{ value }}</p>
+    <p v-else>{{ value.text }}</p>
   </div>
 </template>
 
 <script>
-import TextInput from "../forms/TextInput";
+import SelectInput from "../forms/SelectInput";
 
 export default {
   name: "text-info",
 
   components: {
-    TextInput,
+    SelectInput,
   },
 
   props: {
+    items: Array,
     label: String,
-    value: String,
-    rules: String,
-    name: String,
+    value: [String, Number, Object],
     isUpdate: Boolean,
   },
 };

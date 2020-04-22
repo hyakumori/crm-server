@@ -28,7 +28,15 @@
 .d-hover {
   border: 1px solid #e1e1e1;
 }
+
 .d-hover:hover {
   border: 1px solid #12c7a6 !important;
   transition: all ease-in-out 0.25s;
+}
+
+.v-data-table-header tr {
+  height: 70px;
+}
+.v-application--is-ltr .v-data-table--fixed-header .v-data-footer {
+  margin-right: 0;
 }
