@@ -9,8 +9,8 @@ from rest_framework.response import Response
 from rest_typed_views import Body, typed_action
 
 from hyakumori_crm.core.utils import default_paginator
-from hyakumori_crm.crm.models import Forest
-from hyakumori_crm.crm.restful.serializers import ContactSerializer, ForestSerializer
+from hyakumori_crm.crm.models import Forest, Customer
+from hyakumori_crm.crm.restful.serializers import CustomerSerializer, ForestSerializer
 
 from ..api.decorators import api_validate_model, get_or_404, typed_api_view
 from .schemas import (
@@ -40,16 +40,17 @@ class ForestViewSets(viewsets.ModelViewSet):
 
         paginator = default_paginator()
         paged_list = paginator.paginate_queryset(
-            request=request, queryset=obj.forestcustomer_set.all(), view=self
+            request=request,
+            queryset=Customer.objects.filter(forestcustomer__forest_id=obj.pk)
+            .forests_count()
+            .prefetch_related("customercontact_set__contact")
+            .order_by("id"),
+            view=self,
         )
 
-        customers = []
-        for forest_customer in paged_list:
-            _contact = ContactSerializer(forest_customer.contact).data
-            _contact["customer_id"] = forest_customer.customer.pk
-            customers.append(_contact)
-
-        return paginator.get_paginated_response(customers)
+        return paginator.get_paginated_response(
+            CustomerSerializer(paged_list, many=True).data
+        )
 
     @typed_action(detail=True, methods=["GET"])
     def related_archives(self, request):
