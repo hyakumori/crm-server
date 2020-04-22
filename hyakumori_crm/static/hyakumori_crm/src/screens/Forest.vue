@@ -223,7 +223,7 @@ export default {
 <style lang="scss" scoped>
 .forest {
   &__data-section {
-    width: 100%;
+    max-width: 1021px;
     overflow: hidden;
 
     &__table-action ::v-deep {

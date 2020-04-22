@@ -12,7 +12,10 @@ export default {
   mounted() {
     eventBus.$on("auth:relogin", () => {
       localStorage.clear();
-      this.$router.push({ name: "auth-login" });
+      this.$router.push({ name: "auth-login" }).catch();
+    });
+    eventBus.$on("rest:404", () => {
+      this.$router.replace({ name: "not-found" }).catch();
     });
   },
 };

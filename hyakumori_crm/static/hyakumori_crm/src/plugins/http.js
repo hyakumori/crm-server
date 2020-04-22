@@ -33,7 +33,17 @@ const setupRestClient = options => {
     response => response && response.data,
     error => {
       if (error.response && error.response.status === 401) {
-        eventBus.$emit("auth:relogin");
+        return new Promise((resolve, reject) => {
+          eventBus.$emit("auth:relogin");
+          reject(error);
+        });
+      }
+
+      if (error.response && error.response.status === 404) {
+        return new Promise((resolve, reject) => {
+          eventBus.$emit("rest:404");
+          reject(error);
+        });
       }
 
       return new Promise((resolve, reject) => {
