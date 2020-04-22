@@ -1,6 +1,6 @@
 from django.contrib.postgres.fields.jsonb import JSONField
 from django.db import models
-from django.db.models import OuterRef, Subquery
+from django.db.models import OuterRef, Subquery, Count, F
 
 from ...core.models import BaseResourceModel, BaseQuerySet
 from ..schemas.customer import Address, Banking
@@ -39,6 +39,9 @@ class CustomerQueryset(BaseQuerySet):
             is_basic=True
         )
         return self.annotate(basic_contact_id=Subquery(cc.values("contact_id")[:1]))
+
+    def forests_count(self):
+        return self.annotate(forests_count=Count(F("forestcustomer")))
 
 
 class Customer(BaseResourceModel):
