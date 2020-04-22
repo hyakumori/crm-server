@@ -188,7 +188,7 @@ $text-font-size: 14px;
 
 .search-card {
   padding: 18px;
-  height: 625px;
+  min-height: 625px;
   overflow: auto;
   min-width: 295px;
   max-width: 295px;
