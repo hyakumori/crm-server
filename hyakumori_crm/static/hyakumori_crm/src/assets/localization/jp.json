@@ -76,25 +76,18 @@
     },
     "forgot_password_hint": "パスワードを忘れた方はこちら",
     "go_to_login": "ログイン画面に戻る",
-    "go_to_register": "Don't have an account?",
-    "password": "パスワード",
-    "password_confirmation": "Password confirmation",
-    "please_login": "Please login to continue",
-    "register_form_title": "Register new account",
-    "register_successfully": "Register successfully!",
-    "subscribed_message": "Currently consider opening a store within six months",
-    "subscribed_warning": "If you check, we will provide your information to suppliers.",
-    "term_of_service": "I accept to the <a class='blue--text' target='_blank' href='/terms-of-service'>Terms of Service</a> and <a class='blue--text' target='_blank' href='/privacy-policy'>Privacy Policy</a>",
-    "username": "Username",
-    "validation_match_error": "The username and password you entered don't match"
+    "password": "パスワード"
   },
   "messages": {
     "forgot_password_help_text": "パスワードを再発行するには、メールアドレスを入力し、届いたメールのURLをクリックしてください",
     "logging_out": "ログアウト中 .  .  .",
     "no_permission": "許可がありません",
     "not_found_text": "要求したページは見つかりませんでした",
+    "email_not_found": "入力したメールアドレスに該当するユーザが存在しません。",
     "reset_password_confirm_help_text": "パスワードを再発行するには、新しいパスワードを2ド入力してください。",
-    "reset_password_url_sent": "再発行用のURLをご登録のメールアドレス宛てに送信しました。"
+    "reset_password_url_sent": "再発行用のURLをご登録のメールアドレス宛てに送信しました。",
+    "error_set_new_password": "パスワード設定中にエラーが発生しました。入力した内容を確認した上で、再度試してみてください。",
+    "reset_password_success": "パスワードが変更できました。{seconds}後にログイン画面にリダイレクトします。"
   },
   "page_header": {
     "archive_detail": "協議履歴",
