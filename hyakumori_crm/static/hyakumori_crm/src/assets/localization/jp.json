@@ -71,6 +71,7 @@
     "user_icon": "mdi-calendar-text"
   },
   "login_form": {
+    "activation_guide": "An activation email will be sent to your registered email address.</br> Click the URL in the email to complete registration.",
     "email": "メールアドレス",
     "errors": {
       "auth_failed": "入力した認証情報でログインできませんでした"
@@ -96,8 +97,10 @@
     "field_optional": "省略可能"
   },
   "page_header": {
-    "archive_detail": "交渉履歴",
-    "archive_mgmt": "交渉履歴一覧",
+    "archive_detail": "協議履歴",
+    "archive_history": "協議履歴",
+    "archive_mgmt": "協議履歴一覧",
+    "archive_list": "協議記録の一覧",
     "customer_detail": "顧客情報詳細",
     "customer_mgmt": "顧客情報一覧",
     "forest_detail": "森林詳細",
