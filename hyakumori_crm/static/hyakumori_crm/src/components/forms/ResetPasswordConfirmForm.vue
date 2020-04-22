@@ -8,6 +8,24 @@
 
         <v-card-text class="pa-6">
           <v-container fluid class="pa-0">
+            <v-row no-gutters v-if="formError">
+              <v-col cols="12">
+                <v-alert dense outlined type="error">
+                  {{ formError }}
+                </v-alert>
+              </v-col>
+            </v-row>
+            <v-row no-gutters v-if="success">
+              <v-col cols="12">
+                <v-alert dense outlined type="success">
+                  {{
+                    $t("messages.reset_password_success", {
+                      seconds: redirectCount,
+                    })
+                  }}
+                </v-alert>
+              </v-col>
+            </v-row>
             <v-row no-gutters>
               <p class="grey--text text--darken-3">
                 {{ $t("messages.reset_password_confirm_help_text") }}
@@ -53,7 +71,7 @@
                   depressed
                   @click="onSubmit"
                   width="100%"
-                  :disabled="invalid"
+                  :disabled="invalid || loading || success"
                   >{{ $t("buttons.send") }}
                 </v-btn>
               </v-col>
@@ -90,12 +108,41 @@ export default {
         password_retype: "",
       },
       formError: "",
+      loading: false,
       showPassword: false,
       success: false,
+      redirectInterval: null,
+      redirectCount: 3,
     };
   },
   methods: {
-    onSubmit() {},
+    async onSubmit() {
+      try {
+        this.loading = true;
+        const response = await this.$rest.post(
+          `/users/reset_password_confirm`,
+          {
+            uid: this.$route.params.uid,
+            token: this.$route.params.token,
+            new_password: this.form.password,
+            re_new_password: this.form.password_retype,
+          },
+        );
+        this.success = true;
+        this.redirectInterval = setInterval(() => {
+          if (this.redirectCount == 0) {
+            clearInterval(this.redirectInterval);
+            return this.$router.push({ name: "auth-login" });
+          }
+          this.redirectCount -= 1;
+        }, 1000);
+      } catch (err) {
+        this.formError = this.$t("messages.error_set_new_password");
+        this.success = false;
+      } finally {
+        this.loading = false;
+      }
+    },
   },
   created() {
     extend("password", {
