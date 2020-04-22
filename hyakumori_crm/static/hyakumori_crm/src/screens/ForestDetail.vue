@@ -2,11 +2,11 @@
   <main-section class="forest-detail">
     <template #section>
       <div class="forest-detail__section px-7">
-        <basic-info-container
+        <forest-basic-info-container
           headerContent="基本情報 (登記情報)"
           editBtnContent="所有地を追加・編集"
-          :isLoading="basicInfo.length === 0"
-          :info="basicInfo"
+          :isLoading="!forestInfo"
+          :info="forestInfo"
         />
 
         <forest-contact-tab-container
@@ -34,18 +34,12 @@
         />
 
         <div id="forest-attributes">
-          <content-header
-            class="mt-9"
-            content="森林情報"
-            :displayAdditionBtn="false"
-          />
+          <content-header class="mt-9" content="森林情報" :displayAdditionBtn="false" />
           <v-row class="forest-detail__header d-flex mx-0 mt-5">
             <template v-for="(header, index) in headerData">
               <v-col class="forest-detail__header--text" cols="3" :key="index">
                 <td class="pr-2">{{ header.name }}</td>
-                <td class="forest-detail__header--text__data--color">
-                  {{ header.data }}
-                </td>
+                <td class="forest-detail__header--text__data--color">{{ header.data }}</td>
               </v-col>
             </template>
           </v-row>
@@ -55,7 +49,7 @@
           />
         </div>
       </div>
-    </template>moduleName
+    </template>
     <template #right>
       <div class="forest-detail__log ml-6">
         <h4 class="mb-1">更新履歴</h4>
@@ -79,7 +73,7 @@ import discussions from "../assets/dump/history_discussion.json";
 import actionLogs from "../assets/dump/action_log.json";
 import LogCard from "../components/detail/LogCard";
 import ForestContactTabContainer from "../components/detail/ForestContactTabContainer";
-import BasicInfoContainer from "../components/detail/BasicInfoContainer";
+import ForestBasicInfoContainer from "../components/detail/ForestBasicInfoContainer";
 import AttachmentContainer from "../components/detail/AttachmentContainer";
 import ForestAttributeTable from "../components/detail/ForestAttributeTable";
 import { fetchBasicInfo, fetchForestOwner } from "../api/forest";
@@ -94,7 +88,7 @@ export default {
     ContentHeader,
     LogCard,
     ForestAttributeTable,
-    BasicInfoContainer,
+    ForestBasicInfoContainer,
     AttachmentContainer,
     ForestContactTabContainer,
   },
@@ -119,8 +113,8 @@ export default {
           this.forestOwners = owners.results;
           this.setHeaderInfo(basicInfo);
         }),
-      )
-      .catch(() => this.$router.push({ name: "not-found" }));
+      );
+    // .catch(() => this.$router.push({ name: "not-found" }));
   },
 
   methods: {
@@ -134,25 +128,28 @@ export default {
       this.$store.dispatch("setHeaderInfo", headerInfo);
     },
 
-    forestContractDateRange(info) {
-      const longTermContract = info.contracts[0];
-      if (longTermContract) {
-        if (longTermContract.start_date) {
-          if (longTermContract.end_date) {
-            return `${longTermContract.start_date} - ${longTermContract.end_date}`;
-          } else {
-            return `${longTermContract.start_date} - `;
-          }
-        } else {
-          return "";
-        }
-      } else {
-        return "";
-      }
-    },
-
     fallbackText(text) {
       return text || "";
+    },
+
+    mapContact(info) {
+      const self_contact = info.self_contact;
+      const addr = self_contact.address;
+      const kanji_name = self_contact.name_kanji;
+      return {
+        customer_id: info.id,
+        fullname:
+          this.fallbackText(kanji_name.last_name) +
+          this.fallbackText(kanji_name.first_name),
+        telephone: self_contact.telephone,
+        mobilephone: self_contact.mobilephone,
+        forest_count: info.forests_count,
+        address: `${this.fallbackText(self_contact.postal_code)}
+          ${this.fallbackText(addr.prefecture)}
+          ${this.fallbackText(addr.municipality)}
+          ${this.fallbackText(addr.sector)}`,
+        email: self_contact.email,
+      };
     },
   },
 
@@ -167,29 +164,6 @@ export default {
 
     attaches() {
       return discussions;
-    },
-
-    basicInfo() {
-      let basicInfo = [];
-      const forestInfo = this.forestInfo;
-      if (forestInfo) {
-        const cadas = forestInfo.cadastral;
-        basicInfo = [
-          {
-            label: "住所",
-            value: cadas.prefecture + cadas.municipality + cadas.sector,
-          },
-          {
-            label: "契約期間",
-            value: this.forestContractDateRange(forestInfo),
-          },
-          {
-            label: "地番",
-            value: cadas.subsector,
-          },
-        ];
-      }
-      return basicInfo;
     },
 
     getActionLogs() {
