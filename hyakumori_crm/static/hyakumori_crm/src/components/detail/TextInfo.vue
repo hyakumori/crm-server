@@ -1,7 +1,7 @@
 <template>
   <div class="text-info">
     <h5>{{ label }}</h5>
-    <text-input v-if="isUpdate" :value="value" />
+    <text-input v-if="isUpdate" :value="value" @input="input" />
     <p v-else>{{ value }}</p>
   </div>
 </template>
@@ -20,6 +20,12 @@ export default {
     label: String,
     value: String,
     isUpdate: Boolean,
+  },
+
+  methods: {
+    input(val) {
+      this.$emit("input", val);
+    },
   },
 };
 </script>

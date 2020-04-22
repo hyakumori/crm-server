@@ -24,7 +24,18 @@ export default {
 
   props: {
     isUpdate: Boolean,
+    isSave: Boolean,
     infos: Array,
+  },
+
+  watch: {
+    isSave(oldVal, newVal) {
+      if (oldVal !== newVal) {
+        if (newVal) {
+          this.$emit("updateInfo", this.infos);
+        }
+      }
+    },
   },
 };
 </script>
