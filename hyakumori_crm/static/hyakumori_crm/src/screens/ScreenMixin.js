@@ -11,19 +11,22 @@ export default {
     },
 
     mapContact(info) {
-      const addr = info.address;
+      const self_contact = info.self_contact;
+      const addr = self_contact.address;
+      const kanji_name = self_contact.name_kanji;
       return {
-        customer_id: info.customer_id,
+        customer_id: info.id,
         fullname:
-          this.fallbackText(info.name_kanji.last_name) +
-          this.fallbackText(info.name_kanji.first_name),
-        telephone: info.telephone,
-        mobilephone: info.mobilephone,
-        address: `${this.fallbackText(info.postal_code)}
+          this.fallbackText(kanji_name.last_name) +
+          this.fallbackText(kanji_name.first_name),
+        telephone: self_contact.telephone,
+        mobilephone: self_contact.mobilephone,
+        forest_count: info.forests_count,
+        address: `${this.fallbackText(self_contact.postal_code)}
           ${this.fallbackText(addr.prefecture)}
           ${this.fallbackText(addr.municipality)}
           ${this.fallbackText(addr.sector)}`,
-        email: info.email,
+        email: self_contact.email,
       };
     },
   },
