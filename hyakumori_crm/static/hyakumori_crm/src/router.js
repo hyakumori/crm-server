@@ -30,23 +30,23 @@ const AdminRoutes = [
     children: [
       {
         path: "",
-        name: "user-management-list",
+        name: "user-list",
         meta: {
           title: "page_header.user_mgmt",
           isPublic: false,
           isAdmin: true,
         },
-        component: () => import("./screens/UserManagementList.vue"),
+        component: () => import("./screens/UserList.vue"),
       },
       {
         path: ":id",
-        name: "user-management-detail",
+        name: "user-detail",
         meta: {
           title: "page_header.user_detail",
           isPublic: false,
           isAdmin: true,
         },
-        component: () => import("./screens/UserManagementDetail.vue"),
+        component: () => import("./screens/UserDetail.vue"),
       },
     ],
   },
@@ -193,17 +193,31 @@ const router = new VueRouter({
     ...AuthRoutes,
     ...UserProfileRoutes,
     {
-      path: "*",
-      name: "not-found",
+      path: "/not-found",
       component: DefaultLayout,
       children: [
         {
           path: "",
+          name: "not-found",
+          meta: {
+            title: "page_header.not_found",
+            isPublic: true,
+          },
           component: () => import("./screens/PageNotFound.vue"),
         },
       ],
     },
+    {
+      path: "*",
+      redirect: { name: "not-found" },
+    },
   ],
 });
+
+// Override for processing NavigationDuplicated exception
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err);
+};
 
 export default router;

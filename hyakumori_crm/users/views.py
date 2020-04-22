@@ -2,8 +2,9 @@ from typing import List
 from uuid import UUID
 
 from django.contrib.auth.models import Group
+from django.db.models import Q
 from djoser.views import UserViewSet
-from rest_framework import serializers
+from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAdminUser
@@ -28,6 +29,21 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class CustomUserViewSet(UserViewSet):
+
+    def get_queryset(self):
+        return super().get_queryset().filter(~Q(email="AnonymousUser")).order_by("date_joined")
+
+    def perform_update(self, serializer):
+        viewsets.ModelViewSet.perform_update(self, serializer)
+
+    @action(detail=True, url_path="update", methods=["post"])
+    def update_user(self, request, pk: UUID):
+        try:
+            permissions = PermissionService.get_user_permissions(pk)
+            return make_success_json(permissions)
+        except Exception as e:
+            return make_error_json(str(e))
+
     @action(detail=True, url_path="permissions", methods=["get"])
     def list_permissions(self, request, pk: UUID):
         try:
@@ -53,9 +69,7 @@ class CustomUserViewSet(UserViewSet):
             )
             forests = []
             for forest_customer in paged_list:
-                _forest = ForestSerializer(forest_customer.forest).data
-                _contact = ContactSerializer(forest_customer.contact).data
-                _forest["contact"] = _contact
+                _forest = ForestSerializer(forest_customer).data
                 forests.append(_forest)
 
             return paginator.get_paginated_response(forests)

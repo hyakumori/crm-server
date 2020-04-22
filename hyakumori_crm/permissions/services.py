@@ -1,10 +1,9 @@
-from typing import List, Union
+from typing import List
 from uuid import UUID
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission, AbstractUser, Group
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Model
 from guardian.shortcuts import (
     assign_perm,
     get_user_perms,
@@ -13,7 +12,7 @@ from guardian.shortcuts import (
 )
 
 from hyakumori_crm.core.utils import model_to_dict
-from hyakumori_crm.crm.models import Customer
+from hyakumori_crm.permissions.enums import SystemGroups
 
 
 class PermissionService:
@@ -47,7 +46,10 @@ class PermissionService:
     def get_user_permissions(cls, user_id: UUID):
         user = get_user_model().objects.get(pk=user_id)
 
-        user_groups = [model_to_dict(group) for group in user.groups.all().iterator()]
+        user_groups = [
+            model_to_dict(group, exclude="permissions")
+            for group in user.groups.all().iterator()
+        ]
         results = dict(
             is_admin=user.is_superuser, is_staff=user.is_staff, groups=user_groups,
         )
@@ -55,15 +57,24 @@ class PermissionService:
         return results
 
     @classmethod
-    def assign_user_to_group(cls, user_id: UUID, group_ids: List[int]):
+    def assign_user_to_group(
+        cls, user_id: UUID, group_ids: List[int], clear: bool = True
+    ):
         user = get_user_model().objects.get(pk=user_id)
 
         for group_id in group_ids:
             group = Group.objects.get(pk=group_id)
+            if clear:
+                user.groups.clear()
+                user.save()
+                group.refresh_from_db()
+
             group.user_set.add(user)
             group.save()
 
-        return [model_to_dict(group) for group in user.groups.all()]
+        return [
+            model_to_dict(group, exclude="permissions") for group in user.groups.all()
+        ]
 
     @classmethod
     def unassign_user_from_group(cls, user_id: UUID, group_ids: List[int]):
@@ -74,7 +85,9 @@ class PermissionService:
             group.user_set.remove(user)
             group.save()
 
-        return [model_to_dict(group) for group in user.groups.all()]
+        return [
+            model_to_dict(group, exclude="permissions") for group in user.groups.all()
+        ]
 
     @classmethod
     def assign_object_permissions(
@@ -109,14 +122,21 @@ class PermissionService:
     @classmethod
     def setup_groups(cls, user: AbstractUser):
         if user.is_superuser:
-            admin_group, _ = Group.objects.get_or_create(name="admin")
+            admin_group, _ = Group.objects.get_or_create(name=SystemGroups.GROUP_ADMIN)
             admin_group.user_set.add(user)
             admin_group.save()
 
-            # create member group
-            member_group, _ = Group.objects.get_or_create(name="member")
+            # create normal user group
+            member_group, _ = Group.objects.get_or_create(
+                name=SystemGroups.GROUP_NORMAL_USER
+            )
 
-            # create normaluser group
-            normal_user_group, _ = Group.objects.get_or_create(name="normal_user")
+            # create limited user group
+            normal_user_group, _ = Group.objects.get_or_create(
+                name=SystemGroups.GROUP_LIMITED_USER
+            )
 
-        return [model_to_dict(group) for group in Group.objects.all().iterator()]
+        return [
+            model_to_dict(group, exclude="permissions")
+            for group in Group.objects.all().iterator()
+        ]

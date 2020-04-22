@@ -3,6 +3,8 @@ from itertools import chain
 from rest_framework.pagination import PageNumberPagination
 from django.http import JsonResponse, HttpResponseBadRequest
 
+from hyakumori_crm.crm.restful.paginations import StandardPagination
+
 
 def model_to_dict(instance, fields=None, exclude=None):
     """
@@ -31,9 +33,7 @@ def model_to_dict(instance, fields=None, exclude=None):
 
 
 def default_paginator():
-    paginator = PageNumberPagination()
-    paginator.page_size_query_param = "page_size"
-    paginator.max_page_size = 150
+    paginator = StandardPagination()
 
     return paginator
 

@@ -1,6 +1,6 @@
 <template>
   <div class="page-header">
-    <v-img src="../assets/img/app-bar.png" height="151" v-if="!isDetail" />
+    <v-img src="../assets/img/app-bar.png" height="169" v-if="!isDetail" />
     <v-img src="../assets/img/app-bar-detail.jpg" height="169" v-else />
 
     <div class="page-header__content">
@@ -81,6 +81,7 @@
                 </div>
               </div>
             </div>
+
             <template v-else>
               <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
             </template>
@@ -88,6 +89,7 @@
               {{ $store.state.pageHeader }}
             </span>
           </div>
+
           <outline-round-btn
             class="align-self-center"
             v-if="$route.name === 'customer-detail'"
@@ -127,7 +129,10 @@ export default {
 
   computed: {
     isDetail() {
-      return this.$route.name && this.$route.name.includes("detail");
+      return (
+        (this.$route.meta && this.$route.meta.detail) ||
+        (this.$route.name && this.$route.name.includes("detail"))
+      );
     },
 
     headerInfo() {
