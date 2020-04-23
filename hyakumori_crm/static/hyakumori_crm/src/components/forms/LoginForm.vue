@@ -111,7 +111,7 @@ export default {
       localStorage.setItem("scopes", scopes.join(","));
     },
 
-    async getUserProfile(localStorage) {
+    async getUserProfile() {
       const user = await this.$rest.get("/users/me");
       if (user) {
         localStorage.setItem("user", JSON.stringify(user));
@@ -132,7 +132,7 @@ export default {
           localStorage.setItem("accessToken", access);
           localStorage.setItem("refreshToken", refresh);
 
-          await this.getUserProfile(localStorage);
+          await this.getUserProfile();
 
           this.success = true;
 
