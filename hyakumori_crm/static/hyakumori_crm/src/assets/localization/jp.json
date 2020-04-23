@@ -2,12 +2,14 @@
   "buttons": {
     "add_and_edit": "追加＆編集",
     "add_customer": "顧客を追加",
+    "add_user": "アカウントを追加",
     "back": "前のページに戻る",
     "cancel": "キャンセル",
     "login": "ログイン",
     "reset": "リセット",
     "save": "保存",
-    "send": "送信"
+    "send": "送信",
+    "activate": "アクティブ"
   },
   "detail": {
     "tabs": {
@@ -69,7 +71,6 @@
     "user_icon": "mdi-calendar-text"
   },
   "login_form": {
-    "activation_guide": "An activation email will be sent to your registered email address.</br> Click the URL in the email to complete registration.",
     "email": "メールアドレス",
     "errors": {
       "auth_failed": "入力した認証情報でログインできませんでした"
@@ -82,30 +83,36 @@
     "forgot_password_help_text": "パスワードを再発行するには、メールアドレスを入力し、届いたメールのURLをクリックしてください",
     "logging_out": "ログアウト中 .  .  .",
     "no_permission": "許可がありません",
-    "not_found_text": "要求したページは見つかりませんでした",
+    "not_found_text": "要求したページは見つかりませんでした。",
     "email_not_found": "入力したメールアドレスに該当するユーザが存在しません。",
     "reset_password_confirm_help_text": "パスワードを再発行するには、新しいパスワードを2ド入力してください。",
     "reset_password_url_sent": "再発行用のURLをご登録のメールアドレス宛てに送信しました。",
     "error_set_new_password": "パスワード設定中にエラーが発生しました。入力した内容を確認した上で、再度試してみてください。",
-    "reset_password_success": "パスワードが変更できました。{seconds}後にログイン画面にリダイレクトします。"
+    "reset_password_success": "パスワードが変更できました。{seconds}秒後にログイン画面にリダイレクトします。",
+    "invitation_sent": "招待メールを送信しました{email}",
+    "activate_account_success": "アカウントの有効化に成功しました。{seconds}秒後にログイン画面にリダイレクトします。",
+    "uid_not_found": "無効なユーザーまたはユーザーが存在しません。",
+    "token_stale": "無効または期限切リンク",
+    "field_optional": "省略可能"
   },
   "page_header": {
-    "archive_detail": "協議履歴",
-    "archive_mgmt": "協議履歴一覧",
+    "archive_detail": "交渉履歴",
+    "archive_mgmt": "交渉履歴一覧",
     "customer_detail": "顧客情報詳細",
     "customer_mgmt": "顧客情報一覧",
     "forest_detail": "森林詳細",
-    "forest_mgmt": "森林一覧",
+    "forest_mgmt": "森林情報一覧",
     "forgot_password": "パスワードの再発行",
     "login": "ログイン",
     "logout": "ログアウト",
-    "negotiate_mgm": "ユーザー管理",
-    "no_permission": "無許可",
-    "not_found": "見つかりません",
+    "no_permission": "４０３ー無許可",
+    "not_found": "404ー見つかりません",
     "setting": "設定",
-    "user_detail": "アカウント管理",
-    "user_mgmt": "アカウント管理一覧",
-    "user_profile": "ユーザープロファイル"
+    "user_detail": "ユーザ詳細",
+    "user_mgmt": "ユーザ管理",
+    "user_profile": "アカウント情報",
+    "user_invite": "ユーザーを招待",
+    "activate_account": "アカウントを有効にする"
   },
   "raw_text": {
     "agree": "同意する",
@@ -117,6 +124,13 @@
     "new_password": "新しいパスワード",
     "new_password_retype": "新しいパスワード（確認）",
     "password_not_match": "パスワードの確認が一致しません"
+  },
+  "activate_form": {
+    "new_password": "新しいパスワード",
+    "new_password_retype": "新しいパスワード（確認）",
+    "password_not_match": "パスワードの確認が一致しません",
+    "last_name": "姓",
+    "first_name": "名"
   },
   "search": {
     "add_search_condition": "検索条件を追加",
@@ -133,7 +147,7 @@
   "site_name": "Hyakumori CRM",
   "tables": {
     "headers": {},
-    "no_data": "テーブルに利用可能なデータがありません"
+    "no_data": "検索結果がありません。検索条件を見直してください。"
   },
   "user_management": {
     "tables": {
@@ -144,7 +158,8 @@
         "roles": "権限種別",
         "last_name": "姓",
         "first_name": "名",
-        "status": "ステータス"
+        "status": "ステータス",
+        "full_name": "氏名"
       }
     }
   },

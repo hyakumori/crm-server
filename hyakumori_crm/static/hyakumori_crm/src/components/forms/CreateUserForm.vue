@@ -1,9 +1,9 @@
 <template>
   <v-card class="pa-0 elevation-24">
-    <ValidationObserver v-slot="{ invalid }">
+    <ValidationObserver v-slot="{ invalid }" ref="form">
       <form @submit.prevent="onSubmit">
         <v-card-title class="justify-start pb-0 px-6 pt-6">
-          {{ $t("page_header.login") }}
+          {{ $t("page_header.user_invite") }}
         </v-card-title>
 
         <v-card-text class="pa-6">
@@ -12,6 +12,13 @@
               <v-col cols="12">
                 <v-alert dense outlined type="error">
                   {{ formError }}
+                </v-alert>
+              </v-col>
+            </v-row>
+            <v-row no-gutters v-if="success">
+              <v-col cols="12">
+                <v-alert dense outlined type="success">
+                  {{ $t("messages.invitation_sent", { email: form.email }) }}
                 </v-alert>
               </v-col>
             </v-row>
@@ -29,28 +36,6 @@
                 />
               </v-col>
             </v-row>
-            <v-row no-gutters class="mt-4">
-              <v-col cols="12" class="relative">
-                <label class="font-weight-bold">
-                  {{ $t("login_form.password") }}
-                </label>
-                <div class="forgot-password-hint">
-                  <router-link
-                    :to="{ name: 'auth-forgot-password' }"
-                    class="f14"
-                  >
-                    {{ $t("login_form.forgot_password_hint") }}
-                  </router-link>
-                </div>
-                <text-input
-                  type="password"
-                  v-model="form.password"
-                  rules="required|min:8"
-                  placeholder=" ◍ ◍ ◍ ◍ ◍ ◍ ◍ ◍ "
-                  name="login_form.password"
-                />
-              </v-col>
-            </v-row>
           </v-container>
         </v-card-text>
 
@@ -65,7 +50,7 @@
                   :loading="loading"
                   @click="onSubmit"
                   :disabled="invalid || loading"
-                  >{{ $t("page_header.login") }}
+                  >{{ $t("buttons.send") }}
                 </v-btn>
               </v-col>
             </v-row>
@@ -85,11 +70,13 @@ export default {
     TextInput,
     ValidationObserver,
   },
+  props: {
+    show: { type: Boolean },
+  },
   data() {
     return {
       form: {
         email: "",
-        password: "",
       },
       formError: "",
       loading: false,
@@ -97,6 +84,11 @@ export default {
     };
   },
   methods: {
+    randomPassword(length = 8) {
+      return Math.random()
+        .toString(36)
+        .slice(-length);
+    },
     async getPermissions(user_id) {
       const permissions = await this.$rest.get(`/users/${user_id}/permissions`);
       const scopes = [];
@@ -121,39 +113,35 @@ export default {
 
     async onSubmit() {
       try {
-        const response = await this.$rest.post("/token/create/", {
+        this.loading = true;
+        const password = this.randomPassword();
+        const response = await this.$rest.post("/users", {
           ...this.form,
+          password,
         });
 
         if (response) {
-          const { access, refresh } = response;
-          this.loading = true;
-
-          localStorage.setItem("accessToken", access);
-          localStorage.setItem("refreshToken", refresh);
-
-          await this.getUserProfile(localStorage);
-
+          this.loading = false;
           this.success = true;
-
-          setTimeout(() => {
-            this.loading = false;
-            this.$router.replace("/");
-          }, 500);
+          this.formError = "";
+          this.$emit("success", response);
         }
       } catch (e) {
-        this.formError = this.$t("login_form.errors.auth_failed");
+        this.formError = this.$t("login_form.errors.fail_create_user");
         this.success = false;
-        setTimeout(() => {
-          this.loading = false;
-        }, 500);
       }
     },
   },
   watch: {
-    success(val) {
+    show(val) {
       if (val) {
+        this.success = false;
+        this.loading = false;
         this.formError = "";
+        this.form = {
+          email: "",
+        };
+        this.$refs.form.reset();
       }
     },
   },

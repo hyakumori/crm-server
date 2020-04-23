@@ -1,5 +1,5 @@
 <template>
-  <v-btn rounded dark outlined v-on="on">
+  <v-btn rounded dark outlined v-on="on" @click="$emit('click', $event)">
     <v-icon>{{ icon }}</v-icon>
     {{ content }}
   </v-btn>

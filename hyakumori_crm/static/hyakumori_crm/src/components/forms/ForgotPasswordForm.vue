@@ -94,12 +94,10 @@ export default {
   methods: {
     async onSubmit() {
       try {
-        const response = await this.$rest.post(`/users/reset_password`, {
+        await this.$rest.post(`/users/reset_password`, {
           email: this.form.email,
         });
-
         this.success = true;
-        this.formError = "";
       } catch (err) {
         this.formError = this.$t("messages.email_not_found");
       }
@@ -108,6 +106,13 @@ export default {
   computed: {
     mailSent: function() {
       return this.success;
+    },
+  },
+  watch: {
+    success(val) {
+      if (val) {
+        this.formError = "";
+      }
     },
   },
 };
