@@ -100,6 +100,15 @@ const AuthRoutes = [
         component: () => import("./screens/AuthResetPasswordConfirm.vue"),
       },
       {
+        path: "activate/:uid/:token",
+        name: "auth-activate",
+        meta: {
+          title: "page_header.activate_account",
+          isPublic: true,
+        },
+        component: () => import("./screens/AuthActivation.vue"),
+      },
+      {
         path: "no-permission",
         name: "error-403",
         meta: {

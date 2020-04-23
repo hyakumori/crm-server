@@ -26,8 +26,8 @@ class PermissionService:
             for permission in Permission.objects.filter(
                 content_type_id__in=crm_content_types
             )
-            .all()
-            .iterator()
+                .all()
+                .iterator()
         ]
 
         return permissions
@@ -140,3 +140,9 @@ class PermissionService:
             model_to_dict(group, exclude="permissions")
             for group in Group.objects.all().iterator()
         ]
+
+    @classmethod
+    def add_to_default_group(cls, user: AbstractUser):
+        group, _ = Group.objects.get_or_create(name=SystemGroups.GROUP_LIMITED_USER)
+        group.user_set.add(user)
+        group.save()

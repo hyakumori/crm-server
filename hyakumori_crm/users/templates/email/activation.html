@@ -1,25 +1,34 @@
 {% load i18n %}
 
 {% block subject %}
-{% blocktrans %}Account activation on {{ site_name }}{% endblocktrans %}
+HyakumoriCRMへようこそ！
 {% endblock %}
 
 {% block text_body %}
-{% blocktrans %}
-    You're receiving this email because you need to finish activation process on {{ site_name }}.
-{% endblocktrans %}
+HyakumoriCRMを利用するにはアカウントをアクティベートする必要があります。
+{{user.get_username}}をアクティベートするには、次のボタンをクリックしてください。
 
-{% trans "Please go to the following page to activate account" %}
+このボタンをクリックしても機能しない場合は、URLをコピーして新しいブラウザウィンドウに貼り付けてください。
 {{ protocol }}://{{ domain }}/{{ url|safe }}
+
+このメールに心当たりがない場合、何も行わずにこのメールを破棄してください。
+
+本メールは配信専用です。ご返信なさらぬようご注意ください。
+
+------------------------------------
+株式会社百森
+岡山県英田郡西粟倉村影石612-8 (あわくら温泉駅舎)
 
 {% endblock text_body %}
 
+
 {% block html_body %}
 <html>
+
 <head>
-    <meta name="viewport" content="width=device-width"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>{% blocktrans %}Account activation on {{ site_name }}{% endblocktrans %}</title>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>HyakumoriCRMへようこそ！</title>
     <style>
         /* -------------------------------------
         GLOBAL RESETS
@@ -173,7 +182,7 @@
             width: 100%;
         }
 
-        .btn > tbody > tr > td {
+        .btn>tbody>tr>td {
             padding-bottom: 15px;
         }
 
@@ -371,96 +380,108 @@
 
     </style>
 </head>
+
 <body class="">
-<span class="preheader">{% trans "Please activate your account" %}</span>
-<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
-    <tr>
-        <td>&nbsp;</td>
-        <td class="container">
-            <div class="content">
+    <span class="preheader">HyakumoriCRMへようこそ！</span>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+        <tr>
+            <td>&nbsp;</td>
+            <td class="container">
+                <div class="content">
 
-                <!-- START CENTERED WHITE CONTAINER -->
-                <table role="presentation" class="main">
+                    <!-- START CENTERED WHITE CONTAINER -->
+                    <table role="presentation" class="main">
 
-                    <!-- START MAIN CONTENT AREA -->
-                    <tr>
-                        <td class="wrapper">
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td>
-                                        <h1>
-                                            Hi,
-                                        </h1>
-
-                                        <p>
-                                            {% blocktrans %}
-                                                You're receiving this email because you need to finish
-                                                activation process on {{ site_name }}.
-                                            {% endblocktrans %}
-                                        </p>
-                                        <p>{% trans "Please go to the following page to activate account" %}</p>
-
-                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0"
-                                               class="btn btn-primary">
-                                            <tbody>
-                                            <tr>
-                                                <td align="left">
-                                                    <table role="presentation" border="0" cellpadding="0"
-                                                           cellspacing="0">
-                                                        <tbody>
-                                                        <tr>
-                                                            <td>
-                                                                <a href="{{ protocol }}://{{ domain }}/{{ url|safe }}"
-                                                                   target="_blank">
-                                                                {% trans "Activate account" %}</a>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <p>
-                                                        {% trans "Or copy following url and paste into your browser address to activate your account:" %}
-                                                        <small><code>{{ protocol }}://{{ domain }}/{{ url|safe }}</code></small>
-                                                    </p>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-
-                    <!-- END MAIN CONTENT AREA -->
-                </table>
-                <!-- END CENTERED WHITE CONTAINER -->
-
-                <!-- START FOOTER -->
-                <div class="footer">
-                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                        <!-- START MAIN CONTENT AREA -->
                         <tr>
-                            <td class="content-block">
-                                <span class="apple-link">Company Inc, 3 Abbey Road, San Francisco CA 94102</span>
+                            <td class="wrapper">
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td>
+                                            <h1>
+                                                Hi,
+                                            </h1>
+
+                                            <p>
+                                                HyakumoriCRMを利用するにはアカウントをアクティベートする必要があります。
+                                            </p>
+
+                                            <p>
+                                                {{user.get_username}}をアクティベートするには、次のボタンをクリックしてください。
+                                            </p>
+
+                                            <table role="presentation" border="0" cellpadding="0" cellspacing="0"
+                                                class="btn btn-primary">
+                                                <tbody>
+                                                    <tr>
+                                                        <td align="center">
+                                                            <table role="presentation" border="0" cellpadding="0"
+                                                                cellspacing="0">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <a href="{{ protocol }}://{{ domain }}/{{ url|safe }}"
+                                                                                target="_blank">
+                                                                                アカウントを有効にする
+                                                                            </a>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                            <p>
+                                                このボタンをクリックしても機能しない場合は、URLをコピーして新しいブラウザウィンドウに貼り付けてください。
+                                                <br />
+                                                <small><code>{{ protocol }}://{{ domain }}/{{ url|safe }}</code></small>
+                                            </p>
+
+                                            <p>
+                                                このメールに心当たりがない場合、何も行わずにこのメールを破棄してください。
+                                            </p>
+
+                                            <p>
+                                                本メールは配信専用です。ご返信なさらぬようご注意ください。
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="content-block powered-by">
-                                Powered by <a href="{{ protocol }}://{{ domain }}" target="_blank">HyakumoriCRM</a>.
-                            </td>
-                        </tr>
+
+                        <!-- END MAIN CONTENT AREA -->
                     </table>
-                </div>
-                <!-- END FOOTER -->
+                    <!-- END CENTERED WHITE CONTAINER -->
 
-            </div>
-        </td>
-        <td>&nbsp;</td>
-    </tr>
-</table>
+                    <!-- START FOOTER -->
+                    <div class="footer">
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td class="content-block">
+                                    <span class="apple-link">
+                                        株式会社百森 <br />
+                                        岡山県英田郡西粟倉村影石612-8 (あわくら温泉駅舎)
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="content-block powered-by">
+                                    Powered by <a href="{{ protocol }}://{{ domain }}" target="_blank">HyakumoriCRM</a>.
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <!-- END FOOTER -->
+
+                </div>
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
 </body>
+
 </html>
 {% endblock html_body %}

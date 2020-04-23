@@ -1,7 +1,21 @@
 <template>
-  <main-section class="forest">
-    <template slot="top">
-      <page-header> </page-header>
+  <main-section class="forest" single-column>
+    <template #top>
+      <page-header>
+        <template #bottom-right>
+          <outline-round-btn
+            :icon="$t('icon.add')"
+            :content="$t('buttons.add_user')"
+            @click="showCreationForm = !showCreationForm"
+          />
+          <v-dialog v-model="showCreationForm" scrollable max-width="420">
+            <create-user-form
+              @success="onUserCreated"
+              :show="showCreationForm"
+            />
+          </v-dialog>
+        </template>
+      </page-header>
     </template>
 
     <template slot="section">
@@ -32,6 +46,8 @@ import MainSection from "../components/MainSection";
 import PageHeader from "../components/PageHeader";
 import ScreenMixin from "./ScreenMixin";
 import DataList from "../components/DataList";
+import CreateUserForm from "../components/forms/CreateUserForm";
+import OutlineRoundBtn from "../components/OutlineRoundBtn";
 import { fromNow } from "../helpers/datetime";
 
 export default {
@@ -40,6 +56,8 @@ export default {
     DataList,
     PageHeader,
     MainSection,
+    CreateUserForm,
+    OutlineRoundBtn,
   },
   data() {
     return {
@@ -53,6 +71,7 @@ export default {
       results: [],
       isLoading: false,
       options: {},
+      showCreationForm: false,
     };
   },
   methods: {
@@ -77,6 +96,7 @@ export default {
     },
 
     async getData(perPage, page = 1) {
+      this.isLoading = true;
       const response = await this.$rest.get(
         `/users?page_size=${perPage}&page=${page}`,
       );
@@ -86,7 +106,12 @@ export default {
         this.next = response.next;
         this.count = response.count;
         this.previous = response.previous;
+        this.isLoading = false;
       }
+    },
+
+    async onUserCreated(user) {
+      await this.getData(this.filter.preItemsPerPage, this.filter.page);
     },
   },
   async mounted() {
@@ -126,6 +151,12 @@ export default {
           text: this.$t("user_management.tables.headers.username"),
           align: "center",
           value: "username",
+          sortable: false,
+        },
+        {
+          text: this.$t("user_management.tables.headers.full_name"),
+          align: "center",
+          value: "full_name",
           sortable: false,
         },
         {

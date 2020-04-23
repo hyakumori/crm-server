@@ -251,10 +251,12 @@ export default {
 
     mapUserPermissions() {
       if (this.userPermissions && this.userPermissions.groups) {
-        return this.userPermissions.groups.map(group => ({
-          text: group.name,
-          value: group.id,
-        }))[0];
+        return (
+          this.userPermissions.groups.map(group => ({
+            text: group.name,
+            value: group.id,
+          }))[0] || {}
+        );
       }
     },
 
