@@ -4,7 +4,7 @@
       <page-header />
     </slot>
 
-    <v-container fluid class="app-width d-flex px-7 pt-5">
+    <v-container fluid class="app-width d-flex px-7 pt-4">
       <slot name="section"></slot>
       <slot name="right"></slot>
     </v-container>

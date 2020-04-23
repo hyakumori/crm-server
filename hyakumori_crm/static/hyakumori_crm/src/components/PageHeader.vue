@@ -55,12 +55,13 @@
                 text
                 color="white"
                 small
+                v-if="hasBackBtn"
                 @click="onBack"
               >
                 <v-icon small>mdi-arrow-left</v-icon>
                 {{ $store.state.backBtnContent }}
               </v-btn>
-              <div class="d-flex align-center">
+              <div class="d-flex align-center" :class="{ 'mt-3': !hasBackBtn }">
                 <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
                 <div class="white--text page-header__detail__data">
                   <p class="mb-0 page-header__detail__data__title">
@@ -98,6 +99,8 @@
 </template>
 
 <script>
+import busEvent from "../BusEvent";
+
 export default {
   name: "page-header",
 
@@ -110,6 +113,16 @@ export default {
   methods: {
     onBack() {
       this.$router.push(this.$store.state.headerInfo.backUrl || -1);
+    },
+
+    getUserInfo() {
+      try {
+        this.user =
+          localStorage.getItem("user") &&
+          JSON.parse(localStorage.getItem("user"));
+      } catch {
+        this.user = null;
+      }
     },
   },
 
@@ -140,16 +153,19 @@ export default {
 
       return this.user.username;
     },
+
+    hasBackBtn() {
+      return (
+        this.$store.state.backBtnContent &&
+        this.$store.state.backBtnContent.length > 0
+      );
+    },
   },
 
   created() {
-    try {
-      this.user =
-        localStorage.getItem("user") &&
-        JSON.parse(localStorage.getItem("user"));
-    } catch {
-      this.user = null;
-    }
+    this.getUserInfo();
+    busEvent.$off("profile:refresh");
+    busEvent.$on("profile:refresh", () => this.getUserInfo());
   },
 };
 </script>
