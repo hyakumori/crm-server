@@ -5,8 +5,10 @@ from djoser.conf import settings
 from djoser.serializers import (
     UserCreateSerializer as DjUserCreateSerializer,
     ActivationSerializer as DjActivationSerializer,
-    PasswordRetypeSerializer)
-from djoser.serializers import UserSerializer as DjUserSerializer
+    UserSerializer as DjUserSerializer,
+    UidAndTokenSerializer,
+    PasswordRetypeSerializer,
+)
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.relations import SlugRelatedField
@@ -27,9 +29,9 @@ def _is_user_self(request, instance):
 
 
 def _only_admin(request):
-    return not request.user.is_anonymous and (request.user.is_superuser or request.user.member_of(
-        SystemGroups.GROUP_ADMIN
-    ))
+    return not request.user.is_anonymous and (
+        request.user.is_superuser or request.user.member_of(SystemGroups.GROUP_ADMIN)
+    )
 
 
 class ActivationSerializer(DjActivationSerializer, PasswordRetypeSerializer):
@@ -40,7 +42,7 @@ class ActivationSerializer(DjActivationSerializer, PasswordRetypeSerializer):
 
     default_error_messages = {
         "password_mismatch": settings.CONSTANTS.messages.PASSWORD_MISMATCH_ERROR,
-        "stale_token": settings.CONSTANTS.messages.STALE_TOKEN_ERROR
+        "stale_token": settings.CONSTANTS.messages.STALE_TOKEN_ERROR,
     }
 
     def _validate_password(self, attrs):
@@ -53,15 +55,14 @@ class ActivationSerializer(DjActivationSerializer, PasswordRetypeSerializer):
             raise serializers.ValidationError({"new_password": list(e.messages)})
 
     def _validate_activation(self, attrs):
-        attrs = super().validate(attrs)
+        attrs = UidAndTokenSerializer.validate(self, attrs)
         if not self.user.is_active:
             return attrs
         raise PermissionDenied(self.error_messages["stale_token"])
 
     def validate(self, attrs):
         self._validate_password(attrs)
-        self._validate_activation(attrs)
-        return super().validate(attrs)
+        return self._validate_activation(attrs)
 
 
 class UserSerializer(DjUserSerializer):

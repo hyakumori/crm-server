@@ -15,11 +15,19 @@ const UserProfileRoutes = [
   {
     path: "/me",
     name: "my-profile",
-    meta: {
-      title: "page_header.user_profile",
-      isPublic: false,
-    },
     component: MainLayout,
+    children: [
+      {
+        path: "",
+        name: "my-profile",
+        meta: {
+          title: "page_header.user_profile",
+          isPublic: false,
+          detail: true,
+        },
+        component: () => import("./screens/AccountProfile.vue"),
+      },
+    ],
   },
 ];
 

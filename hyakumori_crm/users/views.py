@@ -31,9 +31,13 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class CustomUserViewSet(UserViewSet):
-
     def get_queryset(self):
-        return super().get_queryset().filter(~Q(email="AnonymousUser")).order_by("date_joined")
+        return (
+            super()
+            .get_queryset()
+            .filter(~Q(email="AnonymousUser"))
+            .order_by("date_joined")
+        )
 
     def perform_update(self, serializer):
         viewsets.ModelViewSet.perform_update(self, serializer)
@@ -60,8 +64,11 @@ class CustomUserViewSet(UserViewSet):
     @action(detail=True, url_path="permissions", methods=["get"])
     def list_permissions(self, request, pk: UUID):
         try:
-            permissions = PermissionService.get_user_permissions(pk)
-            return make_success_json(permissions)
+            if request.user.is_superuser or str(request.user.pk) == pk:
+                permissions = PermissionService.get_user_permissions(pk)
+                return make_success_json(permissions)
+            else:
+                raise PermissionDenied()
         except Exception as e:
             return make_error_json(str(e))
 
