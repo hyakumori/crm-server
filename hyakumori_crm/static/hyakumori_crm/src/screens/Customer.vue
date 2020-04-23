@@ -1,5 +1,13 @@
 <template>
   <main-section class="customer">
+    <template #top>
+      <page-header>
+        <template #bottom-right>
+          <customer-create-form />
+        </template>
+      </page-header>
+    </template>
+
     <template #section>
       <search-card
         :searchCriteria="filterFields"
@@ -27,6 +35,8 @@
 <script>
 import gql from "graphql-tag";
 import MainSection from "../components/MainSection";
+import PageHeader from "../components/PageHeader";
+import CustomerCreateForm from "../components/CustomerCreateForm";
 import ScreenMixin from "./ScreenMixin";
 import SearchCard from "../components/SearchCard";
 import DataList from "../components/DataList";
@@ -37,6 +47,8 @@ export default {
     MainSection,
     SearchCard,
     DataList,
+    PageHeader,
+    CustomerCreateForm,
   },
   mixins: [ScreenMixin],
   data() {

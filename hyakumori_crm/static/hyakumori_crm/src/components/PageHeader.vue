@@ -90,13 +90,7 @@
             </span>
           </div>
 
-          <outline-round-btn
-            class="align-self-center"
-            v-if="$route.name === 'customer-detail'"
-            :icon="$t('icon.add')"
-            :content="$t('buttons.add_customer')"
-          />
-          <CustomerCreateForm v-if="$route.name === 'customers'" />
+          <slot name="bottom-right"></slot>
         </v-container>
       </div>
     </div>
@@ -104,16 +98,8 @@
 </template>
 
 <script>
-import CustomerCreateForm from "./CustomerCreateForm";
-import OutlineRoundBtn from "./OutlineRoundBtn";
-
 export default {
   name: "page-header",
-
-  components: {
-    CustomerCreateForm,
-    OutlineRoundBtn,
-  },
 
   data() {
     return {
