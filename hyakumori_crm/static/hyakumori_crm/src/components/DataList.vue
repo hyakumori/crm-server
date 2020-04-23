@@ -19,7 +19,7 @@
       :options.sync="innerOptions"
       :server-items-length="serverItemsLength"
       :footer-props="{
-        itemsPerPageOptions: [10, 50, 100, 150],
+        itemsPerPageOptions: [25, 50, 100, 150],
         itemsPerPageText: $t('raw_text.rows_per_page'),
       }"
       @click:row="clickRow"

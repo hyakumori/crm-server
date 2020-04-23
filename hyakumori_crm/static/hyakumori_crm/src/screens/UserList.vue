@@ -1,25 +1,35 @@
 <template>
-  <v-content>
-    <v-container grid-list-xs class="main-container mt-2">
-      <data-list
-        itemKey="id"
-        :dense="false"
-        :headers="getHeaders"
-        :data="results"
-        :showSelect="false"
-        :isLoading="isLoading"
-        :serverItemsLength="count"
-        :tableRowIcon="tableRowIcon"
-        :options.sync="options"
-        @rowData="rowData"
-        @selectedRow="selectedRow"
-        :autoHeaders="false"
-      ></data-list>
-    </v-container>
-  </v-content>
+  <main-section class="forest">
+    <template slot="top">
+      <page-header> </page-header>
+    </template>
+
+    <template slot="section">
+      <v-content>
+        <v-container grid-list-xs class="main-container">
+          <data-list
+            itemKey="id"
+            :dense="false"
+            :headers="getHeaders"
+            :data="results"
+            :showSelect="false"
+            :isLoading="isLoading"
+            :serverItemsLength="count"
+            :tableRowIcon="tableRowIcon"
+            :options.sync="options"
+            @rowData="rowData"
+            @selectedRow="selectedRow"
+            :autoHeaders="false"
+          ></data-list>
+        </v-container>
+      </v-content>
+    </template>
+  </main-section>
 </template>
 
 <script>
+import MainSection from "../components/MainSection";
+import PageHeader from "../components/PageHeader";
 import ScreenMixin from "./ScreenMixin";
 import DataList from "../components/DataList";
 import { fromNow } from "../helpers/datetime";
@@ -28,6 +38,8 @@ export default {
   mixins: [ScreenMixin],
   components: {
     DataList,
+    PageHeader,
+    MainSection,
   },
   data() {
     return {

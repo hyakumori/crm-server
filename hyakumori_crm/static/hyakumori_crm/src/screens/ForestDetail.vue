@@ -34,12 +34,18 @@
         />
 
         <div id="forest-attributes">
-          <content-header class="mt-9" content="森林情報" :displayAdditionBtn="false" />
+          <content-header
+            class="mt-9"
+            content="森林情報"
+            :displayAdditionBtn="false"
+          />
           <v-row class="forest-detail__header d-flex mx-0 mt-5">
             <template v-for="(header, index) in headerData">
               <v-col class="forest-detail__header--text" cols="3" :key="index">
                 <td class="pr-2">{{ header.name }}</td>
-                <td class="forest-detail__header--text__data--color">{{ header.data }}</td>
+                <td class="forest-detail__header--text__data--color">
+                  {{ header.data }}
+                </td>
               </v-col>
             </template>
           </v-row>
