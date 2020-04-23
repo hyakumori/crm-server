@@ -3,7 +3,7 @@
     <ValidationObserver v-slot="{ invalid }">
       <form>
         <v-card-title class="justify-start pb-0 px-6 pt-6">
-          {{ $t("page_header.forgot_password") }}
+          {{ $t("page_header.activate_account") }}
         </v-card-title>
 
         <v-card-text class="pa-6">
@@ -19,43 +19,62 @@
               <v-col cols="12">
                 <v-alert dense outlined type="success">
                   {{
-                    $t("messages.reset_password_success", {
+                    $t("messages.activate_account_success", {
                       seconds: redirectCount,
                     })
                   }}
                 </v-alert>
               </v-col>
             </v-row>
-            <v-row no-gutters>
-              <p class="grey--text text--darken-3">
-                {{ $t("messages.reset_password_confirm_help_text") }}
-              </p>
-            </v-row>
-            <v-row no-gutters>
+            <v-row no-gutters class="mt-4">
               <v-col cols="12">
                 <label class="font-weight-bold">{{
-                  $t("reset_password_form.new_password")
+                  $t("activate_form.last_name")
+                }}</label>
+                <text-input
+                  v-model="form.last_name"
+                  :placeholder="$t('messages.field_optional')"
+                  name="activate_form.last_name"
+                />
+              </v-col>
+            </v-row>
+            <v-row no-gutters class="mt-4">
+              <v-col cols="12">
+                <label class="font-weight-bold">{{
+                  $t("activate_form.first_name")
+                }}</label>
+                <text-input
+                  v-model="form.first_name"
+                  :placeholder="$t('messages.field_optional')"
+                  name="activate_form.first_name"
+                />
+              </v-col>
+            </v-row>
+            <v-row no-gutters class="mt-4">
+              <v-col cols="12">
+                <label class="font-weight-bold">{{
+                  $t("activate_form.new_password")
                 }}</label>
                 <text-input
                   type="password"
                   v-model="form.password"
                   rules="required|min:8"
                   placeholder=" ◍ ◍ ◍ ◍ ◍ ◍ ◍ ◍ "
-                  name="reset_password_form.new_password"
+                  name="activate_form.new_password"
                 />
               </v-col>
             </v-row>
             <v-row no-gutters class="mt-4">
               <v-col cols="12" class="relative">
                 <label class="font-weight-bold">
-                  {{ $t("reset_password_form.new_password_retype") }}
+                  {{ $t("activate_form.new_password_retype") }}
                 </label>
                 <text-input
                   type="password"
                   v-model="form.password_retype"
-                  rules="required|min:8|password:@reset_password_form.new_password"
+                  rules="required|min:8|password:@activate_form.new_password"
                   placeholder=" ◍ ◍ ◍ ◍ ◍ ◍ ◍ ◍ "
-                  name="reset_password_form.new_password_retype"
+                  name="activate_form.new_password_retype"
                 />
               </v-col>
             </v-row>
@@ -72,7 +91,7 @@
                   @click="onSubmit"
                   width="100%"
                   :disabled="invalid || loading || success"
-                  >{{ $t("buttons.send") }}
+                  >{{ $t("buttons.activate") }}
                 </v-btn>
               </v-col>
             </v-row>
@@ -104,6 +123,8 @@ export default {
   data() {
     return {
       form: {
+        first_name: "",
+        last_name: "",
         password: "",
         password_retype: "",
       },
@@ -119,11 +140,13 @@ export default {
     async onSubmit() {
       try {
         this.loading = true;
-        await this.$rest.post(`/users/reset_password_confirm`, {
+        await this.$rest.post(`/users/activation`, {
           uid: this.$route.params.uid,
           token: this.$route.params.token,
           new_password: this.form.password,
           re_new_password: this.form.password_retype,
+          first_name: this.form.first_name,
+          last_name: this.form.last_name,
         });
         this.success = true;
         this.redirectInterval = setInterval(() => {
@@ -134,18 +157,18 @@ export default {
           this.redirectCount -= 1;
         }, 1000);
       } catch (err) {
-        this.formError = this.$t("messages.error_set_new_password");
         this.success = false;
+        const error_data = err.response.data;
+        if (Object.keys(error_data).indexOf("uid") > -1) {
+          this.formError = this.$t("messages.uid_not_found");
+        } else if (Object.keys(error_data).indexOf("token") > -1) {
+          this.formError = this.$t("messages.token_stale");
+        } else {
+          this.formError = this.$t("messages.error_set_new_password");
+        }
       } finally {
         this.loading = false;
       }
-    },
-    watch: {
-      success(val) {
-        if (val) {
-          this.formError = "";
-        }
-      },
     },
   },
   created() {
@@ -154,8 +177,15 @@ export default {
       validate(value, { target }) {
         return value === target;
       },
-      message: this.$t("reset_password_form.password_not_match"),
+      message: this.$t("activate_form.password_not_match"),
     });
+  },
+  watch: {
+    success(val) {
+      if (val) {
+        this.formError = "";
+      }
+    },
   },
 };
 </script>

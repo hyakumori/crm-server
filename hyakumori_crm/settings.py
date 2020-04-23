@@ -187,10 +187,15 @@ DJOSER = {
     "ACTIVATION_URL": "auth/activate/{uid}/{token}",
     "SEND_ACTIVATION_EMAIL": True,
     "SEND_CONFIRMATION_EMAIL": True,
+    "USER_CREATE_PASSWORD_RETYPE": False,
     "SERIALIZERS": {
+        "activation": "hyakumori_crm.users.serializers.ActivationSerializer",
         "user": "hyakumori_crm.users.serializers.UserSerializer",
         "current_user": "hyakumori_crm.users.serializers.UserSerializer",
         "user_create": "hyakumori_crm.users.serializers.UserCreateSerializer",
+    },
+    "EMAIL": {
+        "activation": "hyakumori_crm.users.emails.ActivationEmail",
     },
     "PERMISSIONS": {"user_list": ["rest_framework.permissions.IsAdminUser"]},
     "LOGIN_FIELD": "email",

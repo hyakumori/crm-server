@@ -3,11 +3,13 @@ from uuid import UUID
 
 from django.contrib.auth.models import Group
 from django.db.models import Q
+from djoser import signals
 from djoser.views import UserViewSet
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenViewBase
 from rest_typed_views import Body, typed_action
 
@@ -36,13 +38,24 @@ class CustomUserViewSet(UserViewSet):
     def perform_update(self, serializer):
         viewsets.ModelViewSet.perform_update(self, serializer)
 
-    @action(detail=True, url_path="update", methods=["post"])
-    def update_user(self, request, pk: UUID):
-        try:
-            permissions = PermissionService.get_user_permissions(pk)
-            return make_success_json(permissions)
-        except Exception as e:
-            return make_error_json(str(e))
+    @action(["post"], detail=False)
+    def activation(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.user
+        user.set_password(serializer.data["new_password"])
+        user.first_name = serializer.data["first_name"]
+        user.last_name = serializer.data["last_name"]
+        user.is_active = True
+        user.save()
+
+        PermissionService.add_to_default_group(user)
+
+        signals.user_activated.send(
+            sender=self.__class__, user=user, request=self.request
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, url_path="permissions", methods=["get"])
     def list_permissions(self, request, pk: UUID):

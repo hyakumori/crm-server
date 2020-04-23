@@ -22,7 +22,6 @@
   </ValidationProvider>
 </template>
 
-
 <script>
 import { ValidationProvider } from "vee-validate";
 
