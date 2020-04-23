@@ -98,7 +98,7 @@ class RelationDbImporter(BaseDbImporter):
                         forest_id, related_count, forest_internal=True
                     )
                 else:
-                    contact = CustomerService.get_basic_contact(related.pk)
+                    contact, customercontact = CustomerService.get_basic_contact(related.pk)
                     customer = CustomerSchema(
                         id=uuid4().hex,
                         name_kanji=owner.name_kanji,
