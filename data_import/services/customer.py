@@ -1,3 +1,4 @@
+from typing import Tuple, Any
 from uuid import UUID, uuid4
 
 from django.db.models import Q
@@ -55,12 +56,12 @@ class CustomerService:
             contact_link.contact.delete()
 
     @staticmethod
-    def get_basic_contact(customer_id) -> Contact:
+    def get_basic_contact(customer_id) -> Tuple[Any, Any]:
         customer_contact_link = CustomerContact.objects.filter(
             Q(is_basic=True) & Q(customer_id=customer_id)
         ).first()
         contact = customer_contact_link.contact
-        return contact
+        return contact, customer_contact_link
 
     @staticmethod
     def has_owner(owner: ForestOwner) -> bool:

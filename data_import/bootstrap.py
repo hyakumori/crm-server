@@ -49,7 +49,7 @@ def load_data():
     customer = df["顧客情報一覧"]
     forest = df["森林情報一覧"]
 
-    return dict(customer=customer, forest=forest, )
+    return dict(customer=customer, forest=forest,)
 
 
 def import_customer(data):
@@ -187,7 +187,7 @@ def create_link_forest_customer():
 @cli.command(
     "link-forest-customer",
     help="Check and insert forest, customer relation. Also generate intermediate pickle under db_importer."
-         + "Remove pickle file if want to refresh database information (eg: reimport)",
+    + "Remove pickle file if want to refresh database information (eg: reimport)",
 )
 def command_link_forest_customer():
     if not click.confirm(

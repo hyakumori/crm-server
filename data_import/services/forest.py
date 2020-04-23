@@ -1,10 +1,11 @@
 from typing import Union
 from uuid import UUID
 
+from django.db import transaction
 from django.db.models import Q
 from hyakumori_crm.crm.models.customer import Customer
 from hyakumori_crm.crm.models.forest import Forest
-from hyakumori_crm.crm.models.relations import ForestCustomer
+from hyakumori_crm.crm.models.relations import ForestCustomer, ForestCustomerContact
 from hyakumori_crm.crm.schemas.forest import ForestSchema
 
 from ..lib.utils import key_value_to_dict
@@ -36,9 +37,9 @@ class ForestService:
         else:
             forest = Forest.objects.get(pk=forest_id)
 
-        contact = CustomerService.get_basic_contact(customer_id)
+        contact, customercontact = CustomerService.get_basic_contact(customer_id)
         link_existed = ForestCustomer.objects.filter(
-            Q(customer=customer) & Q(forest=forest) & Q(contact=contact)
+            Q(customer=customer) & Q(forest=forest)
         ).first()
 
         if link_existed:
@@ -50,6 +51,11 @@ class ForestService:
         relation.customer = customer
         relation.contact = contact
         relation.save()
+
+        relation_contact = ForestCustomerContact()
+        relation_contact.forestcustomer = relation
+        relation_contact.customercontact = customercontact
+        relation_contact.save()
 
         return relation
 

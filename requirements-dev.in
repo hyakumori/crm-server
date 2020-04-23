@@ -8,3 +8,6 @@ filelock
 pytest-django
 coverage
 orjson
+pandas
+click
+xlrd
