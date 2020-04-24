@@ -107,7 +107,8 @@
     "activate_account_success": "アカウントの有効化に成功しました。{seconds}秒後にログイン画面にリダイレクトします。",
     "uid_not_found": "無効なユーザーまたはユーザーが存在しません。",
     "token_stale": "無効または期限切リンク",
-    "field_optional": "省略可能"
+    "field_optional": "省略可能",
+    "fail_create_user": "メール送信中にエラーが発生しました。宛先を確認した上で、再度試して見てください。"
   },
   "page_header": {
     "archive_detail": "協議履歴",

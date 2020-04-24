@@ -134,3 +134,15 @@ def api_validate_model(input_model, arg_name="data"):
         return wrapper
 
     return decorator
+
+
+# TODO: implement policies check
+def action_login_required(with_policies=None):
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            return f(*args, **kwargs)
+
+        return wrapper
+
+    return decorator

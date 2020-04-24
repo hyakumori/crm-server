@@ -43,6 +43,7 @@ const AdminRoutes = [
           title: "page_header.user_mgmt",
           isPublic: false,
           isAdmin: true,
+          scopes: [],
         },
         component: () => import("./screens/UserList.vue"),
       },
@@ -53,6 +54,7 @@ const AdminRoutes = [
           title: "page_header.user_detail",
           isPublic: false,
           isAdmin: true,
+          scopes: [],
         },
         component: () => import("./screens/UserDetail.vue"),
       },
@@ -150,7 +152,7 @@ const router = new VueRouter({
           meta: {
             title: "page_header.forest_mgmt",
             isPublic: false,
-            scopes: ["manage_forest", "view_forest", "admin"],
+            scopes: ["manage_forest", "view_forest"],
           },
         },
         {
@@ -160,7 +162,7 @@ const router = new VueRouter({
           meta: {
             title: "page_header.forest_detail",
             isPublic: false,
-            scopes: ["manage_forest", "view_forest", "admin"],
+            scopes: ["manage_forest", "view_forest"],
           },
         },
         {
@@ -170,7 +172,7 @@ const router = new VueRouter({
           meta: {
             title: "page_header.customer_mgmt",
             isPublic: false,
-            scopes: ["manage_customer", "admin"],
+            scopes: ["manage_customer", "view_customer"],
           },
         },
         {
@@ -180,7 +182,7 @@ const router = new VueRouter({
           meta: {
             title: "page_header.customer_detail",
             isPublic: false,
-            scopes: ["manage_customer", "view_customer", "admin"],
+            scopes: ["manage_customer", "view_customer"],
           },
         },
         {
@@ -201,7 +203,7 @@ const router = new VueRouter({
           meta: {
             title: "page_header.archive_mgmt",
             isPublic: false,
-            scopes: ["manage_archive", "view_archive", "admin"],
+            scopes: ["manage_archive", "view_archive"],
           },
         },
         {
@@ -211,7 +213,7 @@ const router = new VueRouter({
           meta: {
             title: "page_header.archive_detail",
             isPublic: false,
-            scopes: ["manage_archive", "view_archive", "admin"],
+            scopes: ["manage_archive", "view_archive"],
           },
         },
       ],

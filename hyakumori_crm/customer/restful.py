@@ -1,10 +1,11 @@
 from uuid import UUID
 
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.decorators import api_view, action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 from rest_typed_views import typed_action
 
 from hyakumori_crm.core.utils import default_paginator
@@ -35,7 +36,9 @@ from .service import (
 )
 
 
-class CustomerViewSets(viewsets.ModelViewSet):
+class CustomerViewSets(
+    mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericViewSet
+):
     serializer_class = CustomerSerializer
     permission_classes = [IsAuthenticated]
 

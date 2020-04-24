@@ -1,3 +1,4 @@
+import AclSetup from "./plugins/acl";
 import App from "./App.vue";
 import { HttpClientPlugin } from "./plugins/http";
 import VeeValidate from "./plugins/vue-veevalidate";
@@ -17,6 +18,7 @@ Vue.use(HttpClientPlugin);
 Vue.use(VeeValidate, {
   i18n,
 });
+Vue.use(AclSetup);
 
 new Vue({
   vuetify,

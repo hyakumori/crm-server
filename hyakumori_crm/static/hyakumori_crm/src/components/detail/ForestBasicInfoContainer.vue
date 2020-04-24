@@ -6,7 +6,16 @@
       :loading="isLoading"
       :update="isUpdate"
       @update="setUpdate"
-    />
+    >
+      <template v-slot:right="{ click, editBtnContent }">
+        <addition-button
+          v-acl-only="['manage_forest']"
+          :content="editBtnContent"
+          :click="click"
+        />
+      </template>
+    </content-header>
+
     <div class="mt-4">
       <forest-basic-info
         :info="mutableInfo"
@@ -29,6 +38,7 @@
 import ForestBasicInfo from "./ForestBasicInfo";
 import ContentHeader from "./ContentHeader";
 import UpdateButton from "./UpdateButton";
+import AdditionButton from "../AdditionButton";
 import ContainerMixin from "./ContainerMixin";
 import { updateBasicInfo } from "../../api/forest";
 import { cloneDeep } from "lodash";
@@ -42,6 +52,7 @@ export default {
     ContentHeader,
     ForestBasicInfo,
     UpdateButton,
+    AdditionButton,
   },
 
   props: {
