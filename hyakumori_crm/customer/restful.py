@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, action
 from rest_framework.pagination import PageNumberPagination
@@ -10,13 +12,26 @@ from hyakumori_crm.crm.models import Contact, Customer, ForestCustomer
 from hyakumori_crm.crm.restful.serializers import ContactSerializer, CustomerSerializer
 
 from ..api.decorators import api_validate_model, get_or_404
-from .schemas import ForestSerializer, CustomerContactsDeleteInput
+from .schemas import (
+    ForestSerializer,
+    CustomerContactsDeleteInput,
+    CustomerInputSchema,
+    ForestPksInput,
+    ContactsInput,
+    CustomerUpdateSchema,
+    BankingInput,
+)
 from .service import (
     get_customer_contacts,
     get_customer_forests,
     contacts_list_with_search,
     delete_customer_contacts,
     get_customer_by_pk,
+    create,
+    update_forests,
+    update_contacts,
+    update_basic_info,
+    update_banking_info,
 )
 
 
@@ -27,29 +42,67 @@ class CustomerViewSets(viewsets.ModelViewSet):
     def get_queryset(self):
         return Customer.objects.all()
 
-    @typed_action(detail=True, methods=["GET"], permission_classes=[IsAuthenticated])
-    def contacts(self, request):
-        obj = self.get_object()
+    @api_validate_model(CustomerInputSchema)
+    def create(self, request, data: dict = None):
+        customer = create(data)
+        return Response({"id": customer.id}, status=201)
 
-        paginator = default_paginator()
-        paged_list = paginator.paginate_queryset(
-            request=request, queryset=get_customer_contacts(obj.pk), view=self,
-        )
+    @get_or_404(get_customer_by_pk, to_name="customer", remove=True)
+    @api_validate_model(CustomerUpdateSchema)
+    def update(self, request, customer=None, data: dict = None):
+        customer = update_basic_info(data)
+        return Response({"id": customer.id})
 
-        contacts = ContactSerializer(paged_list, many=True).data
-        return paginator.get_paginated_response(contacts)
+    @action(["PUT", "PATCH"], detail=True, url_path="bank")
+    @get_or_404(get_customer_by_pk, to_name="customer", pass_to="kwargs", remove=True)
+    @api_validate_model(BankingInput)
+    def update_customer_bank(self, request, customer=None, data: dict = None):
+        customer = update_banking_info(customer, data)
+        return Response({"id": customer.id})
 
-    @typed_action(detail=True, methods=["GET"], permission_classes=[IsAuthenticated])
-    def forests(self, request):
-        obj = self.get_object()
+    @action(detail=True, methods=["GET", "PUT", "PATCH"])
+    @get_or_404(
+        get_func=get_customer_by_pk,
+        to_name="customer",
+        pass_to=["request", "kwargs"],
+        remove=True,
+    )
+    @api_validate_model(ContactsInput)
+    def contacts(self, request, *, customer=None, data=None):
+        if request.method == "GET":
+            obj = customer
+            paginator = default_paginator()
+            paged_list = paginator.paginate_queryset(
+                request=request, queryset=get_customer_contacts(obj.pk), view=self,
+            )
 
-        paginator = default_paginator()
-        paged_list = paginator.paginate_queryset(
-            request=request, queryset=get_customer_forests(obj.pk), view=self,
-        )
+            contacts = ContactSerializer(paged_list, many=True).data
+            return paginator.get_paginated_response(contacts)
+        else:
+            update_contacts(data)
+            return Response({"id": data.customer.id})
 
-        forests = ForestSerializer(paged_list, many=True).data
-        return paginator.get_paginated_response(forests)
+    @action(detail=True, methods=["GET", "PUT", "PATCH"])
+    @get_or_404(
+        get_func=get_customer_by_pk,
+        to_name="customer",
+        remove=True,
+        pass_to=["request", "kwargs"],
+    )
+    @api_validate_model(ForestPksInput)
+    def forests(self, request, *, customer=None, data: ForestPksInput = None):
+        if request.method == "GET":
+            obj = customer
+            paginator = default_paginator()
+            paged_list = paginator.paginate_queryset(
+                request=request, queryset=get_customer_forests(obj.pk), view=self,
+            )
+
+            forests = ForestSerializer(paged_list, many=True).data
+            return paginator.get_paginated_response(forests)
+        else:
+            update_forests(data)
+            return Response({"id": data.customer.pk})
 
     @typed_action(detail=True, methods=["GET"])
     def representatives(self, request):

@@ -174,6 +174,16 @@ const router = new VueRouter({
           },
         },
         {
+          path: "/customers/new",
+          name: "customer-new",
+          component: CustomerDetail,
+          meta: {
+            title: "page_header.customer_detail",
+            isPublic: false,
+            scopes: ["manage_customer", "view_customer", "admin"],
+          },
+        },
+        {
           path: "/customers/:id",
           name: "customer-detail",
           component: CustomerDetail,

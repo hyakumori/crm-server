@@ -77,25 +77,3 @@ def update_owners(owner_pks_in):
     ForestCustomer.objects.bulk_create(added_forest_customers)
     forest.save(update_fields=["updated_at"])
     return forest
-
-
-def set_forest_owner_contacts(forest: Forest, forest_owner_contact_in: dict):
-    customer = forest_owner_contact_in.customer
-    contacts = forest_owner_contact_in.contacts
-    forestcustomer = customer.forestcustomer_set.get(forest_id=forest.pk)
-    for contact in contacts:
-        customer_contact, _ = CustomerContact.objects.get_or_create(
-            customer_id=customer.id, contact_id=contact.contact.pk
-        )
-        if contact.set_forest:
-            ForestCustomerContact.objects.get_or_create(
-                forestcustomer=forestcustomer, customercontact=customer_contact
-            )
-        customer_contact.attributes = {
-            **(customer_contact.attributes or {}),
-            "relationship_type": contact.relationship_type,
-        }
-        customer_contact.save(update_fields=["attributes", "updated_at"])
-    customer.save(update_fields=["updated_at"])
-    forest.save(update_fields=["updated_at"])
-    return forest
