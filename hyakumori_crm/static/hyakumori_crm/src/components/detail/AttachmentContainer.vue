@@ -4,6 +4,7 @@
       :content="headerContent"
       :editBtnContent="editBtnContent"
       :update="isUpdate"
+      :displayAdditionBtn="false"
       @update="val => (isUpdate = val)"
     />
     <template v-if="isExpand">
@@ -22,7 +23,11 @@
     </template>
     <addition-button class="mb-3" v-if="isUpdate" :content="addBtnContent" />
     <update-button v-if="isUpdate" :cancel="cancel.bind(this)" />
-    <p v-if="isRequiredExpand" class="expand" @click="expandAttachList">
+    <p
+      v-if="isRequiredExpand && attachExpand && attachExpand.length > 0"
+      class="expand"
+      @click="expandAttachList"
+    >
       {{ isExpand ? "一部表示する" : "すべて表示する" }}
     </p>
   </div>

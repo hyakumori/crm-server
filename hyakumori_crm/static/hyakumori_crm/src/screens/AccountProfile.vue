@@ -99,7 +99,6 @@ export default {
       userInfo: null,
       pageIcon: this.$t("icon.user_icon"),
       backBtnContent: this.$t("page_header.user_mgmt"),
-      groups: [],
       userPermissions: {},
       form: {
         last_name: "",
@@ -119,7 +118,6 @@ export default {
 
   async mounted() {
     this.isLoading = true;
-    await this.getGroups();
     await this.getUserDetail();
     await this.getUserPermission();
     await this.setHeaderInfo();
@@ -136,16 +134,6 @@ export default {
         if (callback) {
           callback(response);
         }
-      }
-    },
-
-    async getGroups() {
-      const response = await this.$rest.get(`/permissions/groups`);
-      if (response) {
-        this.groups = response.groups.map(item => ({
-          text: item.name,
-          value: item.id,
-        }));
       }
     },
 

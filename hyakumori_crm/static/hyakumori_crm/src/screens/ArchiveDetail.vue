@@ -50,11 +50,24 @@
         />
       </div>
     </template>
-    <template #right></template>
+    <template #right>
+      <div class="forest-detail__log ml-6">
+        <h4 class="mb-1">更新履歴</h4>
+        <log-card
+          v-for="(log, index) in getActionLogs"
+          :key="index"
+          :action="log.action"
+          :date="log.date"
+          :editor="log.editor"
+        />
+      </div>
+    </template>
   </main-section>
 </template>
 
 <script>
+import actionLogs from "../assets/dump/action_log.json";
+import LogCard from "../components/detail/LogCard";
 import MainSection from "../components/MainSection";
 import ScreenMixin from "./ScreenMixin";
 import ArchiveBasicInfoContainer from "../components/detail/ArchiveBasicInfoContainer";
@@ -77,6 +90,7 @@ export default {
     CustomerContactList,
     ArchiveParticipantList,
     ArchiveRelatedForestContainer,
+    LogCard,
   },
 
   data() {
@@ -106,13 +120,18 @@ export default {
       names: ["John Wick", "Marshmello"],
     };
   },
+  computed: {
+    getActionLogs() {
+      return actionLogs;
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .archives-detail {
   &__section {
-    margin: 30px 0 30px 0;
+    margin: 0 0 30px 0;
     padding: 35px;
     width: 785px;
     background: white;
