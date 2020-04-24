@@ -4,6 +4,7 @@ from uuid import UUID
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission, AbstractUser, Group
 from django.contrib.contenttypes.models import ContentType
+from django.utils.module_loading import import_string
 from guardian.shortcuts import (
     assign_perm,
     get_user_perms,
@@ -26,8 +27,8 @@ class PermissionService:
             for permission in Permission.objects.filter(
                 content_type_id__in=crm_content_types
             )
-                .all()
-                .iterator()
+            .all()
+            .iterator()
         ]
 
         return permissions
@@ -146,3 +147,20 @@ class PermissionService:
         group, _ = Group.objects.get_or_create(name=SystemGroups.GROUP_LIMITED_USER)
         group.user_set.add(user)
         group.save()
+
+    @classmethod
+    def check_policies(cls, request, user, policies):
+        policies_to_check = dict()
+        for policy in policies:
+            try:
+                policy_method = import_string(
+                    f"hyakumori_crm.permissions.policies.{policy}"
+                )
+                policies_to_check[policy] = policy_method(request, user)
+            except ImportError:
+                policies_to_check[policy] = False
+                continue
+
+        check_results = all(result is True for _, result in policies_to_check.items())
+
+        return check_results
