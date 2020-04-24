@@ -13,13 +13,15 @@ from .schemas import (
     CustomerPaginator,
 )
 from .service import create, get, get_list, update
+from ..graphql.decorators import login_required
 
 query = ObjectType("Query")
 mutation = ObjectType("Mutation")
 
 
 @query.field("get_customer")
-def get_customer_by_id(obj: Any, info: GraphQLResolveInfo, id: str = None) -> dict:
+@login_required(with_policies=['can_view_customers'])
+def get_customer_by_id(obj: Any, info: GraphQLResolveInfo, id: str = None, **kwargs) -> dict:
     return {
         "ok": True,
         "customer": {
@@ -32,7 +34,8 @@ def get_customer_by_id(obj: Any, info: GraphQLResolveInfo, id: str = None) -> di
 
 
 @query.field("customertable_headers")
-def get_customertable_headers(obj: Any, info: GraphQLResolveInfo) -> dict:
+@login_required(with_policies=['can_view_customers'])
+def get_customertable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dict:
     headers = [
         {"text": _("Internal Id"), "value": "internal_id"},
         {"text": _("Fullname Kanji"), "value": "fullname_kanji"},
@@ -58,8 +61,9 @@ def get_customertable_headers(obj: Any, info: GraphQLResolveInfo) -> dict:
 
 
 @query.field("list_customers")
+@login_required(with_policies=['can_view_customers'])
 @validate_model(CustomerPaginator)
-def list_customers(obj: Any, info: GraphQLResolveInfo, data=None) -> dict:
+def list_customers(obj: Any, info: GraphQLResolveInfo, data=None, **kwargs) -> dict:
     pager_input = data.dict()
     customers, total = get_list(
         page_num=pager_input["page_num"],
@@ -72,16 +76,18 @@ def list_customers(obj: Any, info: GraphQLResolveInfo, data=None) -> dict:
 
 
 @mutation.field("create_customer")
+@login_required(with_policies=['can_create_customers'])
 @validate_model(CustomerInputSchema)
-def create_customer(obj: Any, info: GraphQLResolveInfo, data=None) -> dict:
+def create_customer(obj: Any, info: GraphQLResolveInfo, data=None, **kwargs) -> dict:
     customer = create(data)
     return {"customer": {"id": customer.id}}
 
 
 @mutation.field("update_customer")
+@login_required(with_policies=['can_create_customers'])
 @validate_model(CustomerUpdate, get)
 def update_customer(
-    obj: Any, info: GraphQLResolveInfo, instance=None, data=None
+    obj: Any, info: GraphQLResolveInfo, instance=None, data=None, **kwargs
 ) -> dict:
     instance = update(instance, data)
     return {"customer": {"id": instance.id}}

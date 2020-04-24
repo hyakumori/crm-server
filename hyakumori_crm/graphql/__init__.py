@@ -11,7 +11,6 @@ from hyakumori_crm.forest.resolvers import resolvers as forest_resolvers
 from .types import types as common_types
 from .scalars import json_scalar
 
-
 type_defs = [common_types, customers_types, forests_types]
 
 schema = make_executable_schema(
@@ -25,5 +24,6 @@ schema = make_executable_schema(
     ],
 )
 
-
-view = GraphQLView.as_view(schema=schema)
+view = GraphQLView.as_view(
+    schema=schema,
+)
