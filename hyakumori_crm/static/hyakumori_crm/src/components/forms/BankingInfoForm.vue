@@ -20,7 +20,7 @@ export default {
     async submit() {
       this.submiting = true;
       try {
-        const data = await this.$rest.put(
+        await this.$rest.put(
           `/customers/${this.id}/bank`,
           this.form,
         );
@@ -28,7 +28,6 @@ export default {
         this.$emit("updated");
         this.toggleEditing();
       } catch (error) {
-        console.log(error);
         this.submiting = false;
         if (error.response) {
           this.$refs.form.setErrors(error.response.data.errors);
