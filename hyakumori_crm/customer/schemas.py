@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import List, Optional, Union
+from uuid import UUID
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError as DjValidationError
@@ -10,7 +11,7 @@ from rest_framework.serializers import ModelSerializer
 from ..core.models import HyakumoriDanticModel, HyakumoriDanticUpdateModel, Paginator
 from ..crm.common import regexes
 from ..crm.common.constants import DEFAULT_EMAIL, EMPTY, UNKNOWN
-from ..crm.models import Customer, Forest
+from ..crm.models import Customer, Forest, ForestCustomer, Contact
 
 
 class Name(HyakumoriDanticModel):
@@ -24,11 +25,11 @@ class Address(HyakumoriDanticModel):
     sector: Optional[str]
 
 
-class Contact(HyakumoriDanticModel):
+class ContactInput(HyakumoriDanticModel):
     name_kanji: Name
     name_kana: Name
     postal_code: constr(regex=regexes.POSTAL_CODE, strip_whitespace=True)
-    address: Optional[Address] = Address
+    address: Optional[Address] = {}
     telephone: Optional[constr(regex=regexes.TELEPHONE_NUMBER, strip_whitespace=True)]
     mobilephone: Optional[
         constr(regex=regexes.MOBILEPHONE_NUMBER, strip_whitespace=True)
@@ -36,7 +37,7 @@ class Contact(HyakumoriDanticModel):
     email: Optional[EmailStr] = DEFAULT_EMAIL
 
 
-class Banking(HyakumoriDanticModel):
+class BankingInput(HyakumoriDanticModel):
     bank_name: Optional[str] = UNKNOWN
     branch_name: Optional[str] = UNKNOWN
     account_type: Optional[str] = EMPTY
@@ -51,8 +52,14 @@ class CustomerStatus(str, Enum):
 
 class CustomerInputSchema(HyakumoriDanticModel):
     internal_id: Optional[str]
-    basic_contact: Contact
-    banking: Optional[Banking]
+    basic_contact: ContactInput
+
+
+class CustomerUpdateSchema(CustomerInputSchema):
+    customer: Customer
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class CustomerRead:
@@ -138,4 +145,101 @@ class CustomerContactsDeleteInput(HyakumoriDanticModel):
                 return Contact.objects.get(pk=v)
             except (Contact.DoesNotExist, DjValidationError):
                 raise ValueError(_("Contact {pk} not found").format(pk=v))
+        return v
+
+
+class ForestPksInput(HyakumoriDanticModel):
+    customer: Customer
+    added: List[UUID] = []
+    deleted: List[UUID] = []
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    @validator("deleted")
+    def check_deleted(cls, v):
+        forest_pks = ForestCustomer.objects.filter(forest_id__in=v).values_list(
+            "forest_id", flat=True
+        )
+        invalid_pks = set(v) - set(forest_pks)
+        if len(invalid_pks) > 0:
+            raise ValueError(_("Forest Id {} not found").format(", ".join(invalid_pks)))
+        return v
+
+    @validator("added")
+    def check_added(cls, v):
+        forest_pks = Forest.objects.filter(id__in=v).values_list("id", flat=True)
+        invalid_pks = set(v) - set(forest_pks)
+        if len(invalid_pks) > 0:
+            raise ValueError(_("Forest Id {} not found").format(", ".join(invalid_pks)))
+        return v
+
+
+class RelationshipType(str, Enum):
+    self = "本人"
+    parents = "両親"
+    husband = "夫"
+    wife = "妻"
+    son = "息子"
+    daughter = "娘"
+    grandchild = "孫"
+    friend = "友人"
+    relative = "その他親族"
+    other = "その他"
+
+
+class ContactType(str, Enum):
+    forest = "FOREST"
+    family = "FAMILY"
+    others = "OTHERS"
+
+
+class SingleSelectContactInput(HyakumoriDanticModel):
+    contact: Contact
+    relationship_type: Optional[RelationshipType]
+    forest_id: Optional[UUID]
+    contact_type: ContactType
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    @validator("contact", pre=True)
+    def prepare_contact(cls, v):
+        if not isinstance(v, Contact):
+            try:
+                return Contact.objects.get(pk=v)
+            except (Contact.DoesNotExist, DjValidationError):
+                raise ValueError(_("Contact {} not found").format(v))
+        return v
+
+
+class ContactsInput(HyakumoriDanticModel):
+    customer: Customer
+    adding: List[SingleSelectContactInput] = []
+    deleting: List[UUID] = []
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    @root_validator(pre=True)
+    def preparing(cls, values):
+        customer = values.get("customer")
+        cls.customer_forest_pks = customer.forestcustomer_set.all().values_list(
+            "forest_id", flat=True
+        )
+        cls.customer_contact_pks = customer.customercontact_set.all().values_list(
+            "contact_id", flat=True
+        )
+        return values
+
+    @validator("adding", each_item=True)
+    def validate_adding_forest_ids(cls, v):
+        if v.forest_id and v.forest_id not in cls.customer_forest_pks:
+            raise ValueError(_("Forest {} not found").format(v.forest_id))
+        return v
+
+    @validator("deleting", each_item=True)
+    def validate_deleting_contact_ids(cls, v):
+        if v not in cls.customer_contact_pks:
+            raise ValueError(_("Contact {} not found").format(v))
         return v

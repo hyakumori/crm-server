@@ -7,26 +7,47 @@
           editBtnContent="所有地を追加・編集"
           :isLoading="customerLoading"
           :info="basicInfo"
-        />
+          :id="id"
+        >
+          <template #form="props"
+            ><ContactForm
+              :id="id"
+              :form="selfContactFormData"
+              :toggleEditing="props.toggleEditing"
+              @updated="fetchCustomer"
+          /></template>
+        </basic-info-container>
 
         <forest-list-container
+          v-if="id"
           headerContent="所有林情報"
           editBtnContent="フォレストの追加/編集"
           addBtnContent="所有地情報を追加"
+          :displayAdditionBtn="true"
           :isLoading="forestsLoading"
           :forests="forests"
+          :id="id"
+          @saved="fetchForests"
+          :selectingForestId.sync="selectingForestId"
         />
 
         <customer-list-container
+          v-if="id"
           class="mt-12"
           headerContent="連絡者情報"
           editBtnContent="連絡者を追加・編集"
           addBtnContent="連絡者を追加"
           :contacts="forestContacts"
           :isLoading="contactsLoading"
+          :id="id"
+          :customer="customer"
+          @saved="fetchContacts"
+          contactType="FOREST"
+          :selectingForestId="selectingForestId"
         />
 
         <attachment-container
+          v-if="id"
           class="consultation-history mt-12"
           headerContent="協議履歴"
           editBtnContent="協議記録を追加・編集"
@@ -36,21 +57,31 @@
         />
 
         <customer-list-container
+          v-if="id"
           class="mt-12"
           headerContent="家族情報"
           editBtnContent="家族を追加・編集"
           addBtnContent="連絡者を追加"
           :contacts="familyContacts"
           :isLoading="contactsLoading"
+          :id="id"
+          :customer="customer"
+          @saved="fetchContacts"
+          contactType="FAMILY"
         />
 
         <customer-list-container
+          v-if="id"
           class="mt-12"
           headerContent="その他関係者情報"
           editBtnContent="その他関係者を追加・編集"
           addBtnContent="連絡者を追加"
           :contacts="otherContacts"
           :isLoading="contactsLoading"
+          :id="id"
+          :customer="customer"
+          @saved="fetchContacts"
+          contactType="OTHERS"
         />
 
         <forest-list-container
@@ -60,15 +91,25 @@
           :displayAdditionBtn="false"
           :isLoading="false"
           :forests="[]"
+          v-if="id"
         />
 
-        <banking-info-container
-          class="banking-info mt-12"
+        <basic-info-container
+          v-if="id"
           headerContent="口座情報"
           editBtnContent="アカウント情報の追加/編集"
           :isLoading="customerLoading"
           :info="bankingInfo"
-        />
+          :id="id"
+        >
+          <template #form="props"
+            ><BankingInfoForm
+              :id="id"
+              :form="bankingInfoFormData"
+              :toggleEditing="props.toggleEditing"
+              @updated="fetchCustomer"
+          /></template>
+        </basic-info-container>
       </div>
     </template>
 
@@ -95,10 +136,12 @@ import discussions from "../assets/dump/history_discussion.json";
 import actionLogs from "../assets/dump/action_log.json";
 import LogCard from "../components/detail/LogCard";
 import BasicInfoContainer from "../components/detail/BasicInfoContainer";
-import BankingInfoContainer from "../components/detail/BankingInfoContainer";
+// import BankingInfoContainer from "../components/detail/BankingInfoContainer";
 import AttachmentContainer from "../components/detail/AttachmentContainer";
 import ForestListContainer from "../components/detail/ForestListContainer";
 import CustomerListContainer from "../components/detail/CustomerListContainer";
+import ContactForm from "../components/forms/ContactForm";
+import BankingInfoForm from "../components/forms/BankingInfoForm";
 import { filter } from "lodash";
 
 export default {
@@ -111,7 +154,9 @@ export default {
     AttachmentContainer,
     ForestListContainer,
     CustomerListContainer,
-    BankingInfoContainer,
+    // BankingInfoContainer,
+    ContactForm,
+    BankingInfoForm,
   },
   props: ["id"],
   data() {
@@ -136,45 +181,18 @@ export default {
         registrationForest: false,
         bankingInfo: false,
       },
+      selectingForestId: null,
       customer: null,
-      customerLoading: true,
+      customerLoading: this.id ? true : false,
       forests: [],
-      forestsLoading: true,
+      forestsLoading: this.id ? true : false,
       contacts: [],
-      contactsLoading: true,
-      selectedForestId: null,
+      contactsLoading: this.id ? true : false,
     };
   },
 
-  mounted() {
-    this.$rest.get(`/customers/${this.id}`).then(data => {
-      this.customer = data;
-      this.customerLoading = false;
-    });
-    this.$rest.get(`/customers/${this.id}/forests`).then(async data => {
-      let forests = data.results;
-      let next = data.next;
-      //TODO: implement UI pagination
-      while (!!next) {
-        let nextForests = await this.$rest.get(data.next);
-        forests.push(...nextForests.results);
-        next = nextForests.next;
-      }
-      this.forests = forests;
-      this.forestsLoading = false;
-    });
-    this.$rest.get(`/customers/${this.id}/contacts`).then(async data => {
-      let contacts = data.results;
-      let next = data.next;
-      //TODO: implement UI pagination
-      while (!!next) {
-        let nextContacts = await this.$rest.get(data.next);
-        contacts.push(...nextContacts.results);
-        next = nextContacts.next;
-      }
-      this.contacts = contacts;
-      this.contactsLoading = false;
-    });
+  created() {
+    this.fetchInitialData();
   },
 
   methods: {
@@ -192,6 +210,49 @@ export default {
 
       return (nameObj && (nameObj.last_name || nameObj.first_name)) || "";
     },
+    fetchInitialData() {
+      if (this.id) {
+        this.fetchCustomer();
+        this.fetchForests();
+        this.fetchContacts();
+      }
+    },
+    fetchCustomer() {
+      this.$rest.get(`/customers/${this.id}`).then(data => {
+        this.customer = data;
+        this.customerLoading = false;
+      });
+    },
+    fetchForests() {
+      this.forestsLoading = true;
+      this.$rest.get(`/customers/${this.id}/forests`).then(async data => {
+        let forests = data.results;
+        let next = data.next;
+        //TODO: implement UI pagination
+        while (!!next) {
+          let nextForests = await this.$rest.get(data.next);
+          forests.push(...nextForests.results);
+          next = nextForests.next;
+        }
+        this.forests = forests;
+        this.forestsLoading = false;
+      });
+    },
+    fetchContacts() {
+      this.contactsLoading = true;
+      this.$rest.get(`/customers/${this.id}/contacts`).then(async data => {
+        let contacts = data.results;
+        let next = data.next;
+        //TODO: implement UI pagination
+        while (!!next) {
+          let nextContacts = await this.$rest.get(data.next);
+          contacts.push(...nextContacts.results);
+          next = nextContacts.next;
+        }
+        this.contacts = contacts;
+        this.contactsLoading = false;
+      });
+    },
   },
 
   computed: {
@@ -201,27 +262,22 @@ export default {
     },
 
     forestContacts() {
-      if (!this.selectedForestId)
+      if (!this.selectingForestId)
         return filter(
           this.contacts,
-          c =>
-            c.forest_id ||
-            (c.attributes && c.attributes.relationship_type === "本人"),
+          c => c.forest_id || c.cc_attrs.contact_type === "FOREST",
         );
-      return filter(this.contacts, { forest_id: this.selectedForestId });
+      return filter(this.contacts, { forest_id: this.selectingForestId });
     },
 
     familyContacts() {
-      return filter(
-        this.contacts,
-        () =>
-          attributes &&
-          !["本人", "その他"].includes(attributes.relationship_type),
-      );
+      return filter(this.contacts, {
+        cc_attrs: { contact_type: "FAMILY" },
+      });
     },
     otherContacts() {
       return filter(this.contacts, {
-        attributes: { relationship_type: "その他" },
+        cc_attrs: { contact_type: "OTHERS" },
       });
     },
 
@@ -240,7 +296,31 @@ export default {
       // TODO: remove this
       return actionLogs;
     },
-
+    selfContactFormData() {
+      return {
+        last_name_kanji: this.customer?.self_contact.name_kanji.last_name || "",
+        first_name_kanji:
+          this.customer?.self_contact.name_kanji.first_name || "",
+        last_name_kana: this.customer?.self_contact.name_kana.last_name || "",
+        first_name_kana: this.customer?.self_contact.name_kana.first_name || "",
+        postal_code: this.customer?.self_contact.postal_code || "",
+        sector: this.customer?.self_contact.address.sector || "",
+        prefecture: this.customer?.self_contact.address.prefecture || "",
+        municipality: this.customer?.self_contact.address.municipality || "",
+        telephone: this.customer?.self_contact.telephone || "",
+        mobilephone: this.customer?.self_contact.mobilephone || "",
+        email: this.customer?.self_contact.email || "",
+      };
+    },
+    bankingInfoFormData() {
+      return {
+        bank_name: this.customer?.banking?.bank_name || "",
+        branch_name: this.customer?.banking?.branch_name || "",
+        account_type: this.customer?.banking?.account_type || "",
+        account_number: this.customer?.banking?.account_number || "",
+        account_name: this.customer?.banking?.account_name || "",
+      };
+    },
     basicInfo() {
       return [
         {
@@ -305,6 +385,7 @@ export default {
   },
 
   watch: {
+    $route: "fetchInitialData",
     customer: {
       deep: true,
       handler: function() {

@@ -40,7 +40,11 @@ def typed_api_view(methods, permissions_classes=None):
 
 
 def get_or_404(
-    get_func: Callable, to_name: str = None, msg: str = None, remove: bool = False
+    get_func: Callable,
+    to_name: str,
+    pass_to: str = "request",
+    msg: str = None,
+    remove: bool = False,
 ):
     """Get model instance base on kwargs passed from url and inject into `request.data`.
     Raise Http404 if not found.
@@ -59,19 +63,37 @@ def get_or_404(
                     "Invalid func arguments, only kwargs after request param"
                 )
 
-            get_func_args = {
-                arg: kwargs[arg] for arg in inspect.getfullargspec(get_func).args
-            }
+            try:
+                get_func_args = {
+                    arg: kwargs[arg] for arg in inspect.getfullargspec(get_func).args
+                }
+            except KeyError:
+                return
 
             try:
                 obj = get_func(**get_func_args)
             except ValueError as e:
                 raise NotFound(msg or str(e))
 
-            # currently only work if content-type is application/json
-            request.data[to_name] = obj
+            obj_passed = False
+            if (pass_to == "request" or "request" in pass_to) and request.method in [
+                "POST",
+                "PUT",
+                "PATCH",
+            ]:
+                # currently only work if content-type is application/json
+                request.data[to_name] = obj
+                obj_passed = True
+            if pass_to == "kwargs" or "kwargs" in pass_to:
+                kwargs[to_name] = obj
+                obj_passed = True
+            if pass_to == "kwargs_data" or "kwargs_data" in pass_to:
+                if "_data" not in kwargs:
+                    kwargs["_data"] = request.data.copy()
+                kwargs["_data"][to_name] = obj
+                obj_passed = True
 
-            if remove:
+            if remove and obj_passed:
                 for arg in get_func_args:
                     del kwargs[arg]
 
@@ -95,11 +117,12 @@ def api_validate_model(input_model, arg_name="data"):
                 raise TypeError(
                     "Invalid func arguments, only kwargs after request param"
                 )
-            try:
-                validated_input = input_model(**request.data)
-                kwargs[arg_name] = validated_input
-            except ValidationError as e:
-                return Response({"errors": errors_wrapper(e.errors())}, status=404)
+            if request.method in ["POST", "PUT", "PATCH"]:
+                try:
+                    validated_input = input_model(**request.data)
+                    kwargs[arg_name] = validated_input
+                except ValidationError as e:
+                    return Response({"errors": errors_wrapper(e.errors())}, status=400)
 
             try:
                 return f(*args, **kwargs)
