@@ -1,10 +1,16 @@
-from rest_framework.serializers import ModelSerializer, UUIDField, IntegerField
+from rest_framework.serializers import (
+    ModelSerializer,
+    UUIDField,
+    IntegerField,
+    JSONField,
+)
 
 from ..models import Customer, Contact, Forest
 
 
 class ContactSerializer(ModelSerializer):
     forest_id = UUIDField(read_only=True)
+    cc_attrs = JSONField(read_only=True)
 
     class Meta:
         model = Contact

@@ -2,40 +2,27 @@
   <div class="update-btn">
     <v-btn
       color="primary"
+      :disabled="saveDisabled"
       elevation="0"
       class="mr-2"
-      :loading="isLoading"
-      @click="onSave"
-      :disabled="disabled"
-      >保存</v-btn
+      @click.stop="save"
+      :loading="saving"
+      >{{ $t("buttons.save") }}</v-btn
     >
-    <v-btn class="update-btn__cancel" text @click="onCancel">キャンセル</v-btn>
+    <v-btn class="update-btn__cancel" text @click="cancel">{{
+      $t("buttons.cancel")
+    }}</v-btn>
   </div>
 </template>
 
 <script>
 export default {
   name: "update-button",
-
   props: {
     save: Function,
     cancel: Function,
-    isLoading: Boolean,
-    disabled: Boolean,
-  },
-
-  methods: {
-    onCancel() {
-      if (this.cancel) {
-        this.cancel();
-      }
-    },
-
-    onSave() {
-      if (this.save) {
-        this.save();
-      }
-    },
+    saveDisabled: Boolean,
+    saving: Boolean,
   },
 };
 </script>

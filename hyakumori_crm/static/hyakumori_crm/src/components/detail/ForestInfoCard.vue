@@ -1,9 +1,11 @@
 <template>
   <v-card
+    :color="selected ? '#f5f5f5' : undefined"
     class="forest-info-card d-flex d-hover"
+    :class="{ flat: flat, deleted: deleted, added: added }"
     outlined
     :ripple="false"
-    @click.self="onClickCard"
+    @click="$emit('selected', card_id, index)"
   >
     <v-icon class="forest-info-card__icon">{{ $t("icon.forest_icon") }}</v-icon>
 
@@ -20,10 +22,28 @@
         <span class="ml-1 caption">{{ address }}</span>
       </div>
     </div>
-
-    <v-btn class="align-self-center" icon @click="onClick">
-      <v-icon>{{ toggleUpdateIcon }}</v-icon>
+    <v-btn
+      v-if="deleted"
+      class="align-self-center"
+      icon
+      @click.stop="$emit('undoDeleteForest')"
+    >
+      <v-icon>mdi-undo</v-icon>
     </v-btn>
+    <router-link
+      v-if="showAction && !deleted"
+      :to="{ name: 'forest-detail', params: { id: card_id } }"
+      v-slot="{ href }"
+    >
+      <v-btn
+        class="align-self-center"
+        icon
+        @click.stop="isUpdate ? $emit('deleteForest') : undefined"
+        :href="isUpdate ? null : href"
+      >
+        <v-icon>{{ actionIcon }}</v-icon>
+      </v-btn>
+    </router-link>
   </v-card>
 </template>
 
@@ -37,30 +57,20 @@ export default {
     customerCount: Number,
     address: String,
     isUpdate: Boolean,
+    showAction: { type: Boolean, default: true },
+    flat: { type: Boolean, default: false },
+    deleted: { type: Boolean, default: false },
+    added: { type: Boolean, default: false },
+    selectedId: String,
+    index: Number,
+    handleDeleteClick: Function,
   },
-
-  methods: {
-    onClick() {
-      // Do click card
-      if (this.card_id) {
-        this.$router.push({
-          name: "forest-detail",
-          params: { id: this.card_id },
-        });
-        window.scrollTo(0, 0);
-      }
-    },
-
-    onClickCard() {},
-  },
-
   computed: {
-    toggleUpdateIcon() {
-      if (this.isUpdate) {
-        return "mdi-close";
-      } else {
-        return "mdi-chevron-right";
-      }
+    actionIcon() {
+      return this.isUpdate ? "mdi-close" : "mdi-chevron-right";
+    },
+    selected() {
+      return this.selectedId === this.card_id;
     },
   },
 };
@@ -74,13 +84,31 @@ $background-color: #f5f5f5;
   border-radius: $border-radius;
 }
 
+.forest-info-card.flat {
+  border: none !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid #e1e1e1 !important;
+}
+
+.forest-info-card.deleted {
+  border: 1px solid #ff5252 !important;
+}
+
+.forest-info-card.added {
+  border: 1px solid #2196f3 !important;
+}
+
 .forest-info-card {
   width: 100%;
-  height: 100%;
+  height: 80px;
   padding: 10px;
   border-radius: $border-radius !important;
   border: 1px solid #e1e1e1 !important;
   position: relative;
+
+  &:focus::before {
+    opacity: 0 !important;
+  }
 
   &__icon {
     padding: 10px;

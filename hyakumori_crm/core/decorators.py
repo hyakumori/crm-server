@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def errors_wrapper(errors):
     error_dict = {}
     for e in errors:
-        key = ".".join(e["loc"])
+        key = ".".join(str(key) for key in e["loc"])
         if key not in error_dict:
             error_dict[key] = [e["msg"]]
         else:

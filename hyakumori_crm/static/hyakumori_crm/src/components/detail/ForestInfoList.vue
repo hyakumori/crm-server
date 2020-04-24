@@ -3,6 +3,7 @@
     <template v-for="(forest, index) in forests">
       <v-col cols="6" :key="index">
         <forest-info-card
+          :forest="forest"
           :card_id="forest.id"
           :forestId="forest.internal_id"
           :customerCount="forest.customers_count"
@@ -10,6 +11,13 @@
             `${forest.cadastral.subsector} ${forest.cadastral.sector} ${forest.cadastral.municipality} ${forest.cadastral.prefecture}`
           "
           :isUpdate="isUpdate"
+          :index="index"
+          @deleteForest="$emit('deleteForest', forest)"
+          @undoDeleteForest="$emit('undoDeleteForest', forest)"
+          :added="forest.added"
+          :deleted="forest.deleted"
+          :selectedId="selectedId"
+          @selected="(fId, inx) => $emit('selected', fId, inx)"
         />
       </v-col>
     </template>
@@ -29,6 +37,7 @@ export default {
   props: {
     forests: Array,
     isUpdate: Boolean,
+    selectedId: String,
   },
 };
 </script>
