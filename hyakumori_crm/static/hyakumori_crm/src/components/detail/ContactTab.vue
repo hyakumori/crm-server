@@ -15,6 +15,7 @@
     >
 
     <v-spacer></v-spacer>
+
     <v-switch
       class="contact-tabs__switch mt-0 pr-4"
       label="代表連絡者"

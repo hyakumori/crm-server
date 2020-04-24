@@ -1,11 +1,11 @@
 <template>
   <v-card
-    :color="selected ? '#f5f5f5' : undefined"
+    :color="mode != 'view' && selected ? '#f5f5f5' : undefined"
     class="customer-contact-card d-flex d-hover"
     :class="{ flat: flat, deleted: deleted, added: added }"
     outlined
     active-class="selected"
-    :ripple="false"
+    :ripple="mode != 'view'"
     @click="$emit('selected', card_id, index)"
   >
     <v-icon class="customer-contact-card__icon">{{
@@ -13,7 +13,7 @@
     }}</v-icon>
 
     <div class="customer-contact-card__name d-flex ml-4 flex-column">
-      <div v-if="fullname" class="d-flex justify-space-between">
+      <div class="d-flex justify-space-between">
         <h4 class="body-2">
           {{ fullname }}
           <span class="caption">{{ forestsCount || 0 }} 件の森林</span>
@@ -61,7 +61,7 @@
         :items="RELATIONSHIP"
         @change="selectedRelationship"
       ></v-select>
-      <p>{{ forestId }}</p>
+      <p v-if="forestId">{{ forestId }}</p>
     </div>
     <v-btn
       v-if="deleted"
@@ -118,6 +118,7 @@ export default {
     index: Number,
     handleDeleteClick: Function,
     forestId: { type: String, default: null },
+    mode: { type: String, default: "view" },
   },
 
   data() {
@@ -194,12 +195,12 @@ $background-color: #f5f5f5;
 }
 
 .customer-contact-card.added {
-  border: 1px solid #2196f3 !important;
+  border: 1px solid #12c7a6 !important;
 }
 
 .customer-contact-card {
   width: 100%;
-  min-height: 120px;
+  min-height: 116px;
   max-height: 100%;
   padding: 10px;
   border-radius: $border-radius !important;
@@ -221,6 +222,7 @@ $background-color: #f5f5f5;
     height: inherit;
     width: 100%;
     max-width: 234px;
+    align-self: center;
 
     span {
       color: #999999;

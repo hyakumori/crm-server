@@ -107,7 +107,10 @@ export default {
       if (permissions.is_staff) {
         scopes.push("staff");
       }
-      permissions.groups.forEach(item => scopes.push(item.name));
+      permissions.groups.forEach(group => {
+        scopes.push(group.codename);
+        group.permissions.map(permission => scopes.push(permission.codename));
+      });
       localStorage.setItem("scopes", scopes.join(","));
     },
 

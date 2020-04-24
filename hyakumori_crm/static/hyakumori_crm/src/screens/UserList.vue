@@ -1,5 +1,5 @@
 <template>
-  <main-section class="forest" single-column>
+  <main-section class="forest">
     <template #top>
       <page-header>
         <template #bottom-right>

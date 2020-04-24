@@ -54,6 +54,7 @@
           :index="indx"
           :selectedId="modalSelectingContactId"
           flat
+          mode="search"
         />
       </template>
     </SelectListModal>
@@ -148,18 +149,20 @@ export default {
         this.modalSelectingContactIndex,
         1,
       )[0];
-      contactItem.added = true;
-      contactItem.forest_id = this.selectingForestId;
-      contactItem.contact_type = this.contactType;
-      this.contactsToAdd.push(contactItem);
-      this.modalSelectingContactIndex = null;
-      this.modalSelectingForestId = null;
+      if (contactItem) {
+        contactItem.added = true;
+        contactItem.forest_id = this.selectingForestId;
+        contactItem.contact_type = this.contactType;
+        this.contactsToAdd.push(contactItem);
+        this.modalSelectingContactIndex = null;
+        this.modalSelectingForestId = null;
+      }
     },
     handleDelete(contact) {
       if (contact.added) {
         delete contact.added;
-        delete contactItem.forest_id;
-        delete contactItem.contact_type;
+        // delete contactItem.forest_id;
+        // delete contactItem.contact_type;
         this.contactsToAdd = reject(this.contactsToAdd, { id: contact.id });
       } else {
         this.$set(contact, "deleted", true);

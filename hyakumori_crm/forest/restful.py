@@ -2,17 +2,24 @@ from uuid import UUID
 
 from django.db.models import Q, F, Count
 from django.core.exceptions import ValidationError
-from rest_framework import viewsets
+from django.http import Http404
+from rest_framework import viewsets, mixins
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 from rest_typed_views import Body, typed_action
 
 from hyakumori_crm.core.utils import default_paginator
 from hyakumori_crm.crm.models import Forest, Customer
 from hyakumori_crm.crm.restful.serializers import CustomerSerializer, ForestSerializer
 
-from ..api.decorators import api_validate_model, get_or_404, typed_api_view
+from ..api.decorators import (
+    api_validate_model,
+    get_or_404,
+    typed_api_view,
+    action_login_required,
+)
 from .schemas import (
     ForestInput,
     OwnerPksInput,
@@ -25,7 +32,7 @@ from .service import (
 )
 
 
-class ForestViewSets(viewsets.ModelViewSet):
+class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericViewSet):
     serializer_class = ForestSerializer
 
     def get_queryset(self):
@@ -55,8 +62,11 @@ class ForestViewSets(viewsets.ModelViewSet):
         )
         return paginator.get_paginated_response(paged_list)
 
-    @typed_action(detail=True, methods=["GET"])
-    def customers(self, request):
+    @action(detail=True, methods=["GET"], permission_classes=[IsAuthenticated])
+    @action_login_required(
+        with_policies=["can_view_forest_customer"]
+    )  # TODO: implement policies check
+    def customers(self, request, **kwargs):
         obj = self.get_object()
 
         paginator = default_paginator()
