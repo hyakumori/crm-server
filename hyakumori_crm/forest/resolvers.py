@@ -6,12 +6,14 @@ from django.utils.translation import gettext as _
 from ..core.decorators import validate_model
 from .service import get_forests_by_condition
 from .schemas import ForestFilter, ForestPaginator
+from ..graphql.decorators import login_required
 
 query = QueryType()
 
 
 @query.field("foresttable_headers")
-def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo) -> dict:
+@login_required(with_policies=['can_view_forests'])
+def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dict:
     headers = [
         {"text": _("Forest ID"), "align": "right", "value": "internal_id"},
         {
@@ -145,8 +147,9 @@ def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo) -> dict:
 
 
 @query.field("list_forests")
+@login_required(with_policies=['can_view_forests'])
 @validate_model(ForestPaginator)
-def get_list_forests(obj, info, data) -> dict:
+def get_list_forests(obj, info, data, **kwargs) -> dict:
     pager_input = data.dict()
     forests, total = get_forests_by_condition(
         page_num=pager_input["page_num"],
