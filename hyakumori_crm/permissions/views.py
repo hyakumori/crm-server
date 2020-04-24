@@ -20,11 +20,7 @@ def get_resource_permissions(
 
 @typed_api_view(["GET"])
 def get_groups(request: Request, user: User = CurrentUser(member_of=SystemGroups.GROUP_ADMIN)):
-    groups = []
-
-    for group in Group.objects.all():
-        groups.append(model_to_dict(group, exclude="permissions"))
-
+    groups = PermissionService.get_groups()
     return make_success_json(data=dict(groups=groups))
 
 

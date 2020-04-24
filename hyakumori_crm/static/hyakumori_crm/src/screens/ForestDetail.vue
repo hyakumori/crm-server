@@ -10,6 +10,7 @@
         />
 
         <forest-contact-tab-container
+          v-acl-only="['manage_customer', 'view_customer']"
           headerContent="所有林情報"
           editBtnContent="所有者を追加・編集"
           addBtnContent="連絡者を追加"
@@ -17,6 +18,7 @@
         />
 
         <attachment-container
+          v-acl-only="['manage_archive', 'view_archive']"
           class="consultation-history"
           headerContent="協議履歴"
           editBtnContent="協議記録を追加・編集"
@@ -25,6 +27,7 @@
         />
 
         <attachment-container
+          v-acl-only="['manage_archive', 'view_archive']"
           class="document-mailing-record"
           headerContent="書類郵送記録"
           editBtnContent="書類郵送記録を追加・編集"

@@ -127,8 +127,10 @@ export default {
           this.$emit("success", response);
         }
       } catch (e) {
-        this.formError = this.$t("login_form.errors.fail_create_user");
+        this.formError = this.$t("messages.fail_create_user");
         this.success = false;
+      } finally {
+        this.loading = false;
       }
     },
   },

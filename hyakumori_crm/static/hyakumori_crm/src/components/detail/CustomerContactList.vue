@@ -3,11 +3,9 @@
     <template v-for="(contact, index) in contacts">
       <v-col cols="6" :key="index">
         <customer-contact-card
-          :card_id="contact.id"
-          :fullname="
-            `${contact.name_kanji.last_name} ${contact.name_kanji.first_name}`
-          "
-          :address="contact.address.sector"
+          :card_id="contact.customer_id || contact.id"
+          :fullname="getFullname(contact)"
+          :address="getAddress(contact)"
           :email="contact.email"
           :forestsCount="contact.forests_count"
           :phone="contact.telephone"
@@ -39,6 +37,25 @@ export default {
     contacts: Array,
     isUpdate: Boolean,
     isOwner: Boolean,
+  },
+
+  methods: {
+    getFullname(contact) {
+      if (contact.fullname) {
+        return contact.fullname;
+      }
+      if (contact.name_kanji) {
+        return `${contact.name_kanji.last_name} ${contact.name_kanji.first_name}`;
+      }
+      return "";
+    },
+    getAddress(contact) {
+      if (typeof contact.address === "object") {
+        return (contact.address && contact.address.sector) || "";
+      } else {
+        return contact.address;
+      }
+    },
   },
 };
 </script>

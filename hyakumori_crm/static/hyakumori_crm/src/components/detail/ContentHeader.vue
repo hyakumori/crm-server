@@ -12,11 +12,15 @@
         </v-img>
       </div>
       <v-spacer></v-spacer>
-      <addition-button
-        v-if="displayAdditionBtn"
-        :content="editBtnContent"
-        :click="onUpdate.bind(this)"
-      />
+
+      <slot name="right" :click="onUpdate" :displayAdditionBtn="displayAdditionBtn" :editBtnContent="editBtnContent">
+        <addition-button
+          v-if="displayAdditionBtn"
+          :content="editBtnContent"
+          :click="onUpdate.bind(this)"
+        />
+      </slot>
+
     </div>
     <v-progress-linear v-if="loading" height="2" indeterminate />
     <v-divider v-else class="content-header__divider mt-1"></v-divider>

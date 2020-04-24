@@ -15,21 +15,36 @@
           </div>
 
           <div class="menu caption pa-7">
-            <router-link to="/forests">{{
-              $t("page_header.forest_mgmt")
-            }}</router-link>
+            <router-link
+              to="/forests"
+              v-acl-only="['manage_forest', 'view_forest']"
+            >
+              {{ $t("page_header.forest_mgmt") }}
+            </router-link>
 
-            <router-link to="/customers" class="ml-4 mr-4">{{
-              $t("page_header.customer_mgmt")
-            }}</router-link>
+            <router-link
+              to="/customers"
+              class="ml-4 mr-4"
+              v-acl-only="['manage_customer', 'view_customer']"
+            >
+              {{ $t("page_header.customer_mgmt") }}
+            </router-link>
 
-            <router-link to="/archives" class="mr-4">{{
-              $t("page_header.archive_mgmt")
-            }}</router-link>
+            <router-link
+              to="/archives"
+              class="mr-4"
+              v-acl-only="['manage_archive', 'view_archive']"
+            >
+              {{ $t("page_header.archive_mgmt") }}
+            </router-link>
 
-            <router-link to="/users" class="mr-2">{{
-              $t("page_header.user_mgmt")
-            }}</router-link>
+            <router-link
+              to="/users"
+              class="mr-2"
+              v-acl-only="['admin', 'group_admin']"
+            >
+              {{ $t("page_header.user_mgmt") }}
+            </router-link>
 
             <router-link to="/me" class="me">
               <span class="mr-2">|</span>
