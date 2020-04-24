@@ -100,7 +100,7 @@ def test_customer_contacts(admin_user, api_rf):
 
     assert resp_data["results"][1]["id"] == str(contact3.id)
     # check customer2's contact has forest2
-    assert resp_data["results"][1]["forest_id"] == None
+    assert resp_data["results"][1]["forest_id"] is None
 
 
 @pytest.mark.django_db

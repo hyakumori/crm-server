@@ -104,12 +104,13 @@ class OwnerPksInput(HyakumoriDanticModel):
     @validator("deleted")
     def check_deleted(cls, v):
         owner_pks = ForestCustomer.objects.filter(customer_id__in=v).values_list(
-            "customer_id"
+            "customer_id", flat=True
         )
         invalid_pks = set(v) - set(owner_pks)
         if len(invalid_pks) > 0:
-            v = list(invalid_pks)
-            raise ValueError(_(f"Customer Id {v} not found"))
+            raise ValueError(
+                _("Customer Id {} not found").format(", ".join(invalid_pks))
+            )
         return v
 
     @validator("added")
@@ -117,58 +118,7 @@ class OwnerPksInput(HyakumoriDanticModel):
         owner_pks = Customer.objects.filter(id__in=v).values_list("id", flat=True)
         invalid_pks = set(v) - set(owner_pks)
         if len(invalid_pks) > 0:
-            v = list(invalid_pks)
-            raise ValueError(_(f"Customer Id {v} not found"))
+            raise ValueError(
+                _("Customer Id {} not found").format(", ".join(invalid_pks))
+            )
         return v
-
-
-class RelationshipType(str, Enum):
-    self = "本人"
-    parents = "両親"
-    husband = "夫"
-    wife = "妻"
-    son = "息子"
-    daughter = "娘"
-    grandchild = "孫"
-    friend = "友人"
-    relative = "その他親族"
-    other = "その他"
-
-
-class SingleSelectContactInput(HyakumoriDanticModel):
-    contact: Contact
-    relationship_type: RelationshipType
-    set_forest: bool = False
-
-    class Config:
-        arbitrary_types_allowed = True
-
-    @validator("contact", pre=True)
-    def prepare_contact(cls, v):
-        if not isinstance(v, Contact):
-            try:
-                return Contact.objects.get(pk=v)
-            except (Contact.DoesNotExist, DjValidationError):
-                raise ValueError(_("Contact not found"))
-        return v
-
-
-class ForestOwnerContactsInput(HyakumoriDanticModel):
-    forest: Forest
-    customer: Customer
-    contacts: List[SingleSelectContactInput]
-
-    class Config:
-        arbitrary_types_allowed = True
-
-    @root_validator
-    def prepare_contacts(cls, values):
-        forest = values.get("forest")
-        customer = values.get("customer")
-        contacts = values.get("contacts")
-        if not forest or not customer or not contacts:
-            return values
-        pks = list(map(lambda c: str(c.contact.pk), contacts))
-        if len(set(pks)) < len(pks):
-            raise ValueError(_("Duplicate contacts"))
-        return values

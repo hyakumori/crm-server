@@ -1,9 +1,12 @@
 <template>
   <v-card
+    :color="selected ? '#f5f5f5' : undefined"
     class="customer-contact-card d-flex d-hover"
+    :class="{ flat: flat, deleted: deleted, added: added }"
     outlined
+    active-class="selected"
     :ripple="false"
-    @click.self="onClickCard"
+    @click="$emit('selected', card_id, index)"
   >
     <v-icon class="customer-contact-card__icon">{{
       $t("icon.customer_icon")
@@ -13,7 +16,7 @@
       <div v-if="fullname" class="d-flex justify-space-between">
         <h4 class="body-2">
           {{ fullname }}
-          <span class="caption">{{ forestCount || 0 }} 件の森林</span>
+          <span class="caption">{{ forestsCount || 0 }} 件の森林</span>
         </h4>
 
         <p class="green--text mb-0 ml-2 caption">{{ getRelationship }}</p>
@@ -53,15 +56,35 @@
         class="customer-contact-card__select-relationship mt-2"
         outlined
         dense
+        hide-details
         placeholder="続き柄を選択"
         :items="RELATIONSHIP"
         @change="selectedRelationship"
       ></v-select>
+      <p>{{ forestId }}</p>
     </div>
-
-    <v-btn class="align-self-center" icon @click="onClick">
-      <v-icon>{{ toggleUpdateIcon }}</v-icon>
+    <v-btn
+      v-if="deleted"
+      class="align-self-center"
+      icon
+      @click.stop="$emit('undoDeleteContact')"
+    >
+      <v-icon>mdi-undo</v-icon>
     </v-btn>
+    <router-link
+      v-if="showAction && !deleted"
+      :to="{ name: 'customer-detail', params: { id: card_id } }"
+      v-slot="{ href }"
+    >
+      <v-btn
+        class="align-self-center"
+        icon
+        @click.stop="isUpdate ? $emit('deleteContact') : undefined"
+        :href="isUpdate ? null : href"
+      >
+        <v-icon>{{ actionIcon }}</v-icon>
+      </v-btn>
+    </router-link>
 
     <div
       class="customer-contact-card__tag"
@@ -77,7 +100,7 @@ export default {
   props: {
     card_id: String,
     fullname: String,
-    forestCount: Number,
+    forestsCount: Number,
     address: String,
     email: String,
     phone: String,
@@ -87,6 +110,14 @@ export default {
     isOwner: Boolean,
     isContactor: Boolean,
     isUpdate: Boolean,
+    showAction: { type: Boolean, default: true },
+    flat: { type: Boolean, default: false },
+    deleted: { type: Boolean, default: false },
+    added: { type: Boolean, default: false },
+    selectedId: String,
+    index: Number,
+    handleDeleteClick: Function,
+    forestId: { type: String, default: null },
   },
 
   data() {
@@ -127,14 +158,12 @@ export default {
   },
 
   computed: {
-    toggleUpdateIcon() {
-      if (this.isUpdate) {
-        return "mdi-close";
-      } else {
-        return "mdi-chevron-right";
-      }
+    actionIcon() {
+      return this.isUpdate ? "mdi-close" : "mdi-chevron-right";
     },
-
+    selected() {
+      return this.selectedId === this.card_id;
+    },
     getRelationship() {
       if (this.relationship) {
         return this.relationship;
@@ -154,13 +183,32 @@ $background-color: #f5f5f5;
   border-radius: $border-radius;
 }
 
+.customer-contact-card.flat {
+  border: none !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid #e1e1e1 !important;
+}
+
+.customer-contact-card.deleted {
+  border: 1px solid #ff5252 !important;
+}
+
+.customer-contact-card.added {
+  border: 1px solid #2196f3 !important;
+}
+
 .customer-contact-card {
   width: 100%;
-  height: 100%;
+  min-height: 120px;
+  max-height: 100%;
   padding: 10px;
   border-radius: $border-radius !important;
   border: 1px solid #e1e1e1 !important;
   position: relative;
+
+  &:focus::before {
+    opacity: 0 !important;
+  }
 
   &__icon {
     padding: 10px;
