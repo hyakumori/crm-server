@@ -8,7 +8,7 @@
 
         <v-card-text class="pa-6">
           <v-container fluid class="pa-0">
-            <v-row no-gutters v-if="formError">
+            <v-row no-gutters v-if="formError && !success">
               <v-col cols="12">
                 <v-alert dense outlined type="error">
                   {{ formError }}

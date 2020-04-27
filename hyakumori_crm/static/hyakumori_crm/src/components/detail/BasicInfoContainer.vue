@@ -3,6 +3,7 @@
     <content-header
       :content="headerContent"
       :editBtnContent="editBtnContent"
+      :displayAdditionBtn="displayAdditionBtn"
       :loading="isLoading"
       :update="isUpdate"
       @update="val => (isUpdate = val)"
@@ -41,6 +42,7 @@ export default {
   props: {
     id: String,
     info: Array,
+    displayAdditionBtn: Boolean,
   },
   data() {
     return {

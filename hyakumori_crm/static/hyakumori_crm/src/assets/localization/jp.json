@@ -111,11 +111,10 @@
     "fail_create_user": "メール送信中にエラーが発生しました。宛先を確認した上で、再度試して見てください。"
   },
   "page_header": {
-    "archive_detail": "協議履歴",
-    "archive_history": "協議履歴",
-    "archive_mgmt": "協議履歴一覧",
-    "archive_list": "協議記録の一覧",
+    "archive_detail": "交渉履歴",
+    "archive_mgmt": "交渉履歴一覧",
     "customer_detail": "顧客情報詳細",
+    "customer_new": "顧客情報の追加",
     "customer_mgmt": "顧客情報一覧",
     "forest_detail": "森林詳細",
     "forest_mgmt": "森林情報一覧",

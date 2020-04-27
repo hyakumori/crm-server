@@ -3,7 +3,11 @@
     <template #top>
       <page-header>
         <template #bottom-right>
-          <customer-create-form />
+          <outline-round-btn
+            :icon="$t('icon.add')"
+            @click="$router.push({ name: 'customer-new' })"
+            :content="$t('buttons.add_customer')"
+          />
         </template>
       </page-header>
     </template>
@@ -26,7 +30,7 @@
         :tableRowIcon="tableRowIcon"
         :autoHeaders="false"
         @rowData="rowData"
-        :isLoading="$apollo.queries.result.loading"
+        :isLoading="$apollo.queries.customerList.loading"
       ></data-list>
     </template>
   </main-section>
@@ -36,9 +40,9 @@
 import gql from "graphql-tag";
 import MainSection from "../components/MainSection";
 import PageHeader from "../components/PageHeader";
-import CustomerCreateForm from "../components/CustomerCreateForm";
 import ScreenMixin from "./ScreenMixin";
 import SearchCard from "../components/SearchCard";
+import OutlineRoundBtn from "../components/OutlineRoundBtn";
 import DataList from "../components/DataList";
 import BusEvent from "../BusEvent";
 
@@ -48,12 +52,12 @@ export default {
     SearchCard,
     DataList,
     PageHeader,
-    CustomerCreateForm,
+    OutlineRoundBtn,
   },
   mixins: [ScreenMixin],
   data() {
     return {
-      result: {},
+      customerList: {},
       pageIcon: "mdi-account-outline",
       pageHeader: this.$t("page_header.customer_mgmt"),
       options: {},
@@ -64,15 +68,15 @@ export default {
   },
   mounted() {
     BusEvent.$on("customersChanged", () => {
-      this.$apollo.queries.result.refetch();
+      this.$apollo.queries.customerList.refetch();
     });
   },
   computed: {
     customers() {
-      return this.result.customers;
+      return this.customerList.customers;
     },
     totalCustomers() {
-      return this.result.total;
+      return this.customerList.total;
     },
     filterFields() {
       return this.headers
@@ -89,7 +93,7 @@ export default {
     },
     onSearch() {
       this.filter = { ...this.filter, filters: this.$refs.filter.conditions };
-      this.$apollo.queries.result.refetch();
+      this.$apollo.queries.customerList.refetch();
     },
   },
   watch: {
@@ -121,7 +125,7 @@ export default {
         return data.customertable_headers.headers;
       },
     },
-    result: {
+    customerList: {
       query: gql`
         query ListCustomers($filter: TableCustomerFilterInput!) {
           list_customers(data: $filter) {

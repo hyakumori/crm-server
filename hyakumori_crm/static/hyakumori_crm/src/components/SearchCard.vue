@@ -101,11 +101,15 @@ export default {
     searchable() {
       const criteria = uniq(map(this.conditions, "criteria"));
       const keywords = uniq(map(this.conditions, "keyword"));
+
       if (
         (criteria.length === 1 && criteria[0] === null) ||
-        (keywords.length === 1 && keywords[0] === null)
-      )
+        (keywords.length === 1 && keywords[0] === null) ||
+        keywords.every(keyword => !keyword || keywords.length === 0)
+      ) {
         return false;
+      }
+
       return true;
     },
   },

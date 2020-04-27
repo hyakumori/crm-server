@@ -9,5 +9,5 @@ export function fetchForestOwner(forestId) {
 }
 
 export function updateBasicInfo(forestId, info) {
-  return axios.put(`forests/${forestId}`, info);
+  return axios.put(`forests/${forestId}/basic-info`, info);
 }
