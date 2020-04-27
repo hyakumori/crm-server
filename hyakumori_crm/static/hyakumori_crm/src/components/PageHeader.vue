@@ -76,9 +76,15 @@
                 <v-icon small>mdi-arrow-left</v-icon>
                 {{ $store.state.backBtnContent }}
               </v-btn>
+
               <div class="d-flex align-center" :class="{ 'mt-3': !hasBackBtn }">
                 <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
-                <div class="white--text page-header__detail__data">
+                <div
+                  class="white--text page-header__detail__data"
+                  :class="{
+                    'default-height': isDetail,
+                  }"
+                >
                   <p class="mb-0 page-header__detail__data__title">
                     {{ headerInfo.title }}
                     <span
@@ -190,7 +196,6 @@ export default {
 
 .page-header {
   position: relative;
-  min-width: 1400px;
 
   .page-header__content {
     position: absolute;
@@ -258,6 +263,9 @@ export default {
       font-size: 14px;
       line-height: 14px;
     }
+  }
+  .default-height {
+    height: auto;
   }
 }
 </style>

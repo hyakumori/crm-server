@@ -96,7 +96,7 @@ export default {
   data() {
     return {
       pageIcon: this.$t("icon.archive_icon"),
-      backBtnContent: this.$t("page_header.archive_list"),
+      backBtnContent: this.$t("page_header.archive_mgmt"),
       participants: [
         {
           customer_id: "123",

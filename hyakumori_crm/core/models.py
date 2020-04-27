@@ -128,7 +128,7 @@ class Paginator(BaseModel):
     order_by: Optional[Sequence[str]]
     filters: Optional[Union[Dict[str, Any], FilterSet]]
 
-    MAX_ITEMS: ClassVar = 150
+    MAX_ITEMS: ClassVar = 1000
 
     @validator("page_num")
     def validate_page_num(cls, page_num):

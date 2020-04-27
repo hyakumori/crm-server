@@ -1,34 +1,27 @@
-from uuid import UUID
-
 from django.db.models import Q, F, Count
-from django.core.exceptions import ValidationError
-from django.http import Http404
-from rest_framework import viewsets, mixins
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework import mixins
+from rest_framework.decorators import action, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from rest_typed_views import Body, typed_action
+from rest_typed_views import typed_action
 
 from hyakumori_crm.core.utils import default_paginator
 from hyakumori_crm.crm.models import Forest, Customer
 from hyakumori_crm.crm.restful.serializers import CustomerSerializer, ForestSerializer
-
-from ..api.decorators import (
-    api_validate_model,
-    get_or_404,
-    typed_api_view,
-    action_login_required,
-)
 from .schemas import (
     ForestInput,
     OwnerPksInput,
 )
 from .service import (
-    get_customer_of_forest,
     get_forest_by_pk,
     update,
     update_owners,
+)
+from ..api.decorators import (
+    api_validate_model,
+    get_or_404,
+    action_login_required,
 )
 
 

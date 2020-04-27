@@ -1,72 +1,3 @@
-<script>
-import { ValidationObserver, setInteractionMode } from "vee-validate";
-import TextInput from "./TextInput";
-
-setInteractionMode("eager");
-
-export default {
-  components: {
-    ValidationObserver,
-    TextInput,
-  },
-  props: ["form", "id", "toggleEditing"],
-  data() {
-    return {
-      shown: false,
-      submiting: false,
-    };
-  },
-  methods: {
-    async submit() {
-      const customerInput = {
-        basic_contact: {
-          name_kanji: {
-            last_name: this.form.last_name_kanji,
-            first_name: this.form.first_name_kanji,
-          },
-          name_kana: {
-            last_name: this.form.last_name_kana,
-            first_name: this.form.first_name_kana,
-          },
-          address: {
-            sector: this.form.sector,
-            prefecture: this.form.prefecture,
-            municipality: this.form.municipality,
-          },
-          postal_code: this.form.postal_code,
-          telephone: this.form.telephone,
-          mobilephone: this.form.mobilephone,
-          email: this.form.email,
-        },
-      };
-      this.submiting = true;
-      try {
-        if (!this.id) {
-          const data = await this.$rest.post("/customers", customerInput);
-          this.submiting = false;
-          this.$router.push({
-            name: "customer-detail",
-            params: { id: data.id },
-          });
-        } else {
-          const data = await this.$rest.put(
-            `/customers/${this.id}`,
-            customerInput,
-          );
-          this.submiting = false;
-          this.$emit("updated");
-          this.toggleEditing();
-        }
-      } catch (error) {
-        this.submiting = false;
-        if (error.response) {
-          this.$refs.form.setErrors(error.response.data.errors);
-        }
-      }
-    },
-  },
-};
-</script>
 
 <template>
   <ValidationObserver ref="form" v-slot="{ dirty, invalid }">
@@ -200,11 +131,85 @@ export default {
             :loading="submiting"
             >{{ id ? $t("buttons.save") : $t("buttons.continue") }}</v-btn
           >
-          <v-btn @click="toggleEditing" text color="#999999">{{
-            $t("buttons.cancel")
-          }}</v-btn>
+          <v-btn
+            @click="toggleEditing"
+            text
+            color="#999999"
+            v-if="showCancel"
+            >{{ $t("buttons.cancel") }}</v-btn
+          >
         </v-col>
       </v-row>
     </v-form>
   </ValidationObserver>
 </template>
+
+<script>
+import { ValidationObserver, setInteractionMode } from "vee-validate";
+import TextInput from "./TextInput";
+
+setInteractionMode("eager");
+
+export default {
+  components: {
+    ValidationObserver,
+    TextInput,
+  },
+  props: ["form", "id", "toggleEditing", "showCancel"],
+  data() {
+    return {
+      shown: false,
+      submiting: false,
+    };
+  },
+  methods: {
+    async submit() {
+      const customerInput = {
+        basic_contact: {
+          name_kanji: {
+            last_name: this.form.last_name_kanji,
+            first_name: this.form.first_name_kanji,
+          },
+          name_kana: {
+            last_name: this.form.last_name_kana,
+            first_name: this.form.first_name_kana,
+          },
+          address: {
+            sector: this.form.sector,
+            prefecture: this.form.prefecture,
+            municipality: this.form.municipality,
+          },
+          postal_code: this.form.postal_code,
+          telephone: this.form.telephone,
+          mobilephone: this.form.mobilephone,
+          email: this.form.email,
+        },
+      };
+      this.submiting = true;
+      try {
+        if (!this.id) {
+          const data = await this.$rest.post("/customers", customerInput);
+          this.submiting = false;
+          this.$router.push({
+            name: "customer-detail",
+            params: { id: data.id },
+          });
+        } else {
+          const data = await this.$rest.put(
+            `/customers/${this.id}`,
+            customerInput,
+          );
+          this.submiting = false;
+          this.$emit("updated");
+          this.toggleEditing();
+        }
+      } catch (error) {
+        this.submiting = false;
+        if (error.response) {
+          this.$refs.form.setErrors(error.response.data.errors);
+        }
+      }
+    },
+  },
+};
+</script>

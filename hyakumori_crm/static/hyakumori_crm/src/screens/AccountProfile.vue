@@ -345,6 +345,7 @@ export default {
     }
   }
   .main-container {
+    padding: 0;
     max-width: 974px;
   }
 }
