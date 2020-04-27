@@ -145,6 +145,14 @@ export default {
       },
     },
 
+    "innerOptions.page": {
+      handler() {
+        var table = this.$refs.dataTable;
+        var wrapper = table.$el.querySelector("div.v-data-table__wrapper");
+        this.$vuetify.goTo(table, { container: wrapper });
+      },
+    },
+
     selected(newVal, oldVal) {
       if (newVal !== oldVal) {
         this.$emit("selectedRow", newVal);

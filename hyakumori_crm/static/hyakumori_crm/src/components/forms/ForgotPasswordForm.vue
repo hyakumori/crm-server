@@ -48,6 +48,7 @@
                   depressed
                   width="100%"
                   @click="onSubmit"
+                  :loading="loading"
                   :disabled="invalid || success"
                   >{{ $t("buttons.send") }}
                 </v-btn>
@@ -89,17 +90,21 @@ export default {
       },
       formError: "",
       success: false,
+      loading: false,
     };
   },
   methods: {
     async onSubmit() {
       try {
+        this.loading = true;
         await this.$rest.post(`/users/reset_password`, {
           email: this.form.email,
         });
         this.success = true;
       } catch (err) {
         this.formError = this.$t("messages.email_not_found");
+      } finally {
+        this.loading = false;
       }
     },
   },

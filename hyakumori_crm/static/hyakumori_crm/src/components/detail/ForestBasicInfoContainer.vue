@@ -26,7 +26,7 @@
       <update-button
         class="mb-12"
         v-if="isUpdate"
-        :isLoading="isSave"
+        :saving="isSave"
         :save="save.bind(this)"
         :cancel="cancel.bind(this)"
       />
@@ -86,7 +86,7 @@ export default {
     updateData(updateInfo) {
       updateBasicInfo(this.info.id, updateInfo)
         .then(res => {
-          this.mutableInfo = res;
+          this.$emit("forest:basic-info-updated", res);
           this.isSave = false;
           this.isUpdate = false;
         })
