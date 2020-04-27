@@ -26,10 +26,11 @@ export default {
   },
 
   mounted() {
-    this.reiszeInputPlaceHolderWidth();
+    this.resizeInputPlaceholderWidth();
   },
+
   methods: {
-    reiszeInputPlaceHolderWidth() {
+    resizeInputPlaceholderWidth() {
       const additionWidthSize = 2;
       const input = select(this.$refs.selectList)._groups[0][0].$refs.input;
       const placeHolderLength = input.placeholder.length;

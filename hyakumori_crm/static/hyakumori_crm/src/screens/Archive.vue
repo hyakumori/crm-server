@@ -26,7 +26,7 @@ export default {
   data() {
     return {
       pageIcon: this.$t("icon.archive_icon"),
-      pageHeader: this.$t("page_header.archive_history"),
+      pageHeader: this.$t("page_header.archive_detail"),
       tableRowIcon: this.$t("icon.archive_icon"),
     };
   },

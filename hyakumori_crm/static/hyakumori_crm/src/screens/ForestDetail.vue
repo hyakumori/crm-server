@@ -5,6 +5,7 @@
         <forest-basic-info-container
           headerContent="基本情報 (登記情報)"
           editBtnContent="所有地を追加・編集"
+          @forest:basic-info-updated="getForestInfo"
           :isLoading="!forestInfo"
           :info="forestInfo"
         />
@@ -113,20 +114,23 @@ export default {
     };
   },
 
-  mounted() {
-    this.$rest
-      .all([fetchBasicInfo(this.forestId), fetchForestOwner(this.forestId)])
-      .then(
-        this.$rest.spread((basicInfo, owners) => {
-          this.forestInfo = basicInfo;
-          this.forestOwners = owners.results;
-          this.setHeaderInfo(basicInfo);
-        }),
-      );
-    // .catch(() => this.$router.push({ name: "not-found" }));
+  async mounted() {
+    await this.getForestInfo();
   },
 
   methods: {
+    getForestInfo() {
+      this.$rest
+        .all([fetchBasicInfo(this.forestId), fetchForestOwner(this.forestId)])
+        .then(
+          this.$rest.spread((basicInfo, owners) => {
+            this.forestInfo = basicInfo;
+            this.forestOwners = owners.results;
+            this.setHeaderInfo(basicInfo);
+          }),
+        );
+      // .catch(() => this.$router.push({ name: "not-found" }));
+    },
     setHeaderInfo(info) {
       const headerInfo = {
         title: info.internal_id,

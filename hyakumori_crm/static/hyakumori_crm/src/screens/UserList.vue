@@ -192,5 +192,6 @@ export default {
 <style lang="scss" scoped>
 .main-container {
   max-width: 974px;
+  padding: 0;
 }
 </style>

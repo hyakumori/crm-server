@@ -180,9 +180,10 @@ const router = new VueRouter({
           name: "customer-new",
           component: CustomerDetail,
           meta: {
-            title: "page_header.customer_detail",
+            detail: true,
+            title: "page_header.customer_new",
             isPublic: false,
-            scopes: ["manage_customer", "view_customer"],
+            scopes: ["manage_customer", "add_customer"],
           },
         },
         {
@@ -191,6 +192,7 @@ const router = new VueRouter({
           component: CustomerDetail,
           props: true,
           meta: {
+            detail: true,
             title: "page_header.customer_detail",
             isPublic: false,
             scopes: ["manage_customer", "view_customer", "admin"],

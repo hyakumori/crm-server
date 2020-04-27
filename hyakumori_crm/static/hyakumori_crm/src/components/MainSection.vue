@@ -4,7 +4,7 @@
       <page-header />
     </slot>
 
-    <v-container fluid class="app-width d-flex px-7 pt-5">
+    <v-container fluid class="app-width d-flex px-7 pt-7">
       <slot name="section"></slot>
       <slot name="right"></slot>
     </v-container>
@@ -26,5 +26,6 @@ export default {
 .app-width {
   width: $content-width;
   min-width: $content-width;
+  justify-content: center;
 }
 </style>

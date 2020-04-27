@@ -5,6 +5,7 @@
         <basic-info-container
           headerContent="顧客情報"
           editBtnContent="所有地を追加・編集"
+          :displayAdditionBtn="isDetail"
           :isLoading="customerLoading"
           :info="basicInfo"
           :id="id"
@@ -14,6 +15,7 @@
               :id="id"
               :form="selfContactFormData"
               :toggleEditing="props.toggleEditing"
+              :showCancel="isDetail"
               @updated="fetchCustomer"
           /></template>
         </basic-info-container>
@@ -21,7 +23,7 @@
         <forest-list-container
           v-if="id"
           headerContent="所有林情報"
-          editBtnContent="フォレストの追加/編集"
+          editBtnContent=" 所有林情報の追加・編集"
           addBtnContent="所有地情報を追加"
           :displayAdditionBtn="true"
           :isLoading="forestsLoading"
@@ -97,7 +99,7 @@
         <basic-info-container
           v-if="id"
           headerContent="口座情報"
-          editBtnContent="アカウント情報の追加/編集"
+          editBtnContent="口座情報を編集"
           :isLoading="customerLoading"
           :info="bankingInfo"
           :id="id"
@@ -113,7 +115,7 @@
       </div>
     </template>
 
-    <template #right>
+    <template #right v-if="isDetail">
       <div class="customer-detail__log ml-6">
         <h4 class="mb-1">更新履歴</h4>
         <log-card
@@ -183,11 +185,11 @@ export default {
       },
       selectingForestId: null,
       customer: null,
-      customerLoading: this.id ? true : false,
+      customerLoading: this.checkAndShowLoading(),
       forests: [],
-      forestsLoading: this.id ? true : false,
+      forestsLoading: this.checkAndShowLoading(),
       contacts: [],
-      contactsLoading: this.id ? true : false,
+      contactsLoading: this.checkAndShowLoading(),
     };
   },
 
@@ -195,11 +197,23 @@ export default {
     this.fetchInitialData();
   },
 
+  mounted() {
+    const info = {
+      title: this.$t("page_header.customer_new"),
+      subTitle: "",
+      backUrl: "/customers",
+    };
+    this.$store.dispatch("setHeaderInfo", info);
+  },
+
   methods: {
+    checkAndShowLoading() {
+      //only available under detail page
+      return this.isDetail;
+    },
     expandDiscussionList() {
       this.isExpand = !this.isExpand;
     },
-
     cancel(val) {
       this.isUpdate[val] = false;
     },
@@ -211,7 +225,7 @@ export default {
       return (nameObj && (nameObj.last_name || nameObj.first_name)) || "";
     },
     fetchInitialData() {
-      if (this.id) {
+      if (this.isDetail) {
         this.fetchCustomer();
         this.fetchForests();
         this.fetchContacts();
@@ -229,6 +243,7 @@ export default {
         let forests = data.results;
         let next = data.next;
         //TODO: implement UI pagination
+        //TODO: use generator instead?
         while (!!next) {
           let nextForests = await this.$rest.get(data.next);
           forests.push(...nextForests.results);
@@ -256,6 +271,10 @@ export default {
   },
 
   computed: {
+    isDetail() {
+      return !!this.id;
+    },
+
     getOwnersForest() {
       // TODO: remove this
       return ownersForest;
@@ -390,7 +409,6 @@ export default {
       deep: true,
       handler: function() {
         const tags = [];
-
         Object.keys(this.customer?.tags).forEach(k => {
           const tagValue = this.customer?.tags[k];
           tagValue && tags.push(`${tagValue}`);
