@@ -3,9 +3,11 @@ from rest_framework.serializers import (
     UUIDField,
     IntegerField,
     JSONField,
+    SerializerMethodField
 )
 
-from ..models import Customer, Contact, Forest
+from ..models import Customer, Contact, Forest, Attachment, Archive
+from ...users.serializers import UserSerializer
 
 
 class ContactSerializer(ModelSerializer):
@@ -38,3 +40,39 @@ class ForestSerializer(ModelSerializer):
     class Meta:
         model = Forest
         exclude = ["deleted"]
+
+
+class AttachmentSerializer(ModelSerializer):
+    class Meta:
+        model = Attachment
+        fields = [
+            "id",
+            "object_id",
+            "content_type",
+            "creator",
+            "filename",
+        ]
+
+
+class ArchiveSerializer(ModelSerializer):
+    attachments = SerializerMethodField()
+    author = UserSerializer()
+
+    class Meta:
+        model = Archive
+        fields = [
+            "id",
+            "title",
+            "content",
+            "location",
+            "future_action",
+            "archive_date",
+            "author",
+            "attachments"
+        ]
+
+    def get_attachments(self, obj: Archive):
+        try:
+            return AttachmentSerializer(Attachment.objects.filter(object_id=obj.id), many=True).data
+        except Attachment.DoesNotExist:
+            return []
