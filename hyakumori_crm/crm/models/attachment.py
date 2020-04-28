@@ -28,7 +28,7 @@ class Attachment(BaseResourceModel):
     objects = AttachmentManager()
 
     content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
-    object_id = models.PositiveIntegerField()
+    object_id = models.CharField(max_length=255)
     content_object = GenericForeignKey("content_type", "object_id")
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
