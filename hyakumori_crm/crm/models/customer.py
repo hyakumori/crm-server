@@ -64,12 +64,9 @@ class Customer(BaseResourceModel):
 
     @property
     def self_contact(self):
-        try:
-            return next(
-                filter(lambda cc: cc.is_basic, self.customercontact_set.all())
-            ).contact
-        except StopIteration:
-            return None
+        return next(
+            filter(lambda cc: cc.is_basic, self.customercontact_set.all())
+        ).contact
 
 
 class Contact(BaseResourceModel):
