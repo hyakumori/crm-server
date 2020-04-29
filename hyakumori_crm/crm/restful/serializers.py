@@ -3,7 +3,8 @@ from rest_framework.serializers import (
     UUIDField,
     IntegerField,
     JSONField,
-    SerializerMethodField
+    BooleanField,
+    SerializerMethodField,
 )
 
 from ..models import Customer, Contact, Forest, Attachment, Archive
@@ -12,7 +13,10 @@ from ...users.serializers import UserSerializer
 
 class ContactSerializer(ModelSerializer):
     forest_id = UUIDField(read_only=True)
+    customer_id = UUIDField(read_only=True)
     cc_attrs = JSONField(read_only=True)
+    # forest customer contact default
+    default = BooleanField(read_only=True)
 
     class Meta:
         model = Contact
@@ -22,6 +26,8 @@ class ContactSerializer(ModelSerializer):
 class CustomerSerializer(ModelSerializer):
     self_contact = ContactSerializer()
     forests_count = IntegerField(read_only=True)
+    # forest default owner
+    default = BooleanField(read_only=True)
 
     class Meta:
         model = Customer
@@ -33,6 +39,7 @@ class CustomerSerializer(ModelSerializer):
             "banking",
             "self_contact",
             "forests_count",
+            "default",
         ]
 
 
@@ -68,11 +75,13 @@ class ArchiveSerializer(ModelSerializer):
             "future_action",
             "archive_date",
             "author",
-            "attachments"
+            "attachments",
         ]
 
     def get_attachments(self, obj: Archive):
         try:
-            return AttachmentSerializer(Attachment.objects.filter(object_id=obj.id), many=True).data
+            return AttachmentSerializer(
+                Attachment.objects.filter(object_id=obj.id), many=True
+            ).data
         except Attachment.DoesNotExist:
             return []

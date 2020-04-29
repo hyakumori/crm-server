@@ -1,7 +1,7 @@
 from typing import Dict, Iterator, Union
 from uuid import UUID
 from django.core.exceptions import ValidationError
-from django.db import connection, IntegrityError
+from django.db import connection, IntegrityError, DataError
 from django.db.models import F, Q
 from django.utils.translation import gettext_lazy as _
 from querybuilder.query import Expression, Query
@@ -31,9 +31,55 @@ def get(pk):
 
 def get_customer_by_pk(pk):
     try:
-        return Customer.objects.get(pk=pk)
-    except (Customer.DoesNotExist, ValidationError):
+        return Customer.objects.raw(
+            """select crm_customer.*, count(A0.id) as forests_count
+from crm_customer
+left outer join crm_forestcustomer A0
+on crm_customer.id = A0.customer_id
+where crm_customer.deleted is null and crm_customer.id = %(pk)s
+group by crm_customer.id limit 1""",
+            {"pk": pk},
+        )[0]
+    except (IndexError, DataError):
         raise ValueError(_("Customer not found"))
+
+
+def get_customers(search):
+    sql = """with self_contact as (
+    select c.*, cc.customer_id
+    from crm_contact c
+    join crm_customercontact cc
+    on c.id=cc.contact_id
+    where cc.is_basic = true
+    and cc.deleted is null
+    and c.deleted is null
+)
+select crm_customer.*, count(A0.id) as forests_count
+from crm_customer
+join self_contact sc
+on sc.customer_id = crm_customer.id
+left outer join crm_forestcustomer A0
+on crm_customer.id = A0.customer_id
+where crm_customer.deleted is null{where_clause}
+group by crm_customer.id
+"""
+    if search:
+        where = """
+and (concat(sc.name_kanji->>'last_name', ' ',
+    sc.name_kanji->>'first_name') ilike %(search)s
+or concat(sc.name_kana->>'last_name', ' ',
+    sc.name_kana->>'first_name') ilike %(search)s
+or crm_customer.internal_id ilike %(search)s
+or sc.email ilike %(search)s
+or sc.telephone ilike %(search)s
+or sc.mobilephone ilike %(search)s
+or concat(sc.postal_code, ' ', sc.address->>'sector', ' ',
+    sc.address->>'municipality', ' ', sc.address->>'prefecture') ilike %(search)s)
+"""
+    else:
+        where = ""
+    sql = sql.format(where_clause=where)
+    return Customer.objects.raw(sql, {"search": "%%%s%%" % search})
 
 
 def get_customer_contacts(pk: UUID):

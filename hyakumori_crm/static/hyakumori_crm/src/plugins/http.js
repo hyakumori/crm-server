@@ -37,18 +37,36 @@ const setupRestClient = options => {
           eventBus.$emit("auth:relogin");
           reject(error);
         });
-      }
-
-      if (error.response && error.response.status === 404) {
+      } else if (error.response && error.response.status === 404) {
         return new Promise((resolve, reject) => {
           eventBus.$emit("rest:404");
           reject(error);
         });
+      } else if (error.response && error.response.status === 403) {
+        return new Promise((resolve, reject) => {
+          // TODO: implement this
+          axios.$v.$dialog.notify.error(
+            axios.$v.$t("messages.permission_denied"),
+            {
+              position: "top-right",
+              timeout: 5000,
+            },
+          );
+          reject(error);
+        });
+      } else if (error.response && error.response.status === 400) {
+        return new Promise((resolve, reject) => {
+          reject(error);
+        });
+      } else {
+        axios.$v.$dialog.notify.error(`${error}`, {
+          position: "top-right",
+          timeout: 5000,
+        });
+        return new Promise((resolve, reject) => {
+          reject(error);
+        });
       }
-
-      return new Promise((resolve, reject) => {
-        reject(error);
-      });
     },
   );
 

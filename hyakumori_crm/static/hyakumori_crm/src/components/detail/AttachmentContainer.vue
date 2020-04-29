@@ -3,9 +3,8 @@
     <content-header
       :content="headerContent"
       :editBtnContent="editBtnContent"
-      :update="isUpdate"
       :displayAdditionBtn="false"
-      @update="val => (isUpdate = val)"
+      @toggleEdit="val => (isUpdate = val)"
     />
     <template v-if="isExpand">
       <attachment-card
