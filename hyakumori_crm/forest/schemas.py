@@ -8,7 +8,14 @@ from django_filters import FilterSet, CharFilter, DateFilter
 from pydantic import validator, root_validator
 
 from hyakumori_crm.core.models import HyakumoriDanticModel, Paginator
-from hyakumori_crm.crm.models import Contact, Forest, ForestCustomer, Customer
+from hyakumori_crm.crm.models import (
+    Contact,
+    Forest,
+    ForestCustomer,
+    Customer,
+    CustomerContact,
+    ForestCustomerContact,
+)
 from hyakumori_crm.crm.schemas.contract import ContractType
 
 
@@ -122,3 +129,59 @@ class OwnerPksInput(HyakumoriDanticModel):
                 _("Customer Id {} not found").format(", ".join(invalid_pks))
             )
         return v
+
+
+class CustomerDefaultInput(HyakumoriDanticModel):
+    forest: Forest
+    customer_id: UUID
+    default: bool
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    @root_validator
+    def validate_customer_id(cls, values):
+        forest = values.get("forest")
+        customer_id = values.get("customer_id")
+        if not forest or not customer_id:
+            return values
+        try:
+            ForestCustomer.objects.get(forest_id=forest.id, customer_id=customer_id)
+        except ForestCustomer.DoesNotExist:
+            raise ValueError(_("Customer {v} not found").format(v=customer_id))
+        return values
+
+
+class CustomerContactDefaultInput(HyakumoriDanticModel):
+    forest: Forest
+    customer_id: UUID
+    contact_id: UUID
+    default: bool
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    @root_validator
+    def validate(cls, values):
+        forest = values.get("forest")
+        customer_id = values.get("customer_id")
+        contact_id = values.get("contact_id")
+        if not forest or not customer_id or not contact_id:
+            return values
+        try:
+            fc = ForestCustomer.objects.get(
+                forest_id=forest.id, customer_id=customer_id
+            )
+        except ForestCustomer.DoesNotExist:
+            raise ValueError(_("Customer {v} not found").format(v=customer_id))
+        try:
+            cc = CustomerContact.objects.get(
+                customer_id=customer_id, contact_id=contact_id
+            )
+            fcc = ForestCustomerContact.objects.get(
+                forestcustomer_id=fc.id, customercontact_id=cc.id
+            )
+        except (CustomerContact.DoesNotExist, ForestCustomerContact.DoesNotExist):
+            raise ValueError(_("Contact {v} not found").format(v=customer_id))
+
+        return values

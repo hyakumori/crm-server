@@ -7,8 +7,8 @@
           placeholder="姓、名、キーワード"
         />
       </v-card-title>
-      <v-divider></v-divider>
       <v-progress-linear v-if="loading" height="2" indeterminate />
+      <v-divider v-else></v-divider>
       <v-card-text ref="listContent" style="height:228px" class="pa-0">
         <slot name="list"></slot>
       </v-card-text>

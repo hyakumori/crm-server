@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import forest from "./modules/forest";
 
 Vue.use(Vuex);
 
@@ -44,5 +45,8 @@ export default new Vuex.Store({
     setBackBtnContent({ commit }, content) {
       commit("setBackBtnContent", content);
     },
+  },
+  modules: {
+    forest,
   },
 });

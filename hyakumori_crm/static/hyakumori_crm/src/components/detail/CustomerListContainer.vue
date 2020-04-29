@@ -4,8 +4,7 @@
       :content="headerContent"
       :editBtnContent="editBtnContent"
       :update="isUpdate"
-      :loading="isLoading"
-      @update="val => (isUpdate = val)"
+      @toggleEdit="val => (isUpdate = val)"
     />
 
     <customer-contact-list
@@ -32,7 +31,7 @@
     >
       <template #list>
         <CustomerContactCard
-          @selected="
+          @click="
             (fId, inx) => {
               modalSelectingContactId = fId;
               modalSelectingContactIndex = inx;
@@ -41,14 +40,7 @@
           v-for="(item, indx) in contactitems.results || []"
           :key="item.id"
           :card_id="item.id"
-          :fullname="
-            `${item.name_kanji.last_name} ${item.name_kanji.first_name}`
-          "
-          :address="item.address.sector"
-          :email="item.email"
-          :forestCount="item.forest_count"
-          :phone="item.telephone"
-          :cellphone="item.mobilephone"
+          :contact="item"
           :isOwner="item.is_basic"
           :showAction="false"
           :index="indx"
@@ -187,7 +179,7 @@ export default {
       } catch (error) {}
     },
     async handleLoadMore() {
-      if (!this.contactitems.next) return;
+      if (!this.contactitems.next && this.loadContacts) return;
       this.loadContacts = true;
       const resp = await this.$rest.get(this.contactitems.next);
       this.contactitems = {

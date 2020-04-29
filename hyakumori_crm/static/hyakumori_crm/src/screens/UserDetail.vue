@@ -8,8 +8,7 @@
               content="基本情報 (登記情報)"
               editBtnContent="基本情報・編集"
               :loading="basicInfo.length === 0 || isLoading"
-              :update="isUpdate.basicInfo"
-              @update="val => (isUpdate.basicInfo = val)"
+              @toggleEdit="val => (isUpdate.basicInfo = val)"
             />
             <div class="my-4">
               <v-row v-if="errors">
