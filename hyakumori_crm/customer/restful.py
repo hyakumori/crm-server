@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import ViewSet
 from rest_typed_views import typed_action
 
 from hyakumori_crm.core.utils import default_paginator
@@ -33,17 +33,24 @@ from .service import (
     update_contacts,
     update_basic_info,
     update_banking_info,
+    get_customers,
 )
 
 
-class CustomerViewSets(
-    mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericViewSet
-):
-    serializer_class = CustomerSerializer
-    permission_classes = [IsAuthenticated]
+class CustomerViewSets(ViewSet):
+    def list(self, request):
+        search = request.GET.get("search")
+        paginator = default_paginator()
+        paged_list = paginator.paginate_queryset(
+            request=request, queryset=get_customers(search), view=self,
+        )
+        return paginator.get_paginated_response(
+            CustomerSerializer(paged_list, many=True).data
+        )
 
-    def get_queryset(self):
-        return Customer.objects.all()
+    @get_or_404(get_customer_by_pk, to_name="customer", pass_to="kwargs", remove=True)
+    def retrieve(self, request, customer=None):
+        return Response(CustomerSerializer(customer).data)
 
     @api_validate_model(CustomerInputSchema)
     def create(self, request, data: dict = None):
@@ -120,7 +127,7 @@ class CustomerViewSets(
         get_func=get_customer_by_pk, to_name="customer", remove=True,
     )
     @api_validate_model(CustomerContactsDeleteInput)
-    def delete_contacts(request, *, data: CustomerContactsDeleteInput = None):
+    def delete_contacts(self, request, *, data: CustomerContactsDeleteInput = None):
         delete_customer_contacts(data)
         return Response({"id": data.forest.id})
 

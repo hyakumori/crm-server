@@ -25,17 +25,35 @@
 
     <v-tab-item>
       <customer-contact-list
-        :contacts="ownerContacts"
-        :isUpdate="isUpdate"
+        :contacts="customers"
+        :isUpdate="isEditing"
         :isOwner="true"
+        :showRelationshipSelect="false"
+        @deleteContact="
+          (customer, index) => $emit('deleteCustomer', customer, index)
+        "
+        @undoDeleteContact="
+          (customer, index) => $emit('undoDeleteCustomer', customer, index)
+        "
+        @selected="(card_id, indx) => $emit('customerSelected', card_id, indx)"
+        @toggleDefault="
+          (val, customer_id) => $emit('toggleDefault', val, customer_id)
+        "
+        :selectingId="selectingCustomerId"
       />
     </v-tab-item>
 
     <v-tab-item>
       <customer-contact-list
-        :contacts="contactorContacts"
-        :isUpdate="isUpdate"
+        :contacts="customersContacts"
+        :isUpdate="isEditing"
         :isContactor="true"
+        :showRelationshipSelect="false"
+        :customerIdNameMap="customerIdNameMap"
+        @toggleContactDefault="
+          (val, customer_id, contact_id) =>
+            $emit('toggleContactDefault', val, customer_id, contact_id)
+        "
       />
     </v-tab-item>
   </v-tabs>
@@ -58,9 +76,11 @@ export default {
   },
 
   props: {
-    ownerContacts: Array,
-    contactorContacts: Array,
-    isUpdate: Boolean,
+    customers: Array,
+    customersContacts: Array,
+    isEditing: Boolean,
+    selectingCustomerId: String,
+    customerIdNameMap: Object,
   },
 
   methods: {

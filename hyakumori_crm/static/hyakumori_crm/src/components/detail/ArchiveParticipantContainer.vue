@@ -5,8 +5,7 @@
       :content="headerContent"
       :editBtnContent="editBtnContent"
       :loading="isLoading"
-      :update="isUpdate"
-      @update="val => (isUpdate = val)"
+      @toggleEdit="val => (isUpdate = val)"
     />
     <slot name="participants" :isUpdate="isUpdate"></slot>
     <template v-if="isUpdate">

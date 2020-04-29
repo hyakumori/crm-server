@@ -4,8 +4,7 @@
       :content="headerContent"
       :editBtnContent="editBtnContent"
       :loading="isLoading"
-      :update="isUpdate"
-      @update="val => (isUpdate = val)"
+      @toggleEdit="val => (isUpdate = val)"
     />
     <div class="my-4">
       <basic-info :infos="info" :isUpdate="isUpdate" />

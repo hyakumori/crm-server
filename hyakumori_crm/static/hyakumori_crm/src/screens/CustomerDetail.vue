@@ -138,7 +138,6 @@ import discussions from "../assets/dump/history_discussion.json";
 import actionLogs from "../assets/dump/action_log.json";
 import LogCard from "../components/detail/LogCard";
 import BasicInfoContainer from "../components/detail/BasicInfoContainer";
-// import BankingInfoContainer from "../components/detail/BankingInfoContainer";
 import AttachmentContainer from "../components/detail/AttachmentContainer";
 import ForestListContainer from "../components/detail/ForestListContainer";
 import CustomerListContainer from "../components/detail/CustomerListContainer";
@@ -245,7 +244,7 @@ export default {
         //TODO: implement UI pagination
         //TODO: use generator instead?
         while (!!next) {
-          let nextForests = await this.$rest.get(data.next);
+          let nextForests = await this.$rest.get(next);
           forests.push(...nextForests.results);
           next = nextForests.next;
         }
@@ -260,7 +259,7 @@ export default {
         let next = data.next;
         //TODO: implement UI pagination
         while (!!next) {
-          let nextContacts = await this.$rest.get(data.next);
+          let nextContacts = await this.$rest.get(next);
           contacts.push(...nextContacts.results);
           next = nextContacts.next;
         }

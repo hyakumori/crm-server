@@ -41,7 +41,7 @@ class CustomerQueryset(BaseQuerySet):
         return self.annotate(basic_contact_id=Subquery(cc.values("contact_id")[:1]))
 
     def forests_count(self):
-        return self.annotate(forests_count=Count(F("forestcustomer")))
+        return self.values("id").annotate(forests_count=Count(F("forestcustomer__id")))
 
 
 class Customer(BaseResourceModel):

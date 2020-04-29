@@ -4,8 +4,7 @@
       :content="headerContent"
       :editBtnContent="editBtnContent"
       :loading="isLoading"
-      :update="isUpdate"
-      @update="val => (isUpdate = val)"
+      @toggleEdit="val => (isUpdate = val)"
     />
     <archive-basic-info class="mt-6" :isUpdate="isUpdate" />
     <update-button

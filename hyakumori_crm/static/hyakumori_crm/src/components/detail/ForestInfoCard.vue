@@ -4,7 +4,7 @@
     class="forest-info-card d-flex d-hover"
     :class="{ flat: flat, deleted: deleted, added: added }"
     outlined
-    :ripple="false"
+    :ripple="mode != 'view'"
     @click="$emit('selected', card_id, index)"
   >
     <v-icon class="forest-info-card__icon">{{ $t("icon.forest_icon") }}</v-icon>
@@ -63,6 +63,7 @@ export default {
     added: { type: Boolean, default: false },
     selectedId: String,
     index: Number,
+    mode: { type: String, default: "view" },
     handleDeleteClick: Function,
   },
   computed: {

@@ -5,8 +5,7 @@
       :content="headerContent"
       :editBtnContent="editBtnContent"
       :loading="isLoading"
-      :update="isUpdate"
-      @update="val => (isUpdate = val)"
+      @toggleEdit="val => (isUpdate = val)"
     />
 
     <forest-info-list :forests="relatedForests" :isUpdate="isUpdate" />
