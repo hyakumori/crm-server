@@ -1,4 +1,3 @@
-
 <template>
   <ValidationObserver ref="form" v-slot="{ dirty, invalid }">
     <v-form>
@@ -57,11 +56,11 @@
         </v-col>
         <v-col>
           <label class="font-weight-bold">{{
-            $t("forms.labels.address")
+            $t("forms.labels.sector")
           }}</label>
           <TextInput
             v-model="form.sector"
-            :placeholder="$t('forms.placeholders.customer.address')"
+            :placeholder="$t('forms.placeholders.customer.sector')"
             name="basic_contact.address.sector"
           />
         </v-col>
