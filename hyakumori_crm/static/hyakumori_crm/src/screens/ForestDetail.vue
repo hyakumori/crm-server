@@ -5,17 +5,25 @@
         <forest-basic-info-container
           headerContent="基本情報 (登記情報)"
           editBtnContent="所有地を追加・編集"
-          @forest:basic-info-updated="getForestInfo"
-          :isLoading="!forestInfo"
-          :info="forestInfo"
+          @forest:basic-info-updated="$store.dispatch('forest/getForest', id)"
+          :isLoading="$store.state.forest.forestLoading"
+          :info="$store.state.forest.forest"
         />
 
         <forest-contact-tab-container
           v-acl-only="['manage_customer', 'view_customer']"
           headerContent="所有林情報"
-          editBtnContent="所有者を追加・編集"
+          toggleEditBtnContent="所有者を追加・編集"
           addBtnContent="連絡者を追加"
-          :ownerContacts="ownerContacts"
+          :customers="$store.state.forest.customers"
+          :customersContacts="$store.state.forest.customersContacts"
+          :customerIdNameMap="$store.getters['forest/customerIdNameMap']"
+          :isLoading="$store.state.forest.customersLoading"
+          @saved="$store.dispatch('forest/getCustomers', id)"
+          @savedCustomersContacts="
+            $store.dispatch('forest/getCustomersContacts', id)
+          "
+          :id="id"
         />
 
         <attachment-container
@@ -102,10 +110,11 @@ export default {
     AttachmentContainer,
     ForestContactTabContainer,
   },
-
+  props: {
+    id: String,
+  },
   data() {
     return {
-      forestId: this.$route.params.id,
       forestInfo: null,
       forestOwners: null,
       pageIcon: this.$t("icon.forest_icon"),
@@ -113,34 +122,17 @@ export default {
       headerTagColor: "#FFC83B",
     };
   },
-
-  async mounted() {
-    await this.getForestInfo();
+  created() {
+    this.$store.dispatch("forest/getForest", this.id).then(() => {
+      this.$store.dispatch(
+        "setHeaderInfo",
+        this.$store.getters["forest/headerInfo"],
+      );
+    });
+    this.$store.dispatch("forest/getCustomers", this.id);
+    this.$store.dispatch("forest/getCustomersContacts", this.id);
   },
-
   methods: {
-    getForestInfo() {
-      this.$rest
-        .all([fetchBasicInfo(this.forestId), fetchForestOwner(this.forestId)])
-        .then(
-          this.$rest.spread((basicInfo, owners) => {
-            this.forestInfo = basicInfo;
-            this.forestOwners = owners.results;
-            this.setHeaderInfo(basicInfo);
-          }),
-        );
-      // .catch(() => this.$router.push({ name: "not-found" }));
-    },
-    setHeaderInfo(info) {
-      const headerInfo = {
-        title: info.internal_id,
-        subTitle: info.owner.name_kanji,
-        tag: [info.tag.danchi],
-        backUrl: { name: "forests" },
-      };
-      this.$store.dispatch("setHeaderInfo", headerInfo);
-    },
-
     fallbackText(text) {
       return text || "";
     },
@@ -150,31 +142,25 @@ export default {
       const addr = self_contact.address;
       const kanji_name = self_contact.name_kanji;
       return {
+        id: info.id,
         customer_id: info.id,
         fullname:
           this.fallbackText(kanji_name.last_name) +
           this.fallbackText(kanji_name.first_name),
         telephone: self_contact.telephone,
         mobilephone: self_contact.mobilephone,
-        forest_count: info.forests_count,
-        address: `${this.fallbackText(self_contact.postal_code)}
-          ${this.fallbackText(addr.prefecture)}
-          ${this.fallbackText(addr.municipality)}
-          ${this.fallbackText(addr.sector)}`,
+        forests_count: info.forests_count,
+        address: `${this.fallbackText(
+          self_contact.postal_code,
+        )} ${this.fallbackText(addr.prefecture)} ${this.fallbackText(
+          addr.municipality,
+        )} ${this.fallbackText(addr.sector)}`,
         email: self_contact.email,
       };
     },
   },
 
   computed: {
-    ownerContacts() {
-      let owners = [];
-      if (this.forestOwners) {
-        return this.forestOwners.map(owner => this.mapContact(owner));
-      }
-      return owners;
-    },
-
     attaches() {
       return discussions;
     },
@@ -185,7 +171,7 @@ export default {
 
     headerData() {
       let headerData = [];
-      const forestInfo = this.forestInfo;
+      const forestInfo = this.$store.state.forest.forest;
       if (forestInfo) {
         const attr = forestInfo.forest_attributes;
         return [
@@ -212,7 +198,7 @@ export default {
 
     forrestAttributes() {
       let attributes = [];
-      const forestInfo = this.forestInfo;
+      const forestInfo = this.$store.state.forest.forest;
       if (forestInfo) {
         const attr = forestInfo.forest_attributes;
         return [

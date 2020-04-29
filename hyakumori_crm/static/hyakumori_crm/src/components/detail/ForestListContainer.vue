@@ -3,10 +3,9 @@
     <content-header
       :content="headerContent"
       :editBtnContent="editBtnContent"
-      :update="isUpdate"
       :loading="isLoading"
       :displayAdditionBtn="displayAdditionBtn"
-      @update="val => (isUpdate = val)"
+      @toggleEdit="val => (isUpdate = val)"
     />
     <forest-info-list
       class="mt-4"
@@ -55,6 +54,7 @@
           "
           :showAction="false"
           :index="indx"
+          mode="search"
           :selectedId="modalSelectingForestId"
           flat
         />
@@ -176,7 +176,7 @@ export default {
       }
     },
     async handleLoadMore() {
-      if (!this.forestitems.next) return;
+      if (!this.forestitems.next && this.loadForests) return;
       this.loadForests = true;
       const resp = await this.$rest.get(this.forestitems.next);
       this.forestitems = {
@@ -219,7 +219,7 @@ export default {
         for (let forestToDelete of this.forestsToDelete) {
           this.$set(forestToDelete, "deleted", undefined);
         }
-        this.forestsToDelete && (this.forestsToDelete = []);
+        this.forestsToDelete.length > 0 && (this.forestsToDelete = []);
       }
     },
   },

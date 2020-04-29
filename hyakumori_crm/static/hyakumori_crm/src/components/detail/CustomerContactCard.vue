@@ -6,7 +6,7 @@
     outlined
     active-class="selected"
     :ripple="mode != 'view'"
-    @click="$emit('selected', card_id, index)"
+    @click="$emit('click', card_id, index)"
   >
     <v-icon class="customer-contact-card__icon">{{
       $t("icon.customer_icon")
@@ -52,7 +52,7 @@
       </div>
 
       <v-select
-        v-if="isUpdate"
+        v-if="isUpdate && showRelationshipSelect"
         class="customer-contact-card__select-relationship mt-2"
         outlined
         dense
@@ -61,7 +61,14 @@
         :items="RELATIONSHIP"
         @change="selectedRelationship"
       ></v-select>
-      <p v-if="forestId">{{ forestId }}</p>
+      <p class="ma-0 pt-2 caption text-truncate" v-if="forestId">
+        {{ forestId }}
+      </p>
+      <p class="ma-0 pt-2 caption text-truncate" v-if="customerName">
+        <span style="background-color:#f5f5f5;color: black">{{
+          `${customerName}の関係連絡先`
+        }}</span>
+      </p>
     </div>
     <v-btn
       v-if="deleted"
@@ -87,8 +94,19 @@
     </router-link>
 
     <div
+      v-if="
+        mode !== 'search' &&
+          !contact.deleted &&
+          (isUpdate || this.contact.default)
+      "
       class="customer-contact-card__tag"
-      v-bind:class="{ owner: isOwner, contactor: isContactor }"
+      :title="$t('buttons.set_as_default')"
+      v-bind:class="{
+        owner: isOwner,
+        contactor: isContactor,
+        default: this.contact.default,
+      }"
+      @click.stop="onTagClick"
     ></div>
   </v-card>
 </template>
@@ -96,15 +114,10 @@
 <script>
 export default {
   name: "customer-contact-card",
+  relationship: String,
 
   props: {
     card_id: String,
-    fullname: String,
-    forestsCount: Number,
-    address: String,
-    email: String,
-    phone: String,
-    cellphone: String,
     relationship: String,
     relatedInfo: String,
     isOwner: Boolean,
@@ -117,8 +130,10 @@ export default {
     selectedId: String,
     index: Number,
     handleDeleteClick: Function,
-    forestId: { type: String, default: null },
     mode: { type: String, default: "view" },
+    showRelationshipSelect: { type: Boolean, default: true },
+    contact: Object,
+    customerName: String,
   },
 
   data() {
@@ -140,17 +155,18 @@ export default {
   },
 
   methods: {
-    onClick() {
-      // Do click card
-      if (this.card_id) {
-        this.$router.push({
-          name: "customer-detail",
-          params: { id: this.card_id },
-        });
-        window.scrollTo(0, 0);
-      }
+    onTagClick() {
+      if (!this.isUpdate) return;
+      if (this.isOwner)
+        this.$emit("toggleDefault", !this.contact.default, this.card_id);
+      else if (this.isContactor)
+        this.$emit(
+          "toggleContactDefault",
+          !this.contact.default,
+          this.contact.customer_id,
+          this.contact.id,
+        );
     },
-
     onClickCard() {},
 
     selectedRelationship(val) {
@@ -159,6 +175,36 @@ export default {
   },
 
   computed: {
+    contact_() {
+      return this.contact.self_contact
+        ? this.contact.self_contact
+        : this.contact;
+    },
+    fullname() {
+      return `${this.contact_.name_kanji.last_name} ${this.contact_.name_kanji.first_name}`;
+    },
+    address() {
+      return `${this.contact_.postal_code || ""} ${
+        this.contact_.address.sector
+      } ${this.contact_.address.municipality} ${
+        this.contact_.address.prefecture
+      }`;
+    },
+    email() {
+      return this.contact_.email;
+    },
+    phone() {
+      return this.contact_.telephone;
+    },
+    cellphone() {
+      return this.contact_.mobilephone;
+    },
+    forestId() {
+      return this.contact.forest_id;
+    },
+    forestsCount() {
+      return this.contact.forests_count;
+    },
     actionIcon() {
       return this.isUpdate ? "mdi-close" : "mdi-chevron-right";
     },
@@ -238,13 +284,20 @@ $background-color: #f5f5f5;
     border-radius: unset !important;
     border-top-right-radius: $border-radius !important;
     clip-path: polygon(0 0, 100% 100%, 100% 0);
+    background-color: #e1e1e1;
+    opacity: 0.45;
+    &:hover {
+      opacity: 1;
+    }
   }
 
-  & .owner {
+  & .owner.default {
     background-color: #12c7a6;
+    opacity: 1;
   }
 
-  & .contactor {
+  & .contactor.default {
+    opacity: 1;
     background-color: #f36c69;
   }
 

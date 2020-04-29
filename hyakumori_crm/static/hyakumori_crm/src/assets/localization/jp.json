@@ -11,7 +11,8 @@
     "send": "送信",
     "activate": "アクティブ",
     "continue": "継続する",
-    "add": "追加"
+    "add": "追加",
+    "set_as_default": "デフォルトとして設定"
   },
   "detail": {
     "tabs": {
@@ -108,7 +109,8 @@
     "uid_not_found": "無効なユーザーまたはユーザーが存在しません。",
     "token_stale": "無効または期限切リンク",
     "field_optional": "省略可能",
-    "fail_create_user": "メール送信中にエラーが発生しました。宛先を確認した上で、再度試して見てください。"
+    "fail_create_user": "メール送信中にエラーが発生しました。宛先を確認した上で、再度試して見てください。",
+    "permission_denied": "アクセス拒否"
   },
   "page_header": {
     "archive_detail": "交渉履歴",

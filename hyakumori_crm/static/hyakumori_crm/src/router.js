@@ -14,7 +14,6 @@ Vue.use(VueRouter);
 const UserProfileRoutes = [
   {
     path: "/me",
-    name: "my-profile",
     component: MainLayout,
     children: [
       {
@@ -159,6 +158,7 @@ const router = new VueRouter({
           path: "/forests/:id",
           name: "forest-detail",
           component: ForestDetail,
+          props: true,
           meta: {
             title: "page_header.forest_detail",
             isPublic: false,

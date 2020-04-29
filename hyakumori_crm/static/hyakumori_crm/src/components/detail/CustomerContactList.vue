@@ -1,25 +1,30 @@
 <template>
   <v-row dense>
-    <template v-for="(contact, index) in contacts">
-      <v-col cols="6" :key="index">
-        <customer-contact-card
-          :card_id="contact.customer_id || contact.id"
-          :fullname="getFullname(contact)"
-          :address="getAddress(contact)"
-          :email="contact.email"
-          :forestsCount="contact.forests_count"
-          :phone="contact.telephone"
-          :cellphone="contact.mobilephone"
-          :isOwner="contact.is_basic"
-          :isUpdate="isUpdate"
-          :index="index"
-          @deleteContact="$emit('deleteContact', contact)"
-          @undoDeleteContact="$emit('undoDeleteContact', contact)"
-          :added="contact.added"
-          :deleted="contact.deleted"
-        />
-      </v-col>
-    </template>
+    <v-col v-for="(contact, index) in contacts" cols="6" :key="index">
+      <customer-contact-card
+        :card_id="contact.customer_id || contact.id"
+        :contact="contact"
+        :isOwner="isOwner"
+        :isContactor="isContactor"
+        :isUpdate="isUpdate"
+        :index="index"
+        @deleteContact="$emit('deleteContact', contact, index)"
+        @undoDeleteContact="$emit('undoDeleteContact', contact, index)"
+        :added="contact.added"
+        :deleted="contact.deleted"
+        :showRelationshipSelect="showRelationshipSelect"
+        @click="(card_id, indx) => isUpdate && $emit('selected', card_id, indx)"
+        @toggleDefault="
+          (val, customer_id) => $emit('toggleDefault', val, customer_id)
+        "
+        @toggleContactDefault="
+          (val, customer_id, contact_id) =>
+            $emit('toggleContactDefault', val, customer_id, contact_id)
+        "
+        :selectedId="selectingId"
+        :customerName="getCustomerName(contact.customer_id)"
+      />
+    </v-col>
   </v-row>
 </template>
 
@@ -37,24 +42,16 @@ export default {
     contacts: Array,
     isUpdate: Boolean,
     isOwner: Boolean,
+    isContactor: Boolean,
+    showRelationshipSelect: { type: Boolean, default: true },
+    selectingId: String,
+    customerIdNameMap: Object,
   },
-
   methods: {
-    getFullname(contact) {
-      if (contact.fullname) {
-        return contact.fullname;
-      }
-      if (contact.name_kanji) {
-        return `${contact.name_kanji.last_name} ${contact.name_kanji.first_name}`;
-      }
-      return "";
-    },
-    getAddress(contact) {
-      if (typeof contact.address === "object") {
-        return (contact.address && contact.address.sector) || "";
-      } else {
-        return contact.address;
-      }
+    getCustomerName(customer_id) {
+      if (!this.customerIdNameMap) return null;
+      const nameObj = this.customerIdNameMap[customer_id];
+      return `${nameObj.last_name} ${nameObj.last_name}`;
     },
   },
 };

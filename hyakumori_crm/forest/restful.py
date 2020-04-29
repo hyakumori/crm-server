@@ -8,20 +8,30 @@ from rest_typed_views import typed_action
 
 from hyakumori_crm.core.utils import default_paginator
 from hyakumori_crm.crm.models import Forest, Customer
-from hyakumori_crm.crm.restful.serializers import CustomerSerializer, ForestSerializer
-from .schemas import (
-    ForestInput,
-    OwnerPksInput,
-)
-from .service import (
-    get_forest_by_pk,
-    update,
-    update_owners,
+from hyakumori_crm.crm.restful.serializers import (
+    CustomerSerializer,
+    ForestSerializer,
+    ContactSerializer,
 )
 from ..api.decorators import (
     api_validate_model,
     get_or_404,
     action_login_required,
+)
+from .schemas import (
+    ForestInput,
+    OwnerPksInput,
+    CustomerDefaultInput,
+    CustomerContactDefaultInput,
+)
+from .service import (
+    get_forest_by_pk,
+    update,
+    update_owners,
+    get_customers,
+    get_customer_contacts_of_forest,
+    set_default_customer,
+    set_default_customer_contact,
 )
 
 
@@ -64,12 +74,7 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
 
         paginator = default_paginator()
         paged_list = paginator.paginate_queryset(
-            request=request,
-            queryset=Customer.objects.filter(forestcustomer__forest_id=obj.pk)
-            .forests_count()
-            .prefetch_related("customercontact_set__contact")
-            .order_by("id"),
-            view=self,
+            request=request, queryset=get_customers(obj.pk), view=self,
         )
 
         return paginator.get_paginated_response(
@@ -87,6 +92,18 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
         update(forest_in.forest, forest_in.dict())
         return Response({"id": forest_in.forest.pk})
 
+    @action(detail=True, methods=["GET"], url_path="customers-forest-contacts")
+    @get_or_404(get_forest_by_pk, to_name="forest", pass_to="kwargs", remove=True)
+    def customers_forest_contacts(self, request, *, forest: Forest):
+        contacts = get_customer_contacts_of_forest(forest.pk)
+        paginator = default_paginator()
+        paged_list = paginator.paginate_queryset(
+            request=request, queryset=contacts, view=self
+        )
+        return paginator.get_paginated_response(
+            ContactSerializer(paged_list, many=True).data
+        )
+
 
 @api_view(["PUT", "PATCH"])
 @get_or_404(get_func=get_forest_by_pk, to_name="forest", remove=True)
@@ -94,3 +111,21 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
 def update_owners_view(request, *, owner_pks_in: OwnerPksInput):
     update_owners(owner_pks_in)
     return Response({"id": owner_pks_in.forest.pk})
+
+
+@api_view(["PUT", "PATCH"])
+@get_or_404(get_forest_by_pk, to_name="forest", remove=True)
+@api_validate_model(CustomerDefaultInput)
+def set_default_customer_view(request, *, data: CustomerDefaultInput = None):
+    set_default_customer(data)
+    return Response({"id": data.forest.id})
+
+
+@api_view(["PUT", "PATCH"])
+@get_or_404(get_forest_by_pk, to_name="forest", remove=True)
+@api_validate_model(CustomerContactDefaultInput)
+def set_default_customer_contact_view(
+    request, *, data: CustomerContactDefaultInput = None
+):
+    set_default_customer_contact(data)
+    return Response({"id": data.forest.id})
