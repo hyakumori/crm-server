@@ -1,43 +1,36 @@
-from uuid import UUID
-
-from rest_framework import viewsets, mixins
-from rest_framework.decorators import api_view, action
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_typed_views import typed_action
-
 from hyakumori_crm.core.utils import default_paginator
-from hyakumori_crm.crm.models import Contact, Customer, ForestCustomer
 from hyakumori_crm.crm.restful.serializers import ContactSerializer, CustomerSerializer
-
-from ..api.decorators import api_validate_model, get_or_404
 from .schemas import (
-    ForestSerializer,
+    BankingInput,
+    ContactsInput,
     CustomerContactsDeleteInput,
     CustomerInputSchema,
-    ForestPksInput,
-    ContactsInput,
     CustomerUpdateSchema,
-    BankingInput,
+    ForestPksInput,
+    ForestSerializer,
 )
 from .service import (
-    get_customer_contacts,
-    get_customer_forests,
     contacts_list_with_search,
+    create,
     delete_customer_contacts,
     get_customer_by_pk,
-    create,
-    update_forests,
-    update_contacts,
-    update_basic_info,
-    update_banking_info,
+    get_customer_contacts,
+    get_customer_forests,
     get_customers,
+    update_banking_info,
+    update_basic_info,
+    update_contacts,
+    update_forests,
 )
+from ..api.decorators import action_login_required, api_validate_model, get_or_404
 
 
 class CustomerViewSets(ViewSet):
+    @action_login_required(with_permissions=["view_customer"])
     def list(self, request):
         search = request.GET.get("search")
         paginator = default_paginator()
@@ -49,16 +42,19 @@ class CustomerViewSets(ViewSet):
         )
 
     @get_or_404(get_customer_by_pk, to_name="customer", pass_to="kwargs", remove=True)
+    @action_login_required(with_permissions=["view_customer"])
     def retrieve(self, request, customer=None):
         return Response(CustomerSerializer(customer).data)
 
     @api_validate_model(CustomerInputSchema)
+    @action_login_required(with_permissions=["add_customer"])
     def create(self, request, data: dict = None):
         customer = create(data)
         return Response({"id": customer.id}, status=201)
 
     @get_or_404(get_customer_by_pk, to_name="customer", remove=True)
     @api_validate_model(CustomerUpdateSchema)
+    @action_login_required(with_permissions=["change_customer"])
     def update(self, request, customer=None, data: dict = None):
         customer = update_basic_info(data)
         return Response({"id": customer.id})
@@ -66,6 +62,7 @@ class CustomerViewSets(ViewSet):
     @action(["PUT", "PATCH"], detail=True, url_path="bank")
     @get_or_404(get_customer_by_pk, to_name="customer", pass_to="kwargs", remove=True)
     @api_validate_model(BankingInput)
+    @action_login_required(with_permissions=["change_customer"])
     def update_customer_bank(self, request, customer=None, data: dict = None):
         customer = update_banking_info(customer, data)
         return Response({"id": customer.id})
@@ -78,6 +75,7 @@ class CustomerViewSets(ViewSet):
         remove=True,
     )
     @api_validate_model(ContactsInput)
+    @action_login_required(with_permissions=["change_customer", "view_customer"])
     def contacts(self, request, *, customer=None, data=None):
         if request.method == "GET":
             obj = customer
@@ -100,6 +98,7 @@ class CustomerViewSets(ViewSet):
         pass_to=["request", "kwargs"],
     )
     @api_validate_model(ForestPksInput)
+    @action_login_required(with_permissions=["change_forest"])
     def forests(self, request, *, customer=None, data: ForestPksInput = None):
         if request.method == "GET":
             obj = customer
@@ -114,25 +113,19 @@ class CustomerViewSets(ViewSet):
             update_forests(data)
             return Response({"id": data.customer.pk})
 
-    @typed_action(detail=True, methods=["GET"])
-    def representatives(self, request):
-        return Response()
-
-    @typed_action(detail=True, methods=["GET"])
-    def related_archives(self, request):
-        return Response()
-
     @action(detail=True, methods=["DELETE"], url_path="contacts")
     @get_or_404(
         get_func=get_customer_by_pk, to_name="customer", remove=True,
     )
     @api_validate_model(CustomerContactsDeleteInput)
+    @action_login_required(with_permissions=["change_customer"])
     def delete_contacts(self, request, *, data: CustomerContactsDeleteInput = None):
         delete_customer_contacts(data)
         return Response({"id": data.forest.id})
 
 
 @api_view(["GET"])
+@action_login_required(with_permissions=["view_customer"])
 def contacts_list(request):
     paginator = default_paginator()
     paged_list = paginator.paginate_queryset(

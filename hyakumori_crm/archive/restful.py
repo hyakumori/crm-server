@@ -7,7 +7,7 @@ from .service import *
 from ..api.decorators import (
     api_validate_model,
     get_or_404,
-)
+    action_login_required)
 from ..core.utils import default_paginator
 from ..crm.restful.serializers import *
 from ..users.models import User
@@ -15,6 +15,7 @@ from ..users.models import User
 
 @api_view(["GET", "POST"])
 @api_validate_model(ArchiveInput)
+@action_login_required(with_permissions=["view_archive", "add_archive"])
 def archives(req, data: ArchiveInput = None):
     if req.method == 'GET':
         paginator = default_paginator()
@@ -32,6 +33,7 @@ def archives(req, data: ArchiveInput = None):
 @api_view(["GET", "PUT", "PATCH"])
 @api_validate_model(ArchiveInput)
 @get_or_404(get_archive_by_pk, to_name='archive', pass_to=["kwargs", "request"], remove=True)
+@action_login_required(with_permissions=["view_archive", "change_archive"])
 def archive(req, *, archive: Archive = None, data: ArchiveInput):
     if req.method == 'GET':
         return Response({"data": ArchiveSerializer(archive).data})
@@ -43,6 +45,7 @@ def archive(req, *, archive: Archive = None, data: ArchiveInput):
 @api_view(["GET", "POST"])
 @parser_classes([MultiPartParser])
 @get_or_404(get_archive_by_pk, to_name="archive", pass_to=["kwargs"], remove=True)
+@action_login_required(with_permissions=["view_archive", "change_archive"])
 def attachments(req, archive: Archive = None):
     # get list attachments
     if req.method == 'GET':
@@ -56,6 +59,7 @@ def attachments(req, archive: Archive = None):
 @api_view(["DELETE"])
 @get_or_404(get_archive_by_pk, to_name="archive", pass_to=["kwargs"], remove=True)
 @get_or_404(get_attachment_by_pk, to_name="attachment", pass_to=["kwargs"], remove=True)
+@action_login_required(with_permissions=["view_archive"])
 def attachment(request, archive: Archive = None, attachment: Attachment = None):
     is_deleted = delete_attachment_file(archive, attachment)
     if is_deleted:
@@ -66,6 +70,7 @@ def attachment(request, archive: Archive = None, attachment: Attachment = None):
 
 @api_view(["GET", "POST", "DELETE"])
 @get_or_404(get_archive_by_pk, pass_to=["kwargs"], to_name="archive", remove=True)
+@action_login_required(with_permissions=["view_archive", "change_archive"])
 def archive_forests(req, archive: Archive = None):
     if req.method == 'GET':
         forests = get_related_forests(archive)
@@ -86,6 +91,7 @@ def archive_forests(req, archive: Archive = None):
 
 @api_view(["GET", "POST", "DELETE"])
 @get_or_404(get_archive_by_pk, pass_to=["kwargs"], to_name="archive", remove=True)
+@action_login_required(with_permissions=["view_archive", "change_archive"])
 def archive_customers(req, archive: Archive = None):
     if req.method == 'GET':
         customers = get_related_customer(archive)
@@ -106,6 +112,7 @@ def archive_customers(req, archive: Archive = None):
 
 @api_view(["GET", "POST", "DELETE"])
 @get_or_404(get_archive_by_pk, to_name="archive", pass_to=["kwargs"], remove=True)
+@action_login_required(with_permissions=["view_archive", "change_archive"])
 def archive_users(req, archive: Archive = None):
     if req.method == 'GET':
         paginator = default_paginator()
