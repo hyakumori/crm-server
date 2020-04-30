@@ -11,6 +11,7 @@ from guardian.shortcuts import (
     remove_perm,
     get_objects_for_user,
 )
+from requests import Request
 
 from hyakumori_crm.permissions.enums import SystemGroups
 from hyakumori_crm.permissions.serializers import GroupSerializer, PermissionSerializer
@@ -157,7 +158,14 @@ class PermissionService:
         group.save()
 
     @classmethod
-    def check_policies(cls, request, user, policies):
+    def check_policies(cls, request: Request, user: AbstractUser, policies: List[str] = None):
+        """
+        Run a list of policies to check for authorities
+        :param request: request instance
+        :param user: normally a reference to request.user
+        :param policies: list of policies methods for running again (request, user)
+        :return: True if all policies checked successfully, else False
+        """
         policies_to_check = dict()
         for policy in policies:
             try:
@@ -172,6 +180,34 @@ class PermissionService:
         check_results = all(result is True for _, result in policies_to_check.items())
 
         return check_results
+
+    @classmethod
+    def check_permissions(cls, request: Request, user: AbstractUser, with_permissions: List[str] = None):
+        """
+        Check if user having permissions in provided list
+        If user has `manage_{resource_name}`, assume he can do all actions: `view, edit, change, delete`
+        :param request: request instance
+        :param user: normally a reference to request.user
+        :param with_permissions: list of permissions for checking
+        :return: True if all permission checked successfully, else False
+        """
+        app_label = "crm"
+        app_permissions_to_check = dict()
+
+        for permission in with_permissions:
+            try:
+                permission_parts = permission.split("_")
+                action_name = permission_parts[0]
+                resource_name = permission_parts[1]
+                app_permission = f"{app_label}.{permission}"
+                if user.has_perm(f"{app_label}.manage_{resource_name}"):
+                    app_permissions_to_check[permission] = True
+                else:
+                    app_permissions_to_check[permission] = user.has_perm(app_permission)
+            except IndexError:
+                continue
+
+        return all([v for _, v in app_permissions_to_check.items()])
 
     @classmethod
     def get_groups(cls):

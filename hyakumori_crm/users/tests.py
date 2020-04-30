@@ -10,12 +10,8 @@ class UsersManagersTests(TestCase):
         self.assertTrue(user.is_active)
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
-        try:
-            # username is None for the AbstractUser option
-            # username does not exist for the AbstractBaseUser option
-            self.assertIsNone(user.username)
-        except AttributeError:
-            pass
+        self.assertIsNotNone(user.username)
+
         with self.assertRaises(TypeError):
             User.objects.create_user()
         with self.assertRaises(TypeError):
@@ -30,12 +26,8 @@ class UsersManagersTests(TestCase):
         self.assertTrue(admin_user.is_active)
         self.assertTrue(admin_user.is_staff)
         self.assertTrue(admin_user.is_superuser)
-        try:
-            # username is None for the AbstractUser option
-            # username does not exist for the AbstractBaseUser option
-            self.assertIsNone(admin_user.username)
-        except AttributeError:
-            pass
+        self.assertIsNotNone(admin_user.username)
+
         with self.assertRaises(ValueError):
             User.objects.create_superuser(
                 email="super@user.com", password="foo", is_superuser=False

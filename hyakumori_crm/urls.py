@@ -12,3 +12,4 @@ urlpatterns = [
     path("graphql", graphql_view, name="graphql"),
     re_path(".*", index_view, name="index"),
 ]
+
