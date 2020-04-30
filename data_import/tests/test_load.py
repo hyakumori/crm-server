@@ -33,7 +33,7 @@ class SimpleLoadTestCase(TestCase):
             print(f"Skipped {self.id()} due to no data found")
             return
 
-        customer = CustomerService.create_customer(self.data["customer"]["2001705"], self.user)
+        customer = CustomerService.create_customer(self.data["customer"]["2001705"])
 
         self.assertIsNotNone(customer.id)
         self.assertEqual(customer.customercontact_set.count(), 1)

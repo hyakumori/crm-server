@@ -33,15 +33,22 @@ from .service import (
     set_default_customer,
     set_default_customer_contact,
 )
+from ..permissions.services import PermissionService
 
 
 class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericViewSet):
     serializer_class = ForestSerializer
 
     def get_queryset(self):
-        return Forest.objects.all()
+        if PermissionService.check_permissions(self.request, self.request.user, ["view_forest"]):
+            return Forest.objects.all()
+        else:
+            return Forest.objects.none()
 
     @action(["GET"], detail=False, url_path="minimal")
+    @action_login_required(
+        with_permissions=["view_forest"]
+    )
     def list_minimal(self, request):
         query = (
             self.get_queryset()
@@ -67,8 +74,9 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
 
     @action(detail=True, methods=["GET"], permission_classes=[IsAuthenticated])
     @action_login_required(
-        with_policies=["can_view_forest_customer"]
-    )  # TODO: implement policies check
+        with_permissions=["view_customer"],
+        is_detail=False
+    )
     def customers(self, request, **kwargs):
         obj = self.get_object()
 
@@ -88,6 +96,9 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     @action(detail=True, methods=["PUT", "PATCH"], url_path="basic-info")
     @get_or_404(get_func=get_forest_by_pk, to_name="forest", remove=True)
     @api_validate_model(ForestInput, "forest_in")
+    @action_login_required(
+        with_permissions=["change_forest"]
+    )
     def basic_info(self, request, *, forest_in: ForestInput):
         update(forest_in.forest, forest_in.dict())
         return Response({"id": forest_in.forest.pk})
@@ -108,6 +119,9 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
 @api_view(["PUT", "PATCH"])
 @get_or_404(get_func=get_forest_by_pk, to_name="forest", remove=True)
 @api_validate_model(OwnerPksInput, "owner_pks_in")
+@action_login_required(
+    with_permissions=["change_customer"]
+)
 def update_owners_view(request, *, owner_pks_in: OwnerPksInput):
     update_owners(owner_pks_in)
     return Response({"id": owner_pks_in.forest.pk})

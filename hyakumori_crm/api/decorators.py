@@ -5,13 +5,15 @@ from typing import Callable
 
 from pydantic import ValidationError
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, PermissionDenied, NotAuthenticated
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_typed_views.decorators import prevalidate, transform_view_params
 from rest_typed_views.utils import find_request
 
 from hyakumori_crm.core.decorators import errors_wrapper
+from hyakumori_crm.permissions.services import PermissionService
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +109,7 @@ def get_or_404(
 def api_validate_model(input_model, arg_name="data"):
     def decorator(f):
         @wraps(f)
-        def wrapper(*args, **kwargs) -> dict:
+        def wrapper(*args, **kwargs) -> Response:
             if len(args) == 1:
                 request = args[0]
             elif len(args) == 2:
@@ -136,11 +138,43 @@ def api_validate_model(input_model, arg_name="data"):
     return decorator
 
 
-# TODO: implement policies check
-def action_login_required(with_policies=None):
+def action_login_required(with_policies=None, with_permissions=None, is_detail=False):
+    if with_policies is None:
+        with_policies = []
+
+    if with_permissions is None:
+        with_permissions = []
+
+    def _raise_exception(is_detail=False):
+        if is_detail:
+            raise PermissionDenied()
+        else:
+            return Response(dict(
+                count=0,
+                next=None,
+                previous=None,
+                results=[]
+            ))
+
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
+            request = next((arg for arg in args if isinstance(arg, Request)), None)
+            user = request.user
+
+            if not user.is_authenticated:
+                raise NotAuthenticated()
+
+            if with_policies is not None and len(with_policies) > 0:
+                is_allowed_request = PermissionService.check_policies(request, user, with_policies)
+                if not is_allowed_request:
+                    return _raise_exception(is_detail)
+
+            if with_permissions is not None and len(with_permissions) > 0:
+                is_allowed_request = PermissionService.check_permissions(request, user, with_permissions)
+                if not is_allowed_request:
+                    return _raise_exception(is_detail)
+
             return f(*args, **kwargs)
 
         return wrapper

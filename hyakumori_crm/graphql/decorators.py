@@ -1,7 +1,7 @@
 from functools import wraps
 
 from django.http import HttpRequest
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, NotAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from hyakumori_crm.permissions.services import PermissionService
@@ -25,7 +25,7 @@ def login_required(with_policies=None):
                 user, _ = auth_result
 
                 if not user.is_authenticated:
-                    raise PermissionDenied()
+                    raise NotAuthenticated()
 
                 if with_policies is not None and len(with_policies) > 0:
                     is_allowed_request = PermissionService.check_policies(info.context, user, with_policies)
