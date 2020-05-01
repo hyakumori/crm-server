@@ -7,11 +7,7 @@
       <div class="page-header__content--center">
         <div class="d-flex justify-space-between">
           <div class="logo-section">
-            <img
-              src="../assets/img/crm-logo.png"
-              alt="Logo big text"
-              height="20"
-            />
+            <img src="../assets/img/crm-logo.png" height="20" />
           </div>
 
           <div class="menu caption pa-7">
@@ -168,8 +164,8 @@ export default {
         return "";
       }
 
-      if (this.user.first_name.length > 0 && this.user.last_name.length > 0) {
-        return `${this.user.last_name} ${this.user.first_name}`;
+      if (this.user.full_name && this.user.full_name.length > 0) {
+        return `${this.user.full_name}`;
       }
 
       return this.user.username;

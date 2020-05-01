@@ -60,16 +60,11 @@
     </template>
 
     <template #right>
-      <div class="user-detail__log ml-6">
-        <h4 class="mb-1">更新履歴</h4>
-        <log-card
-          v-for="(log, index) in getActionLogs"
-          :key="index"
-          :action="log.action"
-          :date="log.date"
-          :editor="log.editor"
-        />
-      </div>
+      <action-log
+        app-name="users"
+        object-type="user"
+        :object-id="$route.params.id"
+      ></action-log>
     </template>
   </main-section>
 </template>
@@ -79,11 +74,10 @@ import { ValidationObserver } from "vee-validate";
 import MainSection from "../components/MainSection";
 import ScreenMixin from "./ScreenMixin";
 import ContentHeader from "../components/detail/ContentHeader";
-import actionLogs from "../assets/dump/action_log.json";
-import LogCard from "../components/detail/LogCard";
 import UpdateButton from "../components/detail/UpdateButton";
 import TextInfo from "../components/detail/TextInfo";
 import SelectInfo from "../components/detail/SelectInfo";
+import ActionLog from "../components/detail/ActionLog";
 
 import { fromNow } from "../helpers/datetime";
 
@@ -97,7 +91,7 @@ export default {
     SelectInfo,
     MainSection,
     ContentHeader,
-    LogCard,
+    ActionLog,
     ValidationObserver,
     UpdateButton,
   },

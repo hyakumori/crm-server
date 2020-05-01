@@ -69,16 +69,11 @@
       </div>
     </template>
     <template #right>
-      <div class="forest-detail__log ml-6">
-        <h4 class="mb-1">更新履歴</h4>
-        <log-card
-          v-for="(log, index) in getActionLogs"
-          :key="index"
-          :action="log.action"
-          :date="log.date"
-          :editor="log.editor"
-        />
-      </div>
+      <action-log
+        app-name="crm"
+        object-type="forest"
+        :object-id="$route.params.id"
+      ></action-log>
     </template>
   </main-section>
 </template>
@@ -88,12 +83,11 @@ import MainSection from "../components/MainSection";
 import ScreenMixin from "./ScreenMixin";
 import ContentHeader from "../components/detail/ContentHeader";
 import discussions from "../assets/dump/history_discussion.json";
-import actionLogs from "../assets/dump/action_log.json";
-import LogCard from "../components/detail/LogCard";
 import ForestContactTabContainer from "../components/detail/ForestContactTabContainer";
 import ForestBasicInfoContainer from "../components/detail/ForestBasicInfoContainer";
 import AttachmentContainer from "../components/detail/AttachmentContainer";
 import ForestAttributeTable from "../components/detail/ForestAttributeTable";
+import ActionLog from "../components/detail/ActionLog";
 import { fetchBasicInfo, fetchForestOwner } from "../api/forest";
 
 export default {
@@ -104,7 +98,7 @@ export default {
   components: {
     MainSection,
     ContentHeader,
-    LogCard,
+    ActionLog,
     ForestAttributeTable,
     ForestBasicInfoContainer,
     AttachmentContainer,
