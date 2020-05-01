@@ -1,17 +1,19 @@
+import "vuetify-dialog/dist/vuetify-dialog.css";
+
 import AclSetup from "./plugins/acl";
+import ActionLog from "./plugins/action-log";
 import App from "./App.vue";
 import { HttpClientPlugin } from "./plugins/http";
 import VeeValidate from "./plugins/vue-veevalidate";
 import Vue from "vue";
+import VuetifyDialog from "vuetify-dialog";
+import axios from "./plugins/http";
 import { createProvider } from "./plugins/vue-apollo";
 import i18n from "./plugins/i18n";
 import router from "./router";
 import setupRouter from "./plugins/setup-router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
-import VuetifyDialog from "vuetify-dialog";
-import "vuetify-dialog/dist/vuetify-dialog.css";
-import axios from "axios";
 
 Vue.config.productionTip = false;
 
@@ -27,6 +29,7 @@ Vue.use(VuetifyDialog, {
     vuetify,
   },
 });
+Vue.use(ActionLog);
 
 const vm = new Vue({
   vuetify,

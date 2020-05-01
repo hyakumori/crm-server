@@ -26,5 +26,6 @@ class Query(querybuilder.query.Query):
         return self
 
 
+# TODO: provide documents for these patches
 querybuilder.query.Sorter = CompleteSorter
 querybuilder.query.Query = Query

@@ -51,23 +51,17 @@
       </div>
     </template>
     <template #right>
-      <div class="forest-detail__log ml-6">
-        <h4 class="mb-1">更新履歴</h4>
-        <log-card
-          v-for="(log, index) in getActionLogs"
-          :key="index"
-          :action="log.action"
-          :date="log.date"
-          :editor="log.editor"
-        />
-      </div>
+      <action-log
+        app-name="crm"
+        object-type="archive"
+        :object-id="$route.params.id"
+      ></action-log>
     </template>
   </main-section>
 </template>
 
 <script>
 import actionLogs from "../assets/dump/action_log.json";
-import LogCard from "../components/detail/LogCard";
 import MainSection from "../components/MainSection";
 import ScreenMixin from "./ScreenMixin";
 import ArchiveBasicInfoContainer from "../components/detail/ArchiveBasicInfoContainer";
@@ -76,6 +70,7 @@ import ArchiveParticipantContainer from "../components/detail/ArchiveParticipant
 import CustomerContactList from "../components/detail/CustomerContactList";
 import ArchiveParticipantList from "../components/detail/ArchiveParticipantList";
 import ArchiveRelatedForestContainer from "../components/detail/ArchiveRelatedForestContainer";
+import ActionLog from "../components/detail/ActionLog";
 
 export default {
   name: "archive-detail",
@@ -90,7 +85,7 @@ export default {
     CustomerContactList,
     ArchiveParticipantList,
     ArchiveRelatedForestContainer,
-    LogCard,
+    ActionLog,
   },
 
   data() {
