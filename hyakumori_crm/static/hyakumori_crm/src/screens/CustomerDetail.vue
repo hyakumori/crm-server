@@ -116,16 +116,11 @@
     </template>
 
     <template #right v-if="isDetail">
-      <div class="customer-detail__log ml-6">
-        <h4 class="mb-1">更新履歴</h4>
-        <log-card
-          v-for="(log, index) in getActionLogs"
-          :key="index"
-          :action="log.action"
-          :date="log.date"
-          :editor="log.editor"
-        />
-      </div>
+      <action-log
+        app-name="crm"
+        object-type="customer"
+        :object-id="$route.params.id"
+      ></action-log>
     </template>
   </main-section>
 </template>
@@ -135,12 +130,11 @@ import MainSection from "../components/MainSection";
 import ScreenMixin from "./ScreenMixin";
 import ownersForest from "../assets/dump/owners_forest_info.json";
 import discussions from "../assets/dump/history_discussion.json";
-import actionLogs from "../assets/dump/action_log.json";
-import LogCard from "../components/detail/LogCard";
 import BasicInfoContainer from "../components/detail/BasicInfoContainer";
 import AttachmentContainer from "../components/detail/AttachmentContainer";
 import ForestListContainer from "../components/detail/ForestListContainer";
 import CustomerListContainer from "../components/detail/CustomerListContainer";
+import ActionLog from "../components/detail/ActionLog";
 import ContactForm from "../components/forms/ContactForm";
 import BankingInfoForm from "../components/forms/BankingInfoForm";
 import { filter } from "lodash";
@@ -150,7 +144,6 @@ export default {
 
   components: {
     MainSection,
-    LogCard,
     BasicInfoContainer,
     AttachmentContainer,
     ForestListContainer,
@@ -158,6 +151,7 @@ export default {
     // BankingInfoContainer,
     ContactForm,
     BankingInfoForm,
+    ActionLog,
   },
   props: ["id"],
   data() {

@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     *static_app,  # this need high priority due to some override commands
     "django.contrib.auth",
+    "django.contrib.sites",
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
     "ariadne.contrib.django",
@@ -71,6 +72,7 @@ INSTALLED_APPS = [
     "hyakumori_crm.users",
     "hyakumori_crm.customer",
     "hyakumori_crm.forest",
+    "hyakumori_crm.activity",
 ]
 
 MIDDLEWARE = [
@@ -83,6 +85,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+SITE_ID = 1
 
 ROOT_URLCONF = "hyakumori_crm.urls"
 
@@ -194,9 +198,7 @@ DJOSER = {
         "current_user": "hyakumori_crm.users.serializers.UserSerializer",
         "user_create": "hyakumori_crm.users.serializers.UserCreateSerializer",
     },
-    "EMAIL": {
-        "activation": "hyakumori_crm.users.emails.ActivationEmail",
-    },
+    "EMAIL": {"activation": "hyakumori_crm.users.emails.ActivationEmail",},
     "PERMISSIONS": {"user_list": ["rest_framework.permissions.IsAdminUser"]},
     "LOGIN_FIELD": "email",
     "HIDE_USERS": True,
@@ -257,7 +259,7 @@ LOGGING = {
     "loggers": {
         "django.db.backends": {
             "handlers": ["console"],
-            "level": "DEBUG" if DEBUG else "WARNING",
+            "level": os.getenv("DB_LOG_LEVEL", "DEBUG" if DEBUG else "WARNING"),
             "propagate": False,
         },
     },

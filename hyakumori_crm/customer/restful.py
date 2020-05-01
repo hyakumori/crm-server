@@ -26,6 +26,7 @@ from .service import (
     update_contacts,
     update_forests,
 )
+from ..activity.services import ActivityService, CustomerActions
 from ..api.decorators import action_login_required, api_validate_model, get_or_404
 
 
@@ -50,6 +51,7 @@ class CustomerViewSets(ViewSet):
     @action_login_required(with_permissions=["add_customer"])
     def create(self, request, data: dict = None):
         customer = create(data)
+        ActivityService.log(CustomerActions.created, customer, request=request)
         return Response({"id": customer.id}, status=201)
 
     @get_or_404(get_customer_by_pk, to_name="customer", remove=True)
@@ -57,6 +59,7 @@ class CustomerViewSets(ViewSet):
     @action_login_required(with_permissions=["change_customer"])
     def update(self, request, customer=None, data: dict = None):
         customer = update_basic_info(data)
+        ActivityService.log(CustomerActions.basic_info_updated, customer, request=request)
         return Response({"id": customer.id})
 
     @action(["PUT", "PATCH"], detail=True, url_path="bank")
@@ -65,6 +68,7 @@ class CustomerViewSets(ViewSet):
     @action_login_required(with_permissions=["change_customer"])
     def update_customer_bank(self, request, customer=None, data: dict = None):
         customer = update_banking_info(customer, data)
+        ActivityService.log(CustomerActions.banking_info_updated, customer, request=request)
         return Response({"id": customer.id})
 
     @action(detail=True, methods=["GET", "PUT", "PATCH"])
@@ -83,11 +87,11 @@ class CustomerViewSets(ViewSet):
             paged_list = paginator.paginate_queryset(
                 request=request, queryset=get_customer_contacts(obj.pk), view=self,
             )
-
             contacts = ContactSerializer(paged_list, many=True).data
             return paginator.get_paginated_response(contacts)
         else:
             update_contacts(data)
+            ActivityService.log(CustomerActions.direct_contacts_updated, customer, request=request)
             return Response({"id": data.customer.id})
 
     @action(detail=True, methods=["GET", "PUT", "PATCH"])
@@ -111,6 +115,7 @@ class CustomerViewSets(ViewSet):
             return paginator.get_paginated_response(forests)
         else:
             update_forests(data)
+            ActivityService.log(CustomerActions.forests_updated, customer, request=request)
             return Response({"id": data.customer.pk})
 
     @action(detail=True, methods=["DELETE"], url_path="contacts")
@@ -121,6 +126,7 @@ class CustomerViewSets(ViewSet):
     @action_login_required(with_permissions=["change_customer"])
     def delete_contacts(self, request, *, data: CustomerContactsDeleteInput = None):
         delete_customer_contacts(data)
+        ActivityService.log(CustomerActions.direct_contacts_updated, data.customer, request=request)
         return Response({"id": data.forest.id})
 
 

@@ -13,6 +13,7 @@ from hyakumori_crm.crm.restful.serializers import (
     ForestSerializer,
     ContactSerializer,
 )
+from ..activity.services import ActivityService, ForestActions
 from ..api.decorators import (
     api_validate_model,
     get_or_404,
@@ -52,8 +53,8 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     def list_minimal(self, request):
         query = (
             self.get_queryset()
-            .annotate(customers_count=Count(F("forestcustomer__customer_id")))
-            .values("id", "internal_id", "cadastral", "customers_count")
+                .annotate(customers_count=Count(F("forestcustomer__customer_id")))
+                .values("id", "internal_id", "cadastral", "customers_count")
         )
         search_str = request.GET.get("search")
         if search_str:
@@ -101,6 +102,7 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     )
     def basic_info(self, request, *, forest_in: ForestInput):
         update(forest_in.forest, forest_in.dict())
+        ActivityService.log(ForestActions.basic_info_updated, forest_in.forest, request=request)
         return Response({"id": forest_in.forest.pk})
 
     @action(detail=True, methods=["GET"], url_path="customers-forest-contacts")
@@ -124,6 +126,7 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
 )
 def update_owners_view(request, *, owner_pks_in: OwnerPksInput):
     update_owners(owner_pks_in)
+    ActivityService.log(ForestActions.customers_updated, owner_pks_in.forest, request=request)
     return Response({"id": owner_pks_in.forest.pk})
 
 
@@ -132,6 +135,7 @@ def update_owners_view(request, *, owner_pks_in: OwnerPksInput):
 @api_validate_model(CustomerDefaultInput)
 def set_default_customer_view(request, *, data: CustomerDefaultInput = None):
     set_default_customer(data)
+    ActivityService.log(ForestActions.customers_updated, data.forest, request=request)
     return Response({"id": data.forest.id})
 
 
@@ -142,4 +146,5 @@ def set_default_customer_contact_view(
     request, *, data: CustomerContactDefaultInput = None
 ):
     set_default_customer_contact(data)
+    ActivityService.log(ForestActions.customers_updated, data.forest, request=request)
     return Response({"id": data.forest.id})

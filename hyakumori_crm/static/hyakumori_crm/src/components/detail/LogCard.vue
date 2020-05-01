@@ -2,7 +2,7 @@
   <div>
     <v-card class="log-card d-hover" flat @click="onClickCard">
       <div class="d-flex pa-4">
-        <v-icon class="align-self-start">mdi-calendar-text</v-icon>
+        <v-icon class="align-self-start">{{ icon }}</v-icon>
 
         <div class="log-card__info">
           <h5>{{ action }}</h5>
@@ -10,7 +10,7 @@
         </div>
       </div>
 
-      <div class="align-self-center pr-4">
+      <div class="align-self-center pr-4" v-if="!noRightAction">
         <v-btn icon @click="onClick">
           <v-icon>mdi-chevron-right</v-icon>
         </v-btn>
@@ -20,14 +20,17 @@
 </template>
 
 <script>
+import { parseISO, format } from "date-fns";
 export default {
   name: "log-card",
 
   props: {
+    icon: String,
     action: String,
     date: String,
-    editor: String,
+    editor: Object,
     type: String,
+    noRightAction: { type: Boolean, default: false },
   },
 
   methods: {
@@ -41,10 +44,15 @@ export default {
   },
 
   computed: {
+    editorFullname() {
+      return `${this.editor.last_name} ${this.editor.first_name}`;
+    },
     info() {
       if (this.date) {
         if (this.editor) {
-          return `${this.date}・${this.editor}`;
+          return `${format(parseISO(this.date), "yyyy/MM/dd")}・${
+            this.editorFullname
+          }`;
         } else {
           return this.date;
         }

@@ -57,18 +57,24 @@ class PermissionService:
         cls, user_id: UUID, group_ids: List[int], clear: bool = True
     ):
         user = get_user_model().objects.get(pk=user_id)
+        user_groups = list(user.groups.all())
+
+        if clear:
+            user.groups.clear()
+            user.save()
+
+        has_changed = []
 
         for group_id in group_ids:
             group = Group.objects.get(pk=group_id)
-            if clear:
-                user.groups.clear()
-                user.save()
-                group.refresh_from_db()
-
+            if group in user_groups:
+                has_changed.append(False)
+            else:
+                has_changed.append(True)
             group.user_set.add(user)
             group.save()
 
-        return cls.serialize_groups(user.groups.all())
+        return dict(groups=cls.serialize_groups(user.groups.all()), user=user, has_changed=any(has_changed))
 
     @classmethod
     def unassign_user_from_group(cls, user_id: UUID, group_ids: List[int]):
@@ -79,7 +85,7 @@ class PermissionService:
             group.user_set.remove(user)
             group.save()
 
-        return cls.serialize_groups(user.groups.all())
+        return dict(groups=cls.serialize_groups(user.groups.all()), user=user)
 
     @classmethod
     def assign_object_permissions(
