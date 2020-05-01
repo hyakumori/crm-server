@@ -11,6 +11,7 @@ from djoser.serializers import (
 )
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError, PermissionDenied
+from pydantic.error_wrappers import ValidationError as PydanticValidationError
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import ModelSerializer
 from rest_framework_simplejwt.serializers import (
@@ -22,6 +23,7 @@ from django.utils.translation import gettext as _
 from hyakumori_crm.permissions.services import PermissionService
 from .models import User
 from hyakumori_crm.permissions.enums import SystemGroups
+from .types import UserUpdateInput
 
 
 def _is_user_self(request, instance):
@@ -84,25 +86,27 @@ class UserSerializer(DjUserSerializer):
         )
         read_only_fields = ("username", "email", "is_active", "full_name")
 
-    def update_email(self, request, instance, errors):
+    def update_email(self, _data, instance, errors):
+        email = _data.email
         user = User.objects.filter(
-            Q(email=request.data.get("email")) & (~Q(pk=instance.pk))
+            Q(email=email) & (~Q(pk=instance.pk))
         ).exists()
         if user:
             errors["email"] = [_("Email existed")]
             return
 
-        instance.email = request.data.get("email")
+        instance.email = email
 
-    def update_username(self, request, instance, errors):
+    def update_username(self, _data, instance, errors):
+        username = _data.username
         user = User.objects.filter(
-            Q(username=request.data.get("username")) & (~Q(pk=instance.pk))
+            Q(username=username) & (~Q(pk=instance.pk))
         ).exists()
         if user:
             errors["username"] = [_("Username existed")]
             return
 
-        instance.username = request.data.get("username")
+        instance.username = username
 
     def update_groups(self, request, instance):
         group = request.data.get("group")
@@ -126,16 +130,25 @@ class UserSerializer(DjUserSerializer):
 
         if _only_admin(request):
             errors = dict()
-            self.update_email(request, instance, errors)
-            self.update_username(request, instance, errors)
+            try:
+                _data = UserUpdateInput(**request.data)
+                self.update_email(_data, instance, errors)
+                self.update_username(_data, instance, errors)
 
-            if len(errors.keys()) > 0:
+                if len(errors.keys()) > 0:
+                    raise ValidationError(detail=errors)
+
+            except PydanticValidationError as e:
+                for error in e.errors():
+                    errors[error.get("loc")[0]] = [error.get("msg")]
                 raise ValidationError(detail=errors)
 
-            self.update_groups(request, instance)
+            # ignore if user is admin and attempting to update his groups and status
+            if request.user != instance:
+                self.update_groups(request, instance)
 
-            # update status
-            self.update_status(request, instance)
+                # update status
+                self.update_status(request, instance)
 
         return ModelSerializer.update(self, instance, validated_data)
 
