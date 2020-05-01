@@ -50,7 +50,7 @@
 
                   <update-button
                     class="mb-12"
-                    :disabled="invalid || isLoading"
+                    :saveDisabled="invalid || isLoading"
                     :save="onSave"
                     v-if="isUpdate.basicInfo"
                     :cancel="cancel.bind(this, 'basicInfo')"
