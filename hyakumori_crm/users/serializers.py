@@ -24,6 +24,8 @@ from hyakumori_crm.permissions.services import PermissionService
 from .models import User
 from hyakumori_crm.permissions.enums import SystemGroups
 from .types import UserUpdateInput
+from ..activity.constants import UserActions
+from ..activity.services import ActivityService
 
 
 def _is_user_self(request, instance):
@@ -88,25 +90,30 @@ class UserSerializer(DjUserSerializer):
 
     def update_email(self, _data, instance, errors):
         email = _data.email
-        user = User.objects.filter(
-            Q(email=email) & (~Q(pk=instance.pk))
-        ).exists()
+        user = User.objects.filter(Q(email=email) & (~Q(pk=instance.pk))).exists()
         if user:
             errors["email"] = [_("Email existed")]
             return
 
         instance.email = email
+        if instance.email != email:
+            instance.email = email
+            return True
+
+        return False
 
     def update_username(self, _data, instance, errors):
         username = _data.username
-        user = User.objects.filter(
-            Q(username=username) & (~Q(pk=instance.pk))
-        ).exists()
+        user = User.objects.filter(Q(username=username) & (~Q(pk=instance.pk))).exists()
         if user:
             errors["username"] = [_("Username existed")]
             return
 
-        instance.username = username
+        if instance.username != username:
+            instance.username = username
+            return True
+
+        return False
 
     def update_groups(self, request, instance):
         group = request.data.get("group")
@@ -117,13 +124,26 @@ class UserSerializer(DjUserSerializer):
         if group is None or group.get("value") is None:
             return
 
-        group_id = [request.data.get("group").get("value")]
-        PermissionService.assign_user_to_group(instance.pk, group_id, clear=True)
+        group_id = [group.get("value")]
+        results = PermissionService.assign_user_to_group(
+            instance.pk, group_id, clear=True
+        )
+        if results.get("has_changed"):
+            ActivityService.log(
+                UserActions.group_updated, model_instance=instance, request=request
+            )
 
     def update_status(self, request, instance):
         status = request.data.get("is_active")
-        if not _is_user_self(request, instance) and status is not None:
-            instance.is_active = request.data.get("is_active")
+        if (
+            not _is_user_self(request, instance)
+            and status is not None
+            and instance.is_active != status
+        ):
+            instance.is_active = status
+            ActivityService.log(
+                UserActions.status_updated, model_instance=instance, request=request
+            )
 
     def update(self, instance, validated_data):
         request = self.context.get("request")
@@ -132,11 +152,18 @@ class UserSerializer(DjUserSerializer):
             errors = dict()
             try:
                 _data = UserUpdateInput(**request.data)
-                self.update_email(_data, instance, errors)
-                self.update_username(_data, instance, errors)
+                has_email_update = self.update_email(_data, instance, errors)
+                has_username_update = self.update_username(_data, instance, errors)
 
                 if len(errors.keys()) > 0:
                     raise ValidationError(detail=errors)
+
+                if has_email_update or has_username_update:
+                    ActivityService.log(
+                        UserActions.basic_info_updated,
+                        model_instance=instance,
+                        request=request,
+                    )
 
             except PydanticValidationError as e:
                 for error in e.errors():
@@ -146,11 +173,22 @@ class UserSerializer(DjUserSerializer):
             # ignore if user is admin and attempting to update his groups and status
             if request.user != instance:
                 self.update_groups(request, instance)
-
                 # update status
                 self.update_status(request, instance)
 
-        return ModelSerializer.update(self, instance, validated_data)
+        has_basic_info_changed = (
+            validated_data.get("first_name") != instance.first_name
+            or validated_data.get("last_name") != instance.last_name
+        )
+
+        saved = ModelSerializer.update(self, instance, validated_data)
+
+        if has_basic_info_changed:
+            ActivityService.log(
+                UserActions.basic_info_updated, model_instance=instance, request=request
+            )
+
+        return saved
 
 
 class UserCreateSerializer(DjUserCreateSerializer):
@@ -161,7 +199,11 @@ class UserCreateSerializer(DjUserCreateSerializer):
         request = self.context.get("request")
         # only allow admin to create user
         if _only_admin(request):
-            return super().create(validated_data)
+            user = super().create(validated_data)
+            ActivityService.log(
+                UserActions.created, model_instance=user, request=request
+            )
+            return user
         else:
             raise PermissionDenied()
 

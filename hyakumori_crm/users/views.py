@@ -14,6 +14,7 @@ from rest_framework_simplejwt.views import TokenViewBase
 from rest_typed_views import Body, typed_action
 
 from .serializers import CustomTokenObtainPairSerializer
+from ..activity.services import ActivityService, UserActions
 from ..core.permissions import IsAdminOrSelf
 from ..core.utils import default_paginator, make_error_json, make_success_json
 from ..crm.restful.serializers import (
@@ -34,9 +35,9 @@ class CustomUserViewSet(UserViewSet):
     def get_queryset(self):
         return (
             super()
-            .get_queryset()
-            .filter(~Q(email="AnonymousUser"))
-            .order_by("date_joined")
+                .get_queryset()
+                .filter(~Q(email="AnonymousUser"))
+                .order_by("date_joined")
         )
 
     def perform_update(self, serializer):
@@ -58,6 +59,8 @@ class CustomUserViewSet(UserViewSet):
         signals.user_activated.send(
             sender=self.__class__, user=user, request=self.request
         )
+
+        ActivityService.log(UserActions.account_activated, model_instance=user, user=user, request=request)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -113,6 +116,7 @@ class CustomUserViewSet(UserViewSet):
                 request=request, queryset=queryset, view=self
             )
             customers = []
+
             for customer in paged_list:
                 _customer = CustomerSerializer(customer).data
                 _contact = ContactSerializer(
@@ -150,7 +154,10 @@ class CustomUserViewSet(UserViewSet):
     ):
         try:
             results = PermissionService.assign_user_to_group(user_id, group_ids)
-            return make_success_json(dict(groups=results))
+
+            ActivityService.log(UserActions.group_updated, model_instance=results.get("user"), request=request)
+
+            return make_success_json(dict(groups=results.get("groups")))
         except Exception as e:
             return make_error_json(str(e))
 
@@ -168,7 +175,10 @@ class CustomUserViewSet(UserViewSet):
     ):
         try:
             results = PermissionService.unassign_user_from_group(user_id, group_ids)
-            return make_success_json(dict(groups=results))
+
+            ActivityService.log(UserActions.group_updated, model_instance=results.get("user"), request=request)
+
+            return make_success_json(dict(groups=results.get("groups")))
         except Exception as e:
             return make_error_json(str(e))
 

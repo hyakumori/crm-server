@@ -6,6 +6,16 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from hyakumori_crm.crm.restful.paginations import StandardPagination
 
 
+def get_remote_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        remote_ip = x_forwarded_for.split(',')[0]
+    else:
+        remote_ip = request.META.get('REMOTE_ADDR')
+
+    return remote_ip
+
+
 def model_to_dict(instance, fields=None, exclude=None):
     """
     Copy from django.form.models
