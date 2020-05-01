@@ -81,6 +81,7 @@ class HyakumoriDanticModel(BaseModel):
             "type_error.none.not_allowed": _("Required"),
             "value_error.str.regex": _("Invalid"),
             "value_error.missing": _("Required"),
+            "value_error.email": _("Invalid Email")
         }
 
     @validator("*", pre=True)
