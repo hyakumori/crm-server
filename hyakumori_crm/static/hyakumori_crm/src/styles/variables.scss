@@ -14,3 +14,22 @@ $content-width: 100hw;
   background-color: #f5f5f5;
   border-radius: 50% !important;
 }
+
+%picker-shared {
+  $font-size: 14px;
+
+  h5 {
+    font-size: $font-size;
+    color: #444444;
+    font-weight: bold;
+  }
+
+  fieldset {
+    border-radius: 4px;
+  }
+
+  input {
+    font-size: $font-size;
+    color: #999999;
+  }
+}

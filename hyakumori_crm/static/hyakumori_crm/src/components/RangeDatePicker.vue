@@ -64,23 +64,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$font-size: 14px;
+@import "src/styles/variables";
 
 .range-date-picker ::v-deep {
-  h5 {
-    font-size: $font-size;
-    color: #444444;
-    font-weight: bold;
-  }
-
-  fieldset {
-    border: 1px solid #e1e1e1;
-    border-radius: 4px;
-  }
-
-  input {
-    font-size: $font-size;
-    color: #999999;
-  }
+  @extend %picker-shared;
 }
 </style>
