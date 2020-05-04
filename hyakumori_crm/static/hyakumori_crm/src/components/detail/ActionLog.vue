@@ -1,5 +1,5 @@
 <template>
-  <div class="forest-detail__log ml-6">
+  <div class="action-log ml-6">
     <h4 class="mb-1">更新履歴</h4>
     <v-progress-linear
       height="2"
@@ -7,15 +7,17 @@
       rounded
       v-if="isLoading"
     ></v-progress-linear>
-    <log-card
-      v-for="log in results"
-      :key="log.id"
-      :icon="log.icon"
-      :action="log.template"
-      :date="log.created_at"
-      :editor="log.author"
-      no-right-action
-    />
+    <div class="items">
+      <log-card
+        v-for="log in results"
+        :key="log.id"
+        :icon="log.icon"
+        :action="log.template"
+        :date="log.created_at"
+        :editor="log.author"
+        no-right-action
+      />
+    </div>
   </div>
 </template>
 
@@ -63,3 +65,11 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.action-log {
+  .items {
+    max-height: 640px;
+    overflow: auto;
+  }
+}
+</style>

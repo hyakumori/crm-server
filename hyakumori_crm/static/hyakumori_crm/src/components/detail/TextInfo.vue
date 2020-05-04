@@ -1,6 +1,6 @@
 <template>
   <div class="text-info">
-    <h5>{{ label }}</h5>
+    <h5 v-if="label && label.length > 0">{{ label }}</h5>
     <text-input
       v-if="isUpdate"
       :rules="rules"

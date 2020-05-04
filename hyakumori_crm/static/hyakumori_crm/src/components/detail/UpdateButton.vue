@@ -9,7 +9,7 @@
       :loading="saving"
       >{{ $t("buttons.save") }}</v-btn
     >
-    <v-btn class="update-btn__cancel" text @click="cancel">{{
+    <v-btn class="update-btn__cancel" text @click.stop="cancel">{{
       $t("buttons.cancel")
     }}</v-btn>
   </div>

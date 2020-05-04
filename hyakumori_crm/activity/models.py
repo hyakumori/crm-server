@@ -1,11 +1,9 @@
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from hyakumori_crm.core.models import UUIDPrimary
-from ..crm.models.message_template import MessageTemplate
 
 
 class ActionLog(UUIDPrimary):

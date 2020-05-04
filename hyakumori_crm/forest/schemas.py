@@ -185,3 +185,11 @@ class CustomerContactDefaultInput(HyakumoriDanticModel):
             raise ValueError(_("Contact {v} not found").format(v=customer_id))
 
         return values
+
+
+class ForestMemoInput(HyakumoriDanticModel):
+    forest: Forest
+    memo: str
+
+    class Config:
+        arbitrary_types_allowed = True
