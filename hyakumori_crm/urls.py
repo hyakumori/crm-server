@@ -1,7 +1,4 @@
 from django.urls import include, path, re_path
-from rest_framework.routers import DefaultRouter
-
-from hyakumori_crm.customer.restful import CustomerViewSets
 from hyakumori_crm.graphql import view as graphql_view
 from hyakumori_crm.static.views import index_view, test_view
 

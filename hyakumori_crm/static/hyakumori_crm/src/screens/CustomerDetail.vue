@@ -116,11 +116,17 @@
     </template>
 
     <template #right v-if="isDetail">
-      <action-log
-        app-name="crm"
-        object-type="customer"
-        :object-id="$route.params.id"
-      ></action-log>
+      <div>
+        <memo-input
+          :api-url="`/customers/${$route.params.id}/memo`"
+          :value="customer && customer.attributes['memo']"
+        ></memo-input>
+        <action-log
+          app-name="crm"
+          object-type="customer"
+          :object-id="$route.params.id"
+        ></action-log>
+      </div>
     </template>
   </main-section>
 </template>
@@ -135,6 +141,7 @@ import AttachmentContainer from "../components/detail/AttachmentContainer";
 import ForestListContainer from "../components/detail/ForestListContainer";
 import CustomerListContainer from "../components/detail/CustomerListContainer";
 import ActionLog from "../components/detail/ActionLog";
+import MemoInput from "../components/detail/MemoInput";
 import ContactForm from "../components/forms/ContactForm";
 import BankingInfoForm from "../components/forms/BankingInfoForm";
 import { filter } from "lodash";
@@ -152,6 +159,7 @@ export default {
     ContactForm,
     BankingInfoForm,
     ActionLog,
+    MemoInput,
   },
   props: ["id"],
   data() {

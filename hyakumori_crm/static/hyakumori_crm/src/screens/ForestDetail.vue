@@ -69,11 +69,17 @@
       </div>
     </template>
     <template #right>
-      <action-log
-        app-name="crm"
-        object-type="forest"
-        :object-id="$route.params.id"
-      ></action-log>
+      <div>
+        <memo-input
+          :api-url="`/forests/${$route.params.id}/memo`"
+          :value="forestInfo && forestInfo.attributes['memo']"
+        ></memo-input>
+        <action-log
+          app-name="crm"
+          object-type="forest"
+          :object-id="$route.params.id"
+        ></action-log>
+      </div>
     </template>
   </main-section>
 </template>
@@ -88,6 +94,7 @@ import ForestBasicInfoContainer from "../components/detail/ForestBasicInfoContai
 import AttachmentContainer from "../components/detail/AttachmentContainer";
 import ForestAttributeTable from "../components/detail/ForestAttributeTable";
 import ActionLog from "../components/detail/ActionLog";
+import MemoInput from "../components/detail/MemoInput";
 import { fetchBasicInfo, fetchForestOwner } from "../api/forest";
 
 export default {
@@ -99,6 +106,7 @@ export default {
     MainSection,
     ContentHeader,
     ActionLog,
+    MemoInput,
     ForestAttributeTable,
     ForestBasicInfoContainer,
     AttachmentContainer,
@@ -109,7 +117,6 @@ export default {
   },
   data() {
     return {
-      forestInfo: null,
       forestOwners: null,
       pageIcon: this.$t("icon.forest_icon"),
       backBtnContent: this.$t("page_header.forest_mgmt"),
@@ -163,9 +170,14 @@ export default {
       return actionLogs;
     },
 
+    forestInfo() {
+      return this.$store.state.forest.forest;
+    },
+
     headerData() {
       let headerData = [];
-      const forestInfo = this.$store.state.forest.forest;
+      const forestInfo = this.forestInfo;
+
       if (forestInfo) {
         const attr = forestInfo.forest_attributes;
         return [

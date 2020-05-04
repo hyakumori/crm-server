@@ -243,3 +243,11 @@ class ContactsInput(HyakumoriDanticModel):
         if v not in cls.customer_contact_pks:
             raise ValueError(_("Contact {} not found").format(v))
         return v
+
+
+class CustomerMemoInput(HyakumoriDanticModel):
+    customer: Customer
+    memo: str
+
+    class Config:
+        arbitrary_types_allowed = True
