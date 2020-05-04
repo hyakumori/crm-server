@@ -28,12 +28,12 @@
         <v-icon @click="viewMore">mdi-dots-vertical</v-icon>
       </template>
 
-      <template v-if="tableRowIcon" v-slot:item.internal_id="{ item }">
+      <template v-if="tableRowIcon" v-slot:[`item.${iconRowValue}`]="{ item }">
         <div class="d-flex align-center justify-space-between">
           <v-icon class="icon-mode mr-4 f14 mt-1 mb-1" small>{{
             tableRowIcon
           }}</v-icon>
-          <p class="mb-0">{{ item.internal_id }}</p>
+          <p class="mb-0">{{ item[iconRowValue] }}</p>
         </div>
       </template>
 
@@ -68,6 +68,10 @@ export default {
     serverItemsLength: Number,
     options: Object,
     tableRowIcon: String,
+    iconRowValue: {
+      type: String,
+      default: "internal_id",
+    },
     itemKey: {
       type: String,
       default: "id",

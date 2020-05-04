@@ -3,22 +3,26 @@
     <template #section class="archives-detail">
       <div class="archives-detail__section">
         <archive-basic-info-container
-          headerContent="協議情報"
+          :isDetail="isDetail"
+          :id="id"
           editBtnContent="所有地を追加・編集"
+          headerContent="協議情報"
         />
 
         <archive-document-container
-          class="mt-8"
-          headerContent="配布資料等"
-          editBtnContent="配布資料を追加・編集"
           addBtnContent="さらに追加"
+          class="mt-8"
+          editBtnContent="配布資料を追加・編集"
+          headerContent="配布資料等"
+          v-if="isDetail"
         />
 
         <archive-participant-container
-          class="mt-9"
-          headerContent="先方参加者"
-          editBtnContent="参加者を追加・編集"
           addBtnContent="さらに追加"
+          class="mt-9"
+          editBtnContent="参加者を追加・編集"
+          headerContent="先方参加者"
+          v-if="isDetail"
         >
           <template v-slot:participants="props">
             <customer-contact-list
@@ -29,24 +33,26 @@
         </archive-participant-container>
 
         <archive-participant-container
-          class="mt-9"
-          headerContent="当方参加者"
-          editBtnContent="参加者を追加・編集"
           addBtnContent="さらに追加"
+          class="mt-9"
+          editBtnContent="参加者を追加・編集"
+          headerContent="当方参加者"
+          v-if="isDetail"
         >
           <template v-slot:participants="props">
             <archive-participant-list
-              :participants="names"
               :isUpdate="props.isUpdate"
+              :participants="names"
             />
           </template>
         </archive-participant-container>
 
         <archive-related-forest-container
-          class="mt-9"
-          headerContent="関連する森林"
-          editBtnContent="森林を追加・編集"
           addBtnContent="さらに追加"
+          class="mt-9"
+          editBtnContent="森林を追加・編集"
+          headerContent="関連する森林"
+          v-if="isDetail"
         />
       </div>
     </template>
@@ -92,10 +98,22 @@ export default {
     return {
       pageIcon: this.$t("icon.archive_icon"),
       backBtnContent: this.$t("page_header.archive_mgmt"),
+      headerInfo: {
+        title: this.$t(`${this.$route.meta.title}`),
+        subTitle: "",
+        backUrl: "/archives",
+      },
       participants: [
         {
           customer_id: "123",
-          fullname: "山田太郎",
+          name_kanji: {
+            last_name: "石原",
+            first_name: "正",
+          },
+          name_kana: {
+            last_name: "イシハラ",
+            first_name: "タダシ",
+          },
           address: "424-0023 岡山県倉敷市大谷4-1-3",
           email: "hanako.yamada@gmail.com",
           forest_count: 4,
@@ -104,7 +122,14 @@ export default {
         },
         {
           customer_id: "123",
-          fullname: "山田太郎",
+          name_kanji: {
+            last_name: "石原",
+            first_name: "正",
+          },
+          name_kana: {
+            last_name: "イシハラ",
+            first_name: "タダシ",
+          },
           address: "424-0023 岡山県倉敷市大谷4-1-3",
           email: "hanako.yamada@gmail.com",
           forest_count: 4,
@@ -115,9 +140,22 @@ export default {
       names: ["John Wick", "Marshmello"],
     };
   },
+
+  mounted() {
+    this.$store.dispatch("setHeaderInfo", this.headerInfo);
+  },
+
   computed: {
+    id() {
+      return this.$route.params.id;
+    },
+
     getActionLogs() {
       return actionLogs;
+    },
+
+    isDetail() {
+      return !!this.id;
     },
   },
 };
