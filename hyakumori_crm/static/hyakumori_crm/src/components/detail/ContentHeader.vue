@@ -12,17 +12,19 @@
         </v-img>
       </div>
       <v-spacer></v-spacer>
-      <addition-button
-        v-if="!permissions"
-        :content="editBtnContent"
-        :click="enableEdit"
-      />
-      <addition-button
-        v-else
-        v-acl-only="permissions"
-        :content="editBtnContent"
-        :click="enableEdit"
-      />
+      <div v-if="displayAdditionBtn">
+        <addition-button
+          v-if="!permissions"
+          :content="editBtnContent"
+          :click="enableEdit"
+        />
+        <addition-button
+          v-else
+          v-acl-only="permissions"
+          :content="editBtnContent"
+          :click="enableEdit"
+        />
+      </div>
     </div>
     <v-progress-linear v-if="loading" height="2" indeterminate />
     <v-divider v-else class="content-header__divider mt-1"></v-divider>

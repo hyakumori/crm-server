@@ -33,7 +33,9 @@ def setup_templates(request):
             ActivityService.import_message_templates(for_type="archive", action_class=ArchiveActions)
             ActivityService.import_message_templates(for_type="user", action_class=UserActions)
 
-            ActionLog.objects.all().delete()
+            ActionLog.objects\
+                .filter(template_name__in=["forest.created", "customer.created", "archive.created", "user.created"])\
+                .all().delete()
 
             admin = get_user_model().objects.filter(is_superuser=True).order_by("date_joined").first()
             for forest in Forest.objects.iterator():

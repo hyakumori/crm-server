@@ -130,3 +130,15 @@ def set_default_customer_contact(data: CustomerContactDefaultInput):
     ).update(attributes={"default": data.default})
     data.forest.save(update_fields=["updated_at"])
     return data.forest
+
+
+def update_forest_memo(forest, memo):
+    _memo = forest.attributes.get("memo")
+    _updated = False
+
+    if _memo != memo:
+        forest.attributes["memo"] = memo
+        forest.save()
+        _updated = True
+
+    return forest, _updated

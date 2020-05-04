@@ -1,7 +1,6 @@
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-from rest_typed_views import typed_action
 from hyakumori_crm.core.utils import default_paginator
 from hyakumori_crm.crm.restful.serializers import ContactSerializer, CustomerSerializer
 from .schemas import (
@@ -12,6 +11,7 @@ from .schemas import (
     CustomerUpdateSchema,
     ForestPksInput,
     ForestSerializer,
+    CustomerMemoInput,
 )
 from .service import (
     contacts_list_with_search,
@@ -25,6 +25,7 @@ from .service import (
     update_basic_info,
     update_contacts,
     update_forests,
+    update_customer_memo,
 )
 from ..activity.services import ActivityService, CustomerActions
 from ..api.decorators import action_login_required, api_validate_model, get_or_404
@@ -59,7 +60,9 @@ class CustomerViewSets(ViewSet):
     @action_login_required(with_permissions=["change_customer"])
     def update(self, request, customer=None, data: dict = None):
         customer = update_basic_info(data)
-        ActivityService.log(CustomerActions.basic_info_updated, customer, request=request)
+        ActivityService.log(
+            CustomerActions.basic_info_updated, customer, request=request
+        )
         return Response({"id": customer.id})
 
     @action(["PUT", "PATCH"], detail=True, url_path="bank")
@@ -67,8 +70,9 @@ class CustomerViewSets(ViewSet):
     @api_validate_model(BankingInput)
     @action_login_required(with_permissions=["change_customer"])
     def update_customer_bank(self, request, customer=None, data: dict = None):
-        customer = update_banking_info(customer, data)
-        ActivityService.log(CustomerActions.banking_info_updated, customer, request=request)
+        customer, has_changed = update_banking_info(customer, data)
+        if has_changed:
+            ActivityService.log(CustomerActions.banking_info_updated, customer, request=request)
         return Response({"id": customer.id})
 
     @action(detail=True, methods=["GET", "PUT", "PATCH"])
@@ -91,7 +95,9 @@ class CustomerViewSets(ViewSet):
             return paginator.get_paginated_response(contacts)
         else:
             update_contacts(data)
-            ActivityService.log(CustomerActions.direct_contacts_updated, customer, request=request)
+            ActivityService.log(
+                CustomerActions.direct_contacts_updated, customer, request=request
+            )
             return Response({"id": data.customer.id})
 
     @action(detail=True, methods=["GET", "PUT", "PATCH"])
@@ -115,7 +121,9 @@ class CustomerViewSets(ViewSet):
             return paginator.get_paginated_response(forests)
         else:
             update_forests(data)
-            ActivityService.log(CustomerActions.forests_updated, customer, request=request)
+            ActivityService.log(
+                CustomerActions.forests_updated, customer, request=request
+            )
             return Response({"id": data.customer.pk})
 
     @action(detail=True, methods=["DELETE"], url_path="contacts")
@@ -126,8 +134,25 @@ class CustomerViewSets(ViewSet):
     @action_login_required(with_permissions=["change_customer"])
     def delete_contacts(self, request, *, data: CustomerContactsDeleteInput = None):
         delete_customer_contacts(data)
-        ActivityService.log(CustomerActions.direct_contacts_updated, data.customer, request=request)
+        ActivityService.log(
+            CustomerActions.direct_contacts_updated, data.customer, request=request
+        )
         return Response({"id": data.forest.id})
+
+    @action(detail=True, methods=["POST"], url_path="memo")
+    @get_or_404(
+        get_func=get_customer_by_pk, to_name="customer", remove=True,
+    )
+    @api_validate_model(CustomerMemoInput)
+    @action_login_required(with_permissions=["change_customer"])
+    def update_memo(self, request, *, data: CustomerMemoInput = None):
+        customer, updated = update_customer_memo(data.customer, data.memo)
+
+        if updated:
+            ActivityService.log(
+                CustomerActions.memo_info_updated, data.customer, request=request
+            )
+        return Response({"memo": customer.attributes["memo"]})
 
 
 @api_view(["GET"])
