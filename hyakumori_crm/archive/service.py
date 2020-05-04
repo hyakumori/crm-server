@@ -44,13 +44,13 @@ def archive_mapping(archive: Archive, data: ArchiveInput):
     archive.title = data.title
     archive.content = data.content
     archive.location = data.location
+    archive.archive_date = data.archive_date
     archive.future_action = data.future_action
 
 
 def create_archive(author: AbstractUser, data: ArchiveInput):
     archive = Archive()
     archive_mapping(archive, data)
-    archive.archive_date = datetime.now()
     archive.author = author
     archive.save()
     return archive
@@ -58,7 +58,6 @@ def create_archive(author: AbstractUser, data: ArchiveInput):
 
 def edit_archive(archive: Archive, data: ArchiveInput):
     archive_mapping(archive, data)
-    archive.archive_date = data.archive_date
     archive.save()
     return archive
 
