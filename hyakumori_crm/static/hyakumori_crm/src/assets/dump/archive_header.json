@@ -1,11 +1,11 @@
 [
     {
-        "value": "internal_id",
+        "value": "id",
         "text": "交渉履歴ID",
         "align": "center"
     },
     {
-        "value": "date",
+        "value": "archive_date",
         "text": "日付",
         "sortable": false,
         "align": "center"

@@ -2,6 +2,7 @@
   "buttons": {
     "add_and_edit": "追加＆編集",
     "add_customer": "顧客を追加",
+    "add_archive": "アーカイブを追加",
     "add_user": "アカウントを追加",
     "back": "前のページに戻る",
     "cancel": "キャンセル",
@@ -57,7 +58,16 @@
         "account_name": "口座名義",
         "account_number": "口座番号"
       },
-      "email": "メールアドレス"
+      "email": "メールアドレス",
+      "archive": {
+        "title": "タイトル",
+        "consultant_date_and_time": "協議日時|カレンダー",
+        "consultant_date": "相談日",
+        "consultant_time": "相談時間",
+        "location": "場所",
+        "content": "協議内容",
+        "future_action": "今後の対応"
+      }
     },
     "placeholders": {
       "customer": {
@@ -116,6 +126,7 @@
   },
   "page_header": {
     "archive_detail": "交渉履歴",
+    "archive_new": "アーカイブ情報を追加",
     "archive_mgmt": "交渉履歴一覧",
     "customer_detail": "顧客情報詳細",
     "customer_new": "顧客情報の追加",

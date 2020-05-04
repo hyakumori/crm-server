@@ -85,3 +85,16 @@ class ArchiveSerializer(ModelSerializer):
             ).data
         except Attachment.DoesNotExist:
             return []
+
+
+class ArchiveListingSerializer(ModelSerializer):
+    class Meta:
+        model = Archive
+        fields = [
+            "id",
+            "title",
+            "content",
+            "location",
+            "future_action",
+            "archive_date",
+        ]

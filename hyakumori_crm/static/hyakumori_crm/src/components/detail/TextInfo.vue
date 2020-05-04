@@ -45,7 +45,7 @@ $font-size: 14px;
 .text-info ::v-deep {
   .v-input__slot {
     fieldset {
-      border: 1px solid #e1e1e1;
+      border-radius: 4px;
     }
 
     input {
