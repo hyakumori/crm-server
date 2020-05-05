@@ -19,3 +19,5 @@ djoser
 djangorestframework-simplejwt
 django-guardian
 drf-typed-views
+django-cleanup
+cryptography

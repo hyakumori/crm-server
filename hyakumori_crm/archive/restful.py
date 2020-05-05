@@ -1,4 +1,8 @@
+from datetime import timedelta
+
 from django.http import Http404
+from django.utils.timezone import now
+from django.utils.translation import gettext as _
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
@@ -8,13 +12,13 @@ from .service import create_archive, get_archive_by_pk, edit_archive, get_all_at
     create_attachment, get_attachment_by_pk, delete_attachment_file, get_related_forests, add_related_forest, \
     delete_related_forest, get_related_customer, add_related_customer, delete_related_customer, add_related_user, \
     delete_related_user
+from .utils import encrypt_string, EncryptError
 from ..activity.services import ActivityService, ArchiveActions
 from ..api.decorators import (
     api_validate_model,
     get_or_404,
     action_login_required)
-
-from ..core.utils import default_paginator
+from ..core.utils import default_paginator, make_error_json
 from ..crm.models import Archive, Attachment
 from ..crm.restful.paginations import ListingPagination
 from ..crm.restful.serializers import ArchiveListingSerializer, ArchiveSerializer, AttachmentSerializer, \
@@ -67,6 +71,20 @@ def attachments(request, archive: Archive = None):
         new_attachment = create_attachment(archive, request)
         ActivityService.log(ArchiveActions.materials_updated, archive, request=request)
         return Response({"data": AttachmentSerializer(new_attachment, many=True).data})
+
+
+@api_view(["GET"])
+@get_or_404(get_archive_by_pk, to_name="archive", pass_to=["kwargs"], remove=True)
+@get_or_404(get_attachment_by_pk, to_name="attachment", pass_to=["kwargs"], remove=True)
+def attachment_download(request, archive: Archive = None, attachment: Attachment = None):
+    try:
+        encrypt_data = dict(archive_pk=archive.pk,
+                            attachment_pk=attachment.pk, expired=now() + timedelta(minutes=60))
+        download_code = encrypt_string(encrypt_data)
+        download_url = f"/archives/attachment/{download_code}"
+        return Response({"url": download_url, "filename": attachment.filename})
+    except EncryptError:
+        return make_error_json(message=_("Could not get download url"))
 
 
 @api_view(["DELETE"])
