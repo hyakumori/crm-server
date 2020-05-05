@@ -33,19 +33,20 @@ def setup_templates(request):
             ActivityService.import_message_templates(for_type="archive", action_class=ArchiveActions)
             ActivityService.import_message_templates(for_type="user", action_class=UserActions)
 
-            ActionLog.objects\
-                .filter(template_name__in=["forest.created", "customer.created", "archive.created", "user.created"])\
-                .all().delete()
+            if request.data.get("sync_created"):
+                ActionLog.objects\
+                    .filter(template_name__in=["forest.created", "customer.created", "archive.created", "user.created"])\
+                    .all().delete()
 
-            admin = get_user_model().objects.filter(is_superuser=True).order_by("date_joined").first()
-            for forest in Forest.objects.iterator():
-                ActivityService.log(ForestActions.created, forest, user=admin, created_at=forest.created_at)
+                admin = get_user_model().objects.filter(is_superuser=True).order_by("date_joined").first()
+                for forest in Forest.objects.iterator():
+                    ActivityService.log(ForestActions.created, forest, user=admin, created_at=forest.created_at)
 
-            for customer in Customer.objects.iterator():
-                ActivityService.log(CustomerActions.created, customer, user=admin, created_at=customer.created_at)
+                for customer in Customer.objects.iterator():
+                    ActivityService.log(CustomerActions.created, customer, user=admin, created_at=customer.created_at)
 
-            for user in get_user_model().objects.iterator():
-                ActivityService.log(UserActions.created, user, user=admin, created_at=user.date_joined)
+                for user in get_user_model().objects.iterator():
+                    ActivityService.log(UserActions.created, user, user=admin, created_at=user.date_joined)
 
             return make_success_json(data=dict(success=True))
 
