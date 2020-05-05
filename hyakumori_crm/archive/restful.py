@@ -65,8 +65,11 @@ def archive(request, *, archive: Archive = None, data: ArchiveInput = None):
 def attachments(request, archive: Archive = None):
     # get list attachments
     if request.method == 'GET':
-        attachments = get_all_attachments_by_archive_pk(archive.id)
-        return Response({"data": AttachmentSerializer(attachments, many=True).data})
+        try:
+            attachments = get_all_attachments_by_archive_pk(archive.id)
+            return Response({"data": AttachmentSerializer(attachments, many=True).data})
+        except:
+            return Response(dict(data=[]))
     else:
         new_attachment = create_attachment(archive, request)
         ActivityService.log(ArchiveActions.materials_updated, archive, request=request)
