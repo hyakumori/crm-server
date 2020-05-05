@@ -49,15 +49,15 @@
           :selectingForestId="selectingForestId"
         />
 
-        <attachment-container
-          v-if="id"
-          class="consultation-history mt-12"
-          headerContent="協議履歴"
-          editBtnContent="協議記録を追加・編集"
-          addBtnContent="協議履歴を追加"
-          :attaches="[]"
-          :isLoading="false"
-        />
+        <!--        <attachment-container-->
+        <!--          v-if="id"-->
+        <!--          class="consultation-history mt-12"-->
+        <!--          headerContent="協議履歴"-->
+        <!--          editBtnContent="協議記録を追加・編集"-->
+        <!--          addBtnContent="協議履歴を追加"-->
+        <!--          :attaches="[]"-->
+        <!--          :isLoading="false"-->
+        <!--        />-->
 
         <customer-contacts-container
           v-if="id"
@@ -123,6 +123,7 @@
         <memo-input
           :api-url="`/customers/${$route.params.id}/memo`"
           :value="customer && customer.attributes['memo']"
+          @input="customer.attributes['memo'] = $event"
         ></memo-input>
         <action-log
           app-name="crm"
@@ -156,7 +157,7 @@ export default {
   components: {
     MainSection,
     BasicInfoContainer,
-    AttachmentContainer,
+    // AttachmentContainer,
     ForestListContainer,
     CustomerListContainer,
     CustomerContactsContainer,
