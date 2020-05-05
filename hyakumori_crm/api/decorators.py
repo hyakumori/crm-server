@@ -6,7 +6,12 @@ from typing import Callable
 from django.http import QueryDict
 from pydantic import ValidationError
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.exceptions import NotFound, PermissionDenied, NotAuthenticated, UnsupportedMediaType
+from rest_framework.exceptions import (
+    NotFound,
+    PermissionDenied,
+    NotAuthenticated,
+    UnsupportedMediaType,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -121,7 +126,7 @@ def get_or_404(
     return decorator
 
 
-def api_validate_model(input_model, arg_name="data"):
+def api_validate_model(input_model, arg_name="data", methods=["POST", "PUT", "PATCH"]):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs) -> Response:
@@ -134,7 +139,7 @@ def api_validate_model(input_model, arg_name="data"):
                 raise TypeError(
                     "Invalid func arguments, only kwargs after request param"
                 )
-            if request.method in ["POST", "PUT", "PATCH"]:
+            if request.method in methods:
                 try:
                     if isinstance(request.data, QueryDict):
                         """
@@ -178,12 +183,7 @@ def action_login_required(with_policies=None, with_permissions=None, is_detail=F
         if is_detail:
             raise PermissionDenied()
         else:
-            return Response(dict(
-                count=0,
-                next=None,
-                previous=None,
-                results=[]
-            ))
+            return Response(dict(count=0, next=None, previous=None, results=[]))
 
     def decorator(f):
         @wraps(f)
@@ -195,12 +195,16 @@ def action_login_required(with_policies=None, with_permissions=None, is_detail=F
                 raise NotAuthenticated()
 
             if with_policies is not None and len(with_policies) > 0:
-                is_allowed_request = PermissionService.check_policies(request, user, with_policies)
+                is_allowed_request = PermissionService.check_policies(
+                    request, user, with_policies
+                )
                 if not is_allowed_request:
                     return _raise_exception(is_detail)
 
             if with_permissions is not None and len(with_permissions) > 0:
-                is_allowed_request = PermissionService.check_permissions(request, user, with_permissions)
+                is_allowed_request = PermissionService.check_permissions(
+                    request, user, with_permissions
+                )
                 if not is_allowed_request:
                     return _raise_exception(is_detail)
 

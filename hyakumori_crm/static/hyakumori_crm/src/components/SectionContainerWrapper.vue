@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ContentHeader
+    <content-header
       :content="headerContent"
       :editBtnContent="toggleEditBtnContent"
       :loading="isLoading"
