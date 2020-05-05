@@ -58,6 +58,7 @@
     </template>
     <template #right>
       <action-log
+        v-if="isDetail"
         app-name="crm"
         object-type="archive"
         :object-id="$route.params.id"

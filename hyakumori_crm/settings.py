@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "behaviors.apps.BehaviorsConfig",
     "guardian",
     "django_filters",
+    "django_cleanup",
     # ─── HYAKUMORI APPS ─────────────────────────────────────────────────────────────
     "hyakumori_crm.crm",
     "hyakumori_crm.users",
@@ -195,7 +196,7 @@ DJOSER = {
         "current_user": "hyakumori_crm.users.serializers.UserSerializer",
         "user_create": "hyakumori_crm.users.serializers.UserCreateSerializer",
     },
-    "EMAIL": {"activation": "hyakumori_crm.users.emails.ActivationEmail",},
+    "EMAIL": {"activation": "hyakumori_crm.users.emails.ActivationEmail", },
     "PERMISSIONS": {"user_list": ["rest_framework.permissions.IsAdminUser"]},
     "LOGIN_FIELD": "email",
     "HIDE_USERS": True,
@@ -264,3 +265,9 @@ LOGGING = {
 
 # Under proxy, need this configuration so that restframework can apply https instead of http
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Media path
+# https://docs.djangoproject.com/en/3.0/ref/settings/#std:setting-MEDIA_ROOT
+# https://docs.djangoproject.com/en/3.0/ref/settings/#std:setting-MEDIA_URL
+MEDIA_ROOT = os.getenv("MEDIA_PATH", os.path.join(BASE_DIR, "media"))
+MEDIA_URL = os.getenv("MEDIA_URL", "/media/")

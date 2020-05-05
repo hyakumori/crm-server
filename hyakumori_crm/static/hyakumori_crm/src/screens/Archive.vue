@@ -15,10 +15,10 @@
       <search-card :onSearch="fetchArchives" :search-criteria="headers" />
       <data-list
         :auto-headers="false"
-        :data="data"
         :headers="headers"
         :is-loading="isLoading"
         :showSelect="true"
+        :data="data"
         :tableRowIcon="pageIcon"
         :serverItemsLength="totalItems"
         @rowData="rowData"
@@ -74,18 +74,16 @@ export default {
       this.totalItems = data.count;
       this.next = data.next;
       this.previous = data.previous;
-      this.data = data.results.map(data => {
-        this.isLoading = false;
-        return {
-          id: data.id,
-          archive_date: commonDatetimeFormat(data.archive_date),
-          title: data.title,
-          content: data.content,
-          their_participants: "",
-          our_participants: "",
-          associated_forest: "",
-        };
-      });
+      this.isLoading = false;
+      this.data = data.results.map(data => ({
+        id: data.id,
+        archive_date: commonDatetimeFormat(data.archive_date),
+        title: data.title,
+        content: data.content,
+        their_participants: "",
+        our_participants: "",
+        associated_forest: "",
+      }));
     },
 
     rowData(val) {
