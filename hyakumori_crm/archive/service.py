@@ -1,4 +1,4 @@
-from datetime import datetime
+from urllib import parse
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
@@ -71,6 +71,9 @@ def create_attachment(archive: Archive, req: Request):
         attachment.creator = creator
         attachment.content_object = archive
         attachment.attachment_file = file
+        attachment.attributes["original_file_name"] = parse.unquote(file.name)
+        attachment.attributes["content_type"] = file.content_type
+        attachment.attributes["original_file_size"] = file.size
         attachment.save()
         attachments.append(attachment)
     return attachments

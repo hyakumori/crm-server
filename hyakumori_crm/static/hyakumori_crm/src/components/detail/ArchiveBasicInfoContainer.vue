@@ -78,9 +78,9 @@ export default {
     };
   },
 
-  mounted() {
+  async mounted() {
     if (this.isDetail && !this.info.author) {
-      this.fetchBasicInfo();
+      await this.fetchBasicInfo();
     }
   },
 
@@ -110,23 +110,18 @@ export default {
 
     async fetchBasicInfo() {
       this.loading = true;
-      const basicInfo = await this.$rest
-        .get(`archives/${this.id}`)
-        .then(res => res.data)
-        .catch(() => []);
+      const basicInfo = await this.$rest.get(`archives/${this.id}`);
+
       if (basicInfo) {
         this.loading = false;
-        this.dataMapping(basicInfo);
+        this.dataMapping(basicInfo.data);
       }
     },
 
     async submit(data) {
       this.createLoading = true;
       data.archive_date = toUtcDatetime(data.archive_date);
-      const newData = await this.$rest
-        .post("/archives", data)
-        .then(res => res)
-        .catch();
+      const newData = await this.$rest.post("/archives", data);
       if (newData) {
         this.dataMapping(newData);
         this.createLoading = false;

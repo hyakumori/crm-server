@@ -48,6 +48,9 @@ export default {
   methods: {
     async getActionLogs() {
       try {
+        if (!this.objectId || !this.objectType || !this.appName)
+          return;
+
         this.isLoading = true;
         const response = await this.$rest.get(
           `/activity/ja_JP/${this.appName}/${this.objectType}/${this.objectId}`,
