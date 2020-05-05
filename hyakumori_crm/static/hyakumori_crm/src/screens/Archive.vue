@@ -70,9 +70,7 @@ export default {
   methods: {
     async fetchArchives(api_url) {
       this.isLoading = true;
-      const data = await this.$rest
-        .get(api_url)
-        .then(res => res);
+      const data = await this.$rest.get(api_url).then(res => res);
       this.totalItems = data.count;
       this.next = data.next;
       this.previous = data.previous;

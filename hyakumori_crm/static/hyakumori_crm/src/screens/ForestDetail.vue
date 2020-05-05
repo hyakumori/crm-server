@@ -95,7 +95,6 @@ import AttachmentContainer from "../components/detail/AttachmentContainer";
 import ForestAttributeTable from "../components/detail/ForestAttributeTable";
 import ActionLog from "../components/detail/ActionLog";
 import MemoInput from "../components/detail/MemoInput";
-import { fetchBasicInfo, fetchForestOwner } from "../api/forest";
 
 export default {
   name: "forest-detail",

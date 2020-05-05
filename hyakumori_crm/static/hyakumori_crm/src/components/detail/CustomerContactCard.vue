@@ -19,7 +19,7 @@
           <span class="caption">{{ forestsCount || 0 }} 件の森林</span>
         </h4>
 
-        <p class="green--text mb-0 ml-2 caption">{{ getRelationship }}</p>
+        <p class="green--text mb-0 ml-2 caption">{{ relationshipType }}</p>
       </div>
 
       <div v-if="address" class="text-truncate">
@@ -59,7 +59,8 @@
         hide-details
         placeholder="続き柄を選択"
         :items="RELATIONSHIP"
-        @change="selectedRelationship"
+        @change="val => $emit('relationshipChange', contact.id, val)"
+        :value="relationshipType"
       ></v-select>
       <p class="ma-0 pt-2 caption text-truncate" v-if="forestId">
         {{ forestId }}
@@ -114,11 +115,9 @@
 <script>
 export default {
   name: "customer-contact-card",
-  relationship: String,
 
   props: {
     card_id: String,
-    relationship: String,
     relatedInfo: String,
     isOwner: Boolean,
     isContactor: Boolean,
@@ -139,18 +138,17 @@ export default {
   data() {
     return {
       RELATIONSHIP: [
-        this.$t("detail.tabs.relationship.owner"),
-        this.$t("detail.tabs.relationship.parent"),
-        this.$t("detail.tabs.relationship.husband"),
-        this.$t("detail.tabs.relationship.wife"),
-        this.$t("detail.tabs.relationship.son"),
-        this.$t("detail.tabs.relationship.daughter"),
-        this.$t("detail.tabs.relationship.grand_child"),
-        this.$t("detail.tabs.relationship.friend"),
-        this.$t("detail.tabs.relationship.relatives"),
-        this.$t("detail.tabs.relationship.others"),
+        "本人",
+        "両親",
+        "夫",
+        "妻",
+        "息子",
+        "娘",
+        "孫",
+        "友人",
+        "その他親族",
+        "その他",
       ],
-      innerRelationship: "",
     };
   },
 
@@ -168,10 +166,6 @@ export default {
         );
     },
     onClickCard() {},
-
-    selectedRelationship(val) {
-      this.innerRelationship = val;
-    },
   },
 
   computed: {
@@ -211,12 +205,8 @@ export default {
     selected() {
       return this.selectedId === this.card_id;
     },
-    getRelationship() {
-      if (this.relationship) {
-        return this.relationship;
-      } else {
-        return this.innerRelationship;
-      }
+    relationshipType() {
+      return this.isContactor ? this.contact.cc_attrs.relationship_type : "";
     },
   },
 };
