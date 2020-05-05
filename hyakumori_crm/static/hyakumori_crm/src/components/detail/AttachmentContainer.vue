@@ -3,29 +3,29 @@
     <content-header
       :content="headerContent"
       :editBtnContent="editBtnContent"
-      :displayAdditionBtn="false"
-      @toggleEdit="val => (isUpdate = val)"
+      :loading="loading"
+      :permissions="['just_unnecessary']"
     />
     <template v-if="isExpand">
       <attachment-card
         class="mt-4"
         :isUpdate="isUpdate"
-        :attaches="attachExpand"
+        :attaches="archiveExpand"
+        :ripple="false"
       />
     </template>
     <template v-else>
       <attachment-card
         class="mt-4"
         :isUpdate="isUpdate"
-        :attaches="attachCollapse"
+        :attaches="archiveCollapse"
+        :ripple="false"
       />
     </template>
-    <addition-button class="mb-3" v-if="isUpdate" :content="addBtnContent" />
-    <update-button v-if="isUpdate" :cancel="cancel.bind(this)" />
     <p
-      v-if="isRequiredExpand && attachExpand && attachExpand.length > 0"
+      v-if="isRequiredExpand && archiveExpand && archiveExpand.length > 0"
       class="expand"
-      @click="expandAttachList"
+      @click="this.isExpand = !this.isExpand"
     >
       {{ isExpand ? "一部表示する" : "すべて表示する" }}
     </p>
@@ -34,10 +34,8 @@
 
 <script>
 import ContentHeader from "./ContentHeader";
-import UpdateButton from "./UpdateButton";
 import ContainerMixin from "./ContainerMixin";
 import AttachmentCard from "./AttachmentCard";
-import AdditionButton from "../AdditionButton";
 
 export default {
   name: "attachment-container",
@@ -46,13 +44,11 @@ export default {
 
   components: {
     ContentHeader,
-    UpdateButton,
-    AdditionButton,
     AttachmentCard,
   },
 
   props: {
-    attaches: Array,
+    id: String,
     isRequiredExpand: {
       type: Boolean,
       default: true,
@@ -61,24 +57,34 @@ export default {
 
   data() {
     return {
+      loading: false,
       isExpand: false,
       isUpdate: false,
+      archives: [],
     };
   },
 
+  mounted() {
+    this.fetchRelatedArchives();
+  },
+
   methods: {
-    expandAttachList() {
-      this.isExpand = !this.isExpand;
+    fetchRelatedArchives() {
+      this.loading = true;
+      this.$rest(`/forests/${this.id}/related_archives`).then(res => {
+        this.archives = res.results;
+        this.loading = false;
+      });
     },
   },
 
   computed: {
-    attachExpand() {
-      return this.attaches;
+    archiveExpand() {
+      return this.archives;
     },
 
-    attachCollapse() {
-      return this.attaches.slice(0, 3);
+    archiveCollapse() {
+      return this.archives.slice(0, 3);
     },
   },
 };

@@ -4,20 +4,13 @@ from rest_framework.decorators import action, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from rest_typed_views import typed_action
 
 from hyakumori_crm.core.utils import default_paginator
-from hyakumori_crm.crm.models import Forest, Customer
+from hyakumori_crm.crm.models import Forest, Archive
 from hyakumori_crm.crm.restful.serializers import (
     CustomerSerializer,
     ForestSerializer,
-    ContactSerializer,
-)
-from ..activity.services import ActivityService, ForestActions
-from ..api.decorators import (
-    api_validate_model,
-    get_or_404,
-    action_login_required,
+    ContactSerializer, ArchiveListingSerializer,
 )
 from .schemas import (
     ForestInput,
@@ -35,6 +28,12 @@ from .service import (
     set_default_customer,
     set_default_customer_contact,
     update_forest_memo,
+)
+from ..activity.services import ActivityService, ForestActions
+from ..api.decorators import (
+    api_validate_model,
+    get_or_404,
+    action_login_required,
 )
 from ..permissions.services import PermissionService
 
@@ -89,9 +88,18 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
             CustomerSerializer(paged_list, many=True).data
         )
 
-    @typed_action(detail=True, methods=["GET"])
-    def related_archives(self, request):
-        return Response()
+    @action(["GET"], detail=True, url_path="related_archives")
+    @get_or_404(get_func=get_forest_by_pk, to_name="forest", remove=True, pass_to="kwargs")
+    def related_archives(self, request, forest: Forest = None):
+        paginator = default_paginator()
+        paged_list = paginator.paginate_queryset(
+            request=request,
+            queryset=Archive.objects.filter(archiveforest__forest__id=forest.id, archiveforest__deleted=None), view=self,
+        )
+
+        return paginator.get_paginated_response(
+            ArchiveListingSerializer(paged_list, many=True).data
+        )
 
     @action(detail=True, methods=["PUT", "PATCH"], url_path="basic-info")
     @get_or_404(get_func=get_forest_by_pk, to_name="forest", remove=True)
