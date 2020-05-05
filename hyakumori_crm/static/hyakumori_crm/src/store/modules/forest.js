@@ -110,7 +110,6 @@ const mutations = {
     const newCustomers = [...state.customers];
     const c = find(newCustomers, { id: customer_id });
     c.default = val;
-    console.log(customer_id, val);
     state.customers = newCustomers;
   },
   toggleDefaultCustomerContactLocal(state, { customer_id, contact_id, val }) {

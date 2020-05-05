@@ -57,7 +57,10 @@ class Attachment(BaseResourceModel):
 
     @property
     def size(self):
-        return self.attachment_file.size
+        try:
+            return self.attachment_file.size
+        except FileNotFoundError:
+            return 0
 
     @property
     def download_url(self):
