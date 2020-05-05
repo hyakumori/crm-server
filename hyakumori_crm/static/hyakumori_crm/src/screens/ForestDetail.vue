@@ -26,14 +26,14 @@
           :id="id"
         />
 
-        <attachment-container
-          v-acl-only="['manage_archive', 'view_archive']"
-          class="consultation-history"
-          headerContent="協議履歴"
-          editBtnContent="協議記録を追加・編集"
-          addBtnContent="協議履歴を追加"
-          :attaches="attaches"
-        />
+        <!--        <attachment-container-->
+        <!--          v-acl-only="['manage_archive', 'view_archive']"-->
+        <!--          class="consultation-history"-->
+        <!--          headerContent="協議履歴"-->
+        <!--          editBtnContent="協議記録を追加・編集"-->
+        <!--          addBtnContent="協議履歴を追加"-->
+        <!--          :attaches="attaches"-->
+        <!--        />-->
 
         <attachment-container
           v-acl-only="['manage_archive', 'view_archive']"
@@ -41,15 +41,15 @@
           headerContent="書類郵送記録"
           editBtnContent="書類郵送記録を追加・編集"
           addBtnContent="協議履歴を追加"
-          :attaches="attaches"
           :isRequiredExpand="false"
+          :id="id"
         />
 
         <div id="forest-attributes">
           <content-header
             class="mt-9"
             content="森林情報"
-            :displayAdditionBtn="false"
+            :permissions="['just_unnecessary']"
           />
           <v-row class="forest-detail__header d-flex mx-0 mt-5">
             <template v-for="(header, index) in headerData">
@@ -73,6 +73,7 @@
         <memo-input
           :api-url="`/forests/${$route.params.id}/memo`"
           :value="forestInfo && forestInfo.attributes['memo']"
+          @input="forestInfo.attributes['memo'] = $event"
         ></memo-input>
         <action-log
           app-name="crm"

@@ -5,7 +5,7 @@
       :key="index"
       class="history-discussion d-flex align-center d-hover"
       outlined
-      @click="onClick"
+      :ripple="ripple"
     >
       <v-row>
         <v-col cols="1" class="pl-3">
@@ -14,20 +14,20 @@
           >
         </v-col>
         <v-col cols="2">
-          <p class="ml-4 mr-6">{{ attach.date }}</p>
+          <p class="ml-4 mr-6">{{ getArchiveDate(attach.archive_date) }}</p>
         </v-col>
-        <v-col cols="4" class="d-flex pr-4">
-          <p class="history-discussion__attach">{{ attach.attach_name }}</p>
+        <v-col cols="4" class="d-flex pr-4 text-truncate">
+          <p class="history-discussion__attach">{{ attach.title }}</p>
           <v-icon small>mdi-paperclip</v-icon>
         </v-col>
-        <v-col cols="2" class="pr-2">
+        <v-col cols="2" class="pr-2 text-truncate">
           <p>{{ attach.participant }}</p>
         </v-col>
-        <v-col col="2" class="pr-2">
-          <p class="history-discussion__host">{{ attach.host }}</p>
+        <v-col col="2" class="pr-2 text-truncate">
+          <p class="history-discussion__host">{{ attach.location }}</p>
         </v-col>
         <v-col cols="1">
-          <v-btn icon @click="onClick">
+          <v-btn icon @click="$router.push(`/archives/${attach.id}`)">
             <v-icon>{{ toggleBtn }}</v-icon>
           </v-btn>
         </v-col>
@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import { getDate } from "../../helpers/datetime";
+
 export default {
   name: "attachment-card",
 
@@ -44,11 +46,15 @@ export default {
     attaches: Array,
     isUpdate: Boolean,
     cancel: Function,
+    ripple: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   methods: {
-    onClick() {
-      // Do on click
+    getArchiveDate(date) {
+      return getDate(date) || "";
     },
   },
 
