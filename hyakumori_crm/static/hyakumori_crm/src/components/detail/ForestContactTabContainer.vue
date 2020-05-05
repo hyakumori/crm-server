@@ -1,5 +1,5 @@
 <template>
-  <SectionContainerWrapper
+  <section-container-wrapper
     :headerContent="headerContent"
     :toggleEditBtnContent="toggleEditBtnContent"
     :addBtnContent="addBtnContent"
@@ -41,7 +41,7 @@
         @toggleContactDefault="handleToggleContactDefault"
         :customerIdNameMap="customerIdNameMap"
       />
-      <SelectListModal
+      <select-list-modal
         :loading="customersForAddingLoading"
         :shown.sync="showSelect"
         :submitBtnText="$t('buttons.add')"
@@ -51,7 +51,7 @@
         @search="debounceLoadInitCustomersForAdding"
       >
         <template #list>
-          <CustomerContactCard
+          <customer-contact-card
             @click="
               (cId, inx) => {
                 modalSelectingCustomerId = cId;
@@ -70,9 +70,9 @@
             :showRelationshipSelect="false"
           />
         </template>
-      </SelectListModal>
+      </select-list-modal>
     </template>
-  </SectionContainerWrapper>
+  </section-container-wrapper>
 </template>
 
 <script>

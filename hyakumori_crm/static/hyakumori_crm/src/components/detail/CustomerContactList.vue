@@ -21,6 +21,9 @@
           (val, customer_id, contact_id) =>
             $emit('toggleContactDefault', val, customer_id, contact_id)
         "
+        @relationshipChange="
+          (contact_id, val) => $emit('relationshipChange', contact_id, val)
+        "
         :selectedId="selectingId"
         :customerName="getCustomerName(contact.customer_id)"
       />

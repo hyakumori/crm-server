@@ -41,7 +41,7 @@ export default {
   props: {
     id: String,
     info: Array,
-    displayAdditionBtn: Boolean,
+    displayAdditionBtn: { type: Boolean, default: true },
   },
   data() {
     return {

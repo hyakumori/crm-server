@@ -12,6 +12,9 @@ from .schemas import (
     ForestPksInput,
     ForestSerializer,
     CustomerMemoInput,
+    RequiredContactInput,
+    ContactType,
+    required_contact_input_wrapper,
 )
 from .service import (
     contacts_list_with_search,
@@ -26,6 +29,7 @@ from .service import (
     update_contacts,
     update_forests,
     update_customer_memo,
+    create_contact,
 )
 from ..activity.services import ActivityService, CustomerActions
 from ..api.decorators import action_login_required, api_validate_model, get_or_404
@@ -72,17 +76,20 @@ class CustomerViewSets(ViewSet):
     def update_customer_bank(self, request, customer=None, data: dict = None):
         customer, has_changed = update_banking_info(customer, data)
         if has_changed:
-            ActivityService.log(CustomerActions.banking_info_updated, customer, request=request)
+            ActivityService.log(
+                CustomerActions.banking_info_updated, customer, request=request
+            )
         return Response({"id": customer.id})
 
-    @action(detail=True, methods=["GET", "PUT", "PATCH"])
+    @action(detail=True, methods=["GET", "PUT", "PATCH", "POST"])
     @get_or_404(
         get_func=get_customer_by_pk,
         to_name="customer",
         pass_to=["request", "kwargs"],
         remove=True,
     )
-    @api_validate_model(ContactsInput)
+    @api_validate_model(ContactsInput, methods=["PUT", "PATCH"])
+    @api_validate_model(required_contact_input_wrapper, methods=["POST"])
     @action_login_required(with_permissions=["change_customer", "view_customer"])
     def contacts(self, request, *, customer=None, data=None):
         if request.method == "GET":
@@ -93,6 +100,14 @@ class CustomerViewSets(ViewSet):
             )
             contacts = ContactSerializer(paged_list, many=True).data
             return paginator.get_paginated_response(contacts)
+        elif request.method == "POST":
+            contact = create_contact(customer, data)
+            if data.contact_type == ContactType.family:
+                action_type = CustomerActions.family_contacts_updated
+            elif data.contact_type == ContactType.others:
+                action_type = CustomerActions.other_contacts_updated
+            ActivityService.log(action_type, customer, request=request)
+            return Response({"id": contact.id}, status=201)
         else:
             update_contacts(data)
             ActivityService.log(

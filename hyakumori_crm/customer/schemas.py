@@ -5,8 +5,10 @@ from uuid import UUID
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError as DjValidationError
 from django_filters import FilterSet, CharFilter
-from pydantic import BaseModel, EmailStr, constr, validator, root_validator
 from rest_framework.serializers import ModelSerializer
+from pydantic import BaseModel, EmailStr, constr, validator, root_validator
+from pydantic.error_wrappers import ValidationError
+from pydantic.errors import MissingError
 
 from ..core.models import HyakumoriDanticModel, HyakumoriDanticUpdateModel, Paginator
 from ..crm.common import regexes
@@ -251,3 +253,46 @@ class CustomerMemoInput(HyakumoriDanticModel):
 
     class Config:
         arbitrary_types_allowed = True
+
+
+class RequiredAddress(HyakumoriDanticModel):
+    prefecture: Optional[str]
+    municipality: Optional[str]
+    sector: str
+
+
+class RequiredContactInput(HyakumoriDanticModel):
+    name_kanji: Name
+    name_kana: Name
+    postal_code: Optional[constr(regex=regexes.POSTAL_CODE, strip_whitespace=True)]
+
+    address: RequiredAddress
+    telephone: Optional[constr(regex=regexes.TELEPHONE_NUMBER, strip_whitespace=True)]
+
+    mobilephone: Optional[
+        constr(regex=regexes.MOBILEPHONE_NUMBER, strip_whitespace=True)
+    ]
+    email: Optional[EmailStr]
+    contact_type: ContactType
+
+    @root_validator(pre=True)
+    def validate_atleast_one_way_to_contact(cls, values):
+        telephone = values.get("telephone")
+        mobilephone = values.get("mobilephone")
+        email = values.get("email")
+        if not telephone and not mobilephone and not email:
+            raise ValueError(_("Enter at least telephone or mobilephone or email."))
+        return values
+
+
+def required_contact_input_wrapper(**kwargs):
+    try:
+        return RequiredContactInput(**kwargs)
+    except ValidationError as e:
+        try:
+            root_err = next(filter(lambda e: e._loc == ("__root__"), e.raw_errors))
+            e._error_cache = None
+            root_err._loc = ("telephone",)
+        except StopIteration:
+            pass
+        raise e

@@ -10,14 +10,15 @@
           :info="basicInfo"
           :id="id"
         >
-          <template #form="props"
-            ><ContactForm
+          <template #form="props">
+            <contact-form
               :id="id"
               :form="selfContactFormData"
               :toggleEditing="props.toggleEditing"
               :showCancel="isDetail"
               @updated="fetchCustomer"
-          /></template>
+            />
+          </template>
         </basic-info-container>
 
         <forest-list-container
@@ -58,11 +59,11 @@
           :isLoading="false"
         />
 
-        <customer-list-container
+        <customer-contacts-container
           v-if="id"
           class="mt-12"
           headerContent="家族情報"
-          editBtnContent="家族を追加・編集"
+          toggleEditBtnContent="家族を追加・編集"
           addBtnContent="連絡者を追加"
           :contacts="familyContacts"
           :isLoading="contactsLoading"
@@ -72,11 +73,11 @@
           contactType="FAMILY"
         />
 
-        <customer-list-container
+        <customer-contacts-container
           v-if="id"
           class="mt-12"
           headerContent="その他関係者情報"
-          editBtnContent="その他関係者を追加・編集"
+          toggleEditBtnContent="その他関係者を追加・編集"
           addBtnContent="連絡者を追加"
           :contacts="otherContacts"
           :isLoading="contactsLoading"
@@ -100,17 +101,19 @@
           v-if="id"
           headerContent="口座情報"
           editBtnContent="口座情報を編集"
+          addBtnContent="口座情報を編集"
           :isLoading="customerLoading"
           :info="bankingInfo"
           :id="id"
         >
-          <template #form="props"
-            ><BankingInfoForm
+          <template #form="props">
+            <banking-info-form
               :id="id"
               :form="bankingInfoFormData"
               :toggleEditing="props.toggleEditing"
               @updated="fetchCustomer"
-          /></template>
+            />
+          </template>
         </basic-info-container>
       </div>
     </template>
@@ -140,6 +143,7 @@ import BasicInfoContainer from "../components/detail/BasicInfoContainer";
 import AttachmentContainer from "../components/detail/AttachmentContainer";
 import ForestListContainer from "../components/detail/ForestListContainer";
 import CustomerListContainer from "../components/detail/CustomerListContainer";
+import CustomerContactsContainer from "../components/detail/CustomerContactsContainer";
 import ActionLog from "../components/detail/ActionLog";
 import MemoInput from "../components/detail/MemoInput";
 import ContactForm from "../components/forms/ContactForm";
@@ -155,7 +159,7 @@ export default {
     AttachmentContainer,
     ForestListContainer,
     CustomerListContainer,
-    // BankingInfoContainer,
+    CustomerContactsContainer,
     ContactForm,
     BankingInfoForm,
     ActionLog,
