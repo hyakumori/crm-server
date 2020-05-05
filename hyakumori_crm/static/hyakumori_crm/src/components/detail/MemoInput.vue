@@ -16,7 +16,7 @@
     >
       <div class="d-flex pa-4">
         <div v-if="!isUpdate">
-          <p class="ma-0" v-html="formattedMemo"></p>
+          <p class="ma-0" v-html="formattedMemo || (isEmpty && $t('memo.empty'))" :class="{'grey--text': isEmpty}"></p>
         </div>
 
         <div class="memo-input__value" v-else>
@@ -31,7 +31,7 @@
 
             <update-button
               class="mb-2"
-              :saveDisabled="!memo"
+              :saveDisabled="isEmpty"
               :cancel="onCancel"
               :save="onSave"
               :saving="isLoading"
@@ -72,13 +72,14 @@ export default {
         });
         if (response) {
           this.memo = response.memo;
+          this.$emit("input", this.memo);
         }
       } catch (e) {
       } finally {
         setTimeout(() => {
           this.isLoading = false;
           this.isUpdate = false;
-        }, 400);
+        }, 300);
       }
     },
     onCancel() {
@@ -90,6 +91,9 @@ export default {
   computed: {
     formattedMemo() {
       return (this.memo && this.memo.replace(/(?:\r\n|\r|\n)/g, "<br>")) || "";
+    },
+    isEmpty() {
+      return !this.memo;
     },
   },
   watch: {
