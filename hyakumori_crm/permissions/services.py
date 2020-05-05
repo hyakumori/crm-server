@@ -11,7 +11,7 @@ from guardian.shortcuts import (
     remove_perm,
     get_objects_for_user,
 )
-from requests import Request
+from rest_framework.request import Request
 
 from hyakumori_crm.permissions.enums import SystemGroups
 from hyakumori_crm.permissions.serializers import GroupSerializer, PermissionSerializer
