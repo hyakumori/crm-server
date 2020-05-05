@@ -54,3 +54,7 @@ class Attachment(BaseResourceModel):
     @property
     def filename(self):
         return os.path.split(self.attachment_file.name)[1]
+
+    @property
+    def size(self):
+        return self.attachment_file.size
