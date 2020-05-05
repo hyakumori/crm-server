@@ -122,7 +122,7 @@ export default {
 
     async submit(data) {
       this.createLoading = true;
-      data.archive_date = toUtcDatetime(data.archive_date)
+      data.archive_date = toUtcDatetime(data.archive_date);
       const newData = await this.$rest
         .post("/archives", data)
         .then(res => res)

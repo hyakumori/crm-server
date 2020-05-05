@@ -9,7 +9,7 @@
           <TextInput
             v-model="form.last_name_kanji"
             :placeholder="$t('forms.placeholders.customer.last_name_kanji')"
-            name="basic_contact.name_kanji.last_name"
+            :name="`${fieldNamePrefix}name_kanji.last_name`"
           />
         </v-col>
         <v-col class="">
@@ -19,7 +19,7 @@
           <TextInput
             v-model="form.first_name_kanji"
             :placeholder="$t('forms.placeholders.customer.first_name_kanji')"
-            name="basic_contact.name_kanji.first_name"
+            :name="`${fieldNamePrefix}name_kanji.first_name`"
           />
         </v-col>
         <v-col class="">
@@ -29,7 +29,7 @@
           <TextInput
             v-model="form.last_name_kana"
             :placeholder="$t('forms.placeholders.customer.last_name_kana')"
-            name="basic_contact.name_kana.last_name"
+            :name="`${fieldNamePrefix}name_kana.last_name`"
           />
         </v-col>
         <v-col>
@@ -39,7 +39,7 @@
           <TextInput
             v-model="form.first_name_kana"
             :placeholder="$t('forms.placeholders.customer.first_name_kana')"
-            name="basic_contact.name_kana.first_name"
+            :name="`${fieldNamePrefix}name_kana.first_name`"
           />
         </v-col>
       </v-row>
@@ -51,7 +51,7 @@
           <TextInput
             v-model="form.postal_code"
             :placeholder="$t('forms.placeholders.customer.postal_code')"
-            name="basic_contact.postal_code"
+            :name="`${fieldNamePrefix}postal_code`"
           />
         </v-col>
         <v-col>
@@ -61,7 +61,7 @@
           <TextInput
             v-model="form.sector"
             :placeholder="$t('forms.placeholders.customer.sector')"
-            name="basic_contact.address.sector"
+            :name="`${fieldNamePrefix}address.sector`"
           />
         </v-col>
       </v-row>
@@ -73,7 +73,7 @@
           <TextInput
             v-model="form.prefecture"
             :placeholder="$t('forms.placeholders.customer.prefecture')"
-            name="basic_contact.prefecture"
+            :name="`${fieldNamePrefix}address.prefecture`"
           />
         </v-col>
         <v-col>
@@ -83,7 +83,7 @@
           <TextInput
             v-model="form.municipality"
             :placeholder="$t('forms.placeholders.customer.municipality')"
-            name="basic_contact.municipality.sector"
+            :name="`${fieldNamePrefix}address.municipality`"
           />
         </v-col>
       </v-row>
@@ -93,7 +93,7 @@
             $t("forms.labels.customer.phone_number")
           }}</label>
           <TextInput
-            name="basic_contact.telephone"
+            :name="`${fieldNamePrefix}telephone`"
             :placeholder="$t('forms.placeholders.customer.phone_number')"
             v-model="form.telephone"
           />
@@ -103,7 +103,7 @@
             $t("forms.labels.customer.mobile_number")
           }}</label>
           <TextInput
-            name="basic_contact.mobilephone"
+            :name="`${fieldNamePrefix}mobilephone`"
             :placeholder="$t('forms.placeholders.customer.mobile_number')"
             v-model="form.mobilephone"
           />
@@ -113,7 +113,7 @@
         <v-col class="col-6 pe-3">
           <label class="font-weight-bold">{{ $t("forms.labels.email") }}</label>
           <TextInput
-            name="basic_contact.email"
+            :name="`${fieldNamePrefix}email`"
             :placeholder="$t('forms.placeholders.customer.email')"
             v-model="form.email"
           />
@@ -154,15 +154,44 @@ export default {
     ValidationObserver,
     TextInput,
   },
-  props: ["form", "id", "toggleEditing", "showCancel"],
+  props: [
+    "form",
+    "id",
+    "toggleEditing",
+    "showCancel",
+    "handleSubmit",
+    "errors",
+  ],
   data() {
     return {
       shown: false,
       submiting: false,
     };
   },
+  computed: {
+    fieldNamePrefix() {
+      return this.handleSubmit ? "" : "basic_contact.";
+    },
+  },
+  watch: {
+    errors: {
+      handler(val) {
+        this.$refs.form.setErrors(val);
+      },
+      deep: true,
+    },
+  },
   methods: {
     async submit() {
+      this.submiting = true;
+      if (this.handleSubmit) {
+        await this.handleSubmit();
+      } else {
+        await this._submit();
+      }
+      this.submiting = false;
+    },
+    async _submit() {
       const customerInput = {
         basic_contact: {
           name_kanji: {
@@ -184,7 +213,6 @@ export default {
           email: this.form.email,
         },
       };
-      this.submiting = true;
       try {
         if (!this.id) {
           const data = await this.$rest.post("/customers", customerInput);
@@ -194,16 +222,11 @@ export default {
             params: { id: data.id },
           });
         } else {
-          const data = await this.$rest.put(
-            `/customers/${this.id}`,
-            customerInput,
-          );
-          this.submiting = false;
+          await this.$rest.put(`/customers/${this.id}`, customerInput);
           this.$emit("updated");
           this.toggleEditing();
         }
       } catch (error) {
-        this.submiting = false;
         if (error.response) {
           this.$refs.form.setErrors(error.response.data.errors);
         }

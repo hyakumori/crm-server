@@ -329,8 +329,9 @@ def update_contacts(contacts_in: dict):
             ForestCustomerContact.objects.get_or_create(
                 forestcustomer=forestcustomer, customercontact=customer_contact
             )
+        current_attrs = customer_contact.attributes or {}
         customer_contact.attributes = {
-            **(customer_contact.attributes or {}),
+            **(current_attrs),
             "contact_type": ContactType.forest.value
             if contact_data.forest_id
             else contact_data.contact_type.value,
@@ -364,3 +365,18 @@ def update_customer_memo(customer, memo):
         _updated = True
 
     return customer, _updated
+
+
+def create_contact(customer, contact_in):
+    data = contact_in.dict()
+    contact_type = data.pop("contact_type")
+    contact = Contact(**data)
+    contact.save()
+    customer_contact = CustomerContact(
+        customer_id=customer.id,
+        contact_id=contact.id,
+        attributes={"contact_type": contact_type.value},
+    )
+    customer_contact.save()
+    customer.save(update_fields=["updated_at"])
+    return contact

@@ -86,7 +86,8 @@
       }
     },
     "titles": {
-      "create_customer": "顧客情報の追加"
+      "create_customer": "顧客情報の追加",
+      "create_contact": "新しい連絡先を作成"
     }
   },
   "icon": {
