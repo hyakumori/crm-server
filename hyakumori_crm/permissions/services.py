@@ -74,7 +74,11 @@ class PermissionService:
             group.user_set.add(user)
             group.save()
 
-        return dict(groups=cls.serialize_groups(user.groups.all()), user=user, has_changed=any(has_changed))
+        return dict(
+            groups=cls.serialize_groups(user.groups.all()),
+            user=user,
+            has_changed=any(has_changed),
+        )
 
     @classmethod
     def unassign_user_from_group(cls, user_id: UUID, group_ids: List[int]):
@@ -121,15 +125,26 @@ class PermissionService:
     def setup_groups(cls, user: AbstractUser):
         if user.is_superuser:
             admin_group, _ = Group.objects.get_or_create(name=SystemGroups.GROUP_ADMIN)
+            crm_resources_permissions = [
+                "manage_forest",
+                "manage_customer",
+                "manage_archive",
+                "add_forest",
+                "change_forest",
+                "delete_forest",
+                "view_forest",
+                "add_customer",
+                "change_customer",
+                "delete_customer",
+                "view_customer",
+                "add_archive",
+                "change_archive",
+                "delete_archive",
+                "view_archive",
+            ]
             admin_group_permissions = Permission.objects.filter(
-                codename__in=[
-                    "manage_forest",
-                    "manage_customer",
-                    "manage_archive",
-                    "view_user",
-                    "add_user",
-                    "change_user",
-                ]
+                codename__in=["view_user", "add_user", "change_user", "delete_user"]
+                + crm_resources_permissions
             ).all()
             admin_group.permissions.add(*admin_group_permissions)
             admin_group.user_set.add(user)
@@ -140,7 +155,7 @@ class PermissionService:
                 name=SystemGroups.GROUP_NORMAL_USER
             )
             member_group_permissions = Permission.objects.filter(
-                codename__in=["manage_forest", "manage_customer", "manage_archive"]
+                codename__in=crm_resources_permissions
             ).all()
             member_group.permissions.add(*member_group_permissions)
             member_group.save()
@@ -164,7 +179,9 @@ class PermissionService:
         group.save()
 
     @classmethod
-    def check_policies(cls, request: Request, user: AbstractUser, policies: List[str] = None):
+    def check_policies(
+        cls, request: Request, user: AbstractUser, policies: List[str] = None
+    ):
         """
         Run a list of policies to check for authorities
         :param request: request instance
@@ -188,7 +205,9 @@ class PermissionService:
         return check_results
 
     @classmethod
-    def check_permissions(cls, request: Request, user: AbstractUser, with_permissions: List[str] = None):
+    def check_permissions(
+        cls, request: Request, user: AbstractUser, with_permissions: List[str] = None
+    ):
         """
         Check if user having permissions in provided list
         If user has `manage_{resource_name}`, assume he can do all actions: `view, edit, change, delete`
