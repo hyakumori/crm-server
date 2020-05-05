@@ -57,7 +57,6 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     *static_app,  # this need high priority due to some override commands
     "django.contrib.auth",
-    "django.contrib.sites",
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
     "ariadne.contrib.django",
@@ -85,8 +84,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-SITE_ID = 1
 
 ROOT_URLCONF = "hyakumori_crm.urls"
 
