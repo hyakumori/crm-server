@@ -18,6 +18,7 @@ class ContactSerializer(ModelSerializer):
     cc_attrs = JSONField(read_only=True)
     # forest customer contact default
     default = BooleanField(read_only=True)
+    forests_count = IntegerField(read_only=True)
 
     class Meta:
         model = Contact
