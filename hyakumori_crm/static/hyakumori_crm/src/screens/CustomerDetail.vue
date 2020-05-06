@@ -50,15 +50,15 @@
           :selectingForestCustomerId="selectingForestCustomerId"
         />
 
-        <!--        <attachment-container-->
-        <!--          v-if="id"-->
-        <!--          class="consultation-history mt-12"-->
-        <!--          headerContent="協議履歴"-->
-        <!--          editBtnContent="協議記録を追加・編集"-->
-        <!--          addBtnContent="協議履歴を追加"-->
-        <!--          :attaches="[]"-->
-        <!--          :isLoading="false"-->
-        <!--        />-->
+        <attachment-container
+          v-if="id"
+          class="consultation-history mt-12"
+          headerContent="協議履歴"
+          editBtnContent="協議記録を追加・編集"
+          addBtnContent="協議履歴を追加"
+          :archives="archives"
+          :isLoading="archivesLoading"
+        />
 
         <customer-contacts-container
           v-if="id"
@@ -156,7 +156,7 @@ export default {
   components: {
     MainSection,
     BasicInfoContainer,
-    // AttachmentContainer,
+    AttachmentContainer,
     ForestListContainer,
     CustomerListContainer,
     CustomerContactsContainer,
@@ -185,6 +185,8 @@ export default {
       forestsLoading: this.checkAndShowLoading(),
       contacts: [],
       contactsLoading: this.checkAndShowLoading(),
+      archives: [],
+      archivesLoading: this.checkAndShowLoading(),
     };
   },
 
@@ -224,6 +226,7 @@ export default {
         this.fetchCustomer();
         this.fetchForests();
         this.fetchContacts();
+        this.fetchArchives();
       }
     },
     fetchCustomer() {
@@ -259,6 +262,11 @@ export default {
         this.contacts = contacts;
         this.contactsLoading = false;
       });
+    },
+    async fetchArchives() {
+      this.archivesLoading = true;
+      this.archives = await this.$rest.get(`/customers/${this.id}/archives`);
+      this.archivesLoading = false;
     },
   },
 
