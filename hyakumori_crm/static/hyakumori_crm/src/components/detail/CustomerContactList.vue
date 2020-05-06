@@ -14,16 +14,9 @@
         :deleted="contact.deleted"
         :showRelationshipSelect="showRelationshipSelect"
         @click="(card_id, indx) => isUpdate && $emit('selected', card_id, indx)"
-        @toggleDefault="
-          (val, customer_id) => $emit('toggleDefault', val, customer_id)
-        "
-        @toggleContactDefault="
-          (val, customer_id, contact_id) =>
-            $emit('toggleContactDefault', val, customer_id, contact_id)
-        "
-        @relationshipChange="
-          (contact_id, val) => $emit('relationshipChange', contact_id, val)
-        "
+        @toggleDefault="handleToggleCustomerDefault"
+        @toggleContactDefault="handleToggleContactDefault"
+        @relationshipChange="handleRelationshipChange"
         :selectedId="selectingId"
         :customerName="getCustomerName(contact.customer_id)"
       />
@@ -55,6 +48,15 @@ export default {
       if (!this.customerIdNameMap) return null;
       const nameObj = this.customerIdNameMap[customer_id];
       return `${nameObj.last_name} ${nameObj.last_name}`;
+    },
+    handleToggleCustomerDefault(val, customer_id) {
+      this.$emit("toggleDefault", val, customer_id);
+    },
+    handleToggleContactDefault(val, customer_id, contact_id) {
+      this.$emit("toggleContactDefault", val, customer_id, contact_id);
+    },
+    handleRelationshipChange(contact_id, val) {
+      this.$emit("relationshipChange", contact_id, val);
     },
   },
 };

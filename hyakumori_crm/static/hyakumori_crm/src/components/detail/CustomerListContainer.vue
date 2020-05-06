@@ -5,14 +5,20 @@
       :editBtnContent="editBtnContent"
       :update="isUpdate"
       @toggleEdit="val => (isUpdate = val)"
+      :displayAdditionBtn="
+        (contactType === 'FOREST' && !!selectingForestCustomerId) ||
+          contactType !== 'FOREST'
+      "
     />
 
     <customer-contact-list
       class="mt-4"
       :contacts="tempContacts"
       :isUpdate="isUpdate"
+      isContactor
       @deleteContact="handleDelete"
       @undoDeleteContact="handleUndoDelete"
+      @relationshipChange="handleRelationshipChange"
     />
     <addition-button
       class="my-2"
@@ -68,7 +74,7 @@ import UpdateButton from "./UpdateButton";
 import AdditionButton from "../AdditionButton";
 import SelectListModal from "../SelectListModal";
 import CustomerContactCard from "../detail/CustomerContactCard";
-import { reject, debounce } from "lodash";
+import { reject, debounce, find } from "lodash";
 
 export default {
   name: "customer-list-container",
@@ -87,6 +93,7 @@ export default {
   props: {
     contacts: Array,
     selectingForestId: { type: String, default: null },
+    selectingForestCustomerId: { type: String, default: null },
     id: String,
     customer: Object,
     contactType: String,
@@ -106,6 +113,7 @@ export default {
       contactsToAdd: [],
       contactsToDelete: [],
       saving: false,
+      relationshipChanges: [],
     };
   },
   computed: {
@@ -113,16 +121,14 @@ export default {
       return [...this.contacts, ...this.contactsToAdd];
     },
     contactIdsMap() {
-      return Object.fromEntries(this.tempContacts.map(f => [f.id, true]));
-    },
-    contactIdsToAdd() {
-      return this.contactsToAdd.map(f => f.id);
+      return Object.fromEntries(this.tempContacts.map(c => [c.id, true]));
     },
     contactsAddData() {
-      return this.contactsToAdd.map(f => ({
-        contact: f.id,
-        forest_id: f.forest_id,
-        contact_type: f.contact_type,
+      return [...this.contactsToAdd, ...this.relationshipChanges].map(c => ({
+        contact: c.id,
+        forest_id: c.forest_id,
+        contact_type: c.contact_type || "FOREST",
+        relationship_type: c.relationship_type,
       }));
     },
     contactIdsToDelete() {
@@ -131,11 +137,19 @@ export default {
     saveDisabled() {
       return (
         this.contactIdsToDelete.length === 0 &&
-        this.contactIdsToAdd.length === 0
+        this.contactsAddData.length === 0
       );
     },
   },
   methods: {
+    handleRelationshipChange(contact_id, val) {
+      const contactItem = find(this.tempContacts, { id: contact_id });
+      contactItem.relationship_type = val;
+      if (!contactItem.added) {
+        const others = reject(this.relationshipChanges, { id: contact_id });
+        this.relationshipChanges = [...others, contactItem];
+      }
+    },
     handleAdd() {
       const contactItem = this.contactitems.results.splice(
         this.modalSelectingContactIndex,
@@ -144,6 +158,7 @@ export default {
       if (contactItem) {
         contactItem.added = true;
         contactItem.forest_id = this.selectingForestId;
+        contactItem.forestcustomer_id = this.selectingForestCustomerId;
         contactItem.contact_type = this.contactType;
         this.contactsToAdd.push(contactItem);
         this.modalSelectingContactIndex = null;
@@ -153,11 +168,13 @@ export default {
     handleDelete(contact) {
       if (contact.added) {
         delete contact.added;
-        // delete contactItem.forest_id;
-        // delete contactItem.contact_type;
         this.contactsToAdd = reject(this.contactsToAdd, { id: contact.id });
       } else {
         this.$set(contact, "deleted", true);
+        this.$set(contact, "relationship_type", undefined);
+        this.relationshipChanges = reject(this.relationshipChanges, {
+          id: contact.id,
+        });
         this.contactsToDelete.push(contact);
       }
     },
@@ -176,6 +193,7 @@ export default {
         this.saving = false;
         this.contactsToDelete = [];
         this.contactsToAdd = [];
+        this.relationshipChanges = [];
       } catch (error) {}
     },
     async handleLoadMore() {
@@ -230,7 +248,11 @@ export default {
           this.$set(contactToDelete, "deleted", undefined);
         }
         this.contactsToDelete && (this.contactsToDelete = []);
+        this.relationshipChanges = [];
       }
+    },
+    selectingForestCustomerId(val) {
+      if (this.contactType === "FOREST" && !val) this.isUpdate = false;
     },
   },
 };
