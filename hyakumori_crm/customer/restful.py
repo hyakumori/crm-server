@@ -1,8 +1,16 @@
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
+
 from hyakumori_crm.core.utils import default_paginator
-from hyakumori_crm.crm.restful.serializers import ContactSerializer, CustomerSerializer
+from hyakumori_crm.crm.restful.serializers import (
+    ContactSerializer,
+    CustomerSerializer,
+    ArchiveSerializer,
+)
+from ..activity.services import ActivityService, CustomerActions
+from ..api.decorators import action_login_required, api_validate_model, get_or_404
+
 from .schemas import (
     BankingInput,
     ContactsInput,
@@ -30,9 +38,8 @@ from .service import (
     update_forests,
     update_customer_memo,
     create_contact,
+    get_customer_archives,
 )
-from ..activity.services import ActivityService, CustomerActions
-from ..api.decorators import action_login_required, api_validate_model, get_or_404
 
 
 class CustomerViewSets(ViewSet):
@@ -168,6 +175,15 @@ class CustomerViewSets(ViewSet):
                 CustomerActions.memo_info_updated, data.customer, request=request
             )
         return Response({"memo": customer.attributes["memo"]})
+
+    @action(detail=True, methods=["GET"])
+    @get_or_404(
+        get_func=get_customer_by_pk, to_name="customer", pass_to="kwargs", remove=True,
+    )
+    @action_login_required(with_permissions=["change_customer", "view_customer"])
+    def archives(self, request, *, customer=None):
+        archives = get_customer_archives(customer.pk)
+        return Response(ArchiveSerializer(archives, many=True).data)
 
 
 @api_view(["GET"])

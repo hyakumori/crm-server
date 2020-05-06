@@ -10,7 +10,8 @@ from hyakumori_crm.crm.models import Forest, Archive
 from hyakumori_crm.crm.restful.serializers import (
     CustomerSerializer,
     ForestSerializer,
-    ContactSerializer, ArchiveListingSerializer,
+    ContactSerializer,
+    ArchiveSerializer,
 )
 from .schemas import (
     ForestInput,
@@ -88,18 +89,13 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
             CustomerSerializer(paged_list, many=True).data
         )
 
-    @action(["GET"], detail=True, url_path="related_archives")
-    @get_or_404(get_func=get_forest_by_pk, to_name="forest", remove=True, pass_to="kwargs")
-    def related_archives(self, request, forest: Forest = None):
-        paginator = default_paginator()
-        paged_list = paginator.paginate_queryset(
-            request=request,
-            queryset=Archive.objects.filter(archiveforest__forest__id=forest.id, archiveforest__deleted=None), view=self,
-        )
-
-        return paginator.get_paginated_response(
-            ArchiveListingSerializer(paged_list, many=True).data
-        )
+    @action(["GET"], detail=True, url_path="archives")
+    @get_or_404(
+        get_func=get_forest_by_pk, to_name="forest", remove=True, pass_to="kwargs"
+    )
+    def archives(self, request, forest: Forest = None):
+        archives = Archive.objects.filter(archiveforest__forest_id=forest.id)
+        return Response(ArchiveSerializer(archives, many=True).data)
 
     @action(detail=True, methods=["PUT", "PATCH"], url_path="basic-info")
     @get_or_404(get_func=get_forest_by_pk, to_name="forest", remove=True)

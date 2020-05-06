@@ -1,7 +1,7 @@
 <template>
   <v-card class="pa-0 elevation-24">
     <ValidationObserver v-slot="{ invalid }">
-      <form @submit.prevent="onSubmit">
+      <form @submit.prevent="onSubmit" v-on:keyup.enter="onSubmit">
         <v-card-title class="justify-start pb-0 px-6 pt-6">
           {{ $t("page_header.login") }}
         </v-card-title>

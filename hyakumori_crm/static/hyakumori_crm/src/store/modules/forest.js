@@ -49,6 +49,12 @@ const actions = {
     commit("setCustomersContacts", contacts);
     commit("customersContactsLoadingOff");
   },
+  async getArchives({ commit }, id) {
+    commit("archivesLoadingOn");
+    const archives = await forestApi.fetchForestArchives(id);
+    commit("setArchives", archives);
+    commit("archivesLoadingOff");
+  },
   toggleDefaultCustomerLocal({ commit }, { customer_id, val }) {
     commit("toggleDefaultCustomerLocal", { customer_id, val });
   },
@@ -102,6 +108,15 @@ const mutations = {
   },
   customersContactsLoadingOff() {
     state.customersContactsLoading = false;
+  },
+  setArchives(state, archives) {
+    state.archives = archives;
+  },
+  archivesLoadingOn() {
+    state.archivesLoading = true;
+  },
+  archivesLoadingOff() {
+    state.archivesLoading = false;
   },
   toggleDefaultCustomerLocal(state, { customer_id, val }) {
     const newCustomers = [...state.customers];

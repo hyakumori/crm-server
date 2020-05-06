@@ -28,13 +28,23 @@
 
         <attachment-container
           v-acl-only="['manage_archive', 'view_archive']"
+          class="consultation-history"
+          headerContent="協議履歴"
+          editBtnContent="協議記録を追加・編集"
+          addBtnContent="協議履歴を追加"
+          :archives="$store.state.forest.archives"
+        />
+
+        <!-- <attachment-container
+          v-acl-only="['manage_archive', 'view_archive']"
           class="document-mailing-record"
           headerContent="協議履歴"
           editBtnContent="書類郵送記録を追加・編集"
           addBtnContent="協議履歴を追加"
           :isRequiredExpand="false"
           :id="id"
-        />
+          :archives="$store.state.forest.archives"
+        /> -->
 
         <!--        <attachment-container-->
         <!--          v-acl-only="['manage_archive', 'view_archive']"-->
@@ -131,6 +141,7 @@ export default {
     });
     this.$store.dispatch("forest/getCustomers", this.id);
     this.$store.dispatch("forest/getCustomersContacts", this.id);
+    this.$store.dispatch("forest/getArchives", this.id);
   },
   methods: {
     fallbackText(text) {
