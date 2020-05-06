@@ -39,6 +39,7 @@ from .service import (
     update_customer_memo,
     create_contact,
     get_customer_archives,
+    get_customer_contacts_forests,
 )
 
 
@@ -184,6 +185,14 @@ class CustomerViewSets(ViewSet):
     def archives(self, request, *, customer=None):
         archives = get_customer_archives(customer.pk)
         return Response(ArchiveSerializer(archives, many=True).data)
+
+    @action(detail=True, methods=["GET"], url_path="contacts-forests")
+    @get_or_404(
+        get_func=get_customer_by_pk, to_name="customer", pass_to="kwargs", remove=True,
+    )
+    def contacts_forests(self, request, *, customer=None):
+        forests = get_customer_contacts_forests(pk=customer.pk)
+        return Response(ForestSerializer(forests, many=True).data)
 
 
 @api_view(["GET"])

@@ -2,7 +2,7 @@ from typing import Dict, Iterator, Union
 from uuid import UUID
 from django.core.exceptions import ValidationError
 from django.db import connection, IntegrityError, DataError
-from django.db.models import F, Q
+from django.db.models import F, Q, Count, OuterRef, Subquery
 from django.utils.translation import gettext_lazy as _
 from querybuilder.query import Expression, Query
 
@@ -85,6 +85,11 @@ or concat(sc.postal_code, ' ', sc.address->>'sector', ' ',
 
 
 def get_customer_contacts(pk: UUID):
+    cc = (
+        CustomerContact.objects.filter(is_basic=True, contact=OuterRef("pk"))
+        .values("id", "customer_id")
+        .annotate(forests_count=Count("customer__forestcustomer"))
+    )
     q = (
         Contact.objects.filter(
             customercontact__customer_id=pk, customercontact__is_basic=False,
@@ -100,6 +105,7 @@ def get_customer_contacts(pk: UUID):
             )
         )
         .annotate(cc_attrs=F("customercontact__attributes"))
+        .annotate(forests_count=Subquery(cc.values("forests_count")[:1]))
         .order_by("created_at")
     )
     return q
@@ -267,7 +273,14 @@ def update_banking(data):
 
 
 def contacts_list_with_search(search_str: str = None):
-    queryset = Contact.objects.all()
+    cc = (
+        CustomerContact.objects.filter(is_basic=True, contact=OuterRef("pk"))
+        .values("id", "customer_id")
+        .annotate(forests_count=Count("customer__forestcustomer"))
+    )
+    queryset = Contact.objects.annotate(
+        forests_count=Subquery(cc.values("forests_count")[:1])
+    ).all()
     if search_str:
         queryset = queryset.filter(
             Q(name_kanji__first_name__icontains=search_str)
@@ -394,4 +407,20 @@ def create_contact(customer, contact_in):
 def get_customer_archives(pk):
     return Archive.objects.filter(archivecustomer__customer_id=pk).order_by(
         "-created_at"
+    )
+
+
+def get_customer_contacts_forests(pk):
+    contacts = Contact.objects.filter(
+        customercontact__customer_id=pk,
+        customercontact__is_basic=False,
+        customercontact__attributes__contact_type=ContactType.forest,
+    ).values("id")
+    customers = Customer.objects.filter(
+        customercontact__is_basic=True, customercontact__contact_id__in=contacts
+    ).values("id")
+    return (
+        Forest.objects.filter(forestcustomer__customer_id__in=customers)
+        .prefetch_related("forestcustomer_set")
+        .order_by("created_at")
     )
