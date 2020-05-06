@@ -62,13 +62,10 @@ const actions = {
       val,
     });
   },
-  async toggleDefaultCustomer({ commit, state }, { id, customer_id, val }) {
+  async toggleDefaultCustomer({}, { id, customer_id, val }) {
     await forestApi.toggleDefaultCustomer(id, customer_id, val);
   },
-  async toggleDefaultCustomerContact(
-    { commit, state },
-    { id, customer_id, contact_id, val },
-  ) {
+  async toggleDefaultCustomerContact({}, { id, customer_id, contact_id, val }) {
     await forestApi.toggleDefaultCustomerContact(
       id,
       customer_id,
