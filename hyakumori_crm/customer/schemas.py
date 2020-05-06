@@ -257,10 +257,11 @@ class ContactsInput(HyakumoriDanticModel):
 
 class CustomerMemoInput(HyakumoriDanticModel):
     customer: Customer
-    memo: str
+    memo: str = None
 
     class Config:
         arbitrary_types_allowed = True
+        min_anystr_length = 0
 
 
 class RequiredAddress(HyakumoriDanticModel):
