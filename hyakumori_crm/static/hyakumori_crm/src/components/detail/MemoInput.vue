@@ -16,7 +16,11 @@
     >
       <div class="d-flex pa-4">
         <div v-if="!isUpdate">
-          <p class="ma-0" v-html="formattedMemo || (isEmpty && $t('memo.empty'))" :class="{'grey--text': isEmpty}"></p>
+          <p
+            class="ma-0"
+            v-html="formattedMemo || (isEmpty && $t('memo.empty'))"
+            :class="{ 'grey--text': isEmpty }"
+          ></p>
         </div>
 
         <div class="memo-input__value" v-else>
@@ -50,7 +54,7 @@ import UpdateButton from "./UpdateButton";
 export default {
   props: {
     apiUrl: { type: String },
-    value: { type: String },
+    value: { type: Object },
   },
   components: {
     ValidationProvider,
@@ -59,8 +63,8 @@ export default {
   data() {
     return {
       isLoading: false,
-      memo: "",
       isUpdate: false,
+      memo: "",
     };
   },
   methods: {
@@ -72,7 +76,8 @@ export default {
         });
         if (response) {
           this.memo = response.memo;
-          this.$emit("input", this.memo);
+          this.value.attributes["memo"] = response.memo;
+          this.$emit("input", this.value);
         }
       } catch (e) {
       } finally {
@@ -83,7 +88,7 @@ export default {
       }
     },
     onCancel() {
-      this.memo = this.value;
+      this.memo = this.value.attributes["memo"];
       this.isLoading = false;
       this.isUpdate = false;
     },
@@ -97,8 +102,8 @@ export default {
     },
   },
   watch: {
-    value() {
-      this.memo = this.value;
+    "value.attributes.memo"() {
+      this.memo = this.value.attributes["memo"];
     },
   },
 };

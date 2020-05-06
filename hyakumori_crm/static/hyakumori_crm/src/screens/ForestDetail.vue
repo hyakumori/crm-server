@@ -72,8 +72,7 @@
       <div>
         <memo-input
           :api-url="`/forests/${$route.params.id}/memo`"
-          :value="forestInfo && forestInfo.attributes['memo']"
-          @input="forestInfo.attributes['memo'] = $event"
+          v-model="forestInfo"
         ></memo-input>
         <action-log
           app-name="crm"
