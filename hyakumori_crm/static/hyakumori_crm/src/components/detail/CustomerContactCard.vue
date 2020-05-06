@@ -206,7 +206,7 @@ export default {
       return this.selectedId === this.card_id;
     },
     relationshipType() {
-      return this.isContactor ? this.contact.cc_attrs.relationship_type : "";
+      return this.isContactor ? this.contact.cc_attrs?.relationship_type : "";
     },
   },
 };

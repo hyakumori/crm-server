@@ -44,7 +44,7 @@
           :isLoading="contactsLoading"
           :id="id"
           :customer="customer"
-          @saved="fetchContacts"
+          @saved="handleForestContactsSave"
           contactType="FOREST"
           :selectingForestId="selectingForestId"
           :selectingForestCustomerId="selectingForestCustomerId"
@@ -93,13 +93,14 @@
           headerContent="顧客連絡者登録 森林"
           addBtnContent="所有地情報を追加"
           :displayAdditionBtn="false"
-          :isLoading="false"
-          :forests="[]"
+          :isLoading="contactsForestsLoading"
+          :forests="contactsForests"
           v-if="id"
         />
 
         <basic-info-container
           v-if="id"
+          class="mt-12"
           headerContent="口座情報"
           editBtnContent="口座情報を編集"
           addBtnContent="口座情報を編集"
@@ -138,7 +139,6 @@
 <script>
 import MainSection from "../components/MainSection";
 import ScreenMixin from "./ScreenMixin";
-import discussions from "../assets/dump/history_discussion.json";
 import BasicInfoContainer from "../components/detail/BasicInfoContainer";
 import AttachmentContainer from "../components/detail/AttachmentContainer";
 import ForestListContainer from "../components/detail/ForestListContainer";
@@ -187,6 +187,8 @@ export default {
       contactsLoading: this.checkAndShowLoading(),
       archives: [],
       archivesLoading: this.checkAndShowLoading(),
+      contactsForests: [],
+      contactsForestsLoading: this.checkAndShowLoading(),
     };
   },
 
@@ -227,6 +229,7 @@ export default {
         this.fetchForests();
         this.fetchContacts();
         this.fetchArchives();
+        this.fetchContactsForests();
       }
     },
     fetchCustomer() {
@@ -268,6 +271,17 @@ export default {
       this.archives = await this.$rest.get(`/customers/${this.id}/archives`);
       this.archivesLoading = false;
     },
+    async fetchContactsForests() {
+      this.contactsForestsLoading = true;
+      this.contactsForests = await this.$rest.get(
+        `/customers/${this.id}/contacts-forests`,
+      );
+      this.contactsForestsLoading = false;
+    },
+    handleForestContactsSave() {
+      this.fetchContacts();
+      this.fetchContactsForests();
+    },
   },
 
   computed: {
@@ -295,17 +309,6 @@ export default {
       return filter(this.contacts, {
         cc_attrs: { contact_type: "OTHERS" },
       });
-    },
-
-    getDiscussionsNotExpand() {
-      // TODO: remove this
-      const discuss = discussions.slice(0, 3);
-      return discuss;
-    },
-
-    getDiscussionsExpand() {
-      // TODO: remove this
-      return discussions;
     },
     selfContactFormData() {
       return {
