@@ -47,6 +47,7 @@
           @saved="fetchContacts"
           contactType="FOREST"
           :selectingForestId="selectingForestId"
+          :selectingForestCustomerId="selectingForestCustomerId"
         />
 
         <!--        <attachment-container-->
@@ -138,7 +139,6 @@
 <script>
 import MainSection from "../components/MainSection";
 import ScreenMixin from "./ScreenMixin";
-import ownersForest from "../assets/dump/owners_forest_info.json";
 import discussions from "../assets/dump/history_discussion.json";
 import BasicInfoContainer from "../components/detail/BasicInfoContainer";
 import AttachmentContainer from "../components/detail/AttachmentContainer";
@@ -149,7 +149,7 @@ import ActionLog from "../components/detail/ActionLog";
 import MemoInput from "../components/detail/MemoInput";
 import ContactForm from "../components/forms/ContactForm";
 import BankingInfoForm from "../components/forms/BankingInfoForm";
-import { filter } from "lodash";
+import { filter, find } from "lodash";
 
 export default {
   mixins: [ScreenMixin],
@@ -179,16 +179,6 @@ export default {
       backBtnContent: this.$t("page_header.customer_mgmt"),
       headerTagColor: "#12C7A6",
       isExpand: false,
-      isUpdate: {
-        basicInfo: false,
-        ownersForest: false,
-        contactors: false,
-        archive: false,
-        family: false,
-        otherRelated: false,
-        registrationForest: false,
-        bankingInfo: false,
-      },
       selectingForestId: null,
       customer: null,
       customerLoading: this.checkAndShowLoading(),
@@ -248,8 +238,6 @@ export default {
       this.$rest.get(`/customers/${this.id}/forests`).then(async data => {
         let forests = data.results;
         let next = data.next;
-        //TODO: implement UI pagination
-        //TODO: use generator instead?
         while (!!next) {
           let nextForests = await this.$rest.get(next);
           forests.push(...nextForests.results);
@@ -264,7 +252,6 @@ export default {
       this.$rest.get(`/customers/${this.id}/contacts`).then(async data => {
         let contacts = data.results;
         let next = data.next;
-        //TODO: implement UI pagination
         while (!!next) {
           let nextContacts = await this.$rest.get(next);
           contacts.push(...nextContacts.results);
@@ -281,18 +268,15 @@ export default {
       return !!this.id;
     },
 
-    getOwnersForest() {
-      // TODO: remove this
-      return ownersForest;
-    },
-
     forestContacts() {
-      if (!this.selectingForestId)
+      if (!this.selectingForestCustomerId)
         return filter(
           this.contacts,
-          c => c.forest_id || c.cc_attrs.contact_type === "FOREST",
+          c => c.forestcustomer_id && c.cc_attrs.contact_type === "FOREST",
         );
-      return filter(this.contacts, { forest_id: this.selectingForestId });
+      return filter(this.contacts, {
+        forestcustomer_id: this.selectingForestCustomerId,
+      });
     },
 
     familyContacts() {
@@ -315,11 +299,6 @@ export default {
     getDiscussionsExpand() {
       // TODO: remove this
       return discussions;
-    },
-
-    getActionLogs() {
-      // TODO: remove this
-      return actionLogs;
     },
     selfContactFormData() {
       return {
@@ -406,6 +385,10 @@ export default {
           value: this.customer?.banking?.account_name || "",
         },
       ];
+    },
+    selectingForestCustomerId() {
+      const forest = find(this.forests, { id: this.selectingForestId });
+      return forest ? forest.forestcustomer_id : null;
     },
   },
 

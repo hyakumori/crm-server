@@ -110,6 +110,7 @@ def get_customer_contacts_of_forest(pk):
                 "crm_forestcustomercontact.attributes->>'default'", params=[]
             )
         )
+        .annotate(cc_attrs=F("customercontact__attributes"))
     )
 
 

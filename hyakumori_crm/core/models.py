@@ -2,7 +2,7 @@ import datetime
 import uuid
 from typing import Any, Union, ClassVar, Optional, Sequence, Dict
 
-from behaviors.behaviors import StoreDeleted as StoreDeletedMixin
+from behaviors.behaviors import StoreDeleted
 from behaviors.querysets import StoreDeletedQuerySet
 from behaviors.managers import StoreDeletedManager
 from django.contrib.postgres.fields.jsonb import JSONField
@@ -12,6 +12,14 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import FilterSet
 from pydantic import BaseModel, Field, root_validator, validator
 from querybuilder.fields import SimpleField
+
+
+class StoreDeletedMixin(StoreDeleted):
+    def force_delete(self, *args, **kwargs):
+        return models.Model.delete(self, *args, **kwargs)
+
+    class Meta:
+        abstract = True
 
 
 class TimestampMixin(models.Model):
@@ -81,7 +89,7 @@ class HyakumoriDanticModel(BaseModel):
             "type_error.none.not_allowed": _("Required"),
             "value_error.str.regex": _("Invalid"),
             "value_error.missing": _("Required"),
-            "value_error.email": _("Invalid Email")
+            "value_error.email": _("Invalid Email"),
         }
 
     @validator("*", pre=True)

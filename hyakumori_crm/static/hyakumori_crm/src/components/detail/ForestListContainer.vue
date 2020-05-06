@@ -173,6 +173,9 @@ export default {
         this.forestsToAdd = [];
       } catch (error) {
         this.saving = false;
+        this.$dialog.notify.error(
+          error.response.data.detail || error.response.statusText,
+        );
       }
     },
     async handleLoadMore() {

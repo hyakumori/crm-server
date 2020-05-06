@@ -5,7 +5,7 @@ from uuid import UUID
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError as DjValidationError
 from django_filters import FilterSet, CharFilter
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, UUIDField
 from pydantic import BaseModel, EmailStr, constr, validator, root_validator
 from pydantic.error_wrappers import ValidationError
 from pydantic.errors import MissingError
@@ -104,9 +104,17 @@ class CustomerPaginator(Paginator):
 
 
 class ForestSerializer(ModelSerializer):
+    forestcustomer_id = UUIDField(read_only=True)
+
     class Meta:
         model = Forest
-        fields = ["id", "cadastral", "internal_id", "customers_count"]
+        fields = [
+            "id",
+            "cadastral",
+            "internal_id",
+            "customers_count",
+            "forestcustomer_id",
+        ]
 
 
 class CustomerContactsDeleteInput(HyakumoriDanticModel):
