@@ -103,7 +103,7 @@ export default {
       return [...this.contacts];
     },
     contactIdsToDelete() {
-      return this.contactsToDelete.map(f => f.id);
+      return this.contactsToDelete.map(c => c.id);
     },
     saveDisabled() {
       return (
