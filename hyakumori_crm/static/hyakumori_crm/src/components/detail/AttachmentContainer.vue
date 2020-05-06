@@ -53,6 +53,7 @@ export default {
       type: Boolean,
       default: true,
     },
+    archives: { type: Array, default: () => [] },
   },
 
   data() {
@@ -60,24 +61,8 @@ export default {
       loading: false,
       isExpand: false,
       isUpdate: false,
-      archives: [],
     };
   },
-
-  mounted() {
-    this.fetchRelatedArchives();
-  },
-
-  methods: {
-    fetchRelatedArchives() {
-      this.loading = true;
-      this.$rest(`/forests/${this.id}/related_archives`).then(res => {
-        this.archives = res.results;
-        this.loading = false;
-      });
-    },
-  },
-
   computed: {
     archiveExpand() {
       return this.archives;

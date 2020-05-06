@@ -58,3 +58,9 @@ export function toggleDefaultCustomerContact(id, customer_id, contact_id, val) {
     });
   } catch (error) {}
 }
+
+export function fetchForestArchives(id) {
+  try {
+    return axios.get(`forests/${id}/archives`);
+  } catch (error) {}
+}

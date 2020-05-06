@@ -14,6 +14,8 @@ from hyakumori_crm.crm.models import (
     ForestCustomer,
     Forest,
     ForestCustomerContact,
+    ArchiveCustomer,
+    Archive,
 )
 from hyakumori_crm.users.models import User
 
@@ -387,3 +389,9 @@ def create_contact(customer, contact_in):
     customer_contact.save()
     customer.save(update_fields=["updated_at"])
     return contact
+
+
+def get_customer_archives(pk):
+    return Archive.objects.filter(archivecustomer__customer_id=pk).order_by(
+        "-created_at"
+    )

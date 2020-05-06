@@ -18,7 +18,9 @@
         </v-col>
         <v-col cols="4" class="d-flex pr-4 text-truncate">
           <p class="history-discussion__attach">{{ attach.title }}</p>
-          <v-icon small>mdi-paperclip</v-icon>
+          <v-icon v-if="attach.attachments.length > 0" small
+            >mdi-paperclip</v-icon
+          >
         </v-col>
         <v-col cols="2" class="pr-2 text-truncate">
           <p>{{ attach.participant }}</p>
@@ -27,9 +29,14 @@
           <p class="history-discussion__host">{{ attach.location }}</p>
         </v-col>
         <v-col cols="1">
-          <v-btn icon @click="$router.push(`/archives/${attach.id}`)">
-            <v-icon>{{ toggleBtn }}</v-icon>
-          </v-btn>
+          <router-link
+            :to="{ name: 'archive-detail', params: { id: attach.id } }"
+            v-slot="{ href }"
+          >
+            <v-btn icon :href="href">
+              <v-icon>{{ toggleBtn }}</v-icon>
+            </v-btn>
+          </router-link>
         </v-col>
       </v-row>
     </v-card>
