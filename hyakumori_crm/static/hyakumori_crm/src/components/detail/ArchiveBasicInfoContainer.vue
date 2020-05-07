@@ -19,6 +19,7 @@
       <template v-if="!isDetail" v-slot:create-btn="props">
         <v-btn
           color="primary"
+          depressed
           :disabled="props.invalid"
           :loading="createLoading"
           @click="submit(props.info)"

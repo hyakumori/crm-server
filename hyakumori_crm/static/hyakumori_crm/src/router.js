@@ -209,17 +209,6 @@ const router = new VueRouter({
           },
         },
         {
-          path: "/archives/:id",
-          name: "archive-detail",
-          component: ArchiveDetail,
-          meta: {
-            detail: true,
-            title: "page_header.archive_detail",
-            isPublic: false,
-            scopes: ["manage_archive", "view_archive"],
-          },
-        },
-        {
           path: "/archives/new",
           name: "archive-new",
           component: ArchiveDetail,
@@ -228,6 +217,17 @@ const router = new VueRouter({
             title: "page_header.archive_new",
             isPublic: false,
             scopes: ["manage_archive"],
+          },
+        },
+        {
+          path: "/archives/:id",
+          name: "archive-detail",
+          component: ArchiveDetail,
+          meta: {
+            detail: true,
+            title: "page_header.archive_detail",
+            isPublic: false,
+            scopes: ["manage_archive", "view_archive"],
           },
         },
       ],

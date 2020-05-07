@@ -4,6 +4,7 @@
       class="pa-0"
       ref="dataTable"
       v-model="selected"
+      disable-sort
       :dense="dense"
       light
       :height="tableHeight"

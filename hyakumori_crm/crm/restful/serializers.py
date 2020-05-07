@@ -87,6 +87,7 @@ class ArchiveSerializer(ModelSerializer):
             "archive_date",
             "author",
             "attachments",
+            "attributes",
         ]
 
     def get_attachments(self, obj: Archive):
@@ -99,13 +100,20 @@ class ArchiveSerializer(ModelSerializer):
 
 
 class ArchiveListingSerializer(ModelSerializer):
+    author_name = SerializerMethodField(method_name="get_author_name")
+
+    def get_author_name(self, obj: Archive):
+        return obj.author.full_name
+
     class Meta:
         model = Archive
         fields = [
             "id",
             "title",
             "content",
+            "author_name",
             "location",
             "future_action",
             "archive_date",
+            "attributes",
         ]
