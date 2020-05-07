@@ -136,6 +136,16 @@ export default {
 
   mounted() {
     this.$store.dispatch("setHeaderInfo", this.headerInfo);
+
+    if (this.isDetail) {
+      this.forceRefreshCache();
+    }
+  },
+
+  methods: {
+    forceRefreshCache() {
+      this.$rest.post(`/archives/${this.id}/cache`);
+    },
   },
 
   computed: {

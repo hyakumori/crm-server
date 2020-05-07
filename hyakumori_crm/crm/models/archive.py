@@ -18,6 +18,3 @@ class Archive(BaseResourceModel):
         permissions = [
             ("manage_archive", "All permissions for archive"),
         ]
-
-    def content_type_icon(self):
-        return "mdi-calendar-text"

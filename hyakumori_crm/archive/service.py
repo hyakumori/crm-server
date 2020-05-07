@@ -6,10 +6,12 @@ from django.utils.translation import gettext_lazy as _
 from pydantic import ValidationError
 from rest_framework.request import Request
 
-from hyakumori_crm.crm.models import Archive, Attachment
-from .schemas import ArchiveInput
+from hyakumori_crm.crm.models import Attachment
+from .cache import refresh_customers_cache, refresh_forest_cache, refresh_user_participants_cache
+from .schemas import ArchiveFilter, ArchiveInput
 from ..crm.models.customer import Customer
 from ..crm.models.forest import Forest
+from ..crm.models.archive import Archive
 from ..crm.models.relations import ArchiveForest, ArchiveCustomer, ArchiveUser
 from ..customer.service import get_customer_by_pk
 from ..forest.service import get_forest_by_pk
@@ -18,7 +20,7 @@ from ..forest.service import get_forest_by_pk
 def get_archive_by_pk(pk):
     try:
         return Archive.objects.get(pk=pk)
-    except(Archive.DoesNotExist, ValidationError):
+    except (Archive.DoesNotExist, ValidationError):
         raise ValueError("Archive not found")
 
 
@@ -35,8 +37,10 @@ def get_all_attachments_by_archive_pk(archive_pk):
 
 def get_attachment(archive_pk, attachment_pk):
     try:
-        return Attachment.objects.filter(object_id=archive_pk, id=attachment_pk, deleted=None)
-    except(Attachment.DoesNotExist, ValidationError):
+        return Attachment.objects.filter(
+            object_id=archive_pk, id=attachment_pk, deleted=None
+        )
+    except (Attachment.DoesNotExist, ValidationError):
         return ValueError(_("Attachment not found"))
 
 
@@ -89,11 +93,15 @@ def delete_attachment_file(archive: Archive, attachment: Attachment):
 
 
 def get_related_forests(archive: Archive):
-    return Forest.objects.filter(archiveforest__archive__id=archive.id, archiveforest__deleted=None)
+    return Forest.objects.filter(
+        archiveforest__archive__id=archive.id, archiveforest__deleted=None
+    )
 
 
 def is_archive_forest_exist(archive_pk, forest_pk):
-    archive_forest = ArchiveForest.objects.filter(archive__id=archive_pk, forest__id=forest_pk, deleted=None)
+    archive_forest = ArchiveForest.objects.filter(
+        archive__id=archive_pk, forest__id=forest_pk, deleted=None
+    )
     return True if len(archive_forest) == 1 else False
 
 
@@ -117,6 +125,7 @@ def add_related_forest(archive: Archive, data: dict):
             archive_forest.forest_id = forest.id
             archive_forest.save()
             forests.append(forest)
+    refresh_forest_cache(archive, save=True)
     return forests
 
 
@@ -126,20 +135,27 @@ def delete_related_forest(archive: Archive, data: dict):
     for forest_id in forest_id_list:
         forest = get_forest_by_pk(forest_id)
         if is_archive_forest_exist(archive.id, forest_id):
-            archive_forest = ArchiveForest.objects.get(archive_id=archive.id, forest_id=forest.id, deleted=None)
+            archive_forest = ArchiveForest.objects.get(
+                archive_id=archive.id, forest_id=forest.id, deleted=None
+            )
             archive_forest.delete()
         else:
             continue
+    refresh_forest_cache(archive, save=True)
     return True
 
 
 def is_archive_customer_exist(archive_pk, customer_pk):
-    archive_customer = ArchiveCustomer.objects.filter(archive__id=archive_pk, customer__id=customer_pk, deleted=None)
+    archive_customer = ArchiveCustomer.objects.filter(
+        archive__id=archive_pk, customer__id=customer_pk, deleted=None
+    )
     return True if len(archive_customer) == 1 else False
 
 
 def get_related_customer(archive: Archive):
-    return Customer.objects.filter(archivecustomer__archive__id=archive.id, archivecustomer__deleted=None)
+    return Customer.objects.filter(
+        archivecustomer__archive__id=archive.id, archivecustomer__deleted=None
+    )
 
 
 def add_related_customer(archive: Archive, data: dict):
@@ -156,6 +172,7 @@ def add_related_customer(archive: Archive, data: dict):
             archive_customer.customer_id = customer.id
             archive_customer.save()
             customers.append(customer)
+    refresh_customers_cache(archive, save=True)
     return customers
 
 
@@ -165,16 +182,20 @@ def delete_related_customer(archive: Archive, data: dict):
     for customer_id in customer_id_list:
         customer = get_customer_by_pk(customer_id)
         if is_archive_customer_exist(archive.id, customer_id):
-            archive_customer = ArchiveCustomer.objects.get(archive_id=archive.id, customer_id=customer.id,
-                                                           deleted=None)
+            archive_customer = ArchiveCustomer.objects.get(
+                archive_id=archive.id, customer_id=customer.id, deleted=None
+            )
             archive_customer.delete()
         else:
             continue
+    refresh_customers_cache(archive, save=True)
     return True
 
 
 def is_archive_user_exist(archive_id, user_id):
-    archive_user = ArchiveUser.objects.filter(archive__id=archive_id, user__id=user_id, deleted=None)
+    archive_user = ArchiveUser.objects.filter(
+        archive__id=archive_id, user__id=user_id, deleted=None
+    )
     return True if len(archive_user) == 1 else False
 
 
@@ -192,6 +213,7 @@ def add_related_user(archive: Archive, data: dict):
             archive_user.user_id = user.id
             archive_user.save()
             users.append(user)
+    refresh_user_participants_cache(archive, True)
     return users
 
 
@@ -201,8 +223,99 @@ def delete_related_user(archive: Archive, data: dict):
     for user_id in user_id_list:
         user = get_user_model().objects.get(pk=user_id)
         if is_archive_user_exist(archive.id, user_id):
-            archive_user = ArchiveUser.objects.get(archive_id=archive.id, user_id=user.id, deleted=None)
+            archive_user = ArchiveUser.objects.get(
+                archive_id=archive.id, user_id=user.id, deleted=None
+            )
             archive_user.delete()
         else:
             continue
+    refresh_user_participants_cache(archive, True)
     return True
+
+
+def get_filtered_archive_queryset(archive_filter: ArchiveFilter):
+    try:
+        archive_filter = archive_filter.dict()
+        active_filters = dict()
+        mapping = {
+            "id": "id__icontains",
+            "content": "content__icontains",
+            "archive_date": "archive_date__icontains",
+            "location": "location__icontains",
+            "title": "title__icontains",
+            "future_action": "future_action__icontains",
+            "author": "attributes__user_cache__repr__icontains",
+            "associated_forest": "attributes__forest_cache__repr__icontains",
+            "our_participants": "attributes__user_cache__repr__icontains",
+            "their_participants": "attributes__customer_cache__repr__icontains",
+        }
+
+        for k, v in archive_filter.items():
+            if v is not None:
+                active_filters[mapping[k]] = v
+
+        if len(active_filters.keys()) > 0:
+            return Archive.objects.filter(**active_filters)
+
+        return Archive.objects.all()
+    except:
+        return Archive.objects.none()
+
+
+def _archives_list_raw_sql(page_size, page, filters, order_by):
+    limit = page_size
+    offset = page * page_size
+    active_fields = [
+        "forests",
+        "participants",
+        "customers",
+        "title",
+        "location",
+        "content",
+        "future_action",
+    ]
+    query = """
+        select id,
+               author,
+               forests,
+               participants,
+               customers,
+               title,
+               location,
+               content,
+               future_action,
+               archive_date,
+               attributes
+        from (
+             select crm_archive.id,
+                    crm_archive.title         as                                                       title,
+                    crm_archive.location      as                                                       location,
+                    crm_archive.content       as                                                       content,
+                    crm_archive.future_action as                                                       future_action,
+                    crm_archive.archive_date  as                                                       archive_date,
+                    crm_archive.attributes    as                                                       attributes,
+                    array_to_string(array_agg(DISTINCT (uu.last_name || ' ' || uu.first_name)), ',')   author,
+                    array_to_string(array_agg(DISTINCT f.internal_id), ',')                            forests,
+                    array_to_string(array_agg(DISTINCT (auu.last_name || ' ' || auu.first_name)), ',') participants,
+                    array_to_string(
+                            array_agg(
+                                DISTINCT (cc.name_kanji ->> 'last_name') || ' ' || (cc.name_kanji ->> 'first_name')),
+                            ',')                                                                       customers
+             from crm_archive
+                      left join crm_archiveforest af on crm_archive.id = af.archive_id
+                      left join crm_forest f on af.forest_id = f.id
+                      left join crm_archivecustomer ac on crm_archive.id = ac.archive_id
+                      left join crm_customer cc on ac.customer_id = cc.id
+                      left join crm_archiveuser au on crm_archive.id = au.archive_id
+                      left join users_user auu on au.user_id = auu.id
+                      left join users_user uu on crm_archive.author_id = uu.id
+             where au.deleted is null
+               and ac.deleted is null
+               and af.deleted is null
+             group by crm_archive.id
+        ) results
+        -- where participants ilike '%user%'
+        -- limit 25
+        -- offset 0
+    """
+    return query

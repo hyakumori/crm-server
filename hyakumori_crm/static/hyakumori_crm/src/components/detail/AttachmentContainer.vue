@@ -25,7 +25,7 @@
     <p
       v-if="isRequiredExpand && archiveExpand && archiveExpand.length > 0"
       class="expand"
-      @click="this.isExpand = !this.isExpand"
+      @click="isExpand = !isExpand"
     >
       {{ isExpand ? "一部表示する" : "すべて表示する" }}
     </p>
@@ -49,10 +49,6 @@ export default {
 
   props: {
     id: String,
-    isRequiredExpand: {
-      type: Boolean,
-      default: true,
-    },
     archives: { type: Array, default: () => [] },
   },
 
@@ -70,6 +66,10 @@ export default {
 
     archiveCollapse() {
       return this.archives.slice(0, 3);
+    },
+
+    isRequiredExpand() {
+      return this.archives.length > 3;
     },
   },
 };

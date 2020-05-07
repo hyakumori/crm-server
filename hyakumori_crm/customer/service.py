@@ -1,34 +1,24 @@
-from typing import Dict, Iterator, Union
+import logging
+from typing import Iterator, Union
 from uuid import UUID
-from django.core.exceptions import ValidationError
-from django.db import connection, IntegrityError, DataError
-from django.db.models import F, Q, Count, OuterRef, Subquery
+
+from django.db import DataError, IntegrityError, connection
+from django.db.models import Count, F, OuterRef, Q, Subquery
 from django.utils.translation import gettext_lazy as _
 from querybuilder.query import Expression, Query
 
 from hyakumori_crm.core.models import RawSQLField
 from hyakumori_crm.crm.models import (
+    Archive,
     Contact,
     Customer,
     CustomerContact,
-    ForestCustomer,
     Forest,
+    ForestCustomer,
     ForestCustomerContact,
-    ArchiveCustomer,
-    Archive,
 )
-from hyakumori_crm.users.models import User
-
+from .schemas import ContactType, CustomerInputSchema
 from ..crm.common.constants import CUSTOMER_TAG_KEYS
-from .schemas import CustomerInputSchema, ContactType
-
-
-def get(pk):
-    # try:
-    #     return Customer.objects.get(pk=pk)
-    # except (Customer.DoesNotExist, ValidationError):
-    #     return None
-    return None
 
 
 def get_customer_by_pk(pk):
@@ -261,7 +251,22 @@ def update_basic_info(data):
     self_contact.mobilephone = data.basic_contact.mobilephone
     self_contact.email = data.basic_contact.email
     self_contact.save()
-    customer.save(update_fields=["updated_at"])
+
+    # cache saving for customer
+    customer.name_kana = self_contact.name_kana
+    customer.name_kanji = self_contact.name_kanji
+    customer.address = self_contact.address
+    customer.save(update_fields=["address", "name_kana", "name_kanji", "updated_at"])
+
+    # cache saving for forest
+    for forestcustomer in customer.forestcustomer_set.iterator():
+        try:
+            forest = forestcustomer.forest
+            forest.owner["address"] = self_contact.address
+            forest.save(update_fields=["owner", "updated_at"])
+        except:
+            logging.warning(f"could not saving latest user address in forest: {forestcustomer.forest.pk}")
+
     return customer
 
 
