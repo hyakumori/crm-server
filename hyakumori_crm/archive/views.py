@@ -5,7 +5,7 @@ from django.utils.timezone import now
 from django.utils.translation import gettext as _
 
 from hyakumori_crm.archive.service import get_attachment_by_pk
-from hyakumori_crm.archive.utils import decrypt_string, DecryptError
+from hyakumori_crm.crm.common.utils import decrypt_string, DecryptError
 
 
 def download_file(request, code):

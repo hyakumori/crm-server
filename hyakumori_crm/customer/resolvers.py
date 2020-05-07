@@ -13,7 +13,7 @@ from .schemas import (
     CustomerFilter,
     CustomerPaginator,
 )
-from .service import get, get_list
+from .service import get_list
 
 query = ObjectType("Query")
 mutation = ObjectType("Mutation")

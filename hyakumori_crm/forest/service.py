@@ -52,7 +52,7 @@ def get_forests_by_condition(
         return [], 0
     query = filters.qs if filters else Forest.objects.all()
     total = query.count()
-    forests = query.order_by(*order_by)[offset : offset + per_page]
+    forests = query.order_by("-updated_at", "-created_at")[offset : offset + per_page]
     return forests, total
 
 

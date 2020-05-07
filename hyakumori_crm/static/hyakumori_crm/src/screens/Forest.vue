@@ -223,14 +223,8 @@ export default {
 <style lang="scss" scoped>
 .forest {
   &__data-section {
+    flex: 1;
     overflow: hidden;
-
-    &__table-action ::v-deep {
-      .table-action__select {
-        height: 100%;
-        top: 20%;
-      }
-    }
   }
 }
 </style>

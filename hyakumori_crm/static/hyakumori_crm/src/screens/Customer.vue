@@ -22,7 +22,6 @@
         class="ml-7"
         itemKey="id"
         :headers="headers"
-        :multiSort="true"
         :data="customers"
         :showSelect="true"
         :options.sync="options"
@@ -144,7 +143,6 @@ export default {
               email
               status
               ranking
-              representative
             }
             total
           }
