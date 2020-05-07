@@ -147,7 +147,7 @@ export default {
     },
 
     addSearchField() {
-      if (this.conditions.length == this.searchCriteria.length) {
+      if (this.conditions.length === this.searchCriteria.length) {
         this.$emit("conditionOutOfBounds", true);
       } else {
         this.conditions.push({

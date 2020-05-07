@@ -56,7 +56,9 @@ $action-list-color: #825929;
   }
 
   &__select ::v-deep {
-    margin-top: 2px;
+    margin-top: 0;
+    height: 100%;
+    top: 25%;
 
     .v-select__slot,
     .v-select__selections,
