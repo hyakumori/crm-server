@@ -23,9 +23,7 @@
       <update-button
         :cancel="cancel.bind(this)"
         :save="save.bind(this)"
-        :saveDisabled="
-          addedForestIds.length === 0 && deletedForestIds.length === 0
-        "
+        :saveDisabled="addedForests.length === 0 && deletedForests.length === 0"
         :saving="addRelatedForestLoading"
       />
     </template>
@@ -116,13 +114,15 @@ export default {
 
   methods: {
     handleEdit(val) {
+      if (!this.isUpdate && this.relatedForests) {
+        this.immutableRelatedForest = cloneDeep(this.relatedForests);
+      }
       this.isUpdate = val;
-      this.immutableRelatedForest = cloneDeep(this.relatedForests);
     },
 
     cancel() {
       this.isUpdate = false;
-      this.relatedForests = this.immutableRelatedForest;
+      this.relatedForests = cloneDeep(this.immutableRelatedForest);
       this.allForests = cloneDeep(this.immutableAllForest);
     },
 
@@ -131,47 +131,65 @@ export default {
         this.isUpdate = false;
       } else {
         this.addRelatedForestLoading = true;
-        const addRequest = { ids: this.addedForestIds };
-        if (this.deletedForestIds.length > 0) {
-          const isDeleted = await this.$rest.delete(
-            `/archives/${this.id}/forests`,
-            {
-              data: {
-                ids: this.deletedForestIds,
-              },
-            },
-          );
-          if (isDeleted) {
-            this.relatedForests = pullAllWith(
-              this.relatedForests,
-              this.deletedForestIds,
-              (f1, f2) => f1.id === f2,
-            );
-          }
-        }
-        if (this.addedForestIds.length > 0) {
-          const newRelatedForests = await this.$rest.post(
-            `/archives/${this.id}/forests`,
-            addRequest,
-          );
-          if (newRelatedForests) {
-            const tempForest = this.removeDuplicateForests(
-              this.relatedForests,
-              newRelatedForests.data,
-            );
-            tempForest.push(...newRelatedForests.data);
-            this.relatedForests = tempForest;
-          }
-        }
+        await this.deleteRelatedForests();
+        await this.addRelatedForests();
         this.addRelatedForestLoading = false;
         this.isUpdate = false;
       }
     },
 
+    async deleteRelatedForests() {
+      if (this.deletedForests.length > 0) {
+        const deletedIds = this.deletedForests.map(f => f.id);
+        const deleteRequest = { ids: deletedIds };
+        const isDeleted = await this.$rest.delete(
+          `/archives/${this.id}/forests`,
+          {
+            data: deleteRequest,
+          },
+        );
+        if (isDeleted) {
+          this.selectingForestId = null;
+          this.relatedForests = this.removeDuplicateForests(
+            this.relatedForests,
+            this.deletedForests,
+          );
+          const pureForests = cloneDeep(this.deletedForests);
+          pureForests.forEach(f => (f.deleted = false));
+          this.allForests.push(...pureForests);
+          this.immutableAllForest = cloneDeep(this.allForests);
+        }
+      }
+    },
+
+    async addRelatedForests() {
+      if (this.addedForests.length > 0) {
+        const addedIds = this.addedForests.map(f => f.id);
+        const addRequest = { ids: addedIds };
+        const newRelatedForests = await this.$rest.post(
+          `/archives/${this.id}/forests`,
+          addRequest,
+        );
+        if (newRelatedForests) {
+          const tempForest = this.removeDuplicateForests(
+            this.relatedForests,
+            newRelatedForests.data,
+          );
+          this.allForests = this.removeDuplicateForests(
+            this.allForests,
+            this.addedForests,
+          );
+          this.immutableAllForest = cloneDeep(this.allForests);
+          tempForest.push(...newRelatedForests.data);
+          this.relatedForests = tempForest;
+        }
+      }
+    },
+
     onAdditionClick() {
       this.shown = true;
-      if (this.allForests.length === 0) {
-        this.fetchAllForests();
+      if (this.allForests.length === 0 || this.next === "") {
+        this.fetchAllForests(this.next);
       }
     },
 
@@ -195,15 +213,21 @@ export default {
     async fetchAllForests(next) {
       if (this.next !== null) {
         this.fetchAllForestLoading = true;
-        const response = await this.$rest.get(next || "/forests/minimal");
+        const response = await this.$rest.get(
+          next !== "" ? next : "/forests/minimal",
+        );
         if (response) {
           this.fetchAllForestLoading = false;
           const filteredForests = this.removeDuplicateForests(
             response.results,
             this.relatedForests,
           );
-          this.allForests.push(...filteredForests);
-          this.immutableAllForest.push(...filteredForests);
+          const allForests = this.removeDuplicateForests(
+            filteredForests,
+            this.allForests,
+          );
+          this.allForests.push(...allForests);
+          this.immutableAllForest = cloneDeep(this.allForests);
           this.next = response.next;
         }
       }
@@ -264,16 +288,12 @@ export default {
   },
 
   computed: {
-    addedForestIds() {
-      return this.relatedForests
-        .filter(forest => forest.added)
-        .map(forest => forest.id);
+    addedForests() {
+      return this.relatedForests.filter(forest => forest.added);
     },
 
-    deletedForestIds() {
-      return this.relatedForests
-        .filter(forest => forest.deleted)
-        .map(forest => forest.id);
+    deletedForests() {
+      return this.relatedForests.filter(forest => forest.deleted);
     },
   },
 };
