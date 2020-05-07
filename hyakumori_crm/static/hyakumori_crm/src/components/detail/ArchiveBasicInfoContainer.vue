@@ -45,7 +45,8 @@ import ContainerMixin from "./ContainerMixin";
 import ArchiveBasicInfo from "./ArchiveBasicInfo";
 import UpdateButton from "./UpdateButton";
 import { cloneDeep } from "lodash";
-import { toUtcDatetime } from "../../helpers/datetime";
+import { toUtcDatetime, getDate } from "../../helpers/datetime";
+import { get as _get } from "lodash";
 
 export default {
   name: "archive-basic-info-container",
@@ -107,6 +108,7 @@ export default {
         author: basicInfo.author.full_name,
         content: basicInfo.content,
         title: basicInfo.title,
+        attributes: basicInfo.attributes,
       };
     },
 
@@ -146,6 +148,35 @@ export default {
           this.isSave = false;
         });
       }
+    },
+    renderParticipants(data) {
+      const list = _get(data, "attributes.customer_cache.list", []);
+      if (list.length > 0) {
+        let results = _get(list[0], "customer__name_kanji.last_name", "");
+        results += " " + _get(list[0], "customer__name_kanji.first_name", "");
+        if (list.length > 1) {
+          results +=
+            " " +
+            this.$t("tables.another_item_human", { count: list.length - 1 });
+        }
+        return results;
+      }
+      return "";
+    },
+  },
+  watch: {
+    info: {
+      deep: true,
+      handler() {
+        this.$store.dispatch("setHeaderInfo", {
+          title: this.info.title,
+          subTitle:
+            getDate(this.info.archive_date) +
+            " " +
+            this.renderParticipants(this.info),
+          backUrl: "/archives",
+        });
+      },
     },
   },
 };
