@@ -102,6 +102,7 @@ export default {
         archive_date: basicInfo.archive_date,
         location: basicInfo.location,
         future_action: basicInfo.future_action,
+        author_id: basicInfo.author.id,
         author: basicInfo.author.full_name,
         content: basicInfo.content,
         title: basicInfo.title,

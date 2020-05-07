@@ -51,6 +51,7 @@
         <archive-participant-card
           :isAuthor="true"
           :name="info.author"
+          :card_id="info.author_id"
           v-if="isUpdate || isDetail"
         />
       </v-col>
