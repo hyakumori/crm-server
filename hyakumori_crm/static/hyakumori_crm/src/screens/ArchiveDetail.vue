@@ -92,51 +92,11 @@ export default {
     return {
       pageIcon: this.$t("icon.archive_icon"),
       backBtnContent: this.$t("page_header.archive_mgmt"),
-      headerInfo: {
-        title: this.$t(`${this.$route.meta.title}`),
-        subTitle: "",
-        backUrl: "/archives",
-      },
-      participants: [
-        {
-          customer_id: "123",
-          name_kanji: {
-            last_name: "石原",
-            first_name: "正",
-          },
-          name_kana: {
-            last_name: "イシハラ",
-            first_name: "タダシ",
-          },
-          address: "424-0023 岡山県倉敷市大谷4-1-3",
-          email: "hanako.yamada@gmail.com",
-          forest_count: 4,
-          telephone: "03-1313-4443",
-          mobilephone: "090-2211-6654",
-        },
-        {
-          customer_id: "123",
-          name_kanji: {
-            last_name: "石原",
-            first_name: "正",
-          },
-          name_kana: {
-            last_name: "イシハラ",
-            first_name: "タダシ",
-          },
-          address: "424-0023 岡山県倉敷市大谷4-1-3",
-          email: "hanako.yamada@gmail.com",
-          forest_count: 4,
-          telephone: "03-1313-4443",
-          mobilephone: "090-2211-6654",
-        },
-      ],
+      participants: [],
     };
   },
 
   mounted() {
-    this.$store.dispatch("setHeaderInfo", this.headerInfo);
-
     if (this.isDetail) {
       this.forceRefreshCache();
     }
