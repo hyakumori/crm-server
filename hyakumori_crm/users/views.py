@@ -15,12 +15,14 @@ from rest_typed_views import Body, typed_action
 
 from .serializers import CustomTokenObtainPairSerializer
 from ..activity.services import ActivityService, UserActions
+from ..api.decorators import action_login_required
 from ..core.permissions import IsAdminOrSelf
 from ..core.utils import default_paginator, make_error_json, make_success_json
 from ..crm.restful.serializers import (
     ContactSerializer,
     CustomerSerializer,
     ForestSerializer,
+    UserSerializer,
 )
 from ..permissions.services import PermissionService
 
@@ -39,6 +41,20 @@ class CustomUserViewSet(UserViewSet):
                 .filter(~Q(email="AnonymousUser"))
                 .order_by("date_joined")
         )
+
+    @action(detail=False, url_path="minimal", methods=["get"])
+    @action_login_required(with_policies=["can_view_customers"])
+    def list_minimal(self, request):
+        queryset = self.get_queryset()
+        keyword = request.GET.get("search")
+        if keyword:
+            queryset = queryset.filter(
+                Q(first_name__icontains=keyword) |
+                Q(last_name__icontains=keyword)
+            )
+        paginator = default_paginator()
+        paged_list = paginator.paginate_queryset(request=request, queryset=queryset, view=self)
+        return paginator.get_paginated_response(UserSerializer(paged_list, many=True).data)
 
     def perform_update(self, serializer):
         viewsets.ModelViewSet.perform_update(self, serializer)

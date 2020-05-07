@@ -32,20 +32,13 @@
           </template>
         </archive-participant-container>
 
-        <archive-participant-container
+        <archive-related-user-container
           addBtnContent="さらに追加"
           class="mt-9"
           editBtnContent="参加者を追加・編集"
           headerContent="当方参加者"
           v-if="isDetail"
-        >
-          <template v-slot:participants="props">
-            <archive-participant-list
-              :isUpdate="props.isUpdate"
-              :participants="names"
-            />
-          </template>
-        </archive-participant-container>
+        />
 
         <archive-related-forest-container
           addBtnContent="さらに追加"
@@ -75,9 +68,9 @@ import ArchiveBasicInfoContainer from "../components/detail/ArchiveBasicInfoCont
 import ArchiveDocumentContainer from "../components/detail/ArchiveDocumentContainer";
 import ArchiveParticipantContainer from "../components/detail/ArchiveParticipantContainer";
 import CustomerContactList from "../components/detail/CustomerContactList";
-import ArchiveParticipantList from "../components/detail/ArchiveParticipantList";
 import ArchiveRelatedForestContainer from "../components/detail/ArchiveRelatedForestContainer";
 import ActionLog from "../components/detail/ActionLog";
+import ArchiveRelatedUserContainer from "../components/detail/ArchiveRelatedUserContainer";
 
 export default {
   name: "archive-detail",
@@ -90,9 +83,9 @@ export default {
     ArchiveDocumentContainer,
     ArchiveParticipantContainer,
     CustomerContactList,
-    ArchiveParticipantList,
     ArchiveRelatedForestContainer,
     ActionLog,
+    ArchiveRelatedUserContainer,
   },
 
   data() {
@@ -138,7 +131,6 @@ export default {
           mobilephone: "090-2211-6654",
         },
       ],
-      names: ["John Wick", "Marshmello"],
     };
   },
 
