@@ -206,5 +206,6 @@
       "active": "有効",
       "inactive": "無効"
     }
-  }
+  },
+  "not_available_field": "一時不明"
 }
