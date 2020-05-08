@@ -2,19 +2,33 @@ from urllib import parse
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
+from django.db.models import F
+from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
 from pydantic import ValidationError
 from rest_framework.request import Request
 
-from hyakumori_crm.crm.models import Attachment
-from .cache import refresh_customers_cache, refresh_forest_cache, refresh_user_participants_cache
-from .schemas import ArchiveFilter, ArchiveInput
-from ..crm.models.customer import Customer
-from ..crm.models.forest import Forest
-from ..crm.models.archive import Archive
-from ..crm.models.relations import ArchiveForest, ArchiveCustomer, ArchiveUser
+from ..crm.models import (
+    Archive,
+    Attachment,
+    Customer,
+    Contact,
+    Forest,
+    ArchiveForest,
+    ArchiveCustomer,
+    ArchiveUser,
+    ArchiveCustomerContact,
+    CustomerContact,
+)
 from ..customer.service import get_customer_by_pk
 from ..forest.service import get_forest_by_pk
+
+from .cache import (
+    refresh_customers_cache,
+    refresh_forest_cache,
+    refresh_user_participants_cache,
+)
+from .schemas import ArchiveInput, ArchiveCustomerInput, ArchiveFilter
 
 
 def get_archive_by_pk(pk):
@@ -152,28 +166,63 @@ def is_archive_customer_exist(archive_pk, customer_pk):
     return True if len(archive_customer) == 1 else False
 
 
-def get_related_customer(archive: Archive):
-    return Customer.objects.filter(
-        archivecustomer__archive__id=archive.id, archivecustomer__deleted=None
+def get_participants(archive: Archive):
+    return (
+        Contact.objects.filter(
+            customercontact__archivecustomercontact__archivecustomer__archive_id=archive.id
+        )
+        .annotate(
+            customer_id=F(
+                "customercontact__archivecustomercontact__archivecustomer__customer_id"
+            )
+        )
+        .annotate(is_basic=F("customercontact__is_basic"))
+        .annotate(
+            customer_name_kanji=RawSQL(
+                """(select C0.name_kanji
+from crm_contact C0
+join crm_customercontact CC0
+on C0.id = CC0.contact_id and CC0.is_basic = true
+where CC0.customer_id = crm_customercontact.customer_id)""",
+                params=[],
+            )
+        )
     )
 
 
-def add_related_customer(archive: Archive, data: dict):
-    customer_id_list = set(data.get("ids"))
-    customers = []
-    check_empty_list(customer_id_list)
-    for customer_id in customer_id_list:
-        customer = get_customer_by_pk(customer_id)
-        if is_archive_customer_exist(archive.id, customer_id):
-            customers.append(customer)
-        else:
-            archive_customer = ArchiveCustomer()
-            archive_customer.archive_id = archive.id
-            archive_customer.customer_id = customer.id
-            archive_customer.save()
-            customers.append(customer)
+def add_participants(archive: Archive, data: ArchiveCustomerInput):
+    accs = []
+    for item in data.added:
+        cc = CustomerContact.objects.get(
+            customer_id=item.customer_id, contact_id=item.contact_id
+        )
+        ac, _ = ArchiveCustomer.objects.get_or_create(
+            archive_id=archive.id, customer_id=item.customer_id
+        )
+        acc = ArchiveCustomerContact(archivecustomer_id=ac.id, customercontact_id=cc.id)
+        accs.append(acc)
+    ArchiveCustomerContact.objects.bulk_create(accs)
+
+    for item in data.deleted:
+        cc = CustomerContact.objects.get(
+            customer_id=item.customer_id, contact_id=item.contact_id
+        )
+        ac = (
+            ArchiveCustomer.objects.filter(
+                archive_id=archive.id, customer_id=item.customer_id
+            )
+            .prefetch_related("archivecustomercontact_set")
+            .first()
+        )
+        cc.archivecustomercontact_set.filter(
+            customercontact_id=cc.id, archivecustomer_id=ac.id
+        ).delete()
+        if len(ac.archivecustomercontact_set.all()) == 0:
+            ac.force_delete()
+
+    archive.save(update_fields=["updated_at"])
     refresh_customers_cache(archive, save=True)
-    return customers
+    return archive
 
 
 def delete_related_customer(archive: Archive, data: dict):

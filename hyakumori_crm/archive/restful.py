@@ -9,14 +9,14 @@ from rest_framework.response import Response
 
 from hyakumori_crm.crm.common.utils import EncryptError, encrypt_string
 from .cache import refresh_single_archive_cache
-from .schemas import ArchiveFilter, ArchiveInput
+from .schemas import ArchiveFilter, ArchiveInput, ArchiveCustomerInput
 from .service import (
-    add_related_customer,
     add_related_forest,
     add_related_user,
     create_archive,
     create_attachment,
     delete_attachment_file,
+    add_participants,
     delete_related_customer,
     delete_related_forest,
     delete_related_user,
@@ -25,7 +25,7 @@ from .service import (
     get_archive_by_pk,
     get_attachment_by_pk,
     get_filtered_archive_queryset,
-    get_related_customer,
+    get_participants,
     get_related_forests,
 )
 from ..activity.services import ActivityService, ArchiveActions
@@ -37,8 +37,10 @@ from ..crm.restful.serializers import (
     ArchiveListingSerializer,
     ArchiveSerializer,
     AttachmentSerializer,
-    CustomerSerializer,
+    ForestSerializer,
+    ContactSerializer,
     ForestListingSerializer,
+    CustomerContactSerializer,
 )
 from ..users.models import User
 from ..users.serializers import UserSerializer
@@ -166,33 +168,24 @@ def archive_forests(request, archive: Archive = None):
             raise Http404()
 
 
-@api_view(["GET", "POST", "DELETE"])
-@get_or_404(get_archive_by_pk, pass_to=["kwargs"], to_name="archive", remove=True)
+@api_view(["GET", "PUT"])
 @action_login_required(with_permissions=["view_archive", "change_archive"])
-def archive_customers(request, archive: Archive = None):
+@get_or_404(
+    get_archive_by_pk, pass_to=["kwargs", "request"], to_name="archive", remove=True
+)
+@api_validate_model(ArchiveCustomerInput, methods=["PUT"])
+def archive_customers(
+    request, archive: Archive = None, data: ArchiveCustomerInput = None
+):
     if request.method == "GET":
-        customers = get_related_customer(archive)
-        return Response({"data": CustomerSerializer(customers, many=True).data})
-    elif request.method == "POST":
-        customers = add_related_customer(archive, request.data)
+        participants = get_participants(archive)
+        return Response(CustomerContactSerializer(participants, many=True).data)
+    elif request.method == "PUT":
+        customers = add_participants(archive, data)
         ActivityService.log(
             ArchiveActions.customer_participants_updated, archive, request=request
         )
-        return Response({"data": CustomerSerializer(customers, many=True).data})
-    else:
-        try:
-            is_deleted = delete_related_customer(archive, request.data)
-            if is_deleted:
-                ActivityService.log(
-                    ArchiveActions.customer_participants_updated,
-                    archive,
-                    request=request,
-                )
-                return Response({"msg": "OK"})
-            else:
-                raise Http404()
-        except ValueError:
-            raise Http404()
+        return Response({"id": data.archive.id})
 
 
 @api_view(["GET", "POST", "DELETE"])

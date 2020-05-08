@@ -13,12 +13,18 @@
         :added="contact.added"
         :deleted="contact.deleted"
         :showRelationshipSelect="showRelationshipSelect"
-        @click="(card_id, indx) => isUpdate && $emit('selected', card_id, indx)"
+        @click="
+          (contact_id, indx) => isUpdate && $emit('selected', contact_id, indx)
+        "
         @toggleDefault="handleToggleCustomerDefault"
         @toggleContactDefault="handleToggleContactDefault"
         @relationshipChange="handleRelationshipChange"
         :selectedId="selectingId"
-        :customerName="getCustomerName(contact.customer_id)"
+        :selectedIndex="selectingIndex"
+        :customerName="
+          (!contact.is_basic && getCustomerName(contact.customer_id)) || ''
+        "
+        :mode="mode"
       />
     </v-col>
   </v-row>
@@ -26,6 +32,7 @@
 
 <script>
 import CustomerContactCard from "./CustomerContactCard";
+import { isEmpty } from "lodash";
 
 export default {
   name: "customer-contact-list",
@@ -41,13 +48,16 @@ export default {
     isContactor: Boolean,
     showRelationshipSelect: { type: Boolean, default: true },
     selectingId: String,
+    selectingIndex: Number,
     customerIdNameMap: Object,
+    mode: String,
   },
   methods: {
     getCustomerName(customer_id) {
-      if (!this.customerIdNameMap) return null;
+      if (isEmpty(this.customerIdNameMap)) return null;
       const nameObj = this.customerIdNameMap[customer_id];
-      return `${nameObj.last_name} ${nameObj.last_name}`;
+      if (!nameObj) return null;
+      return `${nameObj.last_name} ${nameObj.first_name}`;
     },
     handleToggleCustomerDefault(val, customer_id) {
       this.$emit("toggleDefault", val, customer_id);

@@ -23,14 +23,10 @@
           editBtnContent="参加者を追加・編集"
           headerContent="先方参加者"
           v-if="isDetail"
-        >
-          <template v-slot:participants="props">
-            <customer-contact-list
-              :contacts="participants"
-              :isUpdate="props.isUpdate"
-            />
-          </template>
-        </archive-participant-container>
+          @saved="fetchParticipants"
+          :id="id"
+          :participants="participants"
+        />
 
         <archive-related-user-container
           addBtnContent="さらに追加"
@@ -67,7 +63,6 @@ import ScreenMixin from "./ScreenMixin";
 import ArchiveBasicInfoContainer from "../components/detail/ArchiveBasicInfoContainer";
 import ArchiveDocumentContainer from "../components/detail/ArchiveDocumentContainer";
 import ArchiveParticipantContainer from "../components/detail/ArchiveParticipantContainer";
-import CustomerContactList from "../components/detail/CustomerContactList";
 import ArchiveRelatedForestContainer from "../components/detail/ArchiveRelatedForestContainer";
 import ActionLog from "../components/detail/ActionLog";
 import ArchiveRelatedUserContainer from "../components/detail/ArchiveRelatedUserContainer";
@@ -82,7 +77,6 @@ export default {
     ArchiveBasicInfoContainer,
     ArchiveDocumentContainer,
     ArchiveParticipantContainer,
-    CustomerContactList,
     ArchiveRelatedForestContainer,
     ActionLog,
     ArchiveRelatedUserContainer,
@@ -92,10 +86,18 @@ export default {
     return {
       pageIcon: this.$t("icon.archive_icon"),
       backBtnContent: this.$t("page_header.archive_mgmt"),
+      headerInfo: {
+        title: this.$t(`${this.$route.meta.title}`),
+        subTitle: "",
+        backUrl: "/archives",
+      },
       participants: [],
+      participantsLoading: false,
     };
   },
-
+  created() {
+    this.fetchParticipants();
+  },
   mounted() {
     if (this.isDetail) {
       this.forceRefreshCache();
@@ -106,8 +108,16 @@ export default {
     forceRefreshCache() {
       this.$rest.post(`/archives/${this.id}/cache`);
     },
+    async fetchParticipants() {
+      this.participantsLoading = true;
+      try {
+        this.participants = await this.$rest.get(
+          `/archives/${this.id}/customers`,
+        );
+      } catch (error) {}
+      this.participantsLoading = false;
+    },
   },
-
   computed: {
     id() {
       return this.$route.params.id;
