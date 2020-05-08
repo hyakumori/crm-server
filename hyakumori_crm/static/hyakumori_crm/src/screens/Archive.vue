@@ -90,7 +90,7 @@ export default {
       const list = _get(data, "attributes.customer_cache.list", []);
       if (list.length > 0) {
         let results = _get(list[0], "customer__name_kanji.last_name", "");
-        results += " " +_get(list[0], "customer__name_kanji.first_name", "");
+        results += " " + _get(list[0], "customer__name_kanji.first_name", "");
         if (list.length > 1) {
           results +=
             " " +
@@ -191,15 +191,6 @@ export default {
   computed: {
     headers() {
       return archive_header;
-    },
-  },
-
-  watch: {
-    options: {
-      async handler(val, old) {
-        const { sortBy, sortDesc, page, itemsPerPage } = val;
-      },
-      deep: true,
     },
   },
 };

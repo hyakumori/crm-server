@@ -18,7 +18,19 @@ class ContactSerializer(ModelSerializer):
     cc_attrs = JSONField(read_only=True)
     # forest customer contact default
     default = BooleanField(read_only=True)
+    is_basic = BooleanField(read_only=True)
     forests_count = IntegerField(read_only=True)
+
+    class Meta:
+        model = Contact
+        exclude = ["contact_info", "deleted"]
+
+
+class CustomerContactSerializer(ModelSerializer):
+    customer_id = UUIDField(read_only=True)
+    customer_name_kanji = JSONField(read_only=True)
+    cc_attrs = JSONField(read_only=True)
+    is_basic = BooleanField(read_only=True)
 
     class Meta:
         model = Contact

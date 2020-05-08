@@ -197,7 +197,7 @@ export default {
       } catch (error) {}
     },
     async handleLoadMore() {
-      if (!this.contactitems.next && this.loadContacts) return;
+      if (!this.contactitems.next || this.loadContacts) return;
       this.loadContacts = true;
       const resp = await this.$rest.get(this.contactitems.next);
       this.contactitems = {

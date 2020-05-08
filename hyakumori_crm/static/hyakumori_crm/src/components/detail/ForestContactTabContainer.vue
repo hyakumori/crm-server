@@ -232,7 +232,7 @@ export default {
       }
     },
     async handleLoadMore() {
-      if (!this.customersForAdding.next && this.customersForAddingLoading)
+      if (!this.customersForAdding.next || this.customersForAddingLoading)
         return;
       this.customersForAddingLoading = true;
       const resp = await this.$rest.get(this.customersForAdding.next);

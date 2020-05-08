@@ -4,6 +4,7 @@ from uuid import UUID
 
 from django.db import DataError, IntegrityError, connection
 from django.db.models import Count, F, OuterRef, Q, Subquery
+from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
 from querybuilder.query import Expression, Query
 
@@ -265,7 +266,9 @@ def update_basic_info(data):
             forest.owner["address"] = self_contact.address
             forest.save(update_fields=["owner", "updated_at"])
         except:
-            logging.warning(f"could not saving latest user address in forest: {forestcustomer.forest.pk}")
+            logging.warning(
+                f"could not saving latest user address in forest: {forestcustomer.forest.pk}"
+            )
 
     return customer
 
@@ -289,6 +292,37 @@ def contacts_list_with_search(search_str: str = None):
     if search_str:
         queryset = queryset.filter(
             Q(name_kanji__first_name__icontains=search_str)
+            | Q(name_kanji__last_name__icontains=search_str)
+            | Q(name_kana__first_name__icontains=search_str)
+            | Q(name_kana__last_name__icontains=search_str)
+            | Q(postal_code__icontains=search_str)
+            | Q(telephone__icontains=search_str)
+            | Q(mobilephone__icontains=search_str)
+            | Q(email__icontains=search_str)
+            | Q(address__sector__icontains=search_str)
+            | Q(address__prefecture__icontains=search_str)
+            | Q(address__municipality__icontains=search_str)
+        )
+    return queryset
+
+
+def customercontacts_list_with_search(search_str: str = None):
+    queryset = Contact.objects.annotate(
+        customer_id=F("customercontact__customer_id"),
+        is_basic=F("customercontact__is_basic"),
+        customer_name_kanji=RawSQL(
+            """(select C0.name_kanji
+from crm_contact C0
+join crm_customercontact CC0
+on C0.id = CC0.contact_id and CC0.is_basic = true
+where CC0.customer_id = crm_customercontact.customer_id)""",
+            params=[],
+        ),
+    ).all()
+    if search_str:
+        queryset = queryset.filter(
+            Q(name_kanji__first_name__icontains=search_str)
+            | Q(id__icontains=search_str)
             | Q(name_kanji__last_name__icontains=search_str)
             | Q(name_kana__first_name__icontains=search_str)
             | Q(name_kana__last_name__icontains=search_str)
