@@ -5,6 +5,7 @@ from rest_framework.viewsets import ViewSet
 from hyakumori_crm.core.utils import default_paginator
 from hyakumori_crm.crm.restful.serializers import (
     ContactSerializer,
+    CustomerContactSerializer,
     CustomerSerializer,
     ArchiveSerializer,
 )
@@ -40,6 +41,7 @@ from .service import (
     create_contact,
     get_customer_archives,
     get_customer_contacts_forests,
+    customercontacts_list_with_search,
 )
 
 
@@ -200,8 +202,21 @@ class CustomerViewSets(ViewSet):
 def contacts_list(request):
     paginator = default_paginator()
     paged_list = paginator.paginate_queryset(
-        request=request, queryset=contacts_list_with_search(request.GET.get("search"))
+        request=request, queryset=contacts_list_with_search(request.GET.get("search")),
     )
     return paginator.get_paginated_response(
         ContactSerializer(paged_list, many=True).data
+    )
+
+
+@api_view(["GET"])
+@action_login_required(with_permissions=["view_customer"])
+def customercontacts_list(request):
+    paginator = default_paginator()
+    paged_list = paginator.paginate_queryset(
+        request=request,
+        queryset=customercontacts_list_with_search(request.GET.get("search")),
+    )
+    return paginator.get_paginated_response(
+        CustomerContactSerializer(paged_list, many=True).data
     )

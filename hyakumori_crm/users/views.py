@@ -37,9 +37,9 @@ class CustomUserViewSet(UserViewSet):
     def get_queryset(self):
         return (
             super()
-                .get_queryset()
-                .filter(~Q(email="AnonymousUser"))
-                .order_by("date_joined")
+            .get_queryset()
+            .filter(~Q(email="AnonymousUser"))
+            .order_by("date_joined")
         )
 
     @action(detail=False, url_path="minimal", methods=["get"])
@@ -49,12 +49,15 @@ class CustomUserViewSet(UserViewSet):
         keyword = request.GET.get("search")
         if keyword:
             queryset = queryset.filter(
-                Q(first_name__icontains=keyword) |
-                Q(last_name__icontains=keyword)
+                Q(first_name__icontains=keyword) | Q(last_name__icontains=keyword)
             )
         paginator = default_paginator()
-        paged_list = paginator.paginate_queryset(request=request, queryset=queryset, view=self)
-        return paginator.get_paginated_response(UserSerializer(paged_list, many=True).data)
+        paged_list = paginator.paginate_queryset(
+            request=request, queryset=queryset, view=self
+        )
+        return paginator.get_paginated_response(
+            UserSerializer(paged_list, many=True).data
+        )
 
     def perform_update(self, serializer):
         viewsets.ModelViewSet.perform_update(self, serializer)
@@ -76,7 +79,12 @@ class CustomUserViewSet(UserViewSet):
             sender=self.__class__, user=user, request=self.request
         )
 
-        ActivityService.log(UserActions.account_activated, model_instance=user, user=user, request=request)
+        ActivityService.log(
+            UserActions.account_activated,
+            model_instance=user,
+            user=user,
+            request=request,
+        )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -171,7 +179,11 @@ class CustomUserViewSet(UserViewSet):
         try:
             results = PermissionService.assign_user_to_group(user_id, group_ids)
 
-            ActivityService.log(UserActions.group_updated, model_instance=results.get("user"), request=request)
+            ActivityService.log(
+                UserActions.group_updated,
+                model_instance=results.get("user"),
+                request=request,
+            )
 
             return make_success_json(dict(groups=results.get("groups")))
         except Exception as e:
@@ -192,7 +204,11 @@ class CustomUserViewSet(UserViewSet):
         try:
             results = PermissionService.unassign_user_from_group(user_id, group_ids)
 
-            ActivityService.log(UserActions.group_updated, model_instance=results.get("user"), request=request)
+            ActivityService.log(
+                UserActions.group_updated,
+                model_instance=results.get("user"),
+                request=request,
+            )
 
             return make_success_json(dict(groups=results.get("groups")))
         except Exception as e:
