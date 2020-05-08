@@ -65,9 +65,9 @@ def refresh_customers_cache(archive: Archive, save=False):
     archive.attributes["customer_cache"]["repr"] = ",".join(
         list(
             map(
-                lambda c: c["customer__name_kanji"]["last_name"]
+                lambda c: c["customer__name_kanji"].get("last_name", "")
                 + " "
-                + c["customer__name_kanji"]["first_name"],
+                + c["customer__name_kanji"].get("first_name", ""),
                 archive.attributes["customer_cache"]["list"],
             )
         )
