@@ -22,25 +22,33 @@
         <p class="green--text mb-0 ml-2 caption">{{ relationshipType }}</p>
       </div>
 
-      <div v-if="address" class="text-truncate">
+      <div class="text-truncate">
         <v-icon small>mdi-map-marker</v-icon>
-        <span class="ml-1 caption">{{ address }}</span>
+        <span class="ml-1 caption min-width-90">
+          {{ address || $t("not_available_field") }}
+        </span>
       </div>
 
-      <div class="d-flex text-truncate" v-if="email">
+      <div class="d-flex text-truncate">
         <v-icon small>mdi-email</v-icon>
-        <span class="ml-1 caption">{{ email }}</span>
+        <span class="ml-1 caption min-width-90">
+          {{ email || $t("not_available_field") }}
+        </span>
       </div>
 
       <div class="d-flex">
-        <template v-if="phone">
+        <template>
           <v-icon small>mdi-phone</v-icon>
-          <span class="ml-1 pr-2 caption">{{ phone }}</span>
+          <span class="ml-1 pr-2 caption min-width-90">
+            {{ phone || $t("not_available_field") }}
+          </span>
         </template>
 
-        <template v-if="cellphone">
+        <template>
           <v-icon small>mdi-cellphone</v-icon>
-          <span class="ml-1 caption">{{ cellphone }}</span>
+          <span class="ml-1 caption min-width-90">
+            {{ cellphone || $t("not_available_field") }}
+          </span>
         </template>
       </div>
 
@@ -176,14 +184,21 @@ export default {
         : this.contact;
     },
     fullname() {
-      return `${this.contact_.name_kanji.last_name} ${this.contact_.name_kanji.first_name}`;
+      if (
+        this.contact_.name_kanji.last_name &&
+        this.contact_.name_kanji.first_name
+      ) {
+        return `${this.contact_.name_kanji.last_name} ${this.contact_.name_kanji.first_name}`;
+      }
+      return (
+        this.contact_.name_kanji.last_name ||
+        this.contact_.name_kanji.first_name || this.$t("not_available_field")
+      );
     },
     address() {
-      return `${this.contact_.postal_code || ""} ${
-        this.contact_.address.sector
-      } ${this.contact_.address.municipality} ${
-        this.contact_.address.prefecture
-      }`;
+      return `${this.contact_.postal_code || ""} ${this.contact_.address
+        .sector || ""} ${this.contact_.address.municipality || ""} ${this
+        .contact_.address.prefecture || ""}`;
     },
     email() {
       return this.contact_.email;
@@ -218,6 +233,10 @@ export default {
 <style lang="scss" scoped>
 $border-radius: 8px;
 $background-color: #f5f5f5;
+
+.min-width-90 {
+  min-width: 90px;
+}
 
 .customer-contact-card::before {
   border-radius: $border-radius;
