@@ -10,73 +10,83 @@ from hyakumori_crm.users.models import User
 
 
 def refresh_user_participants_cache(archive: Archive, save=False):
-    archive.attributes["user_cache"] = dict(
-        count=archive.archiveuser_set.count(),
-        list=list(
-            archive.archiveuser_set.all()
-            .annotate(
-                full_name=Concat("user__last_name", Value(" "), "user__first_name")
-            )
-            .values("user_id", "full_name")
-        ),
-    )
-
-    archive.attributes["user_cache"]["repr"] = ",".join(
-        list(map(lambda c: c["full_name"], archive.attributes["user_cache"]["list"]))
-    )
-
-    if save:
-        archive.save()
-
-    return archive
+    try:
+        archive.attributes["user_cache"] = dict(
+            count=archive.archiveuser_set.count(),
+            list=list(
+                archive.archiveuser_set.all()
+                    .annotate(
+                    full_name=Concat("user__last_name", Value(" "), "user__first_name")
+                )
+                    .values("user_id", "full_name")
+            ),
+        )
+        archive.attributes["user_cache"]["repr"] = ",".join(
+            list(map(lambda c: c["full_name"], archive.attributes["user_cache"]["list"]))
+        )
+        if save:
+            archive.save()
+    except:
+        logging.warning(
+            f"could not refresh user cache for archive: {archive.pk}"
+        )
+    finally:
+        return archive
 
 
 def refresh_forest_cache(archive: Archive, save=False):
-    archive.attributes["forest_cache"] = dict(
-        count=archive.archiveforest_set.count(),
-        list=list(archive.archiveforest_set.all().values("forest__internal_id")),
-    )
-
-    archive.attributes["forest_cache"]["repr"] = ",".join(
-        list(
-            map(
-                lambda c: c["forest__internal_id"],
-                archive.attributes["forest_cache"]["list"],
+    try:
+        archive.attributes["forest_cache"] = dict(
+            count=archive.archiveforest_set.count(),
+            list=list(archive.archiveforest_set.all().values("forest__internal_id")),
+        )
+        archive.attributes["forest_cache"]["repr"] = ",".join(
+            list(
+                map(
+                    lambda c: c["forest__internal_id"],
+                    archive.attributes["forest_cache"]["list"],
+                )
             )
         )
-    )
-
-    if save:
-        archive.save()
-
-    return archive
+        if save:
+            archive.save()
+    except:
+        logging.warning(
+            f"could not refresh user cache for archive: {archive.pk}"
+        )
+    finally:
+        return archive
 
 
 def refresh_customers_cache(archive: Archive, save=False):
-    archive.attributes["customer_cache"] = dict(
-        count=archive.archivecustomer_set.count(),
-        list=list(
-            archive.archivecustomer_set.all().values(
-                "customer__id", "customer__name_kanji", "customer__name_kana"
-            )
-        ),
-    )
-
-    archive.attributes["customer_cache"]["repr"] = ",".join(
-        list(
-            map(
-                lambda c: c["customer__name_kanji"].get("last_name", "")
-                + " "
-                + c["customer__name_kanji"].get("first_name", ""),
-                archive.attributes["customer_cache"]["list"],
-            )
+    try:
+        archive.attributes["customer_cache"] = dict(
+            count=archive.archivecustomer_set.count(),
+            list=list(
+                archive.archivecustomer_set.all().values(
+                    "customer__id", "customer__name_kanji", "customer__name_kana"
+                )
+            ),
         )
-    )
+        customer_repr = []
+        for c in archive.attributes["customer_cache"]["list"]:
+            kanji_name = c["customer__name_kanji"]
+            customer_name = ""
+            if kanji_name.get("last_name", None) is not None:
+                customer_name = kanji_name.get("last_name")
+            if kanji_name.get("first_name", None) is not None:
+                customer_name += kanji_name.get("last_name")
+            customer_repr.append(customer_name)
 
-    if save:
-        archive.save()
-
-    return archive
+        archive.attributes["customer_cache"]["repr"] = ",".join(customer_repr)
+        if save:
+            archive.save()
+    except:
+        logging.warning(
+            f"could not refresh user cache for archive: {archive.pk}"
+        )
+    finally:
+        return archive
 
 
 def refresh_single_archive_cache(archive: Archive):
