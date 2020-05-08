@@ -74,9 +74,9 @@
         {{ forestId }}
       </p>
       <p class="ma-0 pt-2 caption text-truncate" v-if="customerName">
-        <span style="background-color:#f5f5f5;color: black">{{
-          `${customerName}の関係連絡先`
-        }}</span>
+        <span style="background-color:#f5f5f5;color: black">
+          {{ customer.replace("null", "") }}の関係連絡先
+        </span>
       </p>
     </div>
     <v-btn
@@ -192,7 +192,8 @@ export default {
       }
       return (
         this.contact_.name_kanji.last_name ||
-        this.contact_.name_kanji.first_name || this.$t("not_available_field")
+        this.contact_.name_kanji.first_name ||
+        this.$t("not_available_field")
       );
     },
     address() {

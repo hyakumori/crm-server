@@ -1,6 +1,6 @@
 <template>
-  <v-dialog eager v-model="shown_" scrollable width="400" height="480">
-    <v-card>
+  <v-dialog eager v-model="shown_" scrollable width="400">
+    <v-card class="select-list-dialog">
       <v-card-title class="px-4 py-2">
         <TextInput
           @input="val => $emit('search', val)"
@@ -81,3 +81,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.select-list-dialog {
+  height: 64vh;
+}
+</style>
