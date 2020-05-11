@@ -82,6 +82,7 @@ export default {
 
   async mounted() {
     if (this.isDetail && !this.info.author) {
+      this.$store.dispatch("setHeaderInfo", { title: "" });
       await this.fetchBasicInfo();
     }
   },
@@ -168,14 +169,16 @@ export default {
     info: {
       deep: true,
       handler() {
-        this.$store.dispatch("setHeaderInfo", {
-          title: this.info.title,
-          subTitle:
-            getDate(this.info.archive_date) +
-            " " +
-            this.renderParticipants(this.info),
-          backUrl: "/archives",
-        });
+        if (this.isDetail) {
+          this.$store.dispatch("setHeaderInfo", {
+            title: this.info.title,
+            subTitle:
+              getDate(this.info.archive_date) +
+              " " +
+              this.renderParticipants(this.info),
+            backUrl: "/archives",
+          });
+        }
       },
     },
   },

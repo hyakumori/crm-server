@@ -25,7 +25,7 @@
           (!contact.is_basic && getCustomerName(contact.customer_id)) || ''
         "
         :mode="mode"
-        :allowNavigation="contact.allowNavigation"
+        :showDefaultBadge="showDefaultBadge"
       />
     </v-col>
   </v-row>
@@ -52,6 +52,7 @@ export default {
     selectingIndex: Number,
     customerIdNameMap: Object,
     mode: String,
+    showDefaultBadge: { type: Boolean, default: false },
   },
   methods: {
     getCustomerName(customer_id) {

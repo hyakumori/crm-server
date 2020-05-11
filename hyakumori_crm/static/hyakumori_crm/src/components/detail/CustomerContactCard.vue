@@ -93,7 +93,6 @@
       v-slot="{ href }"
     >
       <v-btn
-        v-if="allowNavigation"
         class="align-self-center"
         icon
         @click.stop="isUpdate ? $emit('deleteContact') : undefined"
@@ -105,7 +104,7 @@
 
     <div
       v-if="
-        mode !== 'search' &&
+        showDefaultBadge &&
           !contact.deleted &&
           (isUpdate || this.contact.default)
       "
@@ -143,7 +142,7 @@ export default {
     showRelationshipSelect: { type: Boolean, default: true },
     contact: Object,
     customerName: String,
-    allowNavigation: { type: Boolean, default: true },
+    showDefaultBadge: { type: Boolean, default: false },
   },
 
   data() {
