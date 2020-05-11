@@ -32,14 +32,21 @@
       @search="debounceLoadInitContactsForAdding"
     >
       <template #list>
+        <div
+          v-if="contactsForAdding.results.length === 0 && !loadContacts"
+          class="text-center"
+        >
+          {{ $t("messages.not_found") }}
+        </div>
         <customer-contact-card
+          v-else
           @click="
             (cId, inx) => {
               modalSelectingContactId = cId;
               modalSelectingContactIndex = inx;
             }
           "
-          v-for="(item, indx) in contactsForAdding.results || []"
+          v-for="(item, indx) in contactsForAdding.results"
           :key="`${indx},${item.id}`"
           :card_id="item.id"
           :contact="item"
@@ -105,7 +112,7 @@ export default {
     return {
       isUpdate: false,
       loadContacts: false,
-      contactsForAdding: {},
+      contactsForAdding: { results: [] },
       saving: false,
       modalSelectingContactId: null,
       modalSelectingContactIndex: null,
@@ -166,7 +173,7 @@ export default {
         this.saving = false;
         this.contactsToDelete = [];
         this.contactsToAdd = [];
-        this.loadInitContacts();
+        this.contactsForAdding = { results: [] };
       } catch (error) {
         this.saving = false;
       }
@@ -189,7 +196,7 @@ export default {
       this.modalSelectingContactIndex = null;
       this.modalSelectingContactId = null;
       // side-effect
-      if (this.contactsForAdding.results.length < 3) {
+      if (this.contactsForAdding.results.length <= 3) {
         this.handleLoadMore();
       }
     },
@@ -200,6 +207,7 @@ export default {
           id: contact.id,
           customer_id: contact.customer_id,
         });
+        this.contactsForAdding = { results: [] };
       } else {
         this.$set(contact, "deleted", true);
         this.contactsToDelete.push(contact);
@@ -230,20 +238,29 @@ export default {
       this.loadContacts = false;
     },
     async loadInitContacts(keyword) {
+      const reqConfig = keyword
+        ? {
+            params: {
+              search: keyword || "",
+            },
+          }
+        : {};
       this.loadContacts = true;
-      const resp = await this.$rest.get("/customercontacts", {
-        params: {
-          search: keyword || "",
-        },
-      });
-      this.contactsForAdding = {
-        next: resp.next,
-        previous: resp.previous,
-        results: reject(
-          resp.results,
-          c => !!this.contactIdsMap[`${c.id},${c.customer_id}`],
-        ),
-      };
+      let resp = { next: "/customercontacts" };
+      while (
+        (resp.next && keyword) ||
+        (resp.next && this.contactsForAdding.results.length === 0)
+      ) {
+        resp = await this.$rest.get(resp.next, reqConfig);
+        this.contactsForAdding = {
+          next: resp.next,
+          previous: resp.previous,
+          results: reject(
+            resp.results,
+            c => !!this.contactIdsMap[`${c.id},${c.customer_id}`],
+          ),
+        };
+      }
       this.loadContacts = false;
     },
   },
@@ -255,15 +272,18 @@ export default {
     },
     isUpdate(val) {
       if (!val) {
-        this.contactsToAdd.length > 0 && (this.contactsToAdd = []);
+        if (this.contactsToAdd.length > 0) {
+          this.contactsToAdd = [];
+          this.contactsForAdding = { results: [] };
+        }
         for (let contactToDelete of this.contactsToDelete) {
           this.$set(contactToDelete, "deleted", undefined);
         }
-        this.contactsToDelete.length > 0 && (this.contactsToDelete = []);
+        if (this.contactsToDelete.length > 0) {
+          this.contactsToDelete = [];
+          this.contactsForAdding = { results: [] };
+        }
       }
-    },
-    selectingCustomerId(val) {
-      this.loadInitContacts();
     },
     participants(val) {
       const customerIdNameMap = {};

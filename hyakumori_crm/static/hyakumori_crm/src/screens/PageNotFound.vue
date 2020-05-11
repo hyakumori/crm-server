@@ -9,7 +9,9 @@
         <v-row no-gutters>
           <v-col cols="12">
             <img src="@/assets/img/404.png" width="100%" />
-            <h2 class="text-center">{{ $t("messages.not_found_text") }}</h2>
+            <h2 class="text-center">
+              {{ $t("messages.page_not_found_text") }}
+            </h2>
           </v-col>
         </v-row>
       </v-container>
