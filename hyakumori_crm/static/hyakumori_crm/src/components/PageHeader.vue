@@ -81,7 +81,7 @@
                     'default-height': isDetail,
                   }"
                 >
-                  <p class="mb-0 page-header__detail__data__title">
+                  <p class="mb-0 text-truncate page-header__detail__data__title">
                     {{ headerInfo.title }}
                     <span
                       v-for="tag in headerInfo.tag"
@@ -247,6 +247,7 @@ export default {
 
   &__detail__data {
     height: 40px;
+    max-width: 500px;
     padding-left: 9px;
 
     &__title {

@@ -87,7 +87,7 @@ export default {
       pageIcon: this.$t("icon.archive_icon"),
       backBtnContent: this.$t("page_header.archive_mgmt"),
       headerInfo: {
-        title: this.$t(`${this.$route.meta.title}`),
+        title: this.$t("page_header.archive_new"),
         subTitle: "",
         backUrl: "/archives",
       },
