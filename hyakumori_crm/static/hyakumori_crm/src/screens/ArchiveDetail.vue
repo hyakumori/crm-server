@@ -96,7 +96,11 @@ export default {
     };
   },
   created() {
-    this.fetchParticipants();
+    if (this.isDetail) {
+      this.fetchParticipants();
+    } else {
+      this.$store.dispatch("setHeaderInfo", this.headerInfo);
+    }
   },
   mounted() {
     if (this.isDetail) {

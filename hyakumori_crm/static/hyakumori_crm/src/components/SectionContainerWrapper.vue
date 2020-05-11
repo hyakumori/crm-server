@@ -10,12 +10,14 @@
     <slot></slot>
     <template v-if="isEditing">
       <addition-button
+        v-if="showAddBtn"
         class="my-2"
         :content="addBtnContent"
         :click="addBtnClickHandler"
       />
       <update-button
         class="mb-9"
+        :class="{ 'mt-4': !showAddBtn }"
         :cancel="cancelEdit"
         :save="save"
         :saving="saving"
@@ -48,6 +50,7 @@ export default {
     saveDisabled: Boolean,
     isEditing: Boolean,
     cancelEdit: Function,
+    showAddBtn: { type: Boolean, default: true },
   },
 };
 </script>

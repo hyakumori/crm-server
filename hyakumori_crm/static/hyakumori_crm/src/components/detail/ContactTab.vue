@@ -40,6 +40,7 @@
           (val, customer_id) => $emit('toggleDefault', val, customer_id)
         "
         :selectingId="selectingCustomerId"
+        :showDefaultBadge="true"
       />
     </v-tab-item>
 
@@ -54,6 +55,7 @@
           (val, customer_id, contact_id) =>
             $emit('toggleContactDefault', val, customer_id, contact_id)
         "
+        :showDefaultBadge="true"
       />
     </v-tab-item>
   </v-tabs>
