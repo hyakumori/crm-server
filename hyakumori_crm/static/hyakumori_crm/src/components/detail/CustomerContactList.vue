@@ -25,6 +25,7 @@
           (!contact.is_basic && getCustomerName(contact.customer_id)) || ''
         "
         :mode="mode"
+        :allowNavigation="contact.allowNavigation"
       />
     </v-col>
   </v-row>

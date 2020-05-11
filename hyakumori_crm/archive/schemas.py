@@ -6,6 +6,8 @@ from functools import reduce
 from django.utils.translation import gettext_lazy as _
 from pydantic import validator, root_validator
 
+from pydantic import Field
+
 from ..core.models import HyakumoriDanticModel
 from ..crm.models import (
     Archive,
@@ -17,10 +19,10 @@ from ..crm.models import (
 
 
 class ArchiveInput(HyakumoriDanticModel):
-    title: str
+    title: str = Field(..., max_length=255)
     content: Optional[str]
-    location: Optional[str]
-    future_action: Optional[str]
+    location: Optional[str] = Field(..., max_length=255)
+    future_action: Optional[str] = Field(..., max_length=255)
     archive_date: Optional[datetime]
 
 

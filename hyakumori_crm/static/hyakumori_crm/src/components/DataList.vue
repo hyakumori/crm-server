@@ -34,7 +34,9 @@
           <v-icon class="icon-mode mr-4 f14 mt-1 mb-1" small>{{
             tableRowIcon
           }}</v-icon>
-          <p class="mb-0">{{ item[iconRowValue] }}</p>
+          <p class="mb-0">
+            {{ item[iconRowValue] ? item[iconRowValue].slice(0, 8) : "" }}
+          </p>
         </div>
       </template>
 
@@ -196,6 +198,10 @@ export default {
 
   & ::v-deep tr {
     td {
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       text-align: center;
       @extend %text-overflow-shared;
       &:hover {

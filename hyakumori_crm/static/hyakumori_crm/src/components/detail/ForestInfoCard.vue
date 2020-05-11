@@ -1,6 +1,6 @@
 <template>
   <v-card
-    :color="selected ? '#f5f5f5' : undefined"
+    :color="selected ? '#dddddd' : undefined"
     class="forest-info-card d-flex d-hover"
     :class="{ flat: flat, deleted: deleted, added: added }"
     outlined

@@ -198,7 +198,7 @@ def archive_users(request, archive: Archive = None):
             request=request,
             queryset=User.objects.filter(
                 archiveuser__archive__id=archive.id, archiveuser__deleted=None
-            ),
+            ).prefetch_related("groups"),
         )
         return paginator.get_paginated_response(
             UserSerializer(paged_list, many=True).data

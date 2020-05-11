@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card class="log-card d-hover" flat @click="onClickCard">
+    <v-card class="log-card d-hover" flat>
       <div class="d-flex pa-4">
         <v-icon class="align-self-start">{{ icon }}</v-icon>
 
@@ -11,7 +11,7 @@
       </div>
 
       <div class="align-self-center pr-4" v-if="!noRightAction">
-        <v-btn icon @click="onClick">
+        <v-btn v-acl-only="['admin', 'group_admin']" icon @click="onClick">
           <v-icon>mdi-chevron-right</v-icon>
         </v-btn>
       </div>
@@ -36,10 +36,6 @@ export default {
   methods: {
     onClick() {
       // Handle click navigate
-    },
-
-    onClickCard() {
-      // Handle click card
     },
   },
 

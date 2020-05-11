@@ -45,7 +45,7 @@ class CustomUserViewSet(UserViewSet):
     @action(detail=False, url_path="minimal", methods=["get"])
     @action_login_required(with_policies=["can_view_customers"])
     def list_minimal(self, request):
-        queryset = self.get_queryset()
+        queryset = self.get_queryset().prefetch_related("groups")
         keyword = request.GET.get("search")
         if keyword:
             queryset = queryset.filter(
