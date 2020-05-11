@@ -25,6 +25,7 @@
           height="36"
           outlined
           color="primary"
+          :disabled="disableAdditionBtn"
           @click="handleSubmitClick"
           ><v-icon v-if="submitBtnIcon">{{ submitBtnIcon }}</v-icon
           >{{ submitBtnText }}</v-btn
@@ -46,6 +47,7 @@ export default {
     "shown",
     "loading",
     "handleSubmitClick",
+    "disableAdditionBtn",
   ],
   data() {
     return {
