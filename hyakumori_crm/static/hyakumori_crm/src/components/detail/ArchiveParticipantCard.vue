@@ -3,7 +3,7 @@
     class="participant-card d-hover"
     outlined
     :ripple="!showAction"
-    :color="selected ? '#f5f5f5' : undefined"
+    :color="selected ? '#dddddd' : undefined"
     :class="{ flat: flat, deleted: deleted, added: added }"
     @click="$emit('selected', card_id, index)"
   >

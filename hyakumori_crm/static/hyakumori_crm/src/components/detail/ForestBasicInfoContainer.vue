@@ -14,11 +14,13 @@
         :isUpdate="isUpdate"
         :isSave="isSave"
         @updateInfo="updateData"
+        @forest:save-disable="val => (saveDisabled = val)"
       />
       <update-button
         class="mb-12"
         v-if="isUpdate"
         :saving="isSave"
+        :saveDisabled="saveDisabled"
         :save="save.bind(this)"
         :cancel="cancel.bind(this)"
       />
@@ -56,6 +58,7 @@ export default {
       isSave: false,
       immutableInfo: {},
       mutableInfo: null,
+      saveDisabled: false,
     };
   },
 

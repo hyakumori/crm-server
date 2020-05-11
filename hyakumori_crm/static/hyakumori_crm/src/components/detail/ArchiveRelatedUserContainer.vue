@@ -19,6 +19,7 @@
       :submitBtnText="$t('buttons.add')"
       :shown="shown"
       :handleSubmitClick="submitRelatedParticipant.bind(this)"
+      :disableAdditionBtn="fetchAllParticipantLoading"
       @search="debounceSearchParticipant"
       @needToLoad="handleLoadMore"
       @update:shown="val => (shown = val)"
@@ -99,6 +100,7 @@ export default {
       selectingParticipantId: null,
       selectingParticipantIndex: null,
       updateParticipantLoading: false,
+      searchNext: null,
     };
   },
 
@@ -186,10 +188,21 @@ export default {
 
     fetchRelatedParticipants() {
       this.fetchRelatedParticipantLoading = true;
-      this.$rest.get(`/archives/${this.archive_id}/users`).then(res => {
-        this.fetchRelatedParticipantLoading = false;
-        this.relatedParticipants = res.results;
-      });
+      this.$rest
+        .get(`/archives/${this.archive_id}/users`)
+        .then(async response => {
+          let tempRelatedData = response.results;
+          let next = response.next;
+          while (!!next) {
+            const paginationResponse = await this.$rest.get(next);
+            if (paginationResponse) {
+              tempRelatedData.push(...paginationResponse.results);
+              next = paginationResponse.next;
+            }
+          }
+          this.relatedParticipants = tempRelatedData;
+          this.fetchRelatedParticipantLoading = false;
+        });
     },
 
     fetchAllParticipants() {
@@ -206,7 +219,7 @@ export default {
             this.allParticipants,
           );
           this.allParticipants.push(...allParticipants);
-          this.immutableAllParticipants = cloneDeep(this.allParticipants);
+          this.immutableAllParticipants.push(...allParticipants);
           this.next = res.next;
         });
       }
@@ -228,7 +241,9 @@ export default {
     },
 
     handleLoadMore() {
-      this.fetchAllParticipants(this.next);
+      if (this.next !== null) {
+        this.fetchAllParticipants(this.next);
+      }
     },
 
     submitRelatedParticipant() {
@@ -270,10 +285,15 @@ export default {
           },
         })
         .then(response => {
-          this.allParticipants = this.removeDuplicateParticipant(
+          this.allParticipants = [];
+          this.immutableAllParticipants = [];
+          const tempParticipants = this.removeDuplicateParticipant(
             response.results,
             this.relatedParticipants,
           );
+          this.next = response.next;
+          this.allParticipants.push(...tempParticipants);
+          this.immutableAllParticipants.push(...tempParticipants);
           this.fetchAllParticipantLoading = false;
         });
     },
@@ -292,6 +312,17 @@ export default {
         this.relatedParticipants &&
         this.relatedParticipants.filter(participant => participant.deleted)
       );
+    },
+  },
+
+  watch: {
+    allParticipants: {
+      deep: true,
+      handler(allParticipants) {
+        if (allParticipants.length <= 3 && this.next !== null) {
+          this.handleLoadMore();
+        }
+      },
     },
   },
 };

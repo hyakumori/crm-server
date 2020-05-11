@@ -8,7 +8,7 @@
           :name="$t('forms.labels.archive.title')"
           :value="info.title"
           @input="val => (info.title = val)"
-          rules="required"
+          rules="required|max:255"
           v-if="!isDetail || isUpdate"
         />
         <single-date-picker
@@ -27,7 +27,9 @@
         <text-info
           :isUpdate="isUpdate || !isDetail"
           :label="$t('forms.labels.archive.future_action')"
+          :name="$t('forms.labels.archive.future_action')"
           :value="info.future_action"
+          rules="max:255"
           @input="val => (info.future_action = val)"
         />
       </v-col>
@@ -39,7 +41,7 @@
           :name="$t('forms.labels.archive.location')"
           :value="info.location"
           @input="val => (info.location = val)"
-          rules="required"
+          rules="required|max:255"
         />
         <time-picker
           :class="{ 'mt-6': !isDetail || isUpdate }"

@@ -8,7 +8,7 @@
       :name="name"
       @input="$emit('input', $event)"
     />
-    <p v-else>{{ value }}</p>
+    <p class="text-break" v-else>{{ value }}</p>
   </div>
 </template>
 
