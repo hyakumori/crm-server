@@ -2,7 +2,7 @@ from urllib import parse
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
-from django.db.models import F
+from django.db.models import F, Subquery, OuterRef, Count
 from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
 from pydantic import ValidationError
@@ -167,6 +167,11 @@ def is_archive_customer_exist(archive_pk, customer_pk):
 
 
 def get_participants(archive: Archive):
+    cc = (
+        CustomerContact.objects.filter(is_basic=True, contact=OuterRef("pk"))
+        .values("id", "customer_id")
+        .annotate(forests_count=Count("customer__forestcustomer"))
+    )
     return (
         Contact.objects.filter(
             customercontact__archivecustomercontact__archivecustomer__archive_id=archive.id
@@ -187,6 +192,7 @@ where CC0.customer_id = crm_customercontact.customer_id)""",
                 params=[],
             )
         )
+        .annotate(forests_count=Subquery(cc.values("forests_count")[:1]))
     )
 
 
