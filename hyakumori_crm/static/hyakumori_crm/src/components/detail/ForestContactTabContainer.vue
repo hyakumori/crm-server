@@ -20,9 +20,11 @@
     :saveDisabled="saveDisabled"
     :save="handleSave"
     :saving="saving"
+    :showAddBtn="$refs.tabs && $refs.tabs.selectedTab === 'owner'"
   >
     <template>
       <contact-tab
+        ref="tabs"
         class="mt-5"
         :class="{ 'mb-10': !isEditing }"
         :customers="tempCustomers"
