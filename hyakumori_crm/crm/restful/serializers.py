@@ -31,6 +31,7 @@ class CustomerContactSerializer(ModelSerializer):
     customer_name_kanji = JSONField(read_only=True)
     cc_attrs = JSONField(read_only=True)
     is_basic = BooleanField(read_only=True)
+    forests_count = IntegerField(read_only=True)
 
     class Meta:
         model = Contact
