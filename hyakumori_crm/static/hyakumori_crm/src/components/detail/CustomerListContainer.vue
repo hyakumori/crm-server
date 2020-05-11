@@ -118,7 +118,12 @@ export default {
   },
   computed: {
     tempContacts() {
-      return [...this.contacts, ...this.contactsToAdd];
+      return [...this.contacts, ...this.contactsToAdd].map(contact => {
+        return {
+          ...contact,
+          allowNavigation: false,
+        };
+      });
     },
     contactIdsMap() {
       return Object.fromEntries(this.tempContacts.map(c => [c.id, true]));

@@ -93,6 +93,7 @@
       v-slot="{ href }"
     >
       <v-btn
+        v-if="allowNavigation"
         class="align-self-center"
         icon
         @click.stop="isUpdate ? $emit('deleteContact') : undefined"
@@ -142,6 +143,7 @@ export default {
     showRelationshipSelect: { type: Boolean, default: true },
     contact: Object,
     customerName: String,
+    allowNavigation: { type: Boolean, default: true },
   },
 
   data() {

@@ -1,22 +1,28 @@
 <template>
-  <v-row class="forest-basic-info">
-    <v-col v-if="info" cols="6">
-      <template>
+  <ValidationObserver ref="observer">
+    <v-row class="forest-basic-info">
+      <v-col v-if="info" cols="6">
         <template v-if="isUpdate">
           <text-info
             label="都道府県"
+            name="都道府県"
+            rules="max:255"
             :value="address.prefecture"
             :isUpdate="isUpdate"
             @input="val => (address.prefecture = val)"
           />
           <text-info
             label="市町村"
+            name="市町村"
+            rules="max:255"
             :value="address.municipality"
             :isUpdate="isUpdate"
             @input="val => (address.municipality = val)"
           />
           <text-info
             label="大字"
+            name="大字"
+            rules="max:255"
             :value="address.sector"
             :isUpdate="isUpdate"
             @input="val => (address.sector = val)"
@@ -24,28 +30,31 @@
         </template>
         <text-info v-else label="住所" :value="fullAddress" />
         <text-info v-if="!isUpdate" label="契約期間" :value="fullDate" />
-      </template>
-    </v-col>
-    <v-col v-if="info" cols="6">
-      <text-info
-        label="地番"
-        :value="address.subsector"
-        :isUpdate="isUpdate"
-        @input="val => (address.subsector = val)"
-      />
-      <range-date-picker
-        v-if="isUpdate"
-        label="契約期間"
-        :dates="dates"
-        @newDates="getRangeDate"
-      />
-    </v-col>
-  </v-row>
+      </v-col>
+      <v-col v-if="info" cols="6">
+        <text-info
+          label="地番"
+          name="地番"
+          rules="max:255"
+          :value="address.subsector"
+          :isUpdate="isUpdate"
+          @input="val => (address.subsector = val)"
+        />
+        <range-date-picker
+          v-if="isUpdate"
+          label="契約期間"
+          :dates="dates"
+          @newDates="getRangeDate"
+        />
+      </v-col>
+    </v-row>
+  </ValidationObserver>
 </template>
 
 <script>
 import TextInfo from "./TextInfo";
 import RangeDatePicker from "../RangeDatePicker";
+import { ValidationObserver } from "vee-validate";
 
 export default {
   name: "forest-basic-info",
@@ -53,6 +62,7 @@ export default {
   components: {
     TextInfo,
     RangeDatePicker,
+    ValidationObserver,
   },
 
   props: {
@@ -117,6 +127,14 @@ export default {
       if (val) {
         this.$emit("updateInfo", this.innerInfo);
       }
+    },
+
+    info: {
+      deep: true,
+      async handler() {
+        const isValid = await this.$refs.observer.validate();
+        this.$emit("forest:save-disable", !isValid);
+      },
     },
   },
 };

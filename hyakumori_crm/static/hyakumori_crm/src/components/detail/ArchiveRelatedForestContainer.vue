@@ -32,6 +32,7 @@
       :loading="fetchAllForestLoading"
       :submitBtnText="$t('buttons.add')"
       :handleSubmitClick="submitRelatedForest.bind(this)"
+      :disableAdditionBtn="fetchAllForestLoading"
       submitBtnIcon="mdi-plus"
       @search="deboundGetSearch"
       @needToLoad="handleLoadMore"
@@ -101,6 +102,7 @@ export default {
       selectingForestId: null,
       selectingForestIndex: null,
       addRelatedForestLoading: false,
+      searchNext: null,
     };
   },
 
@@ -227,7 +229,7 @@ export default {
             this.allForests,
           );
           this.allForests.push(...allForests);
-          this.immutableAllForest = cloneDeep(this.allForests);
+          this.immutableAllForest.push(...allForests);
           this.next = response.next;
         }
       }
@@ -238,7 +240,9 @@ export default {
     },
 
     handleLoadMore() {
-      this.fetchAllForests(this.next);
+      if (this.next !== null) {
+        this.fetchAllForests(this.next);
+      }
     },
 
     submitRelatedForest() {
@@ -269,21 +273,25 @@ export default {
       this.$set(forest, "deleted", false);
     },
 
-    fetchSearchForest(keyword) {
+    async fetchSearchForest(keyword) {
       this.fetchAllForestLoading = true;
-      this.$rest
-        .get("/forests/minimal", {
-          params: {
-            search: keyword || "",
-          },
-        })
-        .then(response => {
-          this.allForests = this.removeDuplicateForests(
-            response.results,
-            this.relatedForests,
-          );
-          this.fetchAllForestLoading = false;
-        });
+      const response = await this.$rest.get("/forests/minimal", {
+        params: {
+          search: keyword || "",
+        },
+      });
+      if (response) {
+        this.allForests = [];
+        this.immutableAllForest = [];
+        const tempSearchData = this.removeDuplicateForests(
+          response.results,
+          this.relatedForests,
+        );
+        this.next = response.next;
+        this.allForests.push(...tempSearchData);
+        this.immutableAllForest.push(...tempSearchData);
+        this.fetchAllForestLoading = false;
+      }
     },
   },
 
@@ -294,6 +302,17 @@ export default {
 
     deletedForests() {
       return this.relatedForests.filter(forest => forest.deleted);
+    },
+  },
+
+  watch: {
+    allForests: {
+      deep: true,
+      handler(allForests) {
+        if (allForests.length <= 3 && this.next !== null) {
+          this.handleLoadMore();
+        }
+      },
     },
   },
 };
