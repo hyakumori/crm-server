@@ -48,8 +48,7 @@ export default {
   methods: {
     async getActionLogs() {
       try {
-        if (!this.objectId || !this.objectType || !this.appName)
-          return;
+        if (!this.objectId || !this.objectType || !this.appName) return;
 
         this.isLoading = true;
         const response = await this.$rest.get(

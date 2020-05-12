@@ -91,7 +91,7 @@ class ActivityService:
                     join crm_messagetemplate cm on al.template_name = cm.name and cm.language=%s
                     join users_user uu on al.user_id = uu.id
                     where al.object_pk::uuid=%s::uuid and al.content_type_id=%s and cm.content_type_id=%s
-                    order by al.created_at
+                    order by al.created_at desc
                 """
                 cursor.execute(query, [lang_code, object_id, content_type.pk, action_content_type.pk])
                 columns = [col[0] for col in cursor.description]
