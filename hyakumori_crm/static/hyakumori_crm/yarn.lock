@@ -11510,6 +11510,11 @@ uuid@^3.0.1, uuid@^3.1.0, uuid@^3.3.2:
   resolved "https://registry.npm.taobao.org/uuid/download/uuid-3.4.0.tgz?cache=0&sync_timestamp=1583353513451&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fuuid%2Fdownload%2Fuuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha1-sj5DWK+oogL+ehAK8fX4g/AgB+4=
 
+v-mask@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/v-mask/-/v-mask-2.1.0.tgz#44a996063904824d7ff9de5b1bb026c9856a5590"
+  integrity sha512-yQnSOI7fv+9ut/KfwN1isCGgV473DeysFNvMJ5I59edJpOXa+3YvGh2yysv+YV98CXNafMR3Lct+w9oXs4svEQ==
+
 v8-compile-cache@^2.0.3:
   version "2.1.0"
   resolved "https://registry.npm.taobao.org/v8-compile-cache/download/v8-compile-cache-2.1.0.tgz#e14de37b31a6d194f5690d67efc4e7f6fc6ab30e"
