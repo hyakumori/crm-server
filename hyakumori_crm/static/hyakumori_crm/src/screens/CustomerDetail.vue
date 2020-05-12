@@ -32,6 +32,7 @@
           :id="id"
           @saved="handleForestsSaved"
           :selectingForestId.sync="selectingForestId"
+          itemClickable
         />
 
         <customer-list-container
@@ -96,6 +97,7 @@
           :isLoading="contactsForestsLoading"
           :forests="contactsForests"
           v-if="id"
+          :itemClickable="false"
         />
 
         <basic-info-container

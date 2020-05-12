@@ -19,6 +19,7 @@
           selectingForestId_ = selectingForestId_ === fId ? null : fId;
         }
       "
+      :itemClickable="itemClickable"
     />
     <addition-button
       ref="addBtn"
@@ -57,6 +58,7 @@
           mode="search"
           :selectedId="modalSelectingForestId"
           flat
+          clickable
         />
       </template>
     </SelectListModal>
@@ -99,6 +101,7 @@ export default {
     forests: Array,
     displayAdditionBtn: Boolean,
     selectingForestId: String,
+    itemClickable: { type: Boolean, default: false },
   },
   data() {
     return {

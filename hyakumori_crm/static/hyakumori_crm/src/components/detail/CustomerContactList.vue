@@ -2,7 +2,6 @@
   <v-row dense>
     <v-col v-for="(contact, index) in contacts" cols="6" :key="index">
       <customer-contact-card
-        :card_id="contact.customer_id || contact.id"
         :contact="contact"
         :isOwner="isOwner"
         :isContactor="isContactor"

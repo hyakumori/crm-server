@@ -76,11 +76,12 @@ or concat(sc.postal_code, ' ', sc.address->>'sector', ' ',
 
 
 def get_customer_contacts(pk: UUID):
-    cc = (
+    cc_forest_counts = (
         CustomerContact.objects.filter(is_basic=True, contact=OuterRef("pk"))
-        .values("id", "customer_id")
+        .values("customer_id")
         .annotate(forests_count=Count("customer__forestcustomer"))
     )
+    cc_is_basic = CustomerContact.objects.filter(is_basic=True, contact=OuterRef("pk"))
     q = (
         Contact.objects.filter(
             customercontact__customer_id=pk, customercontact__is_basic=False,
@@ -96,7 +97,9 @@ def get_customer_contacts(pk: UUID):
             )
         )
         .annotate(cc_attrs=F("customercontact__attributes"))
-        .annotate(forests_count=Subquery(cc.values("forests_count")[:1]))
+        .annotate(forests_count=Subquery(cc_forest_counts.values("forests_count")[:1]))
+        .annotate(is_basic=Subquery(cc_is_basic.values("is_basic")[:1]))
+        .annotate(customer_id=Subquery(cc_is_basic.values("customer_id")[:1]))
         .order_by("created_at")
     )
     return q

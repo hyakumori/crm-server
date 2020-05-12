@@ -5,7 +5,8 @@
     :class="{ flat: flat, deleted: deleted, added: added }"
     outlined
     :ripple="mode != 'view'"
-    @click="$emit('selected', card_id, index)"
+    @click="clickable ? $emit('selected', card_id, index) : undefined"
+    :style="{ cursor: clickable ? 'pointer' : 'auto' }"
   >
     <v-icon class="forest-info-card__icon">{{ $t("icon.forest_icon") }}</v-icon>
 
@@ -65,6 +66,7 @@ export default {
     index: Number,
     mode: { type: String, default: "view" },
     handleDeleteClick: Function,
+    clickable: { type: Boolean, default: false },
   },
   computed: {
     actionIcon() {
