@@ -86,8 +86,8 @@ def get_customer_contacts(pk: UUID):
             customercontact__customer_id=pk, customercontact__is_basic=False,
         )
         .annotate(
-            forest_id=F(
-                "customercontact__forestcustomercontact__forestcustomer__forest_id"
+            forest_internal_id=F(
+                "customercontact__forestcustomercontact__forestcustomer__forest__internal_id"
             )
         )
         .annotate(
