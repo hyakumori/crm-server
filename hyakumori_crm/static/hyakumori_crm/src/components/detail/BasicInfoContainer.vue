@@ -11,11 +11,7 @@
       <slot
         v-if="isUpdate || !id"
         name="form"
-        :toggleEditing="
-          () => {
-            isUpdate = !isUpdate;
-          }
-        "
+        :toggleEditing="handleToggleEdit"
       ></slot>
       <basic-info v-if="!!id && !isUpdate" :infos="info" />
     </div>
@@ -26,8 +22,6 @@
 import BasicInfo from "./BasicInfo";
 import ContentHeader from "./ContentHeader";
 import ContainerMixin from "./ContainerMixin";
-import { updateBasicInfo } from "../../api/forest";
-import { zipObjectDeep } from "lodash";
 
 export default {
   name: "basic-info-container",
@@ -55,11 +49,8 @@ export default {
       this.isSave = true;
     },
 
-    updateData(updateInfo) {
-      const key = updateInfo.map(info => info.attr);
-      const val = updateInfo.map(info => info.value);
-      const info = zipObjectDeep(key, val);
-      updateBasicInfo(this.id, info);
+    handleToggleEdit() {
+      this.isUpdate = !this.isUpdate;
     },
   },
 };
