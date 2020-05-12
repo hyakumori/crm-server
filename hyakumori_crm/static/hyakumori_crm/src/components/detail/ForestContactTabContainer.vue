@@ -71,6 +71,7 @@
             flat
             mode="search"
             :showRelationshipSelect="false"
+            clickable
           />
         </template>
       </select-list-modal>

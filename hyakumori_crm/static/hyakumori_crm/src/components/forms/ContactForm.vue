@@ -193,6 +193,9 @@ export default {
       },
       deep: true,
     },
+    form(val) {
+      this.$emit("update:formData", val);
+    },
   },
   methods: {
     handleCancel() {
