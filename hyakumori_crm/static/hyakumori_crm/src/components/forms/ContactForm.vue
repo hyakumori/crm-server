@@ -97,7 +97,8 @@
             maxLength="12"
             :name="`${fieldNamePrefix}telephone`"
             :placeholder="
-              $t('forms.placeholders.customer.phone_number') + '（00-0000-0000）'
+              $t('forms.placeholders.customer.phone_number') +
+                '（00-0000-0000）'
             "
             v-model="form.telephone"
           />
@@ -139,13 +140,9 @@
             :loading="submiting"
             >{{ id ? $t("buttons.save") : $t("buttons.continue") }}</v-btn
           >
-          <v-btn
-            @click="toggleEditing"
-            text
-            color="#999999"
-            v-if="showCancel"
-            >{{ $t("buttons.cancel") }}</v-btn
-          >
+          <v-btn @click="handleCancel" text color="#999999" v-if="showCancel">{{
+            $t("buttons.cancel")
+          }}</v-btn>
         </v-col>
       </v-row>
     </v-form>
@@ -155,6 +152,7 @@
 <script>
 import { ValidationObserver, setInteractionMode } from "vee-validate";
 import TextInput from "./TextInput";
+import { cloneDeep } from "lodash";
 
 setInteractionMode("eager");
 
@@ -164,7 +162,7 @@ export default {
     TextInput,
   },
   props: [
-    "form",
+    "formData",
     "id",
     "toggleEditing",
     "showCancel",
@@ -174,8 +172,14 @@ export default {
   data() {
     return {
       shown: false,
+      form: {},
       submiting: false,
     };
+  },
+  mounted() {
+    if (this.formData) {
+      this.form = cloneDeep(this.formData);
+    }
   },
   computed: {
     fieldNamePrefix() {
@@ -191,6 +195,10 @@ export default {
     },
   },
   methods: {
+    handleCancel() {
+      this.form = { ...this.formData };
+      this.toggleEditing();
+    },
     async submit() {
       this.submiting = true;
       if (this.handleSubmit) {
