@@ -32,7 +32,6 @@
 import ForestBasicInfo from "./ForestBasicInfo";
 import ContentHeader from "./ContentHeader";
 import UpdateButton from "./UpdateButton";
-import AdditionButton from "../AdditionButton";
 import ContainerMixin from "./ContainerMixin";
 import { updateBasicInfo } from "../../api/forest";
 import { cloneDeep } from "lodash";
