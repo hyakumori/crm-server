@@ -19,6 +19,7 @@
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.3",
     "lodash": "^4.17.15",
+    "v-mask": "^2.1.0",
     "vee-validate": "^3.2.5",
     "vue": "^2.6.11",
     "vue-apollo": "^3.0.3",

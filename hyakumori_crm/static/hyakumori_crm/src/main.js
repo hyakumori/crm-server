@@ -14,6 +14,7 @@ import router from "./router";
 import setupRouter from "./plugins/setup-router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
+import VueMask from "v-mask";
 
 Vue.config.productionTip = false;
 
@@ -30,6 +31,7 @@ Vue.use(VuetifyDialog, {
   },
 });
 Vue.use(ActionLog);
+Vue.use(VueMask);
 
 const vm = new Vue({
   vuetify,
