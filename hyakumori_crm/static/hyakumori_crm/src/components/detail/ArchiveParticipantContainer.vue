@@ -238,7 +238,7 @@ export default {
       this.loadContacts = false;
     },
     async loadInitContacts(keyword) {
-      const reqConfig = keyword
+      let reqConfig = keyword
         ? {
             params: {
               search: keyword || "",
@@ -247,10 +247,7 @@ export default {
         : {};
       this.loadContacts = true;
       let resp = { next: "/customercontacts" };
-      while (
-        (resp.next && keyword) ||
-        (resp.next && this.contactsForAdding.results.length === 0)
-      ) {
+      while (resp.next) {
         resp = await this.$rest.get(resp.next, reqConfig);
         this.contactsForAdding = {
           next: resp.next,
@@ -260,6 +257,8 @@ export default {
             c => !!this.contactIdsMap[`${c.id},${c.customer_id}`],
           ),
         };
+        if (this.contactsForAdding.results.length > 5) break;
+        if (resp.next && resp.next.indexOf("page=") > -1) reqConfig = {};
       }
       this.loadContacts = false;
     },

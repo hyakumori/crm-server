@@ -179,6 +179,7 @@ export default {
   p {
     color: #444444;
     font-size: 14px;
+    word-break: break-word;
   }
 
   fieldset {

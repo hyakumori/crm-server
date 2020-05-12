@@ -152,7 +152,7 @@ def delete_related_forest(archive: Archive, data: dict):
             archive_forest = ArchiveForest.objects.get(
                 archive_id=archive.id, forest_id=forest.id, deleted=None
             )
-            archive_forest.delete()
+            archive_forest.force_delete()
         else:
             continue
     refresh_forest_cache(archive, save=True)

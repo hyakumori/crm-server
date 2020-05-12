@@ -35,26 +35,6 @@
           :archives="$store.state.forest.archives"
         />
 
-        <!-- <attachment-container
-          v-acl-only="['manage_archive', 'view_archive']"
-          class="document-mailing-record"
-          headerContent="協議履歴"
-          editBtnContent="書類郵送記録を追加・編集"
-          addBtnContent="協議履歴を追加"
-          :isRequiredExpand="false"
-          :id="id"
-          :archives="$store.state.forest.archives"
-        /> -->
-
-        <!--        <attachment-container-->
-        <!--          v-acl-only="['manage_archive', 'view_archive']"-->
-        <!--          class="consultation-history"-->
-        <!--          headerContent="書類郵送記録"-->
-        <!--          editBtnContent="協議記録を追加・編集"-->
-        <!--          addBtnContent="協議履歴を追加"-->
-        <!--          :attaches="attaches"-->
-        <!--        />-->
-
         <div id="forest-attributes">
           <content-header
             class="mt-9"
@@ -172,18 +152,9 @@ export default {
   },
 
   computed: {
-    attaches() {
-      return discussions;
-    },
-
-    getActionLogs() {
-      return actionLogs;
-    },
-
     forestInfo() {
       return this.$store.state.forest.forest;
     },
-
     headerData() {
       let headerData = [];
       const forestInfo = this.forestInfo;

@@ -30,7 +30,7 @@
           :isLoading="forestsLoading"
           :forests="forests"
           :id="id"
-          @saved="fetchForests"
+          @saved="handleForestsSaved"
           :selectingForestId.sync="selectingForestId"
         />
 
@@ -279,6 +279,11 @@ export default {
       this.contactsForestsLoading = false;
     },
     handleForestContactsSave() {
+      this.fetchContacts();
+      this.fetchContactsForests();
+    },
+    handleForestsSaved() {
+      this.fetchForests();
       this.fetchContacts();
       this.fetchContactsForests();
     },

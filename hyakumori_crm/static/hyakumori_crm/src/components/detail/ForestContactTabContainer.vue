@@ -60,13 +60,14 @@
                 modalSelectingCustomerIndex = inx;
               }
             "
-            v-for="(item, indx) in customersForAdding.results || []"
+            v-for="(item, indx) in customersForAdding.results"
             :key="item.id"
             :card_id="item.id"
             :contact="item"
             :showAction="false"
             :index="indx"
             :selectedId="modalSelectingCustomerId"
+            :selectedIndex="modalSelectingCustomerIndex"
             flat
             mode="search"
             :showRelationshipSelect="false"
@@ -114,7 +115,7 @@ export default {
       isEditing: false,
       customersForAddingLoading: false,
       showSelect: false,
-      customersForAdding: {},
+      customersForAdding: { results: [] },
       customersToAdd: [],
       customersToDelete: [],
       modalSelectingCustomerId: null,
@@ -163,12 +164,16 @@ export default {
       this.customersToAdd.push(c);
       this.modalSelectingCustomerIndex = null;
       this.modalSelectingCustomerId = null;
+      if (this.customersForAdding.results.length <= 3) {
+        this.handleLoadMore();
+      }
     },
     handleDelete(customer, index) {
       if (customer.added) {
         delete customer.added;
         this.customersToAdd = reject(this.customersToAdd, { id: customer.id });
         delete this.defaultCustomersEdit[customer_id];
+        this.customersForAdding = { results: [] };
       } else {
         const newCustomers = [...this.customers];
         const c = newCustomers[index];
@@ -229,6 +234,7 @@ export default {
         this.customersToAdd = [];
         this.defaultCustomersEdit = {};
         this.defaultCustomersContactsEdit = {};
+        this.customersForAdding = { results: [] };
       } catch (error) {
         this.saving = false;
       }
@@ -249,17 +255,25 @@ export default {
       this.customersForAddingLoading = false;
     },
     async loadInitCustomersForAdding(keyword) {
+      const reqConfig = keyword
+        ? {
+            params: {
+              search: keyword || "",
+            },
+          }
+        : {};
       this.customersForAddingLoading = true;
-      const resp = await this.$rest.get("/customers", {
-        params: {
-          search: keyword || "",
-        },
-      });
-      this.customersForAdding = {
-        next: resp.next,
-        previous: resp.previous,
-        results: reject(resp.results, c => this.customerIdsMap[c.id]),
-      };
+      let resp = { next: "/customers" };
+      while (resp.next) {
+        resp = await this.$rest.get(resp.next, reqConfig);
+        this.customersForAdding = {
+          next: resp.next,
+          previous: resp.previous,
+          results: reject(resp.results, c => this.customerIdsMap[c.id]),
+        };
+        if (this.customersForAdding.results.length > 5) break;
+        if (resp.next && resp.next.indexOf("page=") > -1) reqConfig = {};
+      }
       this.customersForAddingLoading = false;
     },
     handleToggleDefault(val, customer_id) {
@@ -298,9 +312,9 @@ export default {
     },
   },
   watch: {
-    async showSelect(val) {
+    showSelect(val) {
       if (val && !this.customersForAdding.next) {
-        await this.loadInitCustomersForAdding();
+        this.loadInitCustomersForAdding();
       }
     },
     isEditing(val) {
@@ -312,8 +326,12 @@ export default {
             delete c.deleted;
           }
           this.$store.commit("forest/setCustomers", newCustomers);
+          this.customersForAdding = { results: [] };
         }
-        this.customersToDelete.length > 0 && (this.customersToDelete = []);
+        if (this.customersToDelete.length > 0) {
+          this.customersForAdding = { results: [] };
+          this.customersToDelete = [];
+        }
 
         for (let [cid, val] of Object.entries(this.defaultCustomersEdit)) {
           this.$store.commit("forest/toggleDefaultCustomerLocal", {

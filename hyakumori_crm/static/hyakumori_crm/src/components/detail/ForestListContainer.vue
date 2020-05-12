@@ -151,6 +151,7 @@ export default {
       if (forest.added) {
         delete forest.added;
         this.forestsToAdd = reject(this.forestsToAdd, { id: forest.id });
+        this.forestitems = { results: [] };
       } else {
         this.$set(forest, "deleted", true);
         this.forestsToDelete.push(forest);
@@ -171,6 +172,7 @@ export default {
         this.saving = false;
         this.forestsToDelete = [];
         this.forestsToAdd = [];
+        this.forestitems = { results: [] };
       } catch (error) {
         this.saving = false;
         this.$dialog.notify.error(
@@ -193,17 +195,25 @@ export default {
       this.loadForests = false;
     },
     async loadInitForests(keyword) {
+      let reqConfig = keyword
+        ? {
+            params: {
+              search: keyword || "",
+            },
+          }
+        : {};
       this.loadForests = true;
-      const resp = await this.$rest.get("/forests/minimal", {
-        params: {
-          search: keyword || "",
-        },
-      });
-      this.forestitems = {
-        next: resp.next,
-        previous: resp.previous,
-        results: reject(resp.results, f => !!this.forestIdsMap[f.id]),
-      };
+      let resp = { next: "/forests/minimal" };
+      while (resp.next) {
+        resp = await this.$rest.get(resp.next, reqConfig);
+        this.forestitems = {
+          next: resp.next,
+          previous: resp.previous,
+          results: reject(resp.results, f => !!this.forestIdsMap[f.id]),
+        };
+        if (this.forestitems.results.length > 5) break;
+        if (resp.next && resp.next.indexOf("page=") > -1) reqConfig = {};
+      }
       this.loadForests = false;
     },
   },
@@ -218,11 +228,17 @@ export default {
     },
     isUpdate(val) {
       if (!val) {
-        this.forestsToAdd.length > 0 && (this.forestsToAdd = []);
+        if (this.forestsToAdd.length > 0) {
+          this.forestsToAdd = [];
+          this.forestitems = { results: [] };
+        }
         for (let forestToDelete of this.forestsToDelete) {
           this.$set(forestToDelete, "deleted", undefined);
         }
-        this.forestsToDelete.length > 0 && (this.forestsToDelete = []);
+        if (this.forestsToDelete.length > 0) {
+          this.forestsToDelete = [];
+          this.forestitems = { results: [] };
+        }
       }
     },
   },
