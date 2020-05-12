@@ -94,7 +94,7 @@
           }}</label>
           <TextInput
             v-mask="'##-####-####'"
-            maxLength="12"
+            :maxLength="12"
             :name="`${fieldNamePrefix}telephone`"
             :placeholder="
               $t('forms.placeholders.customer.phone_number') +
@@ -109,7 +109,7 @@
           }}</label>
           <TextInput
             v-mask="'###-####-####'"
-            maxLength="13"
+            :maxLength="13"
             :name="`${fieldNamePrefix}mobilephone`"
             :placeholder="
               $t('forms.placeholders.customer.mobile_number') +
