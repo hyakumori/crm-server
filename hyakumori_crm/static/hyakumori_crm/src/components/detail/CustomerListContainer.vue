@@ -45,7 +45,6 @@
           "
           v-for="(item, indx) in contactitems.results || []"
           :key="item.id"
-          :card_id="item.id"
           :contact="item"
           :isOwner="item.is_basic"
           :showAction="false"
@@ -54,6 +53,7 @@
           :selectedIndex="modalSelectingContactIndex"
           flat
           mode="search"
+          clickable
         />
       </template>
     </SelectListModal>
@@ -107,7 +107,7 @@ export default {
       isUpdate: false,
       showSelect: false,
       loadContacts: false,
-      contactitems: {},
+      contactitems: { results: [] },
       selectingContactId: null,
       modalSelectingContactId: null,
       modalSelectingContactIndex: null,

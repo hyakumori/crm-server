@@ -6,7 +6,8 @@
     outlined
     active-class="selected"
     :ripple="mode != 'view'"
-    @click="$emit('click', contact.id, index)"
+    @click="clickable ? $emit('click', contact.id, index) : undefined"
+    :style="{ cursor: clickable ? 'pointer' : 'auto' }"
   >
     <v-icon class="customer-contact-card__icon">{{
       $t("icon.customer_icon")
@@ -89,10 +90,11 @@
     </v-btn>
     <router-link
       v-if="showAction && !deleted"
-      :to="{ name: 'customer-detail', params: { id: card_id } }"
+      :to="{ name: 'customer-detail', params: { id: customerId } }"
       v-slot="{ href }"
     >
       <v-btn
+        v-if="isUpdate || customerId"
         class="align-self-center"
         icon
         @click.stop="isUpdate ? $emit('deleteContact') : undefined"
@@ -125,7 +127,6 @@ export default {
   name: "customer-contact-card",
 
   props: {
-    card_id: String,
     relatedInfo: String,
     isOwner: Boolean,
     isContactor: Boolean,
@@ -143,6 +144,7 @@ export default {
     contact: Object,
     customerName: String,
     showDefaultBadge: { type: Boolean, default: false },
+    clickable: { type: Boolean, default: false },
   },
 
   data() {
@@ -166,7 +168,7 @@ export default {
     onTagClick() {
       if (!this.isUpdate) return;
       if (this.isOwner)
-        this.$emit("toggleDefault", !this.contact.default, this.card_id);
+        this.$emit("toggleDefault", !this.contact.default, this.contact.id);
       else if (this.isContactor)
         this.$emit(
           "toggleContactDefault",
@@ -183,6 +185,13 @@ export default {
       return this.contact.self_contact
         ? this.contact.self_contact
         : this.contact;
+    },
+    customerId() {
+      if (this.contact.self_contact) {
+        return this.contact.id;
+      } else {
+        return this.contact.is_basic ? this.contact.customer_id : null;
+      }
     },
     fullname() {
       if (

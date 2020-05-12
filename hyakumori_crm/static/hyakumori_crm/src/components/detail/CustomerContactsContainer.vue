@@ -43,7 +43,7 @@
           <v-divider></v-divider>
           <v-card-text style="min-height: 300px;" class="px-6 py-5">
             <contact-form
-              :form="form"
+              :formData.sync="form"
               :handleSubmit="handleAdd"
               :errors="formErrors"
             />
