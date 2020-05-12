@@ -307,9 +307,15 @@ def contacts_list_with_search(search_str: str = None):
 
 
 def customercontacts_list_with_search(search_str: str = None):
+    cc = (
+        CustomerContact.objects.filter(is_basic=True, contact=OuterRef("pk"))
+        .values("id", "customer_id")
+        .annotate(forests_count=Count("customer__forestcustomer"))
+    )
     queryset = Contact.objects.annotate(
         customer_id=F("customercontact__customer_id"),
         is_basic=F("customercontact__is_basic"),
+        forests_count=Subquery(cc.values("forests_count")[:1]),
         customer_name_kanji=RawSQL(
             """(select C0.name_kanji
 from crm_contact C0
@@ -322,7 +328,6 @@ where CC0.customer_id = crm_customercontact.customer_id)""",
     if search_str:
         queryset = queryset.filter(
             Q(name_kanji__first_name__icontains=search_str)
-            | Q(id__icontains=search_str)
             | Q(name_kanji__last_name__icontains=search_str)
             | Q(name_kana__first_name__icontains=search_str)
             | Q(name_kana__last_name__icontains=search_str)
@@ -355,10 +360,15 @@ def delete_customer_contacts(contacts_delete_in: dict):
 
 def update_forests(data):
     customer = data.customer
-    for fc in ForestCustomer.objects.filter(
+    forestcustomers = ForestCustomer.objects.filter(
         forest_id__in=data.deleted, customer_id=customer.pk
-    ).all():
+    ).all()
+    CustomerContact.objects.filter(
+        forestcustomercontact__forestcustomer_id__in=forestcustomers.values("id")
+    ).delete()
+    for fc in forestcustomers:
         fc.force_delete()
+
     added_forest_customers = []
     for added_forest_pk in data.added:
         forest_customer = ForestCustomer(
