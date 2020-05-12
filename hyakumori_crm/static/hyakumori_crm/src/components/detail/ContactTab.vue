@@ -16,12 +16,18 @@
 
     <v-spacer></v-spacer>
 
-    <v-switch
-      class="contact-tabs__switch mt-0 pr-4"
-      label="代表連絡者"
+    <v-chip
+      class="contact-tabs__note mt-0"
+      outlined
       :ripple="false"
-      :color="switchColor"
-    ></v-switch>
+      :color="representativeColor"
+    >
+      {{ representativeNote }}
+      <div
+        class="contact-tabs__note--icon ml-1"
+        :style="{ backgroundColor: representativeColor }"
+      ></div>
+    </v-chip>
 
     <v-tab-item>
       <customer-contact-list
@@ -96,8 +102,12 @@ export default {
   },
 
   computed: {
-    switchColor() {
+    representativeColor() {
       return this.selectedTab === "owner" ? "#12c7a6" : "#f36c69";
+    },
+
+    representativeNote() {
+      return this.selectedTab === "owner" ? "代表連絡者" : "主要連絡者";
     },
   },
 };
@@ -164,10 +174,16 @@ $border-tabs: 18px;
     }
   }
 
-  &__switch ::v-deep {
-    label {
-      font-size: 14px;
-      color: #444444;
+  &__note {
+    border: none;
+    padding-right: 0;
+    border-radius: 0;
+
+    &--icon {
+      width: 20px;
+      height: 20px;
+      border-top-right-radius: 8px;
+      clip-path: polygon(0 0, 100% 100%, 100% 0);
     }
   }
 }
