@@ -70,8 +70,8 @@
         @change="val => $emit('relationshipChange', contact.id, val)"
         :value="relationshipType"
       ></v-select>
-      <p class="ma-0 pt-2 caption text-truncate" v-if="forestId">
-        {{ forestId }}
+      <p class="ma-0 pt-2 caption text-truncate" v-if="forestInternalId">
+        森林ID{{ forestInternalId }}の連絡者
       </p>
       <p class="ma-0 pt-2 caption text-truncate" v-if="customerName">
         <span style="background-color:#f5f5f5;color: black">
@@ -211,8 +211,8 @@ export default {
     cellphone() {
       return this.contact_.mobilephone;
     },
-    forestId() {
-      return this.contact.forest_id;
+    forestInternalId() {
+      return this.contact.forest_internal_id;
     },
     forestsCount() {
       return this.contact.forests_count;

@@ -5,6 +5,7 @@ from rest_framework.serializers import (
     JSONField,
     BooleanField,
     SerializerMethodField,
+    CharField,
 )
 
 from ..models import Customer, Contact, Forest, Attachment, Archive
@@ -12,7 +13,7 @@ from ...users.serializers import UserSerializer
 
 
 class ContactSerializer(ModelSerializer):
-    forest_id = UUIDField(read_only=True)
+    forest_internal_id = CharField(read_only=True)
     forestcustomer_id = UUIDField(read_only=True)
     customer_id = UUIDField(read_only=True)
     cc_attrs = JSONField(read_only=True)
