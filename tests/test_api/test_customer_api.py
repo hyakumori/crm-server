@@ -47,10 +47,12 @@ def prepare_data():
     forest1 = Forest(
         cadastral={"prefecture": "beep", "municipality": "yam", "sector": "jam"},
         contracts=[{"type": ContractType.long_term}],
+        internal_id="111111",
     )
     forest2 = Forest(
         cadastral={"prefecture": "beep", "municipality": "beep", "sector": "beep"},
         contracts=[{"type": ContractType.long_term}],
+        internal_id="222222",
     )
     Forest.objects.bulk_create([forest1, forest2])
 
@@ -96,11 +98,11 @@ def test_customer_contacts(admin_user, api_rf):
     # check forest1's contact is customer2's contact
     assert resp_data["results"][0]["id"] == str(self_contact2.id)
     # check customer2's contact has forest2
-    assert resp_data["results"][0]["forest_id"] == str(forest2.id)
+    assert resp_data["results"][0]["forest_internal_id"] == str(forest2.internal_id)
 
     assert resp_data["results"][1]["id"] == str(contact3.id)
     # check customer2's contact has forest2
-    assert resp_data["results"][1]["forest_id"] is None
+    assert resp_data["results"][1]["forest_internal_id"] is None
 
 
 @pytest.mark.django_db
