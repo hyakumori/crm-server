@@ -14,6 +14,7 @@
       dense
       outlined
       height="45"
+      :maxlength="maxLength"
       :hide-details="hideDetails"
       :type="type"
       :placeholder="placeholder"
@@ -75,6 +76,7 @@ export default {
       type: null,
       default: "",
     },
+    maxLength: Number,
   },
   data: () => ({
     innerValue: "",
