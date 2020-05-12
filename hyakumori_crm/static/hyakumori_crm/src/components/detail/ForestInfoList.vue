@@ -18,6 +18,7 @@
           :deleted="forest.deleted"
           :selectedId="selectedId"
           @selected="(fId, inx) => $emit('selected', fId, inx)"
+          :clickable="itemClickable"
         />
       </v-col>
     </template>
@@ -38,6 +39,7 @@ export default {
     forests: Array,
     isUpdate: Boolean,
     selectedId: String,
+    itemClickable: { type: Boolean, default: false },
   },
 };
 </script>
