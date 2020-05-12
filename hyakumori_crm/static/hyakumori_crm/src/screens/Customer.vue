@@ -91,7 +91,7 @@ export default {
       });
     },
     onSearch() {
-      this.filter = { ...this.filter, filters: this.$refs.filter.conditions };
+      this.filter = { ...this.filter, filters: this.requestFilters };
       this.$apollo.queries.customerList.refetch();
     },
   },
@@ -105,7 +105,7 @@ export default {
           page,
           itemsPerPage,
           preItemsPerPage: old.itemsPerPage || null,
-          filters: this.$refs.filter.conditions,
+          filters: this.requestFilters,
         };
       },
       deep: true,
