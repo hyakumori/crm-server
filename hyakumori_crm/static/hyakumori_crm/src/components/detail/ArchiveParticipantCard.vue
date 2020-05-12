@@ -4,7 +4,12 @@
     outlined
     :ripple="!showAction"
     :color="selected ? '#dddddd' : undefined"
-    :class="{ flat: flat, deleted: deleted, added: added, 'show-pointer': showPointer }"
+    :class="{
+      flat: flat,
+      deleted: deleted,
+      added: added,
+      'show-pointer': showPointer,
+    }"
     @click="$emit('selected', card_id, index)"
   >
     <v-card-title class="participant-card__title pa-0">{{

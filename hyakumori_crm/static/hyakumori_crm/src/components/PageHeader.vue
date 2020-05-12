@@ -81,7 +81,9 @@
                     'default-height': isDetail,
                   }"
                 >
-                  <p class="mb-0 text-truncate page-header__detail__data__title">
+                  <p
+                    class="mb-0 text-truncate page-header__detail__data__title"
+                  >
                     {{ headerInfo.title }}
                     <span
                       v-for="tag in headerInfo.tag"
