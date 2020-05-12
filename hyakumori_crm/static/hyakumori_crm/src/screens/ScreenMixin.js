@@ -10,4 +10,16 @@ export default {
       this.$store.dispatch("setBackBtnContent", this.backBtnContent);
     },
   },
+  computed: {
+    requestFilters() {
+      return this.$refs.filter
+        ? this.$refs.filter.conditions.map(condition => {
+            return {
+              criteria: condition.criteria,
+              keyword: condition.keyword,
+            };
+          })
+        : [];
+    },
+  },
 };
