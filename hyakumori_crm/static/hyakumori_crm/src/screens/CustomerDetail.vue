@@ -13,7 +13,7 @@
           <template #form="props">
             <contact-form
               :id="id"
-              :form="selfContactFormData"
+              :formData="selfContactFormData"
               :toggleEditing="props.toggleEditing"
               :showCancel="isDetail"
               @updated="fetchCustomer"
@@ -111,7 +111,7 @@
           <template #form="props">
             <banking-info-form
               :id="id"
-              :form="bankingInfoFormData"
+              :formData="bankingInfoFormData"
               :toggleEditing="props.toggleEditing"
               @updated="fetchCustomer"
             />
