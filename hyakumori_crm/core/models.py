@@ -3,8 +3,8 @@ import uuid
 from typing import Any, Union, ClassVar, Optional, Sequence, Dict
 
 from behaviors.behaviors import StoreDeleted
-from behaviors.querysets import StoreDeletedQuerySet
 from behaviors.managers import StoreDeletedManager
+from behaviors.querysets import StoreDeletedQuerySet
 from django.contrib.postgres.fields.jsonb import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
@@ -90,6 +90,7 @@ class HyakumoriDanticModel(BaseModel):
             "value_error.str.regex": _("Invalid"),
             "value_error.missing": _("Required"),
             "value_error.email": _("Invalid Email"),
+            "value_error.any_str.min_length": _('Required at least {limit_value} character'),
         }
 
     @validator("*", pre=True)
