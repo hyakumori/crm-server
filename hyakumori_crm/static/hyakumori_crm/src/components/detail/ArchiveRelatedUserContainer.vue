@@ -27,6 +27,7 @@
       <template #list>
         <archive-participant-card
           v-for="(participant, index) in allParticipants"
+          showPointer
           :key="index"
           :index="index"
           :name="participant.full_name"
