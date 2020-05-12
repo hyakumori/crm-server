@@ -25,9 +25,10 @@
       }"
       @click:row="clickRow"
     >
-      <template v-slot:header.options>
-        <v-icon @click="viewMore">mdi-dots-vertical</v-icon>
-      </template>
+      <!--   For now it has no function, so remove it temporary  -->
+      <!--      <template v-slot:header.options>-->
+      <!--        <v-icon @click="viewMore">mdi-dots-vertical</v-icon>-->
+      <!--      </template>-->
 
       <template v-if="tableRowIcon" v-slot:[`item.${iconRowValue}`]="{ item }">
         <div class="d-flex align-center justify-space-between">
