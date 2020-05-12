@@ -1,6 +1,7 @@
 <script>
 import { ValidationObserver, setInteractionMode } from "vee-validate";
 import TextInput from "./TextInput";
+import { cloneDeep } from "lodash";
 
 setInteractionMode("eager");
 
@@ -9,21 +10,24 @@ export default {
     ValidationObserver,
     TextInput,
   },
-  props: ["form", "id", "toggleEditing"],
+  props: ["formData", "id", "toggleEditing"],
   data() {
     return {
       shown: false,
       submiting: false,
+      form: {},
     };
+  },
+  mounted() {
+    if (this.formData) {
+      this.form = cloneDeep(this.formData);
+    }
   },
   methods: {
     async submit() {
       this.submiting = true;
       try {
-        await this.$rest.put(
-          `/customers/${this.id}/bank`,
-          this.form,
-        );
+        await this.$rest.put(`/customers/${this.id}/bank`, this.form);
         this.submiting = false;
         this.$emit("updated");
         this.toggleEditing();
@@ -33,6 +37,10 @@ export default {
           this.$refs.form.setErrors(error.response.data.errors);
         }
       }
+    },
+    handleCancel() {
+      this.form = { ...this.formData };
+      this.toggleEditing();
     },
   },
 };
@@ -89,7 +97,7 @@ export default {
             :loading="submiting"
             >{{ $t("buttons.save") }}</v-btn
           >
-          <v-btn @click="toggleEditing" text color="#999999">{{
+          <v-btn @click="handleCancel" text color="#999999">{{
             $t("buttons.cancel")
           }}</v-btn>
         </v-col>
