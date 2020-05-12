@@ -4,7 +4,7 @@
     outlined
     :ripple="!showAction"
     :color="selected ? '#dddddd' : undefined"
-    :class="{ flat: flat, deleted: deleted, added: added }"
+    :class="{ flat: flat, deleted: deleted, added: added, 'show-pointer': showPointer }"
     @click="$emit('selected', card_id, index)"
   >
     <v-card-title class="participant-card__title pa-0">{{
@@ -59,6 +59,7 @@ export default {
     deleted: { type: Boolean, default: false },
     added: { type: Boolean, default: false },
     index: Number,
+    showPointer: { type: Boolean, default: false },
   },
 
   methods: {
@@ -90,6 +91,14 @@ export default {
 
 .participant-card.added {
   border: 1px solid #12c7a6 !important;
+}
+
+.participant-card:hover {
+  cursor: default;
+}
+
+.participant-card.show-pointer:hover {
+  cursor: pointer;
 }
 
 .participant-card {
