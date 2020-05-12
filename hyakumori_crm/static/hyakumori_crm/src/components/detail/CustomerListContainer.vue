@@ -51,6 +51,7 @@
           :showAction="false"
           :index="indx"
           :selectedId="modalSelectingContactId"
+          :selectedIndex="modalSelectingContactIndex"
           flat
           mode="search"
         />
@@ -169,6 +170,7 @@ export default {
       if (contact.added) {
         delete contact.added;
         this.contactsToAdd = reject(this.contactsToAdd, { id: contact.id });
+        this.contactitems = { results: [] };
       } else {
         this.$set(contact, "deleted", true);
         this.$set(contact, "relationship_type", undefined);
@@ -194,6 +196,7 @@ export default {
         this.contactsToDelete = [];
         this.contactsToAdd = [];
         this.relationshipChanges = [];
+        this.contactitems = { results: [] };
       } catch (error) {}
     },
     async handleLoadMore() {
@@ -216,22 +219,30 @@ export default {
       this.loadContacts = false;
     },
     async loadInitContacts(keyword) {
+      let reqConfig = keyword
+        ? {
+            params: {
+              search: keyword || "",
+            },
+          }
+        : {};
       this.loadContacts = true;
-      const resp = await this.$rest.get("/contacts", {
-        params: {
-          search: keyword,
-        },
-      });
-      this.contactitems = {
-        next: resp.next,
-        previous: resp.previous,
-        results: reject(
-          resp.results,
-          f =>
-            !!this.contactIdsMap[f.id] ||
-            f.id === this.customer.self_contact.id,
-        ),
-      };
+      let resp = { next: "/contacts" };
+      while (resp.next) {
+        resp = await this.$rest.get(resp.next, reqConfig);
+        this.contactitems = {
+          next: resp.next,
+          previous: resp.previous,
+          results: reject(
+            resp.results,
+            f =>
+              !!this.contactIdsMap[f.id] ||
+              f.id === this.customer.self_contact.id,
+          ),
+        };
+        if (this.contactitems.results.length > 5) break;
+        if (resp.next && resp.next.indexOf("page=") > -1) reqConfig = {};
+      }
       this.loadContacts = false;
     },
   },
@@ -243,11 +254,17 @@ export default {
     },
     isUpdate(val) {
       if (!val) {
-        this.contactsToAdd.length > 0 && (this.contactsToAdd = []);
+        if (this.contactsToAdd.length > 0) {
+          this.contactsToAdd = [];
+          this.contactitems = { results: [] };
+        }
         for (let contactToDelete of this.contactsToDelete) {
           this.$set(contactToDelete, "deleted", undefined);
         }
-        this.contactsToDelete && (this.contactsToDelete = []);
+        if (this.contactsToDelete) {
+          this.contactsToDelete = [];
+          this.contactitems = { results: [] };
+        }
         this.relationshipChanges = [];
       }
     },
