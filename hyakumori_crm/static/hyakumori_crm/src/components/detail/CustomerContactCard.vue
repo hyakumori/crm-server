@@ -116,6 +116,7 @@
         owner: isOwner,
         contactor: isContactor,
         default: this.contact.default,
+        pointer: this.isUpdate,
       }"
       @click.stop="onTagClick"
     ></div>
@@ -247,6 +248,10 @@ $background-color: #f5f5f5;
 
 .min-width-90 {
   min-width: 90px;
+}
+
+.pointer {
+  cursor: pointer;
 }
 
 .customer-contact-card::before {
