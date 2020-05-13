@@ -7,11 +7,7 @@
     :permissions="['manage_forest']"
     :isEditing="isEditing"
     @toggleEdit="val => (isEditing = val)"
-    :cancelEdit="
-      () => {
-        isEditing = false;
-      }
-    "
+    :cancelEdit="handleCancelEdit"
     :addBtnClickHandler="
       () => {
         showSelect = true;
@@ -85,7 +81,6 @@ import ContactTab from "./ContactTab";
 import ContainerMixin from "./ContainerMixin";
 import SelectListModal from "../SelectListModal";
 import CustomerContactCard from "./CustomerContactCard";
-
 import { debounce, reject, isEmpty, find } from "lodash";
 
 export default {
@@ -156,6 +151,12 @@ export default {
     },
   },
   methods: {
+    handleCancelEdit() {
+      this.isEditing = false;
+      this.customersToDelete = [];
+      this.customersToAdd = [];
+      this.customers.forEach(customer => (customer.deleted = false));
+    },
     handleAdd() {
       const c = this.customersForAdding.results.splice(
         this.modalSelectingCustomerIndex,
@@ -173,7 +174,7 @@ export default {
       if (customer.added) {
         delete customer.added;
         this.customersToAdd = reject(this.customersToAdd, { id: customer.id });
-        delete this.defaultCustomersEdit[customer_id];
+        delete this.defaultCustomersEdit[customer.id];
         this.customersForAdding = { results: [] };
       } else {
         const newCustomers = [...this.customers];
