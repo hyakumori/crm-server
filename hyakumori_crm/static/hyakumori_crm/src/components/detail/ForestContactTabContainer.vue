@@ -155,7 +155,7 @@ export default {
       this.isEditing = false;
       this.customersToDelete = [];
       this.customersToAdd = [];
-      this.customers.forEach(customer => (customer.deleted = false));
+      this.customers.forEach(customer => this.$set(customer, "deleted", false));
     },
     handleAdd() {
       const c = this.customersForAdding.results.splice(
