@@ -7,11 +7,7 @@
     :permissions="['manage_customer']"
     :isEditing="isEditing"
     @toggleEdit="val => (isEditing = val)"
-    :cancelEdit="
-      () => {
-        isEditing = false;
-      }
-    "
+    :cancelEdit="handleCancelEdit"
     :addBtnClickHandler="
       () => {
         showNewContactDialog = true;
@@ -120,6 +116,11 @@ export default {
     },
   },
   methods: {
+    handleCancelEdit() {
+      this.isEditing = false;
+      this.form = this.initForm();
+      this.formErrors = {};
+    },
     handleRelationshipChange(contact_id, val) {
       const others = reject(this.relationshipChanges, {
         contact: contact_id,
@@ -203,18 +204,12 @@ export default {
     },
   },
   watch: {
-    async showNewContactDialog(val) {
-      if (!val) {
-        this.formErrors = {};
-      }
-    },
     isEditing(val) {
       if (!val) {
         for (let contactToDelete of this.contactsToDelete) {
           this.$set(contactToDelete, "deleted", undefined);
         }
         this.contactsToDelete && (this.contactsToDelete = []);
-        this.form = this.initForm();
         this.showNewContactDialog = false;
         this.relationshipChanges = [];
       }
