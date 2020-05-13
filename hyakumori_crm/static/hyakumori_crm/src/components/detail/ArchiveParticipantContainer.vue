@@ -55,6 +55,7 @@
           :selectedId="modalSelectingContactId"
           :selectedIndex="modalSelectingContactIndex"
           flat
+          clickable
           mode="search"
           :showRelationshipSelect="false"
           :customerName="

@@ -50,12 +50,8 @@
           :address="getFullAddress(item)"
           :showAction="false"
           :selectedId="selectingForestId"
-          @selected="
-            (fId, fIndex) => {
-              selectingForestId = fId;
-              selectingForestIndex = fIndex;
-            }
-          "
+          @selected="handleForestSelected"
+          clickable
           flat
         />
       </template>
@@ -115,6 +111,11 @@ export default {
   },
 
   methods: {
+    handleForestSelected(fId, fIndex) {
+      this.selectingForestId = fId;
+      this.selectingForestIndex = fIndex;
+    },
+
     handleEdit(val) {
       if (!this.isUpdate && this.relatedForests) {
         this.immutableRelatedForest = cloneDeep(this.relatedForests);

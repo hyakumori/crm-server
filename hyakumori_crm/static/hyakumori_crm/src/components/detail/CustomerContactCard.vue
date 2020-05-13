@@ -178,7 +178,6 @@ export default {
           this.contact.id,
         );
     },
-    onClickCard() {},
   },
 
   computed: {
