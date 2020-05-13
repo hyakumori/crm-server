@@ -3,7 +3,7 @@ from urllib import parse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.db.models import F, Subquery, OuterRef, Count
-from django.db.models.expressions import RawSQL
+from django.db.models.expressions import Func, RawSQL, Value
 from django.utils.translation import gettext_lazy as _
 from pydantic import ValidationError
 from rest_framework.request import Request
@@ -240,7 +240,7 @@ def delete_related_customer(archive: Archive, data: dict):
             archive_customer = ArchiveCustomer.objects.get(
                 archive_id=archive.id, customer_id=customer.id, deleted=None
             )
-            archive_customer.delete()
+            archive_customer.force_delete()
         else:
             continue
     refresh_customers_cache(archive, save=True)
@@ -281,7 +281,7 @@ def delete_related_user(archive: Archive, data: dict):
             archive_user = ArchiveUser.objects.get(
                 archive_id=archive.id, user_id=user.id, deleted=None
             )
-            archive_user.delete()
+            archive_user.force_delete()
         else:
             continue
     refresh_user_participants_cache(archive, True)
@@ -295,7 +295,7 @@ def get_filtered_archive_queryset(archive_filter: ArchiveFilter):
         mapping = {
             "id": "id__icontains",
             "content": "content__icontains",
-            "archive_date": "archive_date__icontains",
+            "archive_date": "archive_date_text__icontains",
             "location": "location__icontains",
             "title": "title__icontains",
             "future_action": "future_action__icontains",
@@ -310,10 +310,14 @@ def get_filtered_archive_queryset(archive_filter: ArchiveFilter):
                 active_filters[mapping[k]] = v
 
         if len(active_filters.keys()) > 0:
-            return Archive.objects.filter(**active_filters)
+            return Archive.objects.annotate(
+                archive_date_text=Func(
+                    F("archive_date"), Value("YYYY-MM-DD HH24:MI"), function="to_char"
+                )
+            ).select_related("author").filter(**active_filters)
 
-        return Archive.objects.all()
-    except:
+        return Archive.objects.select_related("author").all()
+    except Exception as e:
         return Archive.objects.none()
 
 

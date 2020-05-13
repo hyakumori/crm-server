@@ -47,11 +47,14 @@ import SearchCard from "../components/SearchCard";
 import MainSection from "../components/MainSection";
 import DataList from "../components/DataList";
 import ScreenMixin from "./ScreenMixin";
-import archive_header from "../assets/dump/archive_header.json";
+import archiveHeaders from "../assets/dump/archive_header.json";
 import PageHeader from "../components/PageHeader";
 import OutlineRoundBtn from "../components/OutlineRoundBtn";
 import TableAction from "../components/TableAction";
-import { commonDatetimeFormat } from "../helpers/datetime";
+import {
+  commonDatetimeFormat,
+  dateTimeKeywordSearchFormat,
+} from "../helpers/datetime";
 import { get as _get } from "lodash";
 
 export default {
@@ -82,6 +85,7 @@ export default {
       currentPage: 1,
       filterQueryString: "",
       options: {},
+      headers: [...archiveHeaders],
     };
   },
 
@@ -132,9 +136,14 @@ export default {
     async onSearchArchives() {
       const searchData = this.$refs.searchRef.conditions;
       const filter = searchData.map(data => {
+        let criteria = data.criteria;
+        let keyword = data.keyword;
+        if (criteria && criteria === "archive_date" && keyword) {
+          keyword = dateTimeKeywordSearchFormat(keyword);
+        }
         return {
-          criteria: data.criteria,
-          keyword: data.keyword,
+          criteria,
+          keyword,
         };
       });
       this.filterQueryString = this.arrayToQueryString(filter);
@@ -185,12 +194,6 @@ export default {
         const api_url = `/archives?page_size=${val.itemsPerPage}&${this.filterQueryString}`;
         this.fetchArchives(api_url);
       }
-    },
-  },
-
-  computed: {
-    headers() {
-      return archive_header;
     },
   },
 };
