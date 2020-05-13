@@ -146,10 +146,8 @@ export default {
     handleRelationshipChange(contact_id, val) {
       const contactItem = find(this.tempContacts, { id: contact_id });
       contactItem.relationship_type = val;
-      if (!contactItem.added) {
-        const others = reject(this.relationshipChanges, { id: contact_id });
-        this.relationshipChanges = [...others, contactItem];
-      }
+      const others = reject(this.relationshipChanges, { id: contact_id });
+      this.relationshipChanges = [...others, contactItem];
     },
     handleAdd() {
       const contactItem = this.contactitems.results.splice(
