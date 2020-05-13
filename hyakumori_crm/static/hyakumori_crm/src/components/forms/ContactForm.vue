@@ -50,6 +50,8 @@
           }}</label>
           <TextInput
             v-model="form.postal_code"
+            v-mask="'###-####'"
+            :maxLength="8"
             :placeholder="$t('forms.placeholders.customer.postal_code')"
             :name="`${fieldNamePrefix}postal_code`"
           />
