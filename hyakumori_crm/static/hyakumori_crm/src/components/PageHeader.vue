@@ -11,46 +11,55 @@
           </div>
 
           <div class="menu caption pa-7">
-            <router-link
-              to="/forests"
-              v-acl-only="['manage_forest', 'view_forest']"
-            >
-              {{ $t("page_header.forest_mgmt") }}
-            </router-link>
+            <div class="menu--item">
+              <router-link
+                to="/forests"
+                v-acl-only="['manage_forest', 'view_forest']"
+              >
+                {{ $t("page_header.forest_mgmt") }}
+              </router-link>
+            </div>
 
-            <router-link
-              to="/customers"
-              class="ml-4 mr-4"
-              v-acl-only="['manage_customer', 'view_customer']"
-            >
-              {{ $t("page_header.customer_mgmt") }}
-            </router-link>
+            <div class="menu--item">
+              <router-link
+                to="/customers"
+                v-acl-only="['manage_customer', 'view_customer']"
+              >
+                {{ $t("page_header.customer_mgmt") }}
+              </router-link>
+            </div>
 
-            <router-link
-              to="/archives"
-              class="mr-4"
-              v-acl-only="['manage_archive', 'view_archive']"
-            >
-              {{ $t("page_header.archive_mgmt") }}
-            </router-link>
+            <div class="menu--item">
+              <router-link
+                to="/archives"
+                v-acl-only="['manage_archive', 'view_archive']"
+              >
+                {{ $t("page_header.archive_mgmt") }}
+              </router-link>
+            </div>
 
-            <router-link
-              to="/users"
-              class="mr-2"
-              v-acl-only="['admin', 'group_admin']"
-            >
-              {{ $t("page_header.user_mgmt") }}
-            </router-link>
+            <div class="menu--item">
+              <router-link to="/users" v-acl-only="['admin', 'group_admin']">
+                {{ $t("page_header.user_mgmt") }}
+              </router-link>
+            </div>
 
-            <router-link to="/me" class="me">
-              <span class="mr-2">|</span>
-              <v-icon class="white--text">mdi-account-circle</v-icon>
-              {{ userDisplayName }}
-            </router-link>
+            <span class="menu--spacer">|</span>
 
-            <router-link to="/auth/logout" class="ml-2">
-              <span class="mr-2">|</span> {{ $t("page_header.logout") }}
-            </router-link>
+            <div class="menu--item">
+              <router-link to="/me" class="me">
+                <v-icon class="white--text">mdi-account-circle</v-icon>
+                <span>{{ userDisplayName }}</span>
+              </router-link>
+            </div>
+
+            <span class="menu--spacer">|</span>
+
+            <div class="menu--item">
+              <router-link to="/auth/logout">
+                {{ $t("page_header.logout") }}
+              </router-link>
+            </div>
           </div>
         </div>
 
@@ -105,6 +114,7 @@
             <template v-else>
               <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
             </template>
+
             <span v-if="!isDetail" class="ml-3 white--text">
               {{ $store.state.pageHeader }}
             </span>
@@ -215,9 +225,55 @@ export default {
         padding: 28px;
       }
 
-      .menu a {
-        color: white;
-        text-decoration: none;
+      .me {
+        .v-icon {
+          position: relative;
+          top: -1px;
+        }
+        span {
+          margin-left: 5px;
+          position: relative;
+          top: -1px;
+        }
+      }
+
+      .menu {
+        display: flex;
+        width: auto;
+
+        &--spacer {
+          color: white;
+        }
+        &--item {
+          position: relative;
+          display: block;
+          margin: 0 5px;
+          padding: 0 2px;
+        }
+        a {
+          color: white;
+          text-decoration: none;
+
+          &:after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            bottom: 2px;
+            left: 0;
+            background-color: #fff;
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.2s;
+          }
+
+          &:hover {
+            &:after {
+              transform-origin: bottom left;
+              transform: scaleX(1);
+            }
+          }
+        }
       }
 
       .btn-back {

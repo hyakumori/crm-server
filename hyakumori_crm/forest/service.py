@@ -65,6 +65,8 @@ def update(forest: Forest, forest_in: dict):
 
 def update_owners(owner_pks_in):
     forest = owner_pks_in.forest
+
+    # deleting
     forestcustomers = ForestCustomer.objects.filter(
         customer_id__in=owner_pks_in.deleted, forest_id=forest.pk
     )
@@ -72,6 +74,8 @@ def update_owners(owner_pks_in):
         forestcustomercontact__forestcustomer_id__in=forestcustomers.values("id")
     ).delete()
     forestcustomers.delete()
+
+    # adding
     added_forest_customers = []
     for added_owner_pk in owner_pks_in.added:
         forest_customer = ForestCustomer(
