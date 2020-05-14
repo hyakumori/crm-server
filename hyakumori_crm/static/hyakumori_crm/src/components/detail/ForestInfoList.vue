@@ -8,7 +8,7 @@
           :forestId="forest.internal_id"
           :customerCount="forest.customers_count"
           :address="
-            `${forest.cadastral.subsector} ${forest.cadastral.sector} ${forest.cadastral.municipality} ${forest.cadastral.prefecture}`
+            `${forest.cadastral.prefecture} ${forest.cadastral.municipality} ${forest.cadastral.sector} ${forest.cadastral.subsector}`
           "
           :isUpdate="isUpdate"
           :index="index"
