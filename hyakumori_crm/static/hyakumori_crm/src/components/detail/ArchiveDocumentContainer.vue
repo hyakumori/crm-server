@@ -44,6 +44,32 @@
         :save-disabled="saveDisabled"
         :saving="updateAttachmentLoading"
       />
+      <v-dialog v-model="showDuplicateFileDialog" max-width="500">
+        <v-card color="white">
+          <v-card-title>
+            以下のファイルが既に存在します。古いファイルを削除してから再度アップロードしてください。
+          </v-card-title>
+          <v-card-text>
+            <ul>
+              <li v-for="(file, index) in duplicateUploadFiles" :key="index">
+                {{
+                  (file.attributes && file.attributes.original_file_name) ||
+                    file.name
+                }}
+              </li>
+            </ul>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              text
+              color="primary"
+              @click="showDuplicateFileDialog = false"
+              >{{ $t("raw_text.agree") }}</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </template>
   </div>
 </template>
@@ -54,7 +80,7 @@ import ContainerMixin from "./ContainerMixin";
 import DocumentCard from "./DocumentCard";
 import UpdateButton from "./UpdateButton";
 import AdditionButton from "../AdditionButton";
-import { unionWith, isNil, cloneDeep } from "lodash";
+import { unionWith, isNil, cloneDeep, intersectionWith } from "lodash";
 import { saveAs } from "file-saver";
 
 export default {
@@ -79,6 +105,8 @@ export default {
       loading: false,
       deleteDocuments: [],
       immutableDocs: [],
+      showDuplicateFileDialog: false,
+      duplicateUploadFiles: [],
     };
   },
 
@@ -132,14 +160,29 @@ export default {
         });
     },
 
+    getDuplicateFiles(files1, files2) {
+      return intersectionWith(
+        files1,
+        files2,
+        (f1, f2) => (f1.attributes?.original_file_name || f1.name) === f2.name,
+      );
+    },
+
+    removeDuplicateFiles(files1, files2) {
+      return unionWith(files1, files2, (f1, f2) => {
+        return (f1.name || f1.filename) === f2.name || f1.size === f2.size;
+      });
+    },
+
     onFileChange(e) {
       const files = e.target.files;
-      this.documents = unionWith(this.documents, files, (document, file) => {
-        return (
-          (document.name || document.filename) === file.name ||
-          document.size === file.size
-        );
-      });
+      const originalDocs = [...this.documents, ...files];
+      this.duplicateUploadFiles = this.getDuplicateFiles(this.documents, files);
+      const filteredDocs = this.removeDuplicateFiles(this.documents, files);
+      if (originalDocs.length !== filteredDocs.length) {
+        this.showDuplicateFileDialog = true;
+      }
+      this.documents = filteredDocs;
       this.documents.forEach(doc => {
         if (!doc.id) {
           doc.added = true;

@@ -18,11 +18,12 @@
         ref="searchRef"
       />
       <div class="archives__data-section">
-        <table-action
-          class="mb-4"
-          v-if="selectedRows.length > 0"
-          :selected-count="selectedRows.length"
-        />
+        <!--   For now it has no function, so remove it temporary  -->
+        <!--        <table-action-->
+        <!--          class="mb-4"-->
+        <!--          v-if="selectedRows.length > 0"-->
+        <!--          :selected-count="selectedRows.length"-->
+        <!--        />-->
         <data-list
           :auto-headers="false"
           :headers="headers"
@@ -68,7 +69,7 @@ export default {
     DataList,
     PageHeader,
     OutlineRoundBtn,
-    TableAction,
+    // TableAction,
   },
 
   data() {
