@@ -267,17 +267,6 @@ def update_basic_info(data):
     customer.address = self_contact.address
     customer.save(update_fields=["address", "name_kana", "name_kanji", "updated_at"])
 
-    # cache saving for forest
-    for forestcustomer in customer.forestcustomer_set.iterator():
-        try:
-            forest = forestcustomer.forest
-            forest.owner["address"] = self_contact.address
-            forest.save(update_fields=["owner", "updated_at"])
-        except:
-            logging.warning(
-                f"could not saving latest user address in forest: {forestcustomer.forest.pk}"
-            )
-
     return customer
 
 
