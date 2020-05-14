@@ -149,6 +149,9 @@ export default {
       this.forestsToAdd.push(forestItem);
       this.modalSelectingForestIndex = null;
       this.modalSelectingForestId = null;
+      if (this.forestitems.results.length <= 3) {
+        this.handleLoadMore();
+      }
     },
     handleDelete(forest) {
       if (forest.added) {
