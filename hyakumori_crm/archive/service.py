@@ -179,16 +179,18 @@ def get_participants(archive: Archive):
         .annotate(
             customer_id=F(
                 "customercontact__archivecustomercontact__archivecustomer__customer_id"
-            )
+            ),
+            cc_attrs=F("customercontact__attributes")
         )
         .annotate(is_basic=F("customercontact__is_basic"))
         .annotate(
             customer_name_kanji=RawSQL(
-                """(select C0.name_kanji
-from crm_contact C0
-join crm_customercontact CC0
-on C0.id = CC0.contact_id and CC0.is_basic = true
-where CC0.customer_id = crm_customercontact.customer_id)""",
+                """(select
+                        C0.name_kanji
+                        from crm_contact C0
+                    join crm_customercontact CC0
+                        on C0.id = CC0.contact_id and CC0.is_basic = true
+                    where CC0.customer_id = crm_customercontact.customer_id)""",
                 params=[],
             )
         )

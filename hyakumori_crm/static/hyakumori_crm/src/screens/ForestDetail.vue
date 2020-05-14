@@ -62,6 +62,7 @@
       <div>
         <memo-input
           :api-url="`/forests/${$route.params.id}/memo`"
+          object-type="forest"
           v-model="forestInfo"
         ></memo-input>
         <action-log
@@ -78,7 +79,6 @@
 import MainSection from "../components/MainSection";
 import ScreenMixin from "./ScreenMixin";
 import ContentHeader from "../components/detail/ContentHeader";
-import discussions from "../assets/dump/history_discussion.json";
 import ForestContactTabContainer from "../components/detail/ForestContactTabContainer";
 import ForestBasicInfoContainer from "../components/detail/ForestBasicInfoContainer";
 import AttachmentContainer from "../components/detail/AttachmentContainer";

@@ -164,7 +164,18 @@ LOCALE_PATHS = [os.path.join(BASE_DIR, "hyakumori_crm", "locale")]
 
 CORS_ORIGIN_WHITELIST = ["http://localhost:8080", "http://127.0.0.1:8080"]
 CORS_ORIGIN_WHITELIST += os.getenv("CORS_ORIGIN_WHITELIST", "").split(",")
-
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'cache-control'
+]
 # ---------------------------------------------------------------------------- #
 #                                    CACHES                                    #
 # ---------------------------------------------------------------------------- #

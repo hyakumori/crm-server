@@ -2,7 +2,7 @@
   "buttons": {
     "add_and_edit": "追加＆編集",
     "add_customer": "顧客を追加",
-    "add_archive": "アーカイブを追加",
+    "add_archive": "交渉履歴を追加",
     "add_user": "アカウントを追加",
     "back": "前のページに戻る",
     "cancel": "キャンセル",
@@ -36,9 +36,9 @@
   "forms": {
     "labels": {
       "address": "住所",
-      "municipality": "大字",
-      "prefecture": "市町村",
-      "sector": "都道府県",
+      "municipality": "市町村",
+      "prefecture": "都道府県",
+      "sector": "大字",
       "customer": {
         "add_more_info": "より詳細な情報を表示",
         "first_name_kana": "メイ",
@@ -80,9 +80,9 @@
         "mobile_number": "携帯電話番号を入力",
         "phone_number": "電話番号を入力",
         "postal_code": "郵便番号を入力（数字7桁）",
-        "prefecture": "市町村を入力",
-        "municipality": "大字を入力",
-        "sector": "都道府県を入力"
+        "prefecture": "都道府県を入力",
+        "municipality": "市町村を入力",
+        "sector": "大字を入力"
       }
     },
     "titles": {
@@ -128,7 +128,7 @@
   },
   "page_header": {
     "archive_detail": "交渉履歴",
-    "archive_new": "アーカイブ情報を追加",
+    "archive_new": "交渉履歴情報を追加",
     "archive_mgmt": "交渉履歴一覧",
     "customer_detail": "顧客情報詳細",
     "customer_new": "顧客情報の追加",
