@@ -5,6 +5,7 @@
         <archive-basic-info-container
           :isDetail="isDetail"
           :id="id"
+          @input="archive = $event"
           editBtnContent="所有地を追加・編集"
           headerContent="協議情報"
         />
@@ -46,9 +47,15 @@
       </div>
     </template>
     <template #right>
-      <div class="right-column">
+      <div class="right-column" v-if="isDetail">
+        <tag-detail-card
+          app-name="crm"
+          object-type="archive"
+          :object-id="$route.params.id"
+          :tags="archiveTags"
+          @input="archive.tags = $event"
+        ></tag-detail-card>
         <action-log
-          v-if="isDetail"
           app-name="crm"
           object-type="archive"
           :object-id="$route.params.id"
@@ -67,6 +74,7 @@ import ArchiveDocumentContainer from "../components/detail/ArchiveDocumentContai
 import ArchiveParticipantContainer from "../components/detail/ArchiveParticipantContainer";
 import ArchiveRelatedForestContainer from "../components/detail/ArchiveRelatedForestContainer";
 import ActionLog from "../components/detail/ActionLog";
+import TagDetailCard from "../components/tags/TagDetailCard";
 import ArchiveRelatedUserContainer from "../components/detail/ArchiveRelatedUserContainer";
 
 export default {
@@ -81,6 +89,7 @@ export default {
     ArchiveParticipantContainer,
     ArchiveRelatedForestContainer,
     ActionLog,
+    TagDetailCard,
     ArchiveRelatedUserContainer,
   },
 
@@ -88,6 +97,8 @@ export default {
     return {
       pageIcon: this.$t("icon.archive_icon"),
       backBtnContent: this.$t("page_header.archive_mgmt"),
+      archiveTags: {},
+      archive: {},
       headerInfo: {
         title: this.$t("page_header.archive_new"),
         subTitle: "",
@@ -135,6 +146,14 @@ export default {
 
     isDetail() {
       return !!this.id;
+    },
+  },
+  watch: {
+    archive: {
+      deep: true,
+      handler() {
+        this.archiveTags = this.archive.tags;
+      },
     },
   },
 };

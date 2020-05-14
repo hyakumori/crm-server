@@ -119,6 +119,7 @@ export default {
 
       if (basicInfo) {
         this.loading = false;
+        this.$emit("input", basicInfo.data);
         this.dataMapping(basicInfo.data);
       }
     },

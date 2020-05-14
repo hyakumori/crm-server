@@ -42,7 +42,7 @@ class ForestOwner(BaseModel):
     address: Address = Address()
 
 
-class Tag(BaseModel):
+class Tags(BaseModel):
     """
     タグ
     団地	管理形態
@@ -115,7 +115,7 @@ class ForestSchema(BaseModel):
     original_owner: ForestOwner
     owners: List[ForestOwner] = []
     contracts: List[Contract] = []
-    tag: Tag = Tag()
+    tags: dict = {}
     land_attributes: List[LandAttribute] = []
     forest_attributes: List[ForestAttribute] = []
 

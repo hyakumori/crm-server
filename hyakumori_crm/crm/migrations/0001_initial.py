@@ -97,7 +97,7 @@ class Migration(migrations.Migration):
                 ('cadastral', django.contrib.postgres.fields.jsonb.JSONField(db_index=True, default=hyakumori_crm.crm.models.forest.DefaultForest.cadastral)),
                 ('owner', django.contrib.postgres.fields.jsonb.JSONField(db_index=True, default=hyakumori_crm.crm.models.forest.DefaultForest.owner)),
                 ('contracts', django.contrib.postgres.fields.jsonb.JSONField(db_index=True, default=hyakumori_crm.crm.models.forest.DefaultForest.contracts)),
-                ('tag', django.contrib.postgres.fields.jsonb.JSONField(default=hyakumori_crm.crm.models.forest.DefaultForest.tag)),
+                ('tags', django.contrib.postgres.fields.jsonb.JSONField(default=hyakumori_crm.crm.models.forest.DefaultForest.tags)),
                 ('land_attributes', django.contrib.postgres.fields.jsonb.JSONField(default=dict)),
                 ('forest_attributes', django.contrib.postgres.fields.jsonb.JSONField(default=dict)),
                 ('geodata', django.contrib.postgres.fields.jsonb.JSONField(default=hyakumori_crm.crm.models.forest.DefaultForest.geodata)),
