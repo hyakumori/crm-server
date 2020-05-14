@@ -10,7 +10,7 @@ query getForestList($filter: ForestListFilterInput!){
       cadastral
       owner
       contracts
-      tag
+      tags
       land_attributes
       forest_attributes
       geodata

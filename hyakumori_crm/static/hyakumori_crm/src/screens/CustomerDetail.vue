@@ -129,6 +129,13 @@
           object-type="customer"
           v-model="customer"
         ></memo-input>
+        <tag-detail-card
+          app-name="crm"
+          object-type="customer"
+          :object-id="$route.params.id"
+          :tags="customer && customer.tags"
+          @input="customer.tags = $event"
+        ></tag-detail-card>
         <action-log
           app-name="crm"
           object-type="customer"
@@ -149,9 +156,11 @@ import CustomerListContainer from "../components/detail/CustomerListContainer";
 import CustomerContactsContainer from "../components/detail/CustomerContactsContainer";
 import ActionLog from "../components/detail/ActionLog";
 import MemoInput from "../components/detail/MemoInput";
+import TagDetailCard from "../components/tags/TagDetailCard";
 import ContactForm from "../components/forms/ContactForm";
 import BankingInfoForm from "../components/forms/BankingInfoForm";
 import { filter, find } from "lodash";
+import { tags_to_array } from "../helpers/tags";
 
 export default {
   mixins: [ScreenMixin],
@@ -167,6 +176,7 @@ export default {
     BankingInfoForm,
     ActionLog,
     MemoInput,
+    TagDetailCard,
   },
   props: ["id"],
   data() {
@@ -413,15 +423,10 @@ export default {
     customer: {
       deep: true,
       handler: function() {
-        const tags = [];
-        Object.keys(this.customer?.tags).forEach(k => {
-          const tagValue = this.customer?.tags[k];
-          tagValue && tags.push(`${tagValue}`);
-        });
         this.headerInfo = {
           ...this.headerInfo,
           title: this.getPersonFullname(this.customer?.self_contact.name_kanji),
-          tag: tags,
+          tags: tags_to_array(this.customer?.tags),
         };
       },
     },

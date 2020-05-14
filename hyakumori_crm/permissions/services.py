@@ -141,6 +141,10 @@ class PermissionService:
                 "change_archive",
                 "delete_archive",
                 "view_archive",
+                "add_tagsetting",
+                "change_tagsetting",
+                "delete_tagsetting",
+                "view_tagsetting",
             ]
             admin_group_permissions = Permission.objects.filter(
                 codename__in=["view_user", "add_user", "change_user", "delete_user"]

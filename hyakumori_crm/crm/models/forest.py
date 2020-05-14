@@ -1,8 +1,9 @@
 from django.core.serializers.json import DjangoJSONEncoder
 
+from ...activity.constants import ForestActions
 from ...core.models import BaseResourceModel, JSONField
 from ..schemas.contract import Contract, ContractType
-from ..schemas.forest import Cadastral, ForestOwner, GeoData, Tag
+from ..schemas.forest import Cadastral, ForestOwner, GeoData, Tags
 
 
 class DefaultForest:
@@ -23,8 +24,8 @@ class DefaultForest:
         ]
 
     @staticmethod
-    def tag():
-        return Tag().dict()
+    def tags():
+        return dict()
 
     @staticmethod
     def geodata():
@@ -37,7 +38,7 @@ class Forest(BaseResourceModel):
     contracts = JSONField(
         default=DefaultForest.contracts, db_index=True, encoder=DjangoJSONEncoder
     )
-    tag = JSONField(default=DefaultForest.tag)
+    tags = JSONField(default=DefaultForest.tags)
     land_attributes = JSONField(default=dict)
     forest_attributes = JSONField(default=dict)
     geodata = JSONField(default=DefaultForest.geodata)
@@ -50,3 +51,7 @@ class Forest(BaseResourceModel):
     @property
     def customers_count(self):
         return self.forestcustomer_set.all().count()
+
+    @property
+    def actions(self):
+        return ForestActions

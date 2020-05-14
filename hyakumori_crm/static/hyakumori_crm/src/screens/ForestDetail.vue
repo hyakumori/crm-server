@@ -65,6 +65,13 @@
           object-type="forest"
           v-model="forestInfo"
         ></memo-input>
+        <tag-detail-card
+          app-name="crm"
+          object-type="forest"
+          :object-id="$route.params.id"
+          :tags="forestInfo && forestInfo.tags"
+          @input="$store.dispatch('setHeaderTagInfo', $event)"
+        ></tag-detail-card>
         <action-log
           app-name="crm"
           object-type="forest"
@@ -85,6 +92,7 @@ import AttachmentContainer from "../components/detail/AttachmentContainer";
 import ForestAttributeTable from "../components/detail/ForestAttributeTable";
 import ActionLog from "../components/detail/ActionLog";
 import MemoInput from "../components/detail/MemoInput";
+import TagDetailCard from "../components/tags/TagDetailCard";
 
 export default {
   name: "forest-detail",
@@ -96,6 +104,7 @@ export default {
     ContentHeader,
     ActionLog,
     MemoInput,
+    TagDetailCard,
     ForestAttributeTable,
     ForestBasicInfoContainer,
     AttachmentContainer,
@@ -127,58 +136,43 @@ export default {
     fallbackText(text) {
       return text || "";
     },
-
-    mapContact(info) {
-      const self_contact = info.self_contact;
-      const addr = self_contact.address;
-      const kanji_name = self_contact.name_kanji;
-      return {
-        id: info.id,
-        customer_id: info.id,
-        fullname:
-          this.fallbackText(kanji_name.last_name) +
-          this.fallbackText(kanji_name.first_name),
-        telephone: self_contact.telephone,
-        mobilephone: self_contact.mobilephone,
-        forests_count: info.forests_count,
-        address: `${this.fallbackText(
-          self_contact.postal_code,
-        )} ${this.fallbackText(addr.prefecture)} ${this.fallbackText(
-          addr.municipality,
-        )} ${this.fallbackText(addr.sector)}`,
-        email: self_contact.email,
-      };
-    },
   },
-
   computed: {
-    forestInfo() {
-      return this.$store.state.forest.forest;
+    forestInfo: {
+      get() {
+        return this.$store.state.forest.forest;
+      },
+      set(val) {
+        this.$store.commit("forest/setForest", val);
+      },
     },
+
     headerData() {
       let headerData = [];
       const forestInfo = this.forestInfo;
 
       if (forestInfo) {
         const attr = forestInfo.forest_attributes;
-        return [
-          {
-            name: "地番面積_ha",
-            data: attr["地番面積_ha"],
-          },
-          {
-            name: "面積_ha",
-            data: attr["面積_ha"],
-          },
-          {
-            name: "面積_m2",
-            data: attr["面積_m2"],
-          },
-          {
-            name: "平均傾斜度",
-            data: attr["平均傾斜度"],
-          },
-        ];
+        return (
+          attr && [
+            {
+              name: "地番面積_ha",
+              data: attr["地番面積_ha"],
+            },
+            {
+              name: "面積_ha",
+              data: attr["面積_ha"],
+            },
+            {
+              name: "面積_m2",
+              data: attr["面積_m2"],
+            },
+            {
+              name: "平均傾斜度",
+              data: attr["平均傾斜度"],
+            },
+          ]
+        );
       }
       return headerData;
     },

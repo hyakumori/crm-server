@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     "hyakumori_crm.customer",
     "hyakumori_crm.forest",
     "hyakumori_crm.activity",
+    "hyakumori_crm.tags",
 ]
 
 MIDDLEWARE = [

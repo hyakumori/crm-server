@@ -103,6 +103,7 @@ class ArchiveSerializer(ModelSerializer):
             "author",
             "attachments",
             "attributes",
+            "tags",
         ]
 
     def get_attachments(self, obj: Archive):

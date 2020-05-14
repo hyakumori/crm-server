@@ -22,6 +22,9 @@ export default new Vuex.Store({
     setHeaderInfo(state, info) {
       state.headerInfo = info;
     },
+    setHeaderTagInfo(state, tags) {
+      state.headerInfo.tags = tags;
+    },
     setHeaderTagColor(state, info) {
       state.headerTagColor = info;
     },
@@ -38,6 +41,9 @@ export default new Vuex.Store({
     },
     setHeaderInfo({ commit }, info) {
       commit("setHeaderInfo", info);
+    },
+    setHeaderTagInfo({ commit }, tags) {
+      commit("setHeaderTagInfo", tags);
     },
     setHeaderTagColor({ commit }, color) {
       commit("setHeaderTagColor", color);
