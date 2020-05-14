@@ -209,7 +209,6 @@ class SingleSelectContactInput(HyakumoriDanticModel):
     contact: Contact
     relationship_type: Optional[RelationshipType]
     forest_id: Optional[UUID]
-    contact_type: ContactType
 
     class Config:
         arbitrary_types_allowed = True
@@ -228,6 +227,7 @@ class ContactsInput(HyakumoriDanticModel):
     customer: Customer
     adding: List[SingleSelectContactInput] = []
     deleting: List[UUID] = []
+    contact_type: ContactType
 
     class Config:
         arbitrary_types_allowed = True
@@ -241,6 +241,17 @@ class ContactsInput(HyakumoriDanticModel):
         cls.customer_contact_pks = customer.customercontact_set.all().values_list(
             "contact_id", flat=True
         )
+        return values
+
+    @root_validator
+    def validate_contact_type_and_forest_id(cls, values):
+        contact_type = values.get("contact_type")
+        if not contact_type:
+            return values
+        adding = values.get("adding")
+        for c in adding:
+            if not c.forest_id and contact_type == ContactType.forest:
+                raise ValueError(_("forest_id not provied for contact_type FOREST"))
         return values
 
     @validator("adding", each_item=True)

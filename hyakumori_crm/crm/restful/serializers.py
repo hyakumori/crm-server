@@ -14,6 +14,7 @@ from ...users.serializers import UserSerializer
 
 class ContactSerializer(ModelSerializer):
     forest_internal_id = CharField(read_only=True)
+    forest_id = UUIDField(read_only=True)
     forestcustomer_id = UUIDField(read_only=True)
     customer_id = UUIDField(read_only=True)
     cc_attrs = JSONField(read_only=True)
