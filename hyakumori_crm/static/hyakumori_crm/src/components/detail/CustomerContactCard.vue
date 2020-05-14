@@ -86,7 +86,11 @@
     </v-btn>
     <router-link
       v-if="showAction && !deleted"
-      :to="{ name: 'customer-detail', params: { id: customerId } }"
+      :to="
+        customerId
+          ? { name: 'customer-detail', params: { id: customerId } }
+          : ''
+      "
       v-slot="{ href }"
     >
       <v-btn

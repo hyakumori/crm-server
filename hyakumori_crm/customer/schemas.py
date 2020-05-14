@@ -285,7 +285,7 @@ class RequiredContactInput(HyakumoriDanticModel):
     email: Optional[EmailStr]
     contact_type: ContactType
 
-    @root_validator(pre=True)
+    @root_validator
     def validate_atleast_one_way_to_contact(cls, values):
         telephone = values.get("telephone")
         mobilephone = values.get("mobilephone")

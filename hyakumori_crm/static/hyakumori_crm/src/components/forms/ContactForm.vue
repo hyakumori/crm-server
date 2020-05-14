@@ -154,7 +154,7 @@
 <script>
 import { ValidationObserver, setInteractionMode } from "vee-validate";
 import TextInput from "./TextInput";
-import { cloneDeep } from "lodash";
+import { cloneDeep, isEmpty, isEqual } from "lodash";
 
 setInteractionMode("eager");
 
@@ -163,18 +163,18 @@ export default {
     ValidationObserver,
     TextInput,
   },
-  props: [
-    "formData",
-    "id",
-    "toggleEditing",
-    "showCancel",
-    "handleSubmit",
-    "errors",
-  ],
+  props: {
+    formData: { type: Object, default: () => {} },
+    id: { type: String },
+    toggleEditing: { type: Function },
+    showCancel: { type: Boolean },
+    handleSubmit: { type: Function },
+    errors: { type: Object, default: () => {} },
+  },
   data() {
     return {
       shown: false,
-      form: {},
+      form: { ...this.formData },
       submiting: false,
     };
   },
@@ -191,12 +191,16 @@ export default {
   watch: {
     errors: {
       handler(val) {
-        this.$refs.form.setErrors(val);
+        if (isEmpty(val)) this.$refs.form.reset();
+        else this.$refs.form.setErrors(val);
       },
       deep: true,
     },
     form(val) {
       this.$emit("update:formData", val);
+    },
+    formData(val) {
+      if (!isEqual(val, this.form)) this.form = { ...val };
     },
   },
   methods: {
