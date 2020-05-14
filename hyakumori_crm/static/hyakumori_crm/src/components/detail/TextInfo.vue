@@ -64,5 +64,9 @@ $font-size: 14px;
     color: $text-color;
     font-size: $font-size;
   }
+
+  .text-break {
+    word-break: break-all;
+  }
 }
 </style>

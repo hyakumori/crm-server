@@ -210,8 +210,8 @@ export default {
     },
     address() {
       return `${this.contact_.postal_code || ""} ${this.contact_.address
-        .sector || ""} ${this.contact_.address.municipality || ""} ${this
-        .contact_.address.prefecture || ""}`;
+        .prefecture || ""} ${this.contact_.address.municipality || ""} ${this
+        .contact_.address.sector || ""}`;
     },
     email() {
       return this.contact_.email;
