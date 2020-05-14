@@ -7,9 +7,10 @@
       class="mr-2"
       @click.stop="save"
       :loading="saving"
+      :small="small"
       >{{ $t("buttons.save") }}</v-btn
     >
-    <v-btn class="update-btn__cancel" text @click.stop="cancel">{{
+    <v-btn class="update-btn__cancel" text :small="small" @click.stop="cancel">{{
       $t("buttons.cancel")
     }}</v-btn>
   </div>
@@ -23,6 +24,7 @@ export default {
     cancel: Function,
     saveDisabled: Boolean,
     saving: Boolean,
+    small: Boolean,
   },
 };
 </script>

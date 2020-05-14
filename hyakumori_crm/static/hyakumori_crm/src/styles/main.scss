@@ -44,3 +44,7 @@ $body-font-family: "Roboto", "Noto Sans JP", sans-serif !important;
 .v-application--is-ltr .v-data-table--fixed-header .v-data-footer {
   margin-right: 0;
 }
+
+.v-data-table td, .v-data-table th {
+  padding: 0 8px;
+}

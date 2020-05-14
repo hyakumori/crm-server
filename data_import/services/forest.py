@@ -1,7 +1,6 @@
 from typing import Union
 from uuid import UUID
 
-from django.db import transaction
 from django.db.models import Q
 from hyakumori_crm.crm.models.customer import Customer
 from hyakumori_crm.crm.models.forest import Forest
@@ -19,7 +18,7 @@ class ForestService:
         _forest.internal_id = forest.internal_id
         _forest.cadastral = forest.cadastral.dict()
         _forest.owner = forest.original_owner.dict()
-        _forest.tag = forest.tag.dict()
+        _forest.tags = forest.tags
         _forest.contracts = [contract.dict() for contract in forest.contracts]
         _forest.land_attributes = key_value_to_dict(forest.land_attributes)
         _forest.forest_attributes = key_value_to_dict(forest.forest_attributes)

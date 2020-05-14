@@ -127,13 +127,13 @@ def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dic
         {
             "text": _("Tag danchi"),
             "align": "center",
-            "value": "tag__danchi",
+            "value": "tags__danchi",
             "sortable": False,
         },
         {
             "text": _("Tag Manage Type"),
             "align": "center",
-            "value": "tag__manage_type",
+            "value": "tags__manage_type",
             "sortable": False,
         },
     ]

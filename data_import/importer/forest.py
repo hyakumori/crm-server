@@ -1,4 +1,6 @@
 import pandas as pd
+
+from hyakumori_crm.crm.common.constants import FOREST_TAG_KEYS
 from hyakumori_crm.crm.schemas.contract import ContractType
 from hyakumori_crm.crm.schemas.forest import (
     Address,
@@ -9,13 +11,13 @@ from hyakumori_crm.crm.schemas.forest import (
     ForestSchema,
     LandAttribute,
     Name,
-    Tag,
+    Tags,
 )
 from pandas import DataFrame
 from pydantic import ValidationError
 
 from ..lib.common import Counter
-from ..lib.utils import normalize, process_date, process_nan_id
+from ..lib.utils import normalize, process_date, process_nan_id, get_or_default
 from .base import BaseImporter
 
 
@@ -218,7 +220,8 @@ class ForestImporter(BaseImporter):
                 end_date=process_date(row["FSC認証加入_終了日"]),
             ),
         ]
-        tag = Tag(danchi=row["団地"], manage_type=row["管理形態"])
+        tags_name = FOREST_TAG_KEYS.values()  # ["未登録/登録", "所有者順位", "同姓同名"]
+        tags = dict(zip(tags_name, [get_or_default(row[tag], None) for tag in tags_name]))
         forest_attributes = self._build_forest_attributes(row)
         land_attributes = self._build_land_attributes(row)
 
@@ -230,7 +233,7 @@ class ForestImporter(BaseImporter):
             original_owner=original_owner,
             owners=owners,
             contracts=contracts,
-            tag=tag,
+            tags=tags,
             land_attributes=land_attributes,
             forest_attributes=forest_attributes,
         )
