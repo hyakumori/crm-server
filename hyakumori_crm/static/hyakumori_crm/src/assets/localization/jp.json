@@ -124,7 +124,8 @@
     "token_stale": "無効または期限切リンク",
     "field_optional": "省略可能",
     "fail_create_user": "メール送信中にエラーが発生しました。宛先を確認した上で、再度試して見てください。",
-    "permission_denied": "アクセス拒否"
+    "permission_denied": "アクセス拒否",
+    "duplicate_content_was_removed": "重複したファイルが削除されました。"
   },
   "page_header": {
     "archive_detail": "交渉履歴",
@@ -148,7 +149,7 @@
     "activate_account": "アカウントを有効にする"
   },
   "raw_text": {
-    "agree": "同意する",
+    "agree": "わかりました。",
     "in_negotiation": "商談中",
     "rows_per_page": "ページ当たりの行数",
     "search": "検索"

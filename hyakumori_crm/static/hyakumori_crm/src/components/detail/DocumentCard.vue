@@ -41,7 +41,7 @@ export default {
   name: "document-card",
 
   props: {
-    attachment: Object,
+    attachment: [Object, File],
     fileName: String,
     isUpdating: Boolean,
     deleteClick: Function,

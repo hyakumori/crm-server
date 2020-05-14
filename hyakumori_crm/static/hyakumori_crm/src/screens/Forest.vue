@@ -8,11 +8,12 @@
       />
 
       <div class="ml-7 forest__data-section">
-        <table-action
-          class="forest__data-section__table-action mb-4"
-          v-if="tableSelectedRow.length > 0"
-          :selectedCount="tableSelectedRow.length"
-        />
+        <!--   For now it has no function, so remove it temporary  -->
+        <!--        <table-action-->
+        <!--          class="forest__data-section__table-action mb-4"-->
+        <!--          v-if="tableSelectedRow.length > 0"-->
+        <!--          :selectedCount="tableSelectedRow.length"-->
+        <!--        />-->
 
         <data-list
           mode="forest"
@@ -59,7 +60,7 @@ export default {
   components: {
     DataList,
     SearchCard,
-    TableAction,
+    // TableAction,
     SnackBar,
     MainSection,
   },
