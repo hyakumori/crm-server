@@ -56,7 +56,7 @@ import CustomerContactList from "./CustomerContactList";
 import ContainerMixin from "./ContainerMixin";
 import ContactForm from "../forms/ContactForm";
 
-import { reject } from "lodash";
+import { reject, cloneDeep } from "lodash";
 
 export default {
   mixins: [ContainerMixin],
@@ -92,11 +92,12 @@ export default {
       form: this.initForm(),
       formErrors: {},
       relationshipChanges: [],
+      contacts_: [],
     };
   },
   computed: {
     tempContacts() {
-      return [...this.contacts];
+      return [...this.contacts_];
     },
     contactIdsToDelete() {
       return this.contactsToDelete.map(c => c.id);
@@ -111,7 +112,6 @@ export default {
       return this.relationshipChanges.map(i => ({
         contact: i.contact,
         relationship_type: i.val,
-        contact_type: this.contactType,
       }));
     },
   },
@@ -148,6 +148,7 @@ export default {
         await this.$rest.put(`/customers/${this.id}/contacts`, {
           adding: this.contactsAddData,
           deleting: this.contactIdsToDelete,
+          contact_type: this.contactType,
         });
         this.$emit("saved");
         this.saving = false;
@@ -204,6 +205,12 @@ export default {
     },
   },
   watch: {
+    contacts: {
+      deep: true,
+      handler(val) {
+        this.contacts_ = cloneDeep(val);
+      },
+    },
     isEditing(val) {
       if (!val) {
         for (let contactToDelete of this.contactsToDelete) {

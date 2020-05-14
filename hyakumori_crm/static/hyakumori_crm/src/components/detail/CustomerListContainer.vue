@@ -75,7 +75,7 @@ import UpdateButton from "./UpdateButton";
 import AdditionButton from "../AdditionButton";
 import SelectListModal from "../SelectListModal";
 import CustomerContactCard from "../detail/CustomerContactCard";
-import { reject, debounce, find } from "lodash";
+import { reject, debounce, find, cloneDeep } from "lodash";
 
 export default {
   name: "customer-list-container",
@@ -115,11 +115,12 @@ export default {
       contactsToDelete: [],
       saving: false,
       relationshipChanges: [],
+      contacts_: [],
     };
   },
   computed: {
     tempContacts() {
-      return [...this.contacts, ...this.contactsToAdd];
+      return [...this.contacts_, ...this.contactsToAdd];
     },
     contactIdsMap() {
       return Object.fromEntries(this.tempContacts.map(c => [c.id, true]));
@@ -128,7 +129,6 @@ export default {
       return [...this.contactsToAdd, ...this.relationshipChanges].map(c => ({
         contact: c.id,
         forest_id: c.forest_id,
-        contact_type: c.contact_type || "FOREST",
         relationship_type: c.relationship_type,
       }));
     },
@@ -162,9 +162,10 @@ export default {
         this.contactsToAdd.push(contactItem);
         this.modalSelectingContactIndex = null;
         this.modalSelectingForestId = null;
+        if (this.contactitems.results.length <= 3) this.handleLoadMore();
       }
     },
-    handleDelete(contact) {
+    handleDelete(contact, index) {
       if (contact.added) {
         delete contact.added;
         this.contactsToAdd = reject(this.contactsToAdd, { id: contact.id });
@@ -172,6 +173,7 @@ export default {
       } else {
         this.$set(contact, "deleted", true);
         this.$set(contact, "relationship_type", undefined);
+        this.$set(this.contacts, index, contact);
         this.relationshipChanges = reject(this.relationshipChanges, {
           id: contact.id,
         });
@@ -188,6 +190,7 @@ export default {
         await this.$rest.put(`/customers/${this.id}/contacts`, {
           adding: this.contactsAddData,
           deleting: this.contactIdsToDelete,
+          contact_type: this.contactType || "FOREST",
         });
         this.$emit("saved");
         this.saving = false;
@@ -245,6 +248,12 @@ export default {
     },
   },
   watch: {
+    contacts: {
+      deep: true,
+      handler(val) {
+        this.contacts_ = cloneDeep(val);
+      },
+    },
     async showSelect(val) {
       if (val && !this.contactitems.next) {
         await this.loadInitContacts("");
