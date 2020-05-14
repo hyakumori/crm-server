@@ -44,7 +44,7 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col class="">
+        <v-col>
           <label class="font-weight-bold">{{
             $t("forms.labels.customer.postal_code")
           }}</label>
@@ -58,18 +58,6 @@
         </v-col>
         <v-col>
           <label class="font-weight-bold">{{
-            $t("forms.labels.sector")
-          }}</label>
-          <TextInput
-            v-model="form.sector"
-            :placeholder="$t('forms.placeholders.customer.sector')"
-            :name="`${fieldNamePrefix}address.sector`"
-          />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col class="">
-          <label class="font-weight-bold">{{
             $t("forms.labels.prefecture")
           }}</label>
           <TextInput
@@ -78,6 +66,8 @@
             :name="`${fieldNamePrefix}address.prefecture`"
           />
         </v-col>
+      </v-row>
+      <v-row>
         <v-col>
           <label class="font-weight-bold">{{
             $t("forms.labels.municipality")
@@ -86,6 +76,16 @@
             v-model="form.municipality"
             :placeholder="$t('forms.placeholders.customer.municipality')"
             :name="`${fieldNamePrefix}address.municipality`"
+          />
+        </v-col>
+        <v-col>
+          <label class="font-weight-bold">{{
+            $t("forms.labels.sector")
+          }}</label>
+          <TextInput
+            v-model="form.sector"
+            :placeholder="$t('forms.placeholders.customer.sector')"
+            :name="`${fieldNamePrefix}address.sector`"
           />
         </v-col>
       </v-row>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-13 17:31+0700\n"
+"POT-Creation-Date: 2020-05-14 10:40+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -99,8 +99,8 @@ msgid "Required"
 msgstr "必須"
 
 #: core/models.py:90
-msgid "Invalid"
-msgstr "無効"
+msgid "Bad format"
+msgstr "形式が正しくありません"
 
 #: core/models.py:92
 #, fuzzy
@@ -108,7 +108,7 @@ msgstr "無効"
 msgid "Invalid Email"
 msgstr "無効なメール"
 
-#: core/models.py:93
+#: core/models.py:94
 #, python-brace-format
 msgid "Required at least {limit_value} character"
 msgstr "{limit_value}文字以上入力する必要があります。"
@@ -175,6 +175,7 @@ msgid "Contact {c} not belong to forest and customer"
 msgstr "連絡先{c}はフォレストと顧客に属していません"
 
 #: customer/schemas.py:158
+#, python-brace-format
 msgid "Contact {pk} not found"
 msgstr "連絡先{pk}が見つかりません"
 
@@ -502,6 +503,9 @@ msgstr ""
 #: users/templates/email/password_reset.html:435
 msgid "パスワードリセット"
 msgstr ""
+
+#~ msgid "Invalid"
+#~ msgstr "無効"
 
 #, fuzzy
 #~| msgid "email address"

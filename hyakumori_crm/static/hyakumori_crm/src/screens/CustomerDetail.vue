@@ -126,6 +126,7 @@
       <div>
         <memo-input
           :api-url="`/customers/${$route.params.id}/memo`"
+          object-type="customer"
           v-model="customer"
         ></memo-input>
         <action-log
@@ -358,7 +359,12 @@ export default {
         },
         {
           label: this.$t("forms.labels.address"),
-          value: this.customer?.self_contact.address.sector || "",
+          value:
+            (this.customer?.self_contact.address.prefecture || "") +
+            " " +
+            (this.customer?.self_contact.address.municipality || "") +
+            " " +
+            (this.customer?.self_contact.address.sector || ""),
         },
         {
           label: this.$t("forms.labels.customer.phone_number"),
@@ -377,10 +383,6 @@ export default {
 
     bankingInfo() {
       return [
-        {
-          label: "口座指定者",
-          value: "",
-        },
         {
           label: "銀行名",
           value: this.customer?.banking?.bank_name || "",

@@ -46,12 +46,14 @@
       </div>
     </template>
     <template #right>
-      <action-log
-        v-if="isDetail"
-        app-name="crm"
-        object-type="archive"
-        :object-id="$route.params.id"
-      ></action-log>
+      <div class="right-column">
+        <action-log
+          v-if="isDetail"
+          app-name="crm"
+          object-type="archive"
+          :object-id="$route.params.id"
+        ></action-log>
+      </div>
     </template>
   </main-section>
 </template>
@@ -110,7 +112,7 @@ export default {
 
   methods: {
     forceRefreshCache() {
-      this.$rest.post(`/archives/${this.id}/cache`);
+      this.$rest.post(`/archives/${this.id}/cache`, {}, { no_activity: true });
     },
     async fetchParticipants() {
       this.participantsLoading = true;
@@ -148,5 +150,8 @@ export default {
     border-radius: 4px;
     box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
   }
+}
+.right-column {
+  min-width: 400px;
 }
 </style>

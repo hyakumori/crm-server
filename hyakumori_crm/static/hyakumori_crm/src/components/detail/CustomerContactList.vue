@@ -25,7 +25,6 @@
         "
         :mode="mode"
         :showDefaultBadge="showDefaultBadge"
-        :showRelatedInfo="showRelatedInfo"
       />
     </v-col>
   </v-row>
@@ -53,7 +52,6 @@ export default {
     customerIdNameMap: Object,
     mode: String,
     showDefaultBadge: { type: Boolean, default: false },
-    showRelatedInfo: { type: Boolean, default: true },
   },
   methods: {
     getCustomerName(customer_id) {

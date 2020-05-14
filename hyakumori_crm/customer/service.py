@@ -290,8 +290,10 @@ def contacts_list_with_search(search_str: str = None):
         .annotate(forests_count=Count("customer__forestcustomer"))
     )
     queryset = Contact.objects.annotate(
-        forests_count=Subquery(cc.values("forests_count")[:1])
+        forests_count=Subquery(cc.values("forests_count")[:1]),
+        cc_attrs=F("customercontact__attributes")
     ).all()
+
     if search_str:
         queryset = queryset.filter(
             Q(name_kanji__first_name__icontains=search_str)
@@ -319,12 +321,13 @@ def customercontacts_list_with_search(search_str: str = None):
         customer_id=F("customercontact__customer_id"),
         is_basic=F("customercontact__is_basic"),
         forests_count=Subquery(cc.values("forests_count")[:1]),
+        cc_attrs=F("customercontact__attributes"),
         customer_name_kanji=RawSQL(
             """(select C0.name_kanji
-from crm_contact C0
-join crm_customercontact CC0
-on C0.id = CC0.contact_id and CC0.is_basic = true
-where CC0.customer_id = crm_customercontact.customer_id)""",
+                    from crm_contact C0
+                    join crm_customercontact CC0
+                        on C0.id = CC0.contact_id and CC0.is_basic = true
+                where CC0.customer_id = crm_customercontact.customer_id)""",
             params=[],
         ),
     ).all()

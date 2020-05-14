@@ -87,10 +87,12 @@ class HyakumoriDanticModel(BaseModel):
         anystr_strip_whitespace = True
         error_msg_templates = {
             "type_error.none.not_allowed": _("Required"),
-            "value_error.str.regex": _("Invalid"),
+            "value_error.str.regex": _("Bad format"),
             "value_error.missing": _("Required"),
             "value_error.email": _("Invalid Email"),
-            "value_error.any_str.min_length": _('Required at least {limit_value} character'),
+            "value_error.any_str.min_length": _(
+                "Required at least {limit_value} character"
+            ),
         }
 
     @validator("*", pre=True)

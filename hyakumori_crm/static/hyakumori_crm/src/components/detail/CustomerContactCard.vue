@@ -1,11 +1,11 @@
 <template>
   <v-card
-    :color="mode != 'view' && selected ? '#dddddd' : undefined"
+    :color="mode !== 'view' && selected ? '#dddddd' : undefined"
     class="customer-contact-card d-flex d-hover"
     :class="{ flat: flat, deleted: deleted, added: added }"
     outlined
     active-class="selected"
-    :ripple="mode != 'view'"
+    :ripple="mode !== 'view'"
     @click="clickable ? $emit('click', contact.id, index) : undefined"
     :style="{ cursor: clickable ? 'pointer' : 'auto' }"
   >
@@ -20,7 +20,9 @@
           <span class="caption">{{ forestsCount || 0 }} 件の森林</span>
         </h4>
 
-        <p class="green--text mb-0 ml-2 caption">{{ relationshipType }}</p>
+        <p class="green--text mb-0 ml-2 caption relationship-type">
+          {{ relationshipType }}
+        </p>
       </div>
 
       <div class="text-truncate">
@@ -67,12 +69,9 @@
       <p class="ma-0 pt-2 caption text-truncate" v-if="forestInternalId">
         森林ID{{ forestInternalId }}の連絡者
       </p>
-      <p class="ma-0 pt-2 caption text-truncate" v-if="showRelatedInfo">
-        <span style="background-color:#f5f5f5;color: black" v-if="customerName">
+      <p class="ma-0 pt-2 caption text-truncate" v-if="customerName">
+        <span style="background-color:#f5f5f5;color: black">
           {{ customerName.replace("null", "") }}の関係連絡先
-        </span>
-        <span style="background-color:#f5f5f5;color: black" v-else>
-          本人の連絡情報
         </span>
       </p>
     </div>
@@ -145,7 +144,6 @@ export default {
     customerName: String,
     showDefaultBadge: { type: Boolean, default: false },
     clickable: { type: Boolean, default: false },
-    showRelatedInfo: { type: Boolean, default: true },
   },
 
   data() {
@@ -235,7 +233,7 @@ export default {
       );
     },
     relationshipType() {
-      return this.isContactor ? this.contact.cc_attrs?.relationship_type : "";
+      return this.contact.cc_attrs?.relationship_type || "本人";
     },
   },
 };
@@ -269,6 +267,11 @@ $background-color: #f5f5f5;
 
 .customer-contact-card.added {
   border: 1px solid #12c7a6 !important;
+}
+
+.relationship-type {
+  position: absolute;
+  right: 25px;
 }
 
 .customer-contact-card {
