@@ -1,5 +1,9 @@
 <template>
-  <div class="memo-input ml-6 mb-6" @click.stop="isUpdate = true">
+  <div
+    class="memo-input ml-6 mb-6"
+    @click.stop="hasPermission && (isUpdate = true)"
+    :class="{ pointer: !isUpdate && hasPermission }"
+  >
     <h4 class="mb-1">備考</h4>
     <v-progress-linear
       height="2"
@@ -50,11 +54,13 @@
 <script>
 import { ValidationProvider } from "vee-validate";
 import UpdateButton from "./UpdateButton";
+import { hasScope } from "../../helpers/security";
 
 export default {
   props: {
-    apiUrl: { type: String },
+    apiUrl: { type: String, required: true },
     value: { type: Object },
+    objectType: { type: String, required: true },
   },
   components: {
     ValidationProvider,
@@ -94,6 +100,9 @@ export default {
     },
   },
   computed: {
+    hasPermission() {
+      return hasScope(`manage_${this.objectType}`);
+    },
     formattedMemo() {
       return (this.memo && this.memo.replace(/(?:\r\n|\r|\n)/g, "<br>")) || "";
     },
@@ -110,9 +119,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.pointer {
+  cursor: pointer;
+}
 .memo-input {
   width: 400px;
-  cursor: pointer;
   word-break: break-all;
   &__card {
     min-height: 70px;

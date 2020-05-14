@@ -124,9 +124,15 @@ export default {
 
     async onSubmit() {
       try {
-        const response = await this.$rest.post("/token/create/", {
-          ...this.form,
-        });
+        const response = await this.$rest.post(
+          "/token/create/",
+          {
+            ...this.form,
+          },
+          {
+            no_activity: true,
+          },
+        );
 
         if (response) {
           const { access, refresh } = response;

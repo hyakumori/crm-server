@@ -14,19 +14,21 @@
           >
         </v-col>
         <v-col cols="2">
-          <p class="ml-4 mr-6">{{ getArchiveDate(attach.archive_date) }}</p>
+          <p class="ml-3 mr-6">{{ getArchiveDate(attach.archive_date) }}</p>
         </v-col>
         <v-col cols="4" class="d-flex pr-4 text-truncate">
-          <p class="history-discussion__attach">{{ attach.title }}</p>
-          <v-icon v-if="attach.attachments.length > 0" small
-            >mdi-paperclip</v-icon
-          >
+          <p class="history-discussion__attach text-truncate">
+            {{ attach.title }}
+          </p>
+          <v-icon v-if="attach.attachments.length" small>mdi-paperclip</v-icon>
         </v-col>
         <v-col cols="2" class="pr-2 text-truncate">
-          <p>{{ attach.participant }}</p>
+          <p>{{ renderArchiveForests(attach) }}</p>
         </v-col>
         <v-col col="2" class="pr-2 text-truncate">
-          <p class="history-discussion__host">{{ attach.location }}</p>
+          <p class="history-discussion__host">
+            {{ renderArchiveParticipants(attach) }}
+          </p>
         </v-col>
         <v-col cols="1">
           <router-link
@@ -45,6 +47,7 @@
 
 <script>
 import { getDate } from "../../helpers/datetime";
+import { get as _get } from "lodash";
 
 export default {
   name: "attachment-card",
@@ -62,6 +65,33 @@ export default {
   methods: {
     getArchiveDate(date) {
       return getDate(date) || "";
+    },
+    renderArchiveForests(data) {
+      const list = _get(data, "attributes.forest_cache.list", []);
+      if (list.length > 0) {
+        let results = _get(list[0], "forest__internal_id", "");
+        if (list.length > 1) {
+          results +=
+            " " +
+            this.$t("tables.another_item_thing", { count: list.length - 1 });
+        }
+        return results;
+      }
+      return "";
+    },
+    renderArchiveParticipants(data) {
+      const list = _get(data, "attributes.customer_cache.list", []);
+      if (list.length > 0) {
+        let results = _get(list[0], "customer__name_kanji.last_name", "");
+        results += " " + _get(list[0], "customer__name_kanji.first_name", "");
+        if (list.length > 1) {
+          results +=
+            " " +
+            this.$t("tables.another_item_human", { count: list.length - 1 });
+        }
+        return results;
+      }
+      return "";
     },
   },
 
