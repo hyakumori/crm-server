@@ -255,13 +255,31 @@ EMAIL_USE_TLS = strtobool(os.getenv("EMAIL_USE_TLS", "no"))
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    'formatters': {
+        'sql': {
+            '()': 'hyakumori_crm.core.utils.SQLFormatter',
+            'format': '[%(duration).3f] %(statement)s',
+        }
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+        'sql': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'sql',
+            'level': 'DEBUG',
+        },
+    },
     "root": {"handlers": ["console"], "level": "WARNING"},
     "loggers": {
         "django.db.backends": {
-            "handlers": ["console"],
+            "handlers": ["sql"],
             "level": os.getenv("DB_LOG_LEVEL", "DEBUG" if DEBUG else "WARNING"),
             "propagate": False,
+        },
+        'django.db.backends.schema': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
         },
     },
 }
