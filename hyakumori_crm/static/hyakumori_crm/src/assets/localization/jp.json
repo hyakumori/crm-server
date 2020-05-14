@@ -209,5 +209,10 @@
       "inactive": "無効"
     }
   },
-  "not_available_field": "一時不明"
+  "not_available_field": "一時不明",
+  "tags": {
+    "required_fields": "`すべてのフィールドに値を入力してください`",
+    "migrate_title": "確認",
+    "confirm_migrate": "{total} 個のデータが該当のタグを使用中です。本当に更新したいでしょうか？ これが完了するにはしばらく時間がかかる場合があります。"
+  }
 }

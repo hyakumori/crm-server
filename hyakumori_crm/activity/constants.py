@@ -12,6 +12,11 @@ class ForestActions:
         "備考記録が更新されました。",
         "mdi-clipboard-list-outline",
     )
+    tags_updated = (
+        "forest.tags_updated",
+        "タグ情報が更新されました。",
+        "mdi-tag-outline",
+    )
 
 
 class CustomerActions:
@@ -48,6 +53,11 @@ class CustomerActions:
         "備考記録が更新されました。",
         "mdi-clipboard-list-outline",
     )
+    tags_updated = (
+        "customer.tags_updated",
+        "タグ情報が更新されました。",
+        "mdi-tag-outline",
+    )
 
 
 class ArchiveActions:
@@ -72,6 +82,11 @@ class ArchiveActions:
         "archive.forest_list_updated",
         "関連する森林が更新されました。",
         "mdi-image-filter-hdr",
+    )
+    tags_updated = (
+        "customer.tags_updated",
+        "タグ情報が更新されました。",
+        "mdi-tag-outline",
     )
 
 

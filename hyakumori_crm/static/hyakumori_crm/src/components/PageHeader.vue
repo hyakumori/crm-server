@@ -95,8 +95,8 @@
                   >
                     {{ headerInfo.title }}
                     <span
-                      v-for="tag in headerInfo.tag"
-                      :key="tag"
+                      v-for="(tag, index) in headerInfo.tags"
+                      :key="index"
                       class="tag"
                       :class="{ 'px-2': headerInfo.title }"
                       :style="{ backgroundColor: headerTagColor }"

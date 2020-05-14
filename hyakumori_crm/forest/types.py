@@ -9,7 +9,7 @@ type Forest implements Timestamp & Editor {
     cadastral: JSON
     owner: JSON
     contracts: JSON
-    tag: JSON
+    tags: JSON
     land_attributes: JSON
     forest_attributes: JSON
     geodata: JSON

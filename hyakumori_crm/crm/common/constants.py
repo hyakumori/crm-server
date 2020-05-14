@@ -60,3 +60,8 @@ CUSTOMER_TAG_KEYS = dict(
     ranking="所有者順位",
     same_name="同姓同名",
 )
+
+FOREST_TAG_KEYS = dict(
+    danchi="団地",
+    manage_type="管理形態"
+)

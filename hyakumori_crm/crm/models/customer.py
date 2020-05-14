@@ -2,6 +2,7 @@ from django.contrib.postgres.fields.jsonb import JSONField
 from django.db import models
 from django.db.models import OuterRef, Subquery, Count, F
 
+from ...activity.constants import CustomerActions
 from ...core.models import BaseResourceModel, BaseQuerySet
 from ..schemas.customer import Address, Banking
 from ..schemas.customer import Contact as ContactSchema
@@ -70,6 +71,10 @@ class Customer(BaseResourceModel):
             ).contact
         except StopIteration:
             return None
+
+    @property
+    def actions(self):
+        return CustomerActions
 
 
 class Contact(BaseResourceModel):
