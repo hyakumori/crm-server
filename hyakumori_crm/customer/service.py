@@ -18,7 +18,7 @@ from hyakumori_crm.crm.models import (
     ForestCustomer,
     ForestCustomerContact,
 )
-from .schemas import ContactType, CustomerInputSchema
+from .schemas import ContactType, CustomerInputSchema, ContactsInput
 from ..crm.common.constants import CUSTOMER_TAG_KEYS
 
 
@@ -89,6 +89,11 @@ def get_customer_contacts(pk: UUID):
         .annotate(
             forest_internal_id=F(
                 "customercontact__forestcustomercontact__forestcustomer__forest__internal_id"
+            )
+        )
+        .annotate(
+            forest_id=F(
+                "customercontact__forestcustomercontact__forestcustomer__forest_id"
             )
         )
         .annotate(
@@ -291,7 +296,6 @@ def contacts_list_with_search(search_str: str = None):
     )
     queryset = Contact.objects.annotate(
         forests_count=Subquery(cc.values("forests_count")[:1]),
-        cc_attrs=F("customercontact__attributes")
     ).all()
 
     if search_str:
@@ -386,17 +390,27 @@ def update_forests(data):
     return customer
 
 
-def update_contacts(contacts_in: dict):
+def update_contacts(contacts_in: ContactsInput):
     customer = contacts_in.customer
     adding = contacts_in.adding
-    CustomerContact.objects.filter(
-        contact_id__in=contacts_in.deleting, customer_id=customer.id
-    ).delete()
+    customercontacts = CustomerContact.objects.filter(
+        contact_id__in=contacts_in.deleting, customer_id=customer.id,
+    ).prefetch_related("contact")
+    for cc in customercontacts:
+        contact = cc.contact
+        if contacts_in.contact_type == ContactType.forest:
+            cc.forestcustomercontact_set.all().delete()
+            if cc.attributes.get("contact_type") == ContactType.forest:
+                cc.force_delete()
+        else:
+            cc.force_delete()
+            contact.force_delete()
+
     for contact_data in adding:
-        customer_contact, _ = CustomerContact.objects.get_or_create(
+        customer_contact, created = CustomerContact.objects.get_or_create(
             customer_id=customer.id, contact_id=contact_data.contact.pk
         )
-        if contact_data.forest_id:
+        if contact_data.forest_id and contacts_in.contact_type == ContactType.forest:
             forestcustomer = next(
                 filter(
                     lambda fc: fc.forest_id == contact_data.forest_id,
@@ -407,12 +421,11 @@ def update_contacts(contacts_in: dict):
                 forestcustomer=forestcustomer, customercontact=customer_contact
             )
         current_attrs = customer_contact.attributes or {}
-        customer_contact.attributes = {
-            **(current_attrs),
-            "contact_type": ContactType.forest.value
-            if contact_data.forest_id
-            else contact_data.contact_type.value,
-        }
+        if created:
+            customer_contact.attributes = {
+                **(current_attrs),
+                "contact_type": contacts_in.contact_type,
+            }
         if contact_data.relationship_type:
             customer_contact.attributes[
                 "relationship_type"

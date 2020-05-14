@@ -299,10 +299,7 @@ export default {
 
     forestContacts() {
       if (!this.selectingForestCustomerId)
-        return filter(
-          this.contacts,
-          c => c.forestcustomer_id && c.cc_attrs.contact_type === "FOREST",
-        );
+        return filter(this.contacts, c => c.forestcustomer_id);
       return filter(this.contacts, {
         forestcustomer_id: this.selectingForestCustomerId,
       });

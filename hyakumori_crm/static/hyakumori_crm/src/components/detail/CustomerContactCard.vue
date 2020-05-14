@@ -132,8 +132,6 @@ export default {
     isUpdate: Boolean,
     showAction: { type: Boolean, default: true },
     flat: { type: Boolean, default: false },
-    deleted: { type: Boolean, default: false },
-    added: { type: Boolean, default: false },
     selectedId: String,
     selectedIndex: Number,
     index: Number,
@@ -179,6 +177,12 @@ export default {
   },
 
   computed: {
+    deleted() {
+      return this.contact.deleted;
+    },
+    added() {
+      return this.contact.added;
+    },
     contact_() {
       return this.contact.self_contact
         ? this.contact.self_contact

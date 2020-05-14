@@ -9,8 +9,6 @@
         :index="index"
         @deleteContact="$emit('deleteContact', contact, index)"
         @undoDeleteContact="$emit('undoDeleteContact', contact, index)"
-        :added="contact.added"
-        :deleted="contact.deleted"
         :showRelationshipSelect="showRelationshipSelect"
         @click="
           (contact_id, indx) => isUpdate && $emit('selected', contact_id, indx)
