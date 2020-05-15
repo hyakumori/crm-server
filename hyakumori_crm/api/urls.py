@@ -5,6 +5,7 @@ from hyakumori_crm.customer.urls import api_urls as customer_api_urls
 from hyakumori_crm.users.urls import api_urls as user_api_urls
 from hyakumori_crm.permissions.urls import api_urls as permission_api_urls
 from hyakumori_crm.archive.urls import api_urls as archive_api_urls
+from hyakumori_crm.archive.urls import view_urls as archive_view_urls
 from hyakumori_crm.activity.urls import api_urls as activity_api_urls
 from hyakumori_crm.tags.urls import api_urls as tags_api_urls
 from .views import notfound_view
@@ -19,3 +20,6 @@ urlpatterns = (
     + tags_api_urls
     + [re_path(".*", notfound_view)]
 )
+
+view_urls = []
+view_urls += archive_view_urls

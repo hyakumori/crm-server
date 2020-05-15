@@ -5,7 +5,7 @@ from django.utils.timezone import now
 from django.utils.translation import gettext as _
 
 from hyakumori_crm.archive.service import get_attachment_by_pk
-from hyakumori_crm.crm.common.utils import decrypt_string, DecryptError
+from hyakumori_crm.crm.common.utils import DecryptError, decrypt_string
 
 
 def download_file(request, code):
@@ -14,12 +14,13 @@ def download_file(request, code):
         attachment = get_attachment_by_pk(content["attachment_pk"])
         expired = content["expired"]
         if dateutil.parser.parse(expired) < now():
-            return JsonResponse(data={'message': _("expired url")}, status=410)
+            return JsonResponse(data={"message": _("expired url")}, status=410)
 
-        response = HttpResponse(attachment.attachment_file, content_type='octet-stream')
-        response['Content-Disposition'] = 'attachment; filename=%s' % attachment.filename
+        response = HttpResponse(attachment.attachment_file, content_type="octet-stream")
+        response["Content-Disposition"] = (
+            "attachment; filename=%s" % attachment.filename
+        )
 
         return response
     except (ObjectDoesNotExist, DecryptError, FileNotFoundError) as e:
-        return JsonResponse(data={'message': _("file not found")}, status=404)
-
+        return JsonResponse(data={"message": _("file not found")}, status=404)

@@ -68,7 +68,7 @@ def archives(request, data: ArchiveInput = None):
 @get_or_404(
     get_archive_by_pk, to_name="archive", pass_to=["kwargs", "request"], remove=True
 )
-@action_login_required(with_permissions=["view_archive", "add_archive"])
+@action_login_required(with_permissions=["manage_archive"])
 def reload_cache(request, *, archive: Archive = None):
     refresh_single_archive_cache(archive)
     return Response()
@@ -104,8 +104,12 @@ def attachments(request, archive: Archive = None):
     else:
         try:
             new_attachment = create_attachment(archive, request)
-            ActivityService.log(ArchiveActions.materials_updated, archive, request=request)
-            return Response({"data": AttachmentSerializer(new_attachment, many=True).data})
+            ActivityService.log(
+                ArchiveActions.materials_updated, archive, request=request
+            )
+            return Response(
+                {"data": AttachmentSerializer(new_attachment, many=True).data}
+            )
         except ValidationError as error:
             return make_error_json(str(error))
 

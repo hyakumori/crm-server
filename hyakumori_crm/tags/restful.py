@@ -29,13 +29,6 @@ from ..permissions.services import PermissionService
 logger = logging.getLogger(__name__)
 
 
-@api_view(["POST"])
-@permission_classes([IsAdminUser])
-def setup_tags(request):
-    TagService.setup_tags()
-    return make_success_json(data=dict(success=True))
-
-
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_settings_for_type(request, app_name, object_type):
@@ -51,7 +44,6 @@ def get_settings_for_type(request, app_name, object_type):
 
     results = TagService.get_setting_for_type(app_name, object_type)
     if not results:
-        logger.warning(f"ContentType {app_name}.{object_type} not found")
         return make_success_json(data=dict(results=[]))
 
     return make_success_json(
@@ -87,7 +79,6 @@ def modify_tag_for_type(
     if not app_name or not object_type:
         return make_error_json(_("Wrong parameters"))
     try:
-        results = None
         if request.method == "POST":
             results = TagService.create_tag_setting_for_type(
                 app_name, object_type, request.user, tag_setting_input
