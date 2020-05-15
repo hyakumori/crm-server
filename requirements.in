@@ -21,3 +21,5 @@ django-guardian
 drf-typed-views
 django-cleanup
 cryptography
+django-redis
+django-q

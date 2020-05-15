@@ -12,6 +12,13 @@ api_urls = [
     path("archives/<uuid:pk>/customers", archive_customers),
     path("archives/<uuid:pk>/attachments", attachments),
     path("archives/<uuid:pk>/attachments/<uuid:attachment_pk>", attachment),
-    path("archives/<uuid:pk>/attachments/<uuid:attachment_pk>/download", attachment_download),
-    path("archives/attachment/<str:code>", download_file)
+    path(
+        "archives/<uuid:pk>/attachments/<uuid:attachment_pk>/download",
+        attachment_download,
+    ),
+    path("archives/attachment/<str:code>", download_file),
+]
+
+view_urls = [
+    path("archives/attachment/<str:code>", download_file),
 ]
