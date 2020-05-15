@@ -80,6 +80,7 @@ import SelectInfo from "../components/detail/SelectInfo";
 import ActionLog from "../components/detail/ActionLog";
 
 import { fromNow } from "../helpers/datetime";
+import busEvent from "../BusEvent";
 
 export default {
   name: "user-detail",
@@ -186,6 +187,15 @@ export default {
       return formatedErrors;
     },
 
+    syncUserProfileInfo() {
+      try {
+        const userProfile = JSON.parse(localStorage.getItem("user"));
+        if (this.userInfo.id === userProfile.id) {
+          localStorage.setItem("user", JSON.stringify(this.userInfo));
+          busEvent.$emit("profile:refresh");
+        }
+      } catch {}
+    },
     async onSave() {
       try {
         this.isLoading = true;
@@ -196,6 +206,9 @@ export default {
         if (response) {
           await this.getUserPermission();
           this.userInfo = response;
+          this.setHeaderInfo();
+          this.syncUserProfileInfo();
+
           setTimeout(() => {
             this.isUpdate.basicInfo = false;
             this.errors = [];

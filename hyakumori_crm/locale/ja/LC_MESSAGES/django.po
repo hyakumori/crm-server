@@ -103,8 +103,6 @@ msgid "Bad format"
 msgstr "形式が正しくありません"
 
 #: core/models.py:92
-#, fuzzy
-#| msgid "Invalid"
 msgid "Invalid Email"
 msgstr "無効なメール"
 
