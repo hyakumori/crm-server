@@ -234,6 +234,8 @@ export default {
           doc.added = true;
         }
       });
+
+      this.$refs.fileInput.value = "";
     },
 
     async save() {
@@ -281,6 +283,16 @@ export default {
       return (
         this.documents.filter(doc => doc.added || doc.deleted).length === 0
       );
+    },
+  },
+
+  watch: {
+    showDuplicateFileDialog(val) {
+      if (val === false) {
+        this.duplicateUploadFiles = [];
+        this.invalidUploadFilesExtension = [];
+        this.$refs.fileInput.value = "";
+      }
     },
   },
 };
