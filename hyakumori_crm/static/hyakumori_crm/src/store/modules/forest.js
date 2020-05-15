@@ -26,7 +26,7 @@ const getters = {
   customerIdNameMap(state) {
     if (state.customers.length === 0) return {};
     return Object.fromEntries(
-      state.customers.map(c => [c.id, c.self_contact.name_kanji]),
+      state.customers.map(c => [c.id, c.self_contact?.name_kanji]),
     );
   },
 };

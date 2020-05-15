@@ -17,7 +17,6 @@ from .service import (
     create_attachment,
     delete_attachment_file,
     add_participants,
-    delete_related_customer,
     delete_related_forest,
     delete_related_user,
     edit_archive,
@@ -37,8 +36,6 @@ from ..crm.restful.serializers import (
     ArchiveListingSerializer,
     ArchiveSerializer,
     AttachmentSerializer,
-    ForestSerializer,
-    ContactSerializer,
     ForestListingSerializer,
     CustomerContactSerializer,
 )

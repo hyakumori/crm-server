@@ -192,19 +192,21 @@ export default {
       if (this.contact.self_contact) {
         return this.contact.id;
       } else {
-        return this.contact.is_basic ? this.contact.customer_id : null;
+        return this.contact.is_basic
+          ? this.contact.customer_id || this.contact.id
+          : null;
       }
     },
     fullname() {
       if (
-        this.contact_.name_kanji.last_name &&
-        this.contact_.name_kanji.first_name
+        this.contact_?.name_kanji?.last_name &&
+        this.contact_?.name_kanji?.first_name
       ) {
         return `${this.contact_.name_kanji.last_name} ${this.contact_.name_kanji.first_name}`;
       }
       return (
-        this.contact_.name_kanji.last_name ||
-        this.contact_.name_kanji.first_name ||
+        this.contact_?.name_kanji?.last_name ||
+        this.contact_?.name_kanji?.first_name ||
         this.$t("not_available_field")
       );
     },

@@ -87,20 +87,31 @@ def update_owners(owner_pks_in):
     return forest
 
 
-def get_customers(pk):
-    return Customer.objects.raw(
-        """select crm_customer.*,
-count(A0.id) as forests_count,
-crm_forestcustomer.attributes->>'default' as default
-from crm_customer
-join crm_forestcustomer
-on crm_customer.id = crm_forestcustomer.customer_id
-left outer join crm_forestcustomer A0
-on crm_customer.id = A0.customer_id
-where crm_forestcustomer.forest_id = %(pk)s
-group by crm_customer.id, crm_forestcustomer.attributes->>'default'""",
+def get_forest_customers(pk):
+    qs = Customer.objects.raw(
+        """
+        with self_contact as (
+            select customer_id from crm_contact A0
+            join crm_customercontact A1 on A0.id = A1.contact_id
+            where A1.is_basic = true and A0.deleted is null
+            and A1.deleted is null
+        )
+        select crm_customer.*,
+               count(A0.id) as forests_count,
+               crm_forestcustomer.attributes->>'default' as default
+        from crm_customer
+        join self_contact
+            on self_contact.customer_id = crm_customer.id
+        join crm_forestcustomer on crm_customer.id = crm_forestcustomer.customer_id
+        left outer join crm_forestcustomer A0 on crm_customer.id = A0.customer_id
+        where crm_forestcustomer.forest_id = %(pk)s::uuid
+        group by crm_customer.id,
+                 crm_forestcustomer.attributes->>'default'
+        """,
         {"pk": pk},
     ).prefetch_related("customercontact_set__contact")
+
+    return qs
 
 
 def get_customer_contacts_of_forest(pk):
