@@ -58,11 +58,7 @@
           clickable
           mode="search"
           :showRelationshipSelect="false"
-          :customerName="
-            (!item.is_basic &&
-              `${item.customer_name_kanji.last_name} ${item.customer_name_kanji.first_name}`) ||
-              ''
-          "
+          :customerName="renderCustomerName(item)"
         />
       </template>
     </select-list-modal>
@@ -153,6 +149,14 @@ export default {
     },
   },
   methods: {
+    renderCustomerName(item) {
+      return (
+        (!item.is_basic &&
+          item.customer_name_kanji &&
+          `${item.customer_name_kanji.last_name} ${item.customer_name_kanji.first_name}`) ||
+        ""
+      );
+    },
     handleContactCardSelect(contact_id, indx) {
       const contact = this.tempParticipants[indx];
       if (contact.is_basic && this.selectingContactId != contact_id) {

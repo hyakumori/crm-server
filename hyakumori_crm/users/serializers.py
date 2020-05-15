@@ -69,6 +69,20 @@ class ActivationSerializer(DjActivationSerializer, PasswordRetypeSerializer):
         return self._validate_activation(attrs)
 
 
+class UserMinimalSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "full_name",
+        )
+        read_only_fields = ("username", "first_name", "last_name", "full_name")
+
+
 class UserSerializer(DjUserSerializer):
     groups = SlugRelatedField(many=True, read_only=True, slug_field="name")
 

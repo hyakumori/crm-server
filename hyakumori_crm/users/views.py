@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenViewBase
 from rest_typed_views import Body, typed_action
 
-from .serializers import CustomTokenObtainPairSerializer
+from .serializers import CustomTokenObtainPairSerializer, UserMinimalSerializer
 from ..activity.services import ActivityService, UserActions
 from ..api.decorators import action_login_required
 from ..core.permissions import IsAdminOrSelf
@@ -22,7 +22,6 @@ from ..crm.restful.serializers import (
     ContactSerializer,
     CustomerSerializer,
     ForestSerializer,
-    UserSerializer,
 )
 from ..permissions.services import PermissionService
 
@@ -56,7 +55,7 @@ class CustomUserViewSet(UserViewSet):
             request=request, queryset=queryset, view=self
         )
         return paginator.get_paginated_response(
-            UserSerializer(paged_list, many=True).data
+            UserMinimalSerializer(paged_list, many=True).data
         )
 
     def perform_update(self, serializer):

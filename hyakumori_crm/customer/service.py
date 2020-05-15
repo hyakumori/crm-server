@@ -323,7 +323,7 @@ def customercontacts_list_with_search(search_str: str = None):
                 where CC0.customer_id = crm_customercontact.customer_id)""",
             params=[],
         ),
-    ).all()
+    ).filter(is_basic__isnull=False).all()
     if search_str:
         queryset = queryset.filter(
             Q(name_kanji__first_name__icontains=search_str)

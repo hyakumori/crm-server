@@ -209,20 +209,22 @@ export default {
     fetchAllParticipants() {
       if (this.next !== null) {
         this.fetchAllParticipantLoading = true;
-        this.$rest.get(this.next !== "" ? this.next : "/users").then(res => {
-          this.fetchAllParticipantLoading = false;
-          const filteredParticipants = this.removeDuplicateParticipant(
-            res.results,
-            this.relatedParticipants,
-          );
-          const allParticipants = this.removeDuplicateParticipant(
-            filteredParticipants,
-            this.allParticipants,
-          );
-          this.allParticipants.push(...allParticipants);
-          this.immutableAllParticipants.push(...allParticipants);
-          this.next = res.next;
-        });
+        this.$rest
+          .get(this.next !== "" ? this.next : "/users/minimal")
+          .then(res => {
+            this.fetchAllParticipantLoading = false;
+            const filteredParticipants = this.removeDuplicateParticipant(
+              res.results,
+              this.relatedParticipants,
+            );
+            const allParticipants = this.removeDuplicateParticipant(
+              filteredParticipants,
+              this.allParticipants,
+            );
+            this.allParticipants.push(...allParticipants);
+            this.immutableAllParticipants.push(...allParticipants);
+            this.next = res.next;
+          });
       }
     },
 

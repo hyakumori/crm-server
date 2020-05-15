@@ -225,28 +225,15 @@ def add_participants(archive: Archive, data: ArchiveCustomerInput):
         cc.archivecustomercontact_set.filter(
             customercontact_id=cc.id, archivecustomer_id=ac.id
         ).delete()
-        if len(ac.archivecustomercontact_set.all()) == 0:
+
+        ac.refresh_from_db()
+
+        if ac.archivecustomercontact_set.count() == 0:
             ac.force_delete()
 
     archive.save(update_fields=["updated_at"])
     refresh_customers_cache(archive, save=True)
     return archive
-
-
-def delete_related_customer(archive: Archive, data: dict):
-    customer_id_list = set(data.get("ids"))
-    check_empty_list(customer_id_list)
-    for customer_id in customer_id_list:
-        customer = get_customer_by_pk(customer_id)
-        if is_archive_customer_exist(archive.id, customer_id):
-            archive_customer = ArchiveCustomer.objects.get(
-                archive_id=archive.id, customer_id=customer.id, deleted=None
-            )
-            archive_customer.force_delete()
-        else:
-            continue
-    refresh_customers_cache(archive, save=True)
-    return True
 
 
 def is_archive_user_exist(archive_id, user_id):
