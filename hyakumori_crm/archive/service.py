@@ -6,6 +6,7 @@ from django.db.models import F, Subquery, OuterRef, Count
 from django.db.models.expressions import Func, RawSQL, Value
 from django.utils.translation import gettext_lazy as _
 from pydantic import ValidationError
+from django.core.exceptions import ValidationError as DjValidationError
 from rest_framework.request import Request
 
 from ..crm.models import (
@@ -80,21 +81,38 @@ def edit_archive(archive: Archive, data: ArchiveInput):
     return archive
 
 
+def check_valid_file_extension(files):
+    valid_extensions = ['xlsx', 'xls', 'csv', 'doc', 'docx', 'pdf', 'zip', 'png',
+                                                               'jpg', 'gif', 'bmp', 'tif', 'txt']
+    valid_files = []
+    for file in files:
+        file_extension = parse.unquote(file.name).split(".")[-1]
+        if file_extension.lower() in valid_extensions:
+            valid_files.append(file)
+        else:
+            raise DjValidationError('Unsupported file extension')
+    return valid_files
+
+
 def create_attachment(archive: Archive, req: Request):
     files = req.FILES.getlist("file")
-    creator = req.user
-    attachments = []
-    for file in files:
-        attachment = Attachment()
-        attachment.creator = creator
-        attachment.content_object = archive
-        attachment.attachment_file = file
-        attachment.attributes["original_file_name"] = parse.unquote(file.name)
-        attachment.attributes["content_type"] = file.content_type
-        attachment.attributes["original_file_size"] = file.size
-        attachment.save()
-        attachments.append(attachment)
-    return attachments
+    try:
+        valid_files = check_valid_file_extension(files)
+        creator = req.user
+        attachments = []
+        for file in valid_files:
+            attachment = Attachment()
+            attachment.creator = creator
+            attachment.content_object = archive
+            attachment.attachment_file = file
+            attachment.attributes["original_file_name"] = parse.unquote(file.name)
+            attachment.attributes["content_type"] = file.content_type
+            attachment.attributes["original_file_size"] = file.size
+            attachment.save()
+            attachments.append(attachment)
+        return attachments
+    except ValidationError as error:
+        return ValueError(_(error))
 
 
 def delete_attachment_file(archive: Archive, attachment: Attachment):
