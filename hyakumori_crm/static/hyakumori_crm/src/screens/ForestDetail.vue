@@ -12,7 +12,7 @@
 
         <forest-contact-tab-container
           v-acl-only="['manage_customer', 'view_customer']"
-          headerContent="所有林情報"
+          headerContent="所有者情報"
           toggleEditBtnContent="所有者を追加・編集"
           addBtnContent="連絡者を追加"
           :customers="$store.state.forest.customers"

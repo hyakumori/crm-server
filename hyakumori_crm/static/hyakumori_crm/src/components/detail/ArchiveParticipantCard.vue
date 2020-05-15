@@ -40,7 +40,7 @@
     </v-btn>
     <v-btn
       class="align-self-center mr-2"
-      v-if="!isUpdate && !deleted && !added"
+      v-if="!isUpdate && !deleted && !added && hasPermission"
       icon
       @click="onNavigation"
     >
@@ -50,6 +50,8 @@
 </template>
 
 <script>
+import { hasScope } from "../../helpers/security";
+
 export default {
   name: "archive-participant-card",
 
@@ -76,6 +78,9 @@ export default {
   computed: {
     selected() {
       return this.selectedId === this.card_id;
+    },
+    hasPermission() {
+      return hasScope("admin") || hasScope("group_admin");
     },
   },
 };
