@@ -24,7 +24,7 @@ from .service import (
     get_forest_by_pk,
     update,
     update_owners,
-    get_customers,
+    get_forest_customers,
     get_customer_contacts_of_forest,
     set_default_customer,
     set_default_customer_contact,
@@ -82,7 +82,7 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
 
         paginator = default_paginator()
         paged_list = paginator.paginate_queryset(
-            request=request, queryset=get_customers(obj.pk), view=self,
+            request=request, queryset=get_forest_customers(obj.pk), view=self,
         )
 
         return paginator.get_paginated_response(
