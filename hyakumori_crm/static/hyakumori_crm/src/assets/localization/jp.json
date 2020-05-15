@@ -1,18 +1,28 @@
 {
+  "activate_form": {
+    "first_name": "名",
+    "last_name": "姓",
+    "new_password": "新しいパスワード",
+    "new_password_retype": "新しいパスワード（確認）",
+    "password_not_match": "パスワードの確認が一致しません"
+  },
+  "archive": {
+    "no_associated_forest": "関連する森林なし"
+  },
   "buttons": {
+    "activate": "アクティブ",
+    "add": "追加",
     "add_and_edit": "追加＆編集",
-    "add_customer": "顧客を追加",
     "add_archive": "交渉履歴を追加",
+    "add_customer": "顧客を追加",
     "add_user": "アカウントを追加",
     "back": "前のページに戻る",
     "cancel": "キャンセル",
+    "continue": "継続する",
     "login": "ログイン",
     "reset": "リセット",
     "save": "保存",
     "send": "送信",
-    "activate": "アクティブ",
-    "continue": "継続する",
-    "add": "追加",
     "set_as_default": "デフォルトとして設定"
   },
   "detail": {
@@ -33,12 +43,31 @@
       }
     }
   },
+  "enums": {
+    "user_status": {
+      "active": "有効",
+      "inactive": "無効"
+    }
+  },
   "forms": {
     "labels": {
       "address": "住所",
-      "municipality": "市町村",
-      "prefecture": "都道府県",
-      "sector": "大字",
+      "archive": {
+        "consultant_date": "相談日",
+        "consultant_date_and_time": "協議日時|カレンダー",
+        "consultant_time": "相談時間",
+        "content": "協議内容",
+        "future_action": "今後の対応",
+        "location": "場所",
+        "title": "タイトル"
+      },
+      "bank": {
+        "account_name": "口座名義",
+        "account_number": "口座番号",
+        "account_type": "預金種類",
+        "bank_name": "銀行名",
+        "branch_name": "支店名"
+      },
       "customer": {
         "add_more_info": "より詳細な情報を表示",
         "first_name_kana": "メイ",
@@ -51,23 +80,10 @@
         "phone_number": "電話番号",
         "postal_code": "郵便番号"
       },
-      "bank": {
-        "bank_name": "銀行名",
-        "branch_name": "支店名",
-        "account_type": "預金種類",
-        "account_name": "口座名義",
-        "account_number": "口座番号"
-      },
       "email": "メールアドレス",
-      "archive": {
-        "title": "タイトル",
-        "consultant_date_and_time": "協議日時|カレンダー",
-        "consultant_date": "相談日",
-        "consultant_time": "相談時間",
-        "location": "場所",
-        "content": "協議内容",
-        "future_action": "今後の対応"
-      }
+      "municipality": "市町村",
+      "prefecture": "都道府県",
+      "sector": "大字"
     },
     "placeholders": {
       "customer": {
@@ -78,16 +94,16 @@
         "last_name_kana": "例）ヤマダ",
         "last_name_kanji": "例）山田",
         "mobile_number": "携帯電話番号を入力",
+        "municipality": "市町村を入力",
         "phone_number": "電話番号を入力",
         "postal_code": "郵便番号を入力（数字7桁）",
         "prefecture": "都道府県を入力",
-        "municipality": "市町村を入力",
         "sector": "大字を入力"
       }
     },
     "titles": {
-      "create_customer": "顧客情報の追加",
-      "create_contact": "新しい連絡先を作成"
+      "create_contact": "新しい連絡先を作成",
+      "create_customer": "顧客情報の追加"
     }
   },
   "icon": {
@@ -107,33 +123,38 @@
     "go_to_login": "ログイン画面に戻る",
     "password": "パスワード"
   },
+  "memo": {
+    "empty": "備考がありません。クリックして編集します。"
+  },
   "messages": {
+    "activate_account_success": "アカウントの有効化に成功しました。{seconds}秒後にログイン画面にリダイレクトします。",
+    "duplicate_content_was_removed": "重複したファイルが削除されました。",
+    "email_not_found": "入力したメールアドレスに該当するユーザが存在しません。",
+    "error_set_new_password": "パスワード設定中にエラーが発生しました。入力した内容を確認した上で、再度試してみてください。",
+    "fail_create_user": "メール送信中にエラーが発生しました。宛先を確認した上で、再度試して見てください。",
+    "field_optional": "省略可能",
     "forgot_password_help_text": "パスワードを再発行するには、メールアドレスを入力し、届いたメールのURLをクリックしてください",
+    "invitation_sent": "招待メールを送信しました{email}",
     "logging_out": "ログアウト中 .  .  .",
     "no_permission": "許可がありません",
-    "page_not_found_text": "要求したページは見つかりませんでした。",
     "not_found": "見つかりません",
-    "email_not_found": "入力したメールアドレスに該当するユーザが存在しません。",
-    "reset_password_confirm_help_text": "パスワードを再発行するには、新しいパスワードを2ド入力してください。",
-    "reset_password_url_sent": "再発行用のURLをご登録のメールアドレス宛てに送信しました。",
-    "error_set_new_password": "パスワード設定中にエラーが発生しました。入力した内容を確認した上で、再度試してみてください。",
-    "reset_password_success": "パスワードが変更できました。{seconds}秒後にログイン画面にリダイレクトします。",
-    "invitation_sent": "招待メールを送信しました{email}",
-    "activate_account_success": "アカウントの有効化に成功しました。{seconds}秒後にログイン画面にリダイレクトします。",
-    "uid_not_found": "無効なユーザーまたはユーザーが存在しません。",
-    "token_stale": "無効または期限切リンク",
-    "field_optional": "省略可能",
-    "fail_create_user": "メール送信中にエラーが発生しました。宛先を確認した上で、再度試して見てください。",
+    "page_not_found_text": "要求したページは見つかりませんでした。",
     "permission_denied": "アクセス拒否",
-    "duplicate_content_was_removed": "重複したファイルが削除されました。"
+    "reset_password_confirm_help_text": "パスワードを再発行するには、新しいパスワードを2ド入力してください。",
+    "reset_password_success": "パスワードが変更できました。{seconds}秒後にログイン画面にリダイレクトします。",
+    "reset_password_url_sent": "再発行用のURLをご登録のメールアドレス宛てに送信しました。",
+    "token_stale": "無効または期限切リンク",
+    "uid_not_found": "無効なユーザーまたはユーザーが存在しません。"
   },
+  "not_available_field": "一時不明",
   "page_header": {
+    "activate_account": "アカウントを有効にする",
     "archive_detail": "交渉履歴",
-    "archive_new": "交渉履歴情報を追加",
     "archive_mgmt": "交渉履歴一覧",
+    "archive_new": "交渉履歴情報を追加",
     "customer_detail": "顧客情報詳細",
-    "customer_new": "顧客情報の追加",
     "customer_mgmt": "顧客情報一覧",
+    "customer_new": "顧客情報の追加",
     "forest_detail": "森林詳細",
     "forest_mgmt": "森林情報一覧",
     "forgot_password": "パスワードの再発行",
@@ -143,10 +164,9 @@
     "not_found": "404ー見つかりません",
     "setting": "設定",
     "user_detail": "ユーザ詳細",
-    "user_mgmt": "ユーザ管理",
-    "user_profile": "アカウント情報",
     "user_invite": "ユーザーを招待",
-    "activate_account": "アカウントを有効にする"
+    "user_mgmt": "ユーザ管理",
+    "user_profile": "アカウント情報"
   },
   "raw_text": {
     "agree": "わかりました。",
@@ -158,13 +178,6 @@
     "new_password": "新しいパスワード",
     "new_password_retype": "新しいパスワード（確認）",
     "password_not_match": "パスワードの確認が一致しません"
-  },
-  "activate_form": {
-    "new_password": "新しいパスワード",
-    "new_password_retype": "新しいパスワード（確認）",
-    "password_not_match": "パスワードの確認が一致しません",
-    "last_name": "姓",
-    "first_name": "名"
   },
   "search": {
     "add_search_condition": "検索条件を追加",
@@ -180,39 +193,29 @@
   },
   "site_name": "Hyakumori CRM",
   "tables": {
-    "headers": {},
-    "no_data": "検索結果がありません。検索条件を見直してください。",
-    "item_forest": "",
     "another_item_human": "他{count}名",
-    "another_item_thing": "他{count}件"
+    "another_item_thing": "他{count}件",
+    "headers": {},
+    "item_forest": "",
+    "no_data": "検索結果がありません。検索条件を見直してください。"
+  },
+  "tags": {
+    "confirm_migrate": "{total} 個のデータが該当のタグを使用中です。本当に更新したいでしょうか？ これが完了するにはしばらく時間がかかる場合があります。",
+    "migrate_title": "確認",
+    "required_fields": "`すべてのフィールドに値を入力してください`"
   },
   "user_management": {
     "tables": {
       "headers": {
-        "username": "ユーザー名",
         "email": "ユーザーID",
-        "last_login": "最終ログイン",
-        "roles": "権限種別",
-        "last_name": "姓",
         "first_name": "名",
+        "full_name": "氏名",
+        "last_login": "最終ログイン",
+        "last_name": "姓",
+        "roles": "権限種別",
         "status": "ステータス",
-        "full_name": "氏名"
+        "username": "ユーザー名"
       }
     }
-  },
-  "memo": {
-    "empty": "備考がありません。クリックして編集します。"
-  },
-  "enums": {
-    "user_status": {
-      "active": "有効",
-      "inactive": "無効"
-    }
-  },
-  "not_available_field": "一時不明",
-  "tags": {
-    "required_fields": "`すべてのフィールドに値を入力してください`",
-    "migrate_title": "確認",
-    "confirm_migrate": "{total} 個のデータが該当のタグを使用中です。本当に更新したいでしょうか？ これが完了するにはしばらく時間がかかる場合があります。"
   }
 }

@@ -53,24 +53,6 @@ def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dic
             "sortable": False,
         },
         {
-            "text": _("Owner address prefecture"),
-            "align": "center",
-            "value": "owner__address__prefecture",
-            "sortable": False,
-        },
-        {
-            "text": _("Owner address municipality"),
-            "align": "center",
-            "value": "owner__address__municipality",
-            "sortable": False,
-        },
-        {
-            "text": _("Owner address sector"),
-            "align": "center",
-            "value": "owner__address__sector",
-            "sortable": False,
-        },
-        {
             "text": _("Long term contract"),
             "align": "center",
             "value": "contracts__0__status",
