@@ -77,7 +77,7 @@ export default {
         }
         return results;
       }
-      return "";
+      return this.$t("archive.no_associated_forest");
     },
     renderArchiveParticipants(data) {
       const list = _get(data, "attributes.customer_cache.list", []);

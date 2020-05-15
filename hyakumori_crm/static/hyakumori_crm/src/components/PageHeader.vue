@@ -11,35 +11,35 @@
           </div>
 
           <div class="menu caption pa-7">
-            <div class="menu--item">
-              <router-link
-                to="/forests"
-                v-acl-only="['manage_forest', 'view_forest']"
-              >
+            <div
+              class="menu--item"
+              v-acl-only="['manage_forest', 'view_forest']"
+            >
+              <router-link to="/forests">
                 {{ $t("page_header.forest_mgmt") }}
               </router-link>
             </div>
 
-            <div class="menu--item">
-              <router-link
-                to="/customers"
-                v-acl-only="['manage_customer', 'view_customer']"
-              >
+            <div
+              class="menu--item"
+              v-acl-only="['manage_customer', 'view_customer']"
+            >
+              <router-link to="/customers">
                 {{ $t("page_header.customer_mgmt") }}
               </router-link>
             </div>
 
-            <div class="menu--item">
-              <router-link
-                to="/archives"
-                v-acl-only="['manage_archive', 'view_archive']"
-              >
+            <div
+              class="menu--item"
+              v-acl-only="['manage_archive', 'view_archive']"
+            >
+              <router-link to="/archives">
                 {{ $t("page_header.archive_mgmt") }}
               </router-link>
             </div>
 
-            <div class="menu--item">
-              <router-link to="/users" v-acl-only="['admin', 'group_admin']">
+            <div class="menu--item" v-acl-only="['admin', 'group_admin']">
+              <router-link to="/users">
                 {{ $t("page_header.user_mgmt") }}
               </router-link>
             </div>
@@ -267,7 +267,8 @@ export default {
             transition: transform 0.2s;
           }
 
-          &:hover {
+          &:hover,
+          &.router-link-active {
             &:after {
               transform-origin: bottom left;
               transform: scaleX(1);
@@ -305,7 +306,6 @@ export default {
 
   &__detail__data {
     height: 40px;
-    max-width: 500px;
     padding-left: 9px;
 
     &__title {

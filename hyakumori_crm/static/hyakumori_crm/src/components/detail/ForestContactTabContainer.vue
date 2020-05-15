@@ -179,7 +179,7 @@ export default {
       } else {
         const newCustomers = [...this.customers];
         const c = newCustomers[index];
-        c.deleted = true;
+        this.$set(c, "deleted", true);
         this.$store.commit("forest/setCustomers", newCustomers);
         this.customersToDelete.push(c);
       }
@@ -187,7 +187,7 @@ export default {
     handleUndoDelete(customer, index) {
       const newCustomers = [...this.customers];
       const c = newCustomers[index];
-      delete c.deleted;
+      this.$set(c, "deleted", undefined);
       this.$store.commit("forest/setCustomers", newCustomers);
       this.customersToDelete = reject(this.customersToDelete, {
         id: customer.id,
