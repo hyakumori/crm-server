@@ -1,8 +1,17 @@
 import pytest
+from django.conf import settings
+
 from rest_framework.test import APIRequestFactory
 from hyakumori_crm.users.models import User
 from hyakumori_crm.crm.models import Forest
 from hyakumori_crm.crm.schemas.contract import ContractType
+
+
+def pytest_configure():
+    del settings.CACHES
+    settings.CACHES = {
+        "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
+    }
 
 
 @pytest.fixture()

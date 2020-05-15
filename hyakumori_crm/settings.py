@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     "guardian",
     "django_filters",
     "django_cleanup",
+    "django_q",
     # ─── HYAKUMORI APPS ─────────────────────────────────────────────────────────────
     "hyakumori_crm.crm",
     "hyakumori_crm.users",
@@ -74,6 +75,7 @@ INSTALLED_APPS = [
     "hyakumori_crm.forest",
     "hyakumori_crm.activity",
     "hyakumori_crm.tags",
+    "hyakumori_crm.tasks",
 ]
 
 MIDDLEWARE = [
@@ -113,11 +115,11 @@ WSGI_APPLICATION = "hyakumori_crm.wsgi.application"
 DATABASES = {
     "default": dict(
         **dj_database_url.parse(
-            urllib.parse.quote(os.environ.get("DATABASE_URL"), ":/@"),
+            urllib.parse.quote(os.environ.get("DATABASE_URL"), ":/@"), conn_max_age=600
         ),
         # ATOMIC REQUESTS
         # https://docs.djangoproject.com/en/3.0/topics/db/transactions/#tying-transactions-to-http-requests
-        ATOMIC_REQUESTS=True
+        ATOMIC_REQUESTS=True,
     )
 }
 
@@ -131,7 +133,7 @@ DATABASES["default"]["TEST"] = dict(
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa
     },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
@@ -166,24 +168,28 @@ LOCALE_PATHS = [os.path.join(BASE_DIR, "hyakumori_crm", "locale")]
 CORS_ORIGIN_WHITELIST = ["http://localhost:8080", "http://127.0.0.1:8080"]
 CORS_ORIGIN_WHITELIST += os.getenv("CORS_ORIGIN_WHITELIST", "").split(",")
 CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'cache-control'
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "cache-control",
 ]
 # ---------------------------------------------------------------------------- #
 #                                    CACHES                                    #
 # ---------------------------------------------------------------------------- #
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        "LOCATION": "hyakumori_crm_caches",
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv("REDIS_CACHE_URL") or "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+        },
     }
 }
 
@@ -211,7 +217,7 @@ DJOSER = {
         "current_user": "hyakumori_crm.users.serializers.UserSerializer",
         "user_create": "hyakumori_crm.users.serializers.UserCreateSerializer",
     },
-    "EMAIL": {"activation": "hyakumori_crm.users.emails.ActivationEmail", },
+    "EMAIL": {"activation": "hyakumori_crm.users.emails.ActivationEmail"},
     "PERMISSIONS": {"user_list": ["rest_framework.permissions.IsAdminUser"]},
     "LOGIN_FIELD": "email",
     "HIDE_USERS": True,
@@ -232,7 +238,7 @@ SIMPLE_JWT = {
 
 # Django Rest Framework
 REST_FRAMEWORK = {
-    "DEFAULT_PAGINATION_CLASS": "hyakumori_crm.crm.restful.paginations.StandardPagination",
+    "DEFAULT_PAGINATION_CLASS": "hyakumori_crm.crm.restful.paginations.StandardPagination",  # noqa
     "PAGE_SIZE": int(os.getenv("DJANGO_PAGINATION_LIMIT", 10)),
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S%z",
     "DEFAULT_RENDERER_CLASSES": (
@@ -267,18 +273,18 @@ EMAIL_USE_TLS = strtobool(os.getenv("EMAIL_USE_TLS", "no"))
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    'formatters': {
-        'sql': {
-            '()': 'hyakumori_crm.core.utils.SQLFormatter',
-            'format': '[%(duration).3f] %(statement)s',
+    "formatters": {
+        "sql": {
+            "()": "hyakumori_crm.core.utils.SQLFormatter",
+            "format": "[%(duration).3f] %(statement)s",
         }
     },
     "handlers": {
         "console": {"class": "logging.StreamHandler"},
-        'sql': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'sql',
-            'level': 'DEBUG',
+        "sql": {
+            "class": "logging.StreamHandler",
+            "formatter": "sql",
+            "level": "DEBUG",
         },
     },
     "root": {"handlers": ["console"], "level": "WARNING"},
@@ -288,15 +294,16 @@ LOGGING = {
             "level": os.getenv("DB_LOG_LEVEL", "DEBUG" if DEBUG else "WARNING"),
             "propagate": False,
         },
-        'django.db.backends.schema': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
+        "django.db.backends.schema": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
         },
     },
 }
 
-# Under proxy, need this configuration so that restframework can apply https instead of http
+# Under proxy, need this configuration so that
+# restframework can apply https instead of http
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Media path
@@ -304,3 +311,5 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # https://docs.djangoproject.com/en/3.0/ref/settings/#std:setting-MEDIA_URL
 MEDIA_ROOT = os.getenv("MEDIA_PATH", os.path.join(BASE_DIR, "media"))
 MEDIA_URL = os.getenv("MEDIA_URL", "/media/")
+
+Q_CLUSTER = {"name": "hyakumori-q", "django_redis": "default"}

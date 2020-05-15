@@ -1,0 +1,9 @@
+[flake8]
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist
+enable = W0614
+max-line-length = 88
+ignore = E402,F841,F401,E302,E305,E203,W503,F405
