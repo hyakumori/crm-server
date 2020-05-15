@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.utils.timezone import now
 from django.utils.translation import gettext as _
@@ -101,9 +102,12 @@ def attachments(request, archive: Archive = None):
         except:
             return Response(dict(data=[]))
     else:
-        new_attachment = create_attachment(archive, request)
-        ActivityService.log(ArchiveActions.materials_updated, archive, request=request)
-        return Response({"data": AttachmentSerializer(new_attachment, many=True).data})
+        try:
+            new_attachment = create_attachment(archive, request)
+            ActivityService.log(ArchiveActions.materials_updated, archive, request=request)
+            return Response({"data": AttachmentSerializer(new_attachment, many=True).data})
+        except ValidationError as error:
+            return make_error_json(str(error))
 
 
 @api_view(["GET"])
