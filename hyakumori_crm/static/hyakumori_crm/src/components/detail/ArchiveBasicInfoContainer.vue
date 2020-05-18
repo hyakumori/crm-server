@@ -82,7 +82,7 @@ export default {
 
   async mounted() {
     if (this.isDetail && !this.info.author) {
-      this.$store.dispatch("setHeaderInfo", { title: "" });
+      await this.$store.dispatch("setHeaderInfo", { title: "" });
       await this.fetchBasicInfo();
     }
   },
@@ -110,6 +110,7 @@ export default {
         content: basicInfo.content,
         title: basicInfo.title,
         attributes: basicInfo.attributes,
+        tags: basicInfo.tags,
       };
     },
 
@@ -150,37 +151,6 @@ export default {
           this.isSave = false;
         });
       }
-    },
-    renderParticipants(data) {
-      const list = _get(data, "attributes.customer_cache.list", []);
-      if (list.length > 0) {
-        let results = _get(list[0], "customer__name_kanji.last_name", "");
-        results += " " + _get(list[0], "customer__name_kanji.first_name", "");
-        if (list.length > 1) {
-          results +=
-            " " +
-            this.$t("tables.another_item_human", { count: list.length - 1 });
-        }
-        return results;
-      }
-      return "";
-    },
-  },
-  watch: {
-    info: {
-      deep: true,
-      handler() {
-        if (this.isDetail) {
-          this.$store.dispatch("setHeaderInfo", {
-            title: this.info.title,
-            subTitle:
-              getDate(this.info.archive_date) +
-              " " +
-              this.renderParticipants(this.info),
-            backUrl: "/archives",
-          });
-        }
-      },
     },
   },
 };

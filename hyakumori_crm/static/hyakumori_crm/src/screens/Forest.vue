@@ -20,7 +20,7 @@
           itemKey="id"
           :headers="getHeaders"
           :data="getData"
-          :showSelect="true"
+          :showSelect="false"
           :isLoading="$apollo.queries.forestsInfo.loading"
           :serverItemsLength="getTotalForests"
           :tableRowIcon="tableRowIcon"
