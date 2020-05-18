@@ -142,6 +142,7 @@ export default {
       selectedTagValue: "",
       tagValueSearchInput: "",
       editingTags: [],
+      originalTags: { ...this.tags },
       tagSettingDialog: false,
     };
   },
@@ -163,7 +164,7 @@ export default {
       this.isUpdate = false;
       this.selectedTagKey = "";
       this.selectedTagValue = "";
-      this.editingTags = this.mapTagsToEditingValues(this.tags);
+      this.editingTags = this.mapTagsToEditingValues(this.originalTags);
     },
     async onSave() {
       try {
@@ -173,7 +174,7 @@ export default {
           {
             object_id: this.objectId,
             tags: this.editingTags
-              .filter(item => !item.deleted && item.value)
+              .filter(item => item.value && !item.deleted)
               .map(item => ({
                 tag_name: item.key,
                 value: item.value,
@@ -182,6 +183,7 @@ export default {
         );
         if (results) {
           this.$emit("input", results.tags);
+          this.originalTags = results.tags;
           await this.getTagValues();
           await this.getTagSettings();
         }
@@ -219,6 +221,7 @@ export default {
         if (this.selectedTagKey === item.key) {
           item.value = this.tagValueSearchInput;
           item.deleted = false;
+          item.edited = true;
           hasItem = true;
           break;
         }
@@ -242,6 +245,7 @@ export default {
             key: tagKey,
             value: tags[tagKey],
             added: false,
+            edited: false,
             deleted: false,
           });
         }
@@ -255,7 +259,14 @@ export default {
       return hasScope(managePermission);
     },
     hasChanged() {
-      return this.editingTags.filter(item => !item.deleted).length > 0;
+      return (
+        this.editingTags.filter(
+          item =>
+            item.added === true ||
+            item.edited === true ||
+            item.deleted === true,
+        ).length > 0
+      );
     },
     tagKeyItems() {
       const selectedTagKeys = this.editingTags
@@ -274,7 +285,8 @@ export default {
     tags: {
       deep: true,
       handler(val) {
-        this.editingTags = this.mapTagsToEditingValues(val);
+        this.originalTags = { ...val };
+        this.editingTags = this.mapTagsToEditingValues(this.originalTags);
       },
     },
     selectedTagKey() {

@@ -23,7 +23,7 @@
         itemKey="id"
         :headers="headers"
         :data="customers"
-        :showSelect="true"
+        :showSelect="false"
         :options.sync="options"
         :serverItemsLength="totalCustomers"
         :tableRowIcon="tableRowIcon"
