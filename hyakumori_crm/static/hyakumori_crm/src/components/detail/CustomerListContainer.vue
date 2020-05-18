@@ -2,9 +2,8 @@
   <div>
     <content-header
       :content="headerContent"
-      :editBtnContent="editBtnContent"
-      :update="isUpdate"
-      @toggleEdit="val => (isUpdate = val)"
+      :toggleEditBtnContent="toggleEditBtnContent"
+      @toggleEdit="val => (isEditing = val)"
       :displayAdditionBtn="
         (contactType === 'FOREST' && !!selectingForestCustomerId) ||
           contactType !== 'FOREST'
@@ -14,7 +13,7 @@
     <customer-contact-list
       class="mt-4"
       :contacts="tempContacts"
-      :isUpdate="isUpdate"
+      :isUpdate="isEditing"
       isContactor
       @deleteContact="handleDelete"
       @undoDeleteContact="handleUndoDelete"
@@ -22,35 +21,36 @@
     />
     <addition-button
       class="my-2"
-      v-if="isUpdate"
+      v-if="isEditing"
       :content="addBtnContent"
       :click="() => (showSelect = true)"
     />
     <SelectListModal
-      :loading="loadContacts"
+      :loading="itemsForAddingLoading"
       :shown.sync="showSelect"
       :submitBtnText="$t('buttons.add')"
       submitBtnIcon="mdi-plus"
       :handleSubmitClick="handleAdd"
       @needToLoad="handleLoadMore"
-      @search="debounceLoadInitContacts"
+      @search="debounceLoadInitItemsForAdding"
+      ref="selectListModal"
     >
       <template #list>
         <CustomerContactCard
           @click="
             (fId, inx) => {
-              modalSelectingContactId = fId;
-              modalSelectingContactIndex = inx;
+              modalSelectingId = fId;
+              modalSelectingIndex = inx;
             }
           "
-          v-for="(item, indx) in contactitems.results || []"
+          v-for="(item, indx) in itemsForAdding.results || []"
           :key="item.id"
           :contact="item"
           :isOwner="item.is_basic"
           :showAction="false"
           :index="indx"
-          :selectedId="modalSelectingContactId"
-          :selectedIndex="modalSelectingContactIndex"
+          :selectedId="modalSelectingId"
+          :selectedIndex="modalSelectingIndex"
           flat
           mode="search"
           clickable
@@ -58,7 +58,7 @@
       </template>
     </SelectListModal>
     <update-button
-      v-if="isUpdate"
+      v-if="isEditing"
       :cancel="cancel"
       :save="handleSave"
       :saving="saving"
@@ -69,6 +69,7 @@
 
 <script>
 import ContainerMixin from "./ContainerMixin";
+import SelectListModalMixin from "./SelectListModalMixin";
 import ContentHeader from "./ContentHeader";
 import CustomerContactList from "./CustomerContactList";
 import UpdateButton from "./UpdateButton";
@@ -80,7 +81,7 @@ import { reject, debounce, find, cloneDeep } from "lodash";
 export default {
   name: "customer-list-container",
 
-  mixins: [ContainerMixin],
+  mixins: [ContainerMixin, SelectListModalMixin],
 
   components: {
     ContentHeader,
@@ -99,23 +100,14 @@ export default {
     customer: Object,
     contactType: String,
   },
-  created() {
-    this.debounceLoadInitContacts = debounce(this.loadInitContacts, 500);
-  },
   data() {
     return {
-      isUpdate: false,
-      showSelect: false,
-      loadContacts: false,
-      contactitems: { results: [] },
       selectingContactId: null,
-      modalSelectingContactId: null,
-      modalSelectingContactIndex: null,
       contactsToAdd: [],
       contactsToDelete: [],
-      saving: false,
       relationshipChanges: [],
       contacts_: [],
+      itemsForAddingUrl: "/contacts",
     };
   },
   computed: {
@@ -143,6 +135,11 @@ export default {
     },
   },
   methods: {
+    itemsForAddingResultFilter(c) {
+      return (
+        !!this.contactIdsMap[c.id] || c.id === this.customer.self_contact.id
+      );
+    },
     handleRelationshipChange(contact_id, val) {
       const contactItem = find(this.tempContacts, { id: contact_id });
       contactItem.relationship_type = val;
@@ -150,8 +147,8 @@ export default {
       this.relationshipChanges = [...others, contactItem];
     },
     handleAdd() {
-      const contactItem = this.contactitems.results.splice(
-        this.modalSelectingContactIndex,
+      const contactItem = this.itemsForAdding.results.splice(
+        this.modalSelectingIndex,
         1,
       )[0];
       if (contactItem) {
@@ -160,16 +157,16 @@ export default {
         contactItem.forestcustomer_id = this.selectingForestCustomerId;
         contactItem.contact_type = this.contactType;
         this.contactsToAdd.push(contactItem);
-        this.modalSelectingContactIndex = null;
+        this.modalSelectingIndex = null;
         this.modalSelectingForestId = null;
-        if (this.contactitems.results.length <= 3) this.handleLoadMore();
+        if (this.itemsForAdding.results.length <= 3) this.handleLoadMore();
       }
     },
     handleDelete(contact, index) {
       if (contact.added) {
         delete contact.added;
         this.contactsToAdd = reject(this.contactsToAdd, { id: contact.id });
-        this.contactitems = { results: [] };
+        this.itemsForAdding = { results: [] };
       } else {
         this.$set(contact, "deleted", true);
         this.$set(contact, "relationship_type", undefined);
@@ -197,54 +194,8 @@ export default {
         this.contactsToDelete = [];
         this.contactsToAdd = [];
         this.relationshipChanges = [];
-        this.contactitems = { results: [] };
+        this.itemsForAdding = { results: [] };
       } catch (error) {}
-    },
-    async handleLoadMore() {
-      if (!this.contactitems.next || this.loadContacts) return;
-      this.loadContacts = true;
-      const resp = await this.$rest.get(this.contactitems.next);
-      this.contactitems = {
-        next: resp.next,
-        previous: resp.previous,
-        results: [
-          ...this.contactitems.results,
-          ...reject(
-            resp.results,
-            f =>
-              !!this.contactIdsMap[f.id] ||
-              f.id === this.customer.self_contact.id,
-          ),
-        ],
-      };
-      this.loadContacts = false;
-    },
-    async loadInitContacts(keyword) {
-      let reqConfig = keyword
-        ? {
-            params: {
-              search: keyword || "",
-            },
-          }
-        : {};
-      this.loadContacts = true;
-      let resp = { next: "/contacts" };
-      while (resp.next) {
-        resp = await this.$rest.get(resp.next, reqConfig);
-        this.contactitems = {
-          next: resp.next,
-          previous: resp.previous,
-          results: reject(
-            resp.results,
-            f =>
-              !!this.contactIdsMap[f.id] ||
-              f.id === this.customer.self_contact.id,
-          ),
-        };
-        if (this.contactitems.results.length > 5) break;
-        if (resp.next && resp.next.indexOf("page=") > -1) reqConfig = {};
-      }
-      this.loadContacts = false;
     },
   },
   watch: {
@@ -254,29 +205,24 @@ export default {
         this.contacts_ = cloneDeep(val);
       },
     },
-    async showSelect(val) {
-      if (val && !this.contactitems.next) {
-        await this.loadInitContacts("");
-      }
-    },
-    isUpdate(val) {
+    isEditing(val) {
       if (!val) {
         if (this.contactsToAdd.length > 0) {
           this.contactsToAdd = [];
-          this.contactitems = { results: [] };
+          this.itemsForAdding = { results: [] };
         }
         for (let contactToDelete of this.contactsToDelete) {
           this.$set(contactToDelete, "deleted", undefined);
         }
         if (this.contactsToDelete) {
           this.contactsToDelete = [];
-          this.contactitems = { results: [] };
+          this.itemsForAdding = { results: [] };
         }
         this.relationshipChanges = [];
       }
     },
     selectingForestCustomerId(val) {
-      if (this.contactType === "FOREST" && !val) this.isUpdate = false;
+      if (this.contactType === "FOREST" && !val) this.isEditing = false;
     },
   },
 };
