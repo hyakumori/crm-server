@@ -40,13 +40,14 @@
         :customerIdNameMap="customerIdNameMap"
       />
       <select-list-modal
-        :loading="customersForAddingLoading"
+        :loading="itemsForAddingLoading"
         :shown.sync="showSelect"
         :submitBtnText="$t('buttons.add')"
         submitBtnIcon="mdi-plus"
         :handleSubmitClick="handleAdd"
         @needToLoad="handleLoadMore"
-        @search="debounceLoadInitCustomersForAdding"
+        @search="debounceLoadInitItemsForAdding"
+        ref="selectListModal"
       >
         <template #list>
           <customer-contact-card
@@ -56,9 +57,8 @@
                 modalSelectingCustomerIndex = inx;
               }
             "
-            v-for="(item, indx) in customersForAdding.results"
+            v-for="(item, indx) in itemsForAdding.results"
             :key="item.id"
-            :card_id="item.id"
             :contact="item"
             :showAction="false"
             :index="indx"
@@ -79,14 +79,15 @@
 import SectionContainerWrapper from "../SectionContainerWrapper";
 import ContactTab from "./ContactTab";
 import ContainerMixin from "./ContainerMixin";
+import SelectListModalMixin from "./SelectListModalMixin";
 import SelectListModal from "../SelectListModal";
 import CustomerContactCard from "./CustomerContactCard";
-import { debounce, reject, isEmpty, find } from "lodash";
+import { reject, isEmpty, find } from "lodash";
 
 export default {
   name: "forest-contact-tab-container",
 
-  mixins: [ContainerMixin],
+  mixins: [ContainerMixin, SelectListModalMixin],
 
   components: {
     SectionContainerWrapper,
@@ -96,37 +97,21 @@ export default {
   },
 
   props: {
-    headerContent: String,
-    toggleEditBtnContent: String,
-    addBtnContent: String,
     customers: Array,
     customersContacts: Array,
     permissions: Array,
-    isLoading: Boolean,
     id: String,
     customerIdNameMap: Object,
   },
   data() {
     return {
-      isEditing: false,
-      customersForAddingLoading: false,
-      showSelect: false,
-      customersForAdding: { results: [] },
       customersToAdd: [],
       customersToDelete: [],
-      modalSelectingCustomerId: null,
-      modalSelectingCustomerIndex: null,
-      saving: false,
       selectingCustomerId: null,
       defaultCustomersEdit: {},
       defaultCustomersContactsEdit: {},
+      itemsForAddingUrl: "/customers",
     };
-  },
-  created() {
-    this.debounceLoadInitCustomersForAdding = debounce(
-      this.loadInitCustomersForAdding,
-      500,
-    );
   },
   computed: {
     tempCustomers() {
@@ -151,6 +136,9 @@ export default {
     },
   },
   methods: {
+    itemsForAddingResultFilter(item) {
+      return this.customerIdsMap[item.id];
+    },
     handleCancelEdit() {
       this.isEditing = false;
       this.customersToDelete = [];
@@ -158,7 +146,7 @@ export default {
       this.customers.forEach(customer => this.$set(customer, "deleted", false));
     },
     handleAdd() {
-      const c = this.customersForAdding.results.splice(
+      const c = this.itemsForAdding.results.splice(
         this.modalSelectingCustomerIndex,
         1,
       )[0];
@@ -166,7 +154,7 @@ export default {
       this.customersToAdd.push(c);
       this.modalSelectingCustomerIndex = null;
       this.modalSelectingCustomerId = null;
-      if (this.customersForAdding.results.length <= 3) {
+      if (this.itemsForAdding.results.length <= 3) {
         this.handleLoadMore();
       }
     },
@@ -175,7 +163,7 @@ export default {
         delete customer.added;
         this.customersToAdd = reject(this.customersToAdd, { id: customer.id });
         delete this.defaultCustomersEdit[customer.id];
-        this.customersForAdding = { results: [] };
+        this.itemsForAdding = { results: [] };
       } else {
         const newCustomers = [...this.customers];
         const c = newCustomers[index];
@@ -236,47 +224,10 @@ export default {
         this.customersToAdd = [];
         this.defaultCustomersEdit = {};
         this.defaultCustomersContactsEdit = {};
-        this.customersForAdding = { results: [] };
+        this.itemsForAdding = { results: [] };
       } catch (error) {
         this.saving = false;
       }
-    },
-    async handleLoadMore() {
-      if (!this.customersForAdding.next || this.customersForAddingLoading)
-        return;
-      this.customersForAddingLoading = true;
-      const resp = await this.$rest.get(this.customersForAdding.next);
-      this.customersForAdding = {
-        next: resp.next,
-        previous: resp.previous,
-        results: [
-          ...this.customersForAdding.results,
-          ...reject(resp.results, c => this.customerIdsMap[c.id]),
-        ],
-      };
-      this.customersForAddingLoading = false;
-    },
-    async loadInitCustomersForAdding(keyword) {
-      const reqConfig = keyword
-        ? {
-            params: {
-              search: keyword || "",
-            },
-          }
-        : {};
-      this.customersForAddingLoading = true;
-      let resp = { next: "/customers" };
-      while (resp.next) {
-        resp = await this.$rest.get(resp.next, reqConfig);
-        this.customersForAdding = {
-          next: resp.next,
-          previous: resp.previous,
-          results: reject(resp.results, c => this.customerIdsMap[c.id]),
-        };
-        if (this.customersForAdding.results.length > 5) break;
-        if (resp.next && resp.next.indexOf("page=") > -1) reqConfig = {};
-      }
-      this.customersForAddingLoading = false;
     },
     handleToggleDefault(val, customer_id) {
       if (this.defaultCustomersEdit[customer_id] === undefined) {
@@ -314,11 +265,6 @@ export default {
     },
   },
   watch: {
-    showSelect(val) {
-      if (val && !this.customersForAdding.next) {
-        this.loadInitCustomersForAdding();
-      }
-    },
     isEditing(val) {
       if (!val) {
         if (this.customersToAdd.length > 0) {
@@ -328,10 +274,10 @@ export default {
             delete c.deleted;
           }
           this.$store.commit("forest/setCustomers", newCustomers);
-          this.customersForAdding = { results: [] };
+          this.itemsForAdding = { results: [] };
         }
         if (this.customersToDelete.length > 0) {
-          this.customersForAdding = { results: [] };
+          this.itemsForAdding = { results: [] };
           this.customersToDelete = [];
         }
 

@@ -2,7 +2,7 @@
   <div>
     <content-header
       :content="headerContent"
-      :editBtnContent="editBtnContent"
+      :toggleEditBtnContent="toggleEditBtnContent"
       :loading="loading"
       @toggleEdit="setUpdate"
       :display-addition-btn="isDetail"

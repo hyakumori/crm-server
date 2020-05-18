@@ -2,13 +2,18 @@ export default {
   props: {
     isLoading: Boolean,
     headerContent: String,
-    editBtnContent: String,
+    toggleEditBtnContent: String,
     addBtnContent: String,
   },
-
+  data() {
+    return {
+      isEditing: false,
+      saving: false,
+    };
+  },
   methods: {
     cancel() {
-      this.isUpdate = false;
+      this.isEditing = false;
     },
   },
 };

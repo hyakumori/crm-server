@@ -15,13 +15,13 @@
       <div v-if="displayAdditionBtn">
         <addition-button
           v-if="!permissions"
-          :content="editBtnContent"
+          :content="toggleEditBtnContent"
           :click="enableEdit"
         />
         <addition-button
           v-else
           v-acl-only="permissions"
-          :content="editBtnContent"
+          :content="toggleEditBtnContent"
           :click="enableEdit"
         />
       </div>
@@ -44,7 +44,7 @@ export default {
   props: {
     loading: Boolean,
     content: String,
-    editBtnContent: String,
+    toggleEditBtnContent: String,
     displayAdditionBtn: {
       type: Boolean,
       default: true,

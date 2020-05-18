@@ -2,7 +2,7 @@
   <div>
     <content-header
       :content="headerContent"
-      :editBtnContent="toggleEditBtnContent"
+      :toggleEditBtnContent="toggleEditBtnContent"
       :loading="isLoading"
       @toggleEdit="$emit('toggleEdit', true)"
       :permissions="permissions"
