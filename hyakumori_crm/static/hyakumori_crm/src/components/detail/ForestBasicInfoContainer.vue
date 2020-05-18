@@ -2,7 +2,7 @@
   <div>
     <content-header
       :content="headerContent"
-      :editBtnContent="editBtnContent"
+      :toggleEditBtnContent="toggleEditBtnContent"
       :loading="isLoading"
       @toggleEdit="setUpdate"
       :permissions="['manage_forest']"

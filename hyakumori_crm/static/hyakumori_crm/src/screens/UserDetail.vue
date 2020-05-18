@@ -6,7 +6,7 @@
           <div id="basic-info">
             <content-header
               content="基本情報 (登記情報)"
-              editBtnContent="基本情報・編集"
+              toggleEditBtnContent="基本情報・編集"
               :loading="basicInfo.length === 0 || isLoading"
               @toggleEdit="val => (isUpdate.basicInfo = val)"
             />

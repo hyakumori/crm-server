@@ -3,6 +3,7 @@
     <v-card class="select-list-dialog">
       <v-card-title class="px-4 py-2">
         <TextInput
+          v-model="keyword"
           @input="val => $emit('search', val)"
           placeholder="姓、名、キーワード"
         />
@@ -52,6 +53,7 @@ export default {
   data() {
     return {
       shown_: false,
+      keyword: "",
     };
   },
   mounted() {
@@ -68,11 +70,19 @@ export default {
     },
   },
   methods: {
+    clearSearch() {
+      this.keyword = "";
+    },
     needLoadOnNearEnd(event) {
       const el = event.target;
       if (el.scrollHeight - el.scrollTop === el.clientHeight) {
         this.$emit("needToLoad");
       }
+    },
+  },
+  computed: {
+    isSearchEmpty() {
+      return this.keyword === "";
     },
   },
   beforeDestroy() {
