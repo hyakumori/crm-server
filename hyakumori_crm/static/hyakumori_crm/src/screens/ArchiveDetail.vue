@@ -76,6 +76,8 @@ import ArchiveRelatedForestContainer from "../components/detail/ArchiveRelatedFo
 import ActionLog from "../components/detail/ActionLog";
 import TagDetailCard from "../components/tags/TagDetailCard";
 import ArchiveRelatedUserContainer from "../components/detail/ArchiveRelatedUserContainer";
+import { getDate } from "../helpers/datetime";
+import { get as _get } from "lodash";
 
 export default {
   name: "archive-detail",
@@ -123,7 +125,15 @@ export default {
 
   methods: {
     forceRefreshCache() {
-      this.$rest.post(`/archives/${this.id}/cache`, {}, { no_activity: true });
+      try {
+        this.$rest.post(
+          `/archives/${this.id}/cache`,
+          {},
+          { no_activity: true },
+        );
+      } catch {
+        //ignore
+      }
     },
     async fetchParticipants() {
       this.participantsLoading = true;
@@ -133,6 +143,31 @@ export default {
         );
       } catch (error) {}
       this.participantsLoading = false;
+    },
+    renderParticipants(data) {
+      const list = _get(data, "attributes.customer_cache.list", []);
+      if (list.length > 0) {
+        let results = _get(list[0], "customer__name_kanji.last_name", "");
+        results += " " + _get(list[0], "customer__name_kanji.first_name", "");
+        if (list.length > 1) {
+          results +=
+            " " +
+            this.$t("tables.another_item_human", { count: list.length - 1 });
+        }
+        return results;
+      }
+      return "";
+    },
+    setHeaderInfo() {
+      this.$store.dispatch("setHeaderInfo", {
+        title: this.archive.title,
+        subTitle:
+          getDate(this.archive.archive_date) +
+          " " +
+          this.renderParticipants(this.archive),
+        backUrl: "/archives",
+        tags: this.archive.tags,
+      });
     },
   },
   computed: {
@@ -153,6 +188,7 @@ export default {
       deep: true,
       handler() {
         this.archiveTags = this.archive.tags;
+        this.setHeaderInfo();
       },
     },
   },
