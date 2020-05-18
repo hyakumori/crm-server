@@ -28,7 +28,7 @@
           :auto-headers="false"
           :headers="headers"
           :is-loading="isLoading"
-          :showSelect="true"
+          :showSelect="false"
           :data="data"
           :tableRowIcon="pageIcon"
           :serverItemsLength="totalItems"

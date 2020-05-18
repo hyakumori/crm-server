@@ -168,7 +168,7 @@ export default {
     },
 
     headerTagColor() {
-      return this.$store.state.headerTagColor;
+      return this.$store.state.headerTagColor || "#12c7a6";
     },
 
     userDisplayName() {
