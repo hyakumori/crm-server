@@ -68,25 +68,16 @@ export default {
   },
 
   props: {
-    headerContent: String,
-    toggleEditBtnContent: String,
-    addBtnContent: String,
     contacts: Array,
     permissions: Array,
-    isLoading: Boolean,
     id: String,
     contactIdNameMap: Object,
     contactType: String,
   },
   data() {
     return {
-      isEditing: false,
       showNewContactDialog: false,
       contactsToDelete: [],
-      modalSelectingContactId: null,
-      modalSelectingContactIndex: null,
-      saving: false,
-      selectingContactId: null,
       defaultContactsEdit: {},
       defaultContactsContactsEdit: {},
       form: this.initForm(),
@@ -130,8 +121,6 @@ export default {
     handleDelete(contact) {
       if (contact.added) {
         delete contact.added;
-        // delete contactItem.forest_id;
-        // delete contactItem.contact_type;
         this.contactsToAdd = reject(this.contactsToAdd, { id: contact.id });
       } else {
         this.$set(contact, "deleted", true);

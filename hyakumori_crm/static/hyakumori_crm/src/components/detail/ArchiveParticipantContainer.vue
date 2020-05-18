@@ -3,13 +3,13 @@
     <content-header
       class="mb-4"
       :content="headerContent"
-      :editBtnContent="editBtnContent"
+      :toggleEditBtnContent="toggleEditBtnContent"
       :loading="isLoading"
-      @toggleEdit="val => (isUpdate = val)"
+      @toggleEdit="val => (isEditing = val)"
     />
     <customer-contact-list
       :contacts="tempParticipants"
-      :isUpdate="isUpdate"
+      :isUpdate="isEditing"
       :showRelationshipSelect="false"
       @deleteContact="handleDelete"
       @undoDeleteContact="handleUndoDelete"
@@ -18,22 +18,23 @@
     <addition-button
       ref="addBtn"
       class="my-2"
-      v-if="isUpdate"
+      v-if="isEditing"
       :content="addBtnContent"
       :click="() => (showSelect = true)"
     />
     <select-list-modal
-      :loading="loadContacts"
+      :loading="itemsForAddingLoading"
       :shown.sync="showSelect"
       :submitBtnText="$t('buttons.add')"
       submitBtnIcon="mdi-plus"
       :handleSubmitClick="handleAdd"
       @needToLoad="handleLoadMore"
-      @search="debounceLoadInitContactsForAdding"
+      @search="debounceLoadInitItemsForAdding"
+      ref="selectListModal"
     >
       <template #list>
         <div
-          v-if="contactsForAdding.results.length === 0 && !loadContacts"
+          v-if="itemsForAdding.results.length === 0 && !itemsForAddingLoading"
           class="text-center"
         >
           {{ $t("messages.not_found") }}
@@ -42,18 +43,18 @@
           v-else
           @click="
             (cId, inx) => {
-              modalSelectingContactId = cId;
-              modalSelectingContactIndex = inx;
+              modalSelectingId = cId;
+              modalSelectingIndex = inx;
             }
           "
-          v-for="(item, indx) in contactsForAdding.results"
+          v-for="(item, indx) in itemsForAdding.results"
           :key="`${indx},${item.id}`"
           :card_id="item.id"
           :contact="item"
           :showAction="false"
           :index="indx"
-          :selectedId="modalSelectingContactId"
-          :selectedIndex="modalSelectingContactIndex"
+          :selectedId="modalSelectingId"
+          :selectedIndex="modalSelectingIndex"
           flat
           clickable
           mode="search"
@@ -63,8 +64,8 @@
       </template>
     </select-list-modal>
     <update-button
-      v-if="isUpdate"
-      :cancel="() => (isUpdate = !isUpdate)"
+      v-if="isEditing"
+      :cancel="() => (isEditing = !isEditing)"
       :save="handleSave"
       :saving="saving"
       :saveDisabled="saveDisabled"
@@ -75,17 +76,18 @@
 <script>
 import ContentHeader from "./ContentHeader";
 import ContainerMixin from "./ContainerMixin";
+import SelectListModalMixin from "./SelectListModalMixin";
 import UpdateButton from "./UpdateButton";
 import CustomerContactList from "./CustomerContactList";
 import CustomerContactCard from "./CustomerContactCard";
 import AdditionButton from "../AdditionButton";
 import SelectListModal from "../SelectListModal";
-import { debounce, reject } from "lodash";
+import { reject } from "lodash";
 
 export default {
   name: "archive-participant-container",
 
-  mixins: [ContainerMixin],
+  mixins: [ContainerMixin, SelectListModalMixin],
 
   components: {
     ContentHeader,
@@ -99,26 +101,14 @@ export default {
     id: { type: String },
     participants: { type: Array, default: () => [] },
   },
-  created() {
-    this.debounceLoadInitContactsForAdding = debounce(
-      this.loadInitContacts,
-      500,
-    );
-  },
   data() {
     return {
-      isUpdate: false,
-      loadContacts: false,
-      contactsForAdding: { results: [] },
-      saving: false,
-      modalSelectingContactId: null,
-      modalSelectingContactIndex: null,
-      showSelect: false,
       contactsToAdd: [],
       contactsToDelete: [],
       selectingContactId: null,
       selectingCustomerId: null,
       customerIdNameMap: {},
+      itemsForAddingUrl: "/customercontacts",
     };
   },
   computed: {
@@ -157,6 +147,9 @@ export default {
         ""
       );
     },
+    itemsForAddingResultFilter(c) {
+      return !!this.contactIdsMap[`${c.id},${c.customer_id}`];
+    },
     handleContactCardSelect(contact_id, indx) {
       const contact = this.tempParticipants[indx];
       if (contact.is_basic && this.selectingContactId != contact_id) {
@@ -178,14 +171,14 @@ export default {
         this.saving = false;
         this.contactsToDelete = [];
         this.contactsToAdd = [];
-        this.contactsForAdding = { results: [] };
+        this.itemsForAdding = { results: [] };
       } catch (error) {
         this.saving = false;
       }
     },
     async handleAdd() {
-      const item = this.contactsForAdding.results.splice(
-        this.modalSelectingContactIndex,
+      const item = this.itemsForAdding.results.splice(
+        this.modalSelectingIndex,
         1,
       )[0];
       this.$set(
@@ -198,10 +191,10 @@ export default {
         item.customer_id = this.selectingCustomerId;
       }
       this.contactsToAdd.push(item);
-      this.modalSelectingContactIndex = null;
-      this.modalSelectingContactId = null;
+      this.modalSelectingIndex = null;
+      this.modalSelectingId = null;
       // side-effect
-      if (this.contactsForAdding.results.length <= 3) {
+      if (this.itemsForAdding.results.length <= 3) {
         this.handleLoadMore();
       }
     },
@@ -212,7 +205,7 @@ export default {
           id: contact.id,
           customer_id: contact.customer_id,
         });
-        this.contactsForAdding = { results: [] };
+        this.itemsForAdding = { results: [] };
       } else {
         this.$set(contact, "deleted", true);
         this.contactsToDelete.push(contact);
@@ -225,67 +218,20 @@ export default {
         customer_id: contact.customer_id,
       });
     },
-    async handleLoadMore() {
-      if (!this.contactsForAdding.next || this.loadContacts) return;
-      this.loadContacts = true;
-      const resp = await this.$rest.get(this.contactsForAdding.next);
-      this.contactsForAdding = {
-        next: resp.next,
-        previous: resp.previous,
-        results: [
-          ...this.contactsForAdding.results,
-          ...reject(
-            resp.results,
-            c => !!this.contactIdsMap[`${c.id},${c.customer_id}`],
-          ),
-        ],
-      };
-      this.loadContacts = false;
-    },
-    async loadInitContacts(keyword) {
-      let reqConfig = keyword
-        ? {
-            params: {
-              search: keyword || "",
-            },
-          }
-        : {};
-      this.loadContacts = true;
-      let resp = { next: "/customercontacts" };
-      while (resp.next) {
-        resp = await this.$rest.get(resp.next, reqConfig);
-        this.contactsForAdding = {
-          next: resp.next,
-          previous: resp.previous,
-          results: reject(
-            resp.results,
-            c => !!this.contactIdsMap[`${c.id},${c.customer_id}`],
-          ),
-        };
-        if (this.contactsForAdding.results.length > 5) break;
-        if (resp.next && resp.next.indexOf("page=") > -1) reqConfig = {};
-      }
-      this.loadContacts = false;
-    },
   },
   watch: {
-    showSelect(val) {
-      if (val && !this.contactsForAdding.next) {
-        this.loadInitContacts();
-      }
-    },
-    isUpdate(val) {
+    isEditing(val) {
       if (!val) {
         if (this.contactsToAdd.length > 0) {
           this.contactsToAdd = [];
-          this.contactsForAdding = { results: [] };
+          this.itemsForAdding = { results: [] };
         }
         for (let contactToDelete of this.contactsToDelete) {
           this.$set(contactToDelete, "deleted", undefined);
         }
         if (this.contactsToDelete.length > 0) {
           this.contactsToDelete = [];
-          this.contactsForAdding = { results: [] };
+          this.itemsForAdding = { results: [] };
         }
       }
     },

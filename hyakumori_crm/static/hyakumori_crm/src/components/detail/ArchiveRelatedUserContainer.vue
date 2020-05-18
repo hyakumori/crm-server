@@ -2,61 +2,59 @@
   <div>
     <content-header
       :content="headerContent"
-      :editBtnContent="editBtnContent"
-      :loading="fetchRelatedParticipantLoading"
+      :toggleEditBtnContent="toggleEditBtnContent"
+      :update="isEditing"
       @toggleEdit="handleToggleEdit"
       class="mb-4"
     />
     <archive-participant-list
-      :participants="relatedParticipants"
-      :isUpdate="isUpdate"
-      @deleteParticipant="handleDeleteParticipant"
-      @undoDeletedParticipant="handleUndoDeletedParticipant"
+      :participants="tempUserParticipants"
+      :isUpdate="isEditing"
+      @deleteParticipant="handleDelete"
+      @undoDeletedParticipant="handleUndoDelete"
     />
     <select-list-modal
       submitBtnIcon="mdi-plus"
-      :loading="fetchAllParticipantLoading"
+      :loading="itemsForAddingLoading"
       :submitBtnText="$t('buttons.add')"
-      :shown="shown"
-      :handleSubmitClick="submitRelatedParticipant.bind(this)"
-      :disableAdditionBtn="fetchAllParticipantLoading"
-      @search="debounceSearchParticipant"
+      :shown.sync="showSelect"
+      :handleSubmitClick="submitRelatedParticipant"
+      :disableAdditionBtn="itemsForAddingLoading"
+      @search="debounceLoadInitItemsForAdding"
       @needToLoad="handleLoadMore"
-      @update:shown="val => (shown = val)"
+      ref="selectListModal"
     >
       <template #list>
         <archive-participant-card
-          v-for="(participant, index) in allParticipants"
+          v-for="(participant, index) in itemsForAdding.results"
           showPointer
           :key="index"
           :index="index"
           :name="participant.full_name"
           :showAction="false"
           :card_id="participant.id"
-          :selectedId="selectingParticipantId"
+          :selectedId="modalSelectingId"
           @selected="
             (pId, pIndex) => {
-              selectingParticipantId = pId;
-              selectingParticipantIndex = pIndex;
+              modalSelectingId = pId;
+              modelSelectingIndex = pIndex;
             }
           "
           flat
         />
       </template>
     </select-list-modal>
-    <template v-if="isUpdate">
+    <template v-if="isEditing">
       <addition-button
         class="my-2"
         :content="addBtnContent"
-        :click="addRelatedParticipant.bind(this)"
+        :click="() => (showSelect = true)"
       />
       <update-button
-        :cancel="cancel.bind(this)"
-        :saving="updateParticipantLoading"
-        :save="updateParticipant.bind(this)"
-        :saveDisabled="
-          addedParticipants.length === 0 && deletedParticipants.length === 0
-        "
+        :cancel="cancel"
+        :saving="saving"
+        :save="updateParticipant"
+        :saveDisabled="saveDisabled"
       />
     </template>
   </div>
@@ -65,17 +63,18 @@
 <script>
 import ContentHeader from "./ContentHeader";
 import ContainerMixin from "./ContainerMixin";
+import SelectListModalMixin from "./SelectListModalMixin";
 import ArchiveParticipantList from "./ArchiveParticipantList";
 import AdditionButton from "../AdditionButton";
 import UpdateButton from "./UpdateButton";
 import SelectListModal from "../SelectListModal";
 import ArchiveParticipantCard from "./ArchiveParticipantCard";
-import { cloneDeep, pullAllWith, debounce } from "lodash";
+import { reject } from "lodash";
 
 export default {
   name: "ArchiveRelatedUserContainer",
 
-  mixins: [ContainerMixin],
+  mixins: [ContainerMixin, SelectListModalMixin],
 
   components: {
     ContentHeader,
@@ -89,24 +88,12 @@ export default {
   data() {
     return {
       archive_id: this.$route.params.id,
-      isUpdate: false,
-      relatedParticipants: [],
-      immutableRelatedParticipants: [],
-      allParticipants: [],
-      immutableAllParticipants: [],
-      shown: false,
-      next: "",
-      fetchRelatedParticipantLoading: false,
-      fetchAllParticipantLoading: false,
-      selectingParticipantId: null,
-      selectingParticipantIndex: null,
-      updateParticipantLoading: false,
-      searchNext: null,
+      userParticipants: [],
+      addedParticipants: [],
+      deletedParticipants: [],
+      itemsForAddingUrl: "/users/minimal",
+      isLoading_: false,
     };
-  },
-
-  created() {
-    this.debounceSearchParticipant = debounce(this.fetchSearchParticipant, 500);
   },
 
   mounted() {
@@ -114,29 +101,20 @@ export default {
   },
 
   methods: {
-    handleToggleEdit(val) {
-      if (!this.isUpdate && this.relatedParticipants) {
-        this.immutableRelatedParticipants = cloneDeep(this.relatedParticipants);
-      }
-      this.isUpdate = val;
+    itemsForAddingResultFilter(p) {
+      return this.userIdsMap[p.id];
     },
-
-    cancel() {
-      this.isUpdate = false;
-      this.relatedParticipants = cloneDeep(this.immutableRelatedParticipants);
-      this.allParticipants = cloneDeep(this.immutableAllParticipants);
+    handleToggleEdit(val) {
+      this.isEditing = val;
     },
 
     async updateParticipant() {
-      if (this.relatedParticipants.length === 0) {
-        this.isUpdate = false;
-      } else {
-        this.updateParticipantLoading = true;
-        await this.deleteParticipants();
-        await this.addParticipants();
-        this.updateParticipantLoading = false;
-        this.isUpdate = false;
-      }
+      this.saving = true;
+      await this.deleteParticipants();
+      await this.addParticipants();
+      this.saving = false;
+      this.isEditing = false;
+      this.fetchRelatedParticipants();
     },
 
     async deleteParticipants() {
@@ -151,15 +129,7 @@ export default {
           },
         );
         if (isDeleted) {
-          this.selectingParticipantId = null;
-          this.relatedParticipants = this.removeDuplicateParticipant(
-            this.relatedParticipants,
-            this.deletedParticipants,
-          );
-          const pureParticipants = cloneDeep(this.deletedParticipants);
-          pureParticipants.forEach(p => (p.deleted = false));
-          this.allParticipants.push(...pureParticipants);
-          this.immutableAllParticipants = cloneDeep(this.allParticipants);
+          this.modalSelectingId = null;
         }
       }
     },
@@ -172,23 +142,12 @@ export default {
           { ids: addedIds },
         );
         if (newParticipants) {
-          const tempParticipants = this.removeDuplicateParticipant(
-            this.relatedParticipants,
-            newParticipants.data,
-          );
-          this.allParticipants = this.removeDuplicateParticipant(
-            this.allParticipants,
-            this.addedParticipants,
-          );
-          this.immutableAllParticipants = cloneDeep(this.allParticipants);
-          tempParticipants.push(...newParticipants.data);
-          this.relatedParticipants = tempParticipants;
         }
       }
     },
 
     fetchRelatedParticipants() {
-      this.fetchRelatedParticipantLoading = true;
+      this.isLoading_ = true;
       this.$rest
         .get(`/archives/${this.archive_id}/users`)
         .then(async response => {
@@ -201,131 +160,76 @@ export default {
               next = paginationResponse.next;
             }
           }
-          this.relatedParticipants = tempRelatedData;
-          this.fetchRelatedParticipantLoading = false;
+          this.userParticipants = tempRelatedData;
+          this.isLoading_ = false;
         });
-    },
-
-    fetchAllParticipants() {
-      if (this.next !== null) {
-        this.fetchAllParticipantLoading = true;
-        this.$rest
-          .get(this.next !== "" ? this.next : "/users/minimal")
-          .then(res => {
-            this.fetchAllParticipantLoading = false;
-            const filteredParticipants = this.removeDuplicateParticipant(
-              res.results,
-              this.relatedParticipants,
-            );
-            const allParticipants = this.removeDuplicateParticipant(
-              filteredParticipants,
-              this.allParticipants,
-            );
-            this.allParticipants.push(...allParticipants);
-            this.immutableAllParticipants.push(...allParticipants);
-            this.next = res.next;
-          });
-      }
-    },
-
-    removeDuplicateParticipant(participant1, participant2) {
-      return pullAllWith(
-        participant1,
-        participant2,
-        (p1, p2) => p1.id === p2.id,
-      );
-    },
-
-    addRelatedParticipant() {
-      this.shown = true;
-      if (this.allParticipants.length === 0 || this.next === "") {
-        this.fetchAllParticipants();
-      }
-    },
-
-    handleLoadMore() {
-      if (this.next !== null) {
-        this.fetchAllParticipants(this.next);
-      }
     },
 
     submitRelatedParticipant() {
-      if (this.selectingParticipantId && this.selectingParticipantIndex) {
-        const selectedParticipant = this.allParticipants[
-          this.selectingParticipantIndex
-        ];
-        selectedParticipant.added = true;
-        this.relatedParticipants.push(selectedParticipant);
-        this.allParticipants.splice(this.selectingParticipantIndex, 1);
-        this.selectingParticipantId = null;
-        this.selectingParticipantIndex = null;
-      } else {
-        this.allParticipants[0].added = true;
-        this.relatedParticipants.push(this.allParticipants[0]);
-        this.allParticipants.splice(0, 1);
+      const participant = this.itemsForAdding.results.splice(
+        this.modalSelectingIndex,
+        1,
+      )[0];
+      participant.added = true;
+      this.addedParticipants.push(participant);
+      this.modalSelectingIndex = null;
+      this.modalSelectingId = null;
+      if (this.itemsForAdding.results.length <= 3) {
+        this.handleLoadMore();
       }
     },
-
-    handleDeleteParticipant(participant, index) {
+    handleDelete(participant) {
       if (participant.added) {
-        this.relatedParticipants.splice(index, 1);
-        this.allParticipants = [participant, ...this.allParticipants];
+        delete participant.added;
+        this.addedParticipants = reject(this.addedParticipants, {
+          id: participant.id,
+        });
+        this.itemsForAdding = { results: [] };
       } else {
         this.$set(participant, "deleted", true);
+        this.deletedParticipants.push(participant);
       }
     },
-
-    handleUndoDeletedParticipant(participant) {
-      this.$set(participant, "deleted", false);
-    },
-
-    fetchSearchParticipant(keyword) {
-      this.fetchAllParticipantLoading = true;
-      this.$rest
-        .get("/users/minimal", {
-          params: {
-            search: keyword || "",
-          },
-        })
-        .then(response => {
-          this.allParticipants = [];
-          this.immutableAllParticipants = [];
-          const tempParticipants = this.removeDuplicateParticipant(
-            response.results,
-            this.relatedParticipants,
-          );
-          this.next = response.next;
-          this.allParticipants.push(...tempParticipants);
-          this.immutableAllParticipants.push(...tempParticipants);
-          this.fetchAllParticipantLoading = false;
-        });
+    handleUndoDelete(participant) {
+      this.$set(participant, "deleted", undefined);
+      this.deletedParticipants = reject(this.deletedParticipants, {
+        id: participant.id,
+      });
     },
   },
 
   computed: {
-    addedParticipants() {
-      return (
-        this.relatedParticipants &&
-        this.relatedParticipants.filter(participant => participant.added)
+    tempUserParticipants() {
+      return [...this.userParticipants, ...this.addedParticipants];
+    },
+    userIdsMap() {
+      return Object.fromEntries(
+        this.tempUserParticipants.map(u => [u.id, true]),
       );
     },
-
-    deletedParticipants() {
+    saveDisabled() {
       return (
-        this.relatedParticipants &&
-        this.relatedParticipants.filter(participant => participant.deleted)
+        this.addedParticipants.length === 0 &&
+        this.deletedParticipants.length === 0
       );
     },
   },
 
   watch: {
-    allParticipants: {
-      deep: true,
-      handler(allParticipants) {
-        if (allParticipants.length <= 3 && this.next !== null) {
-          this.handleLoadMore();
+    isEditing(val) {
+      if (!val) {
+        if (this.addedParticipants.length > 0) {
+          this.addedParticipants = [];
+          this.itemsForAdding = { results: [] };
         }
-      },
+        for (let p of this.deletedParticipants) {
+          this.$set(p, "deleted", undefined);
+        }
+        if (this.deletedParticipants.length > 0) {
+          this.deletedParticipants = [];
+          this.itemsForAdding = { results: [] };
+        }
+      }
     },
   },
 };

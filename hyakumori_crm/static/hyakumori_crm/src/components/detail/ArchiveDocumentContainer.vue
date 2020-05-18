@@ -3,7 +3,7 @@
     <content-header
       class="mb-3"
       :content="headerContent"
-      :editBtnContent="editBtnContent"
+      :toggleEditBtnContent="toggleEditBtnContent"
       :loading="loading"
       @toggleEdit="handleToggleEdit"
     />
