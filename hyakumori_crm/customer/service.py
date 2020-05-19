@@ -350,7 +350,8 @@ def update_forests(data):
         forest_id__in=data.deleted, customer_id=customer.pk
     ).all()
     CustomerContact.objects.filter(
-        forestcustomercontact__forestcustomer_id__in=forestcustomers.values("id")
+        forestcustomercontact__forestcustomer_id__in=forestcustomers.values("id"),
+        is_basic=False,
     ).delete()
     for fc in forestcustomers:
         fc.force_delete()

@@ -4,7 +4,7 @@
       <page-header>
         <template #bottom-right>
           <div>
-            <v-menu offset-y nudge-bottom="4" class="pa-0">
+            <v-menu offset-y nudge-bottom="4">
               <template v-slot:activator="{ on }">
                 <outline-round-btn
                   icon="mdi-download"
@@ -13,7 +13,7 @@
                   v-on="on"
                 />
               </template>
-              <v-list dense>
+              <v-list dense class="pa-0">
                 <v-list-item
                   v-if="$refs.table && $refs.table.selected.length > 0"
                   @click="handleDownloadSelected"
