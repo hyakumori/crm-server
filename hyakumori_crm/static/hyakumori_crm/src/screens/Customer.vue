@@ -9,6 +9,7 @@
                 <outline-round-btn
                   icon="mdi-download"
                   :content="$t('buttons.csv_download')"
+                  :loading="downloadCsvLoading"
                   class="mr-2"
                   v-on="on"
                 />
@@ -92,6 +93,7 @@ export default {
       filter: null,
       tableRowIcon: this.$t("icon.customer_icon"),
       headers: [],
+      downloadCsvLoading: false,
     };
   },
   mounted() {
@@ -114,6 +116,7 @@ export default {
   },
   methods: {
     downloadCsv(fileName, url) {
+      this.downloadCsvLoading = true;
       const fileStream = streamSaver.createWriteStream(fileName);
 
       fetch(url, {
@@ -132,6 +135,7 @@ export default {
             );
 
         pump();
+        this.downloadCsvLoading = false;
       });
     },
     handleDownloadSelected() {

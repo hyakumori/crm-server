@@ -1,4 +1,8 @@
+import csv
+import itertools
+
 from django.db.models import Q, F, Count
+from django.http import HttpResponse
 from rest_framework import mixins
 from rest_framework.decorators import action, api_view
 from rest_framework.permissions import IsAuthenticated
@@ -28,13 +32,16 @@ from .service import (
     get_customer_contacts_of_forest,
     set_default_customer,
     set_default_customer_contact,
-    update_forest_memo,
-)
+    update_forest_memo, forest_csv_data_mapping, get_all_forest_csv_data, get_specific_forest_csv_data, )
 from ..activity.services import ActivityService, ForestActions
 from ..api.decorators import (
     api_validate_model,
     get_or_404,
     action_login_required,
+)
+from ..crm.common.constants import (
+    FOREST_CADASTRAL, FOREST_LAND_ATTRIBUTES, FOREST_OWNER_NAME, FOREST_CONTRACT, FOREST_TAG_KEYS,
+    FOREST_ATTRIBUTES
 )
 from ..permissions.services import PermissionService
 
@@ -55,8 +62,8 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     def list_minimal(self, request):
         query = (
             self.get_queryset()
-            .annotate(customers_count=Count(F("forestcustomer__customer_id")))
-            .values("id", "internal_id", "cadastral", "customers_count")
+                .annotate(customers_count=Count(F("forestcustomer__customer_id")))
+                .values("id", "internal_id", "cadastral", "customers_count")
         )
         search_str = request.GET.get("search")
         if search_str:
@@ -133,6 +140,26 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
                 ForestActions.memo_info_updated, data.forest, request=request
             )
         return Response({"memo": forest.attributes["memo"]})
+
+    @action(detail=False, methods=["GET", "POST"], url_path="download-csv")
+    @action_login_required(with_permissions=["change_forest"])
+    def download_all_csv(self, request):
+        if request.data is None or len(request.data) == 0:
+            csv_data = get_all_forest_csv_data()
+        else:
+            csv_data = get_specific_forest_csv_data(request.data)
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment'
+        header = ["\ufeff内部ID", "土地管理ID"]
+        flatten_header = list(itertools.chain(header, FOREST_CADASTRAL, FOREST_LAND_ATTRIBUTES, FOREST_OWNER_NAME,
+                                              FOREST_CONTRACT, list(FOREST_TAG_KEYS.values()),
+                                              FOREST_ATTRIBUTES))
+        writer = csv.writer(response, dialect='excel')
+        writer.writerow(flatten_header)
+        for forest in csv_data:
+            csv_row = forest_csv_data_mapping(forest)
+            writer.writerow(csv_row)
+        return response
 
 
 @api_view(["PUT", "PATCH"])

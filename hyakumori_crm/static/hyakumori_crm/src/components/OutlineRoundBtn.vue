@@ -1,5 +1,12 @@
 <template>
-  <v-btn rounded dark outlined v-on="on" @click="$emit('click', $event)">
+  <v-btn
+    rounded
+    dark
+    outlined
+    v-on="on"
+    :loading="loading"
+    @click="$emit('click', $event)"
+  >
     <v-icon>{{ icon }}</v-icon>
     {{ content }}
   </v-btn>
@@ -13,6 +20,7 @@ export default {
     on: Object,
     icon: String,
     content: String,
+    loading: Boolean,
   },
 };
 </script>
