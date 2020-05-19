@@ -1,5 +1,5 @@
 import streamSaver from "streamsaver";
 
-streamSaver.mitm = process.env.NODE_ENV === "/mitm.html";
+streamSaver.mitm = "/mitm.html";
 
 export default streamSaver;
