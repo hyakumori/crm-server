@@ -1,10 +1,11 @@
 from typing import Iterator, Union
 
-from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.db.models import F
 from django.db.models.expressions import RawSQL
+from django.utils.translation import gettext_lazy as _
 
+from .schemas import ForestFilter, CustomerDefaultInput, CustomerContactDefaultInput
 from ..crm.models import (
     Forest,
     ForestCustomer,
@@ -13,7 +14,6 @@ from ..crm.models import (
     ForestCustomerContact,
     Contact,
 )
-from .schemas import ForestFilter, CustomerDefaultInput, CustomerContactDefaultInput
 
 
 def get_forest_by_pk(pk):
@@ -27,8 +27,8 @@ def get_customer_of_forest(pk, customer_pk):
     try:
         return (
             ForestCustomer.objects.select_related("customer")
-            .get(customer_id=customer_pk, forest_id=pk)
-            .customer
+                .get(customer_id=customer_pk, forest_id=pk)
+                .customer
         )
     except (
         ForestCustomer.DoesNotExist,
@@ -52,7 +52,7 @@ def get_forests_by_condition(
         return [], 0
     query = filters.qs if filters else Forest.objects.all()
     total = query.count()
-    forests = query.order_by("-updated_at", "-created_at")[offset : offset + per_page]
+    forests = query.order_by("-updated_at", "-created_at")[offset: offset + per_page]
     return forests, total
 
 
@@ -120,16 +120,16 @@ def get_customer_contacts_of_forest(pk):
             customercontact__attributes__contact_type="FOREST",
             customercontact__forestcustomercontact__forestcustomer__forest_id=pk,
         )
-        .annotate(
+            .annotate(
             is_basic=F("customercontact__is_basic")
         )  # actualy its always False, why did we retrieve it?
-        .annotate(customer_id=F("customercontact__customer_id"))
-        .annotate(
+            .annotate(customer_id=F("customercontact__customer_id"))
+            .annotate(
             default=RawSQL(
                 "crm_forestcustomercontact.attributes->>'default'", params=[]
             )
         )
-        .annotate(cc_attrs=F("customercontact__attributes"))
+            .annotate(cc_attrs=F("customercontact__attributes"))
     )
 
 
@@ -162,3 +162,133 @@ def update_forest_memo(forest, memo):
         _updated = True
 
     return forest, _updated
+
+
+def get_all_forest_csv_data():
+    return Forest.objects.all().distinct("id").annotate(forest_id=F("id")).annotate(
+        customer_name_kana=RawSQL(
+            """
+            select array_to_string(array_agg(concat_ws(' ', cc2.name_kana->>'last_name', cc2.name_kana->>'first_name')), '; ')
+            from crm_customer c
+            inner join crm_forestcustomer cf on c.id = cf.customer_id
+            inner join crm_customercontact cc on c.id = cc.customer_id
+            inner join crm_contact cc2 on cc.contact_id = cc2.id
+            where crm_forest.id = cf.forest_id and cc.is_basic = true
+            """,
+            params=[]
+        )).annotate(
+        customer_name_kanji=RawSQL(
+            """
+            select array_to_string(array_agg(concat_ws(' ', cc4.name_kanji->>'last_name', cc4.name_kanji->>'first_name')), '; ')
+            from crm_customer c
+            inner join crm_forestcustomer cf on c.id = cf.customer_id
+            inner join crm_customercontact cc3 on c.id = cc3.customer_id
+            inner join crm_contact cc4 on cc3.contact_id = cc4.id
+            where crm_forest.id = cf.forest_id and cc3.is_basic = true
+            """,
+            params=[]
+        )).annotate(
+        customer_internal_id=F("forestcustomer__customer__internal_id"))
+
+
+def get_specific_forest_csv_data(forest_ids):
+    return Forest.objects.filter(id__in=forest_ids).distinct("id").annotate(forest_id=F("id")).annotate(
+        customer_name_kana=RawSQL(
+            """
+            select array_to_string(array_agg(concat_ws(' ', cc2.name_kana->>'last_name', cc2.name_kana->>'first_name')), '; ')
+            from crm_customer c
+            inner join crm_forestcustomer cf on c.id = cf.customer_id
+            inner join crm_customercontact cc on c.id = cc.customer_id
+            inner join crm_contact cc2 on cc.contact_id = cc2.id
+            where crm_forest.id = cf.forest_id and cc.is_basic = true
+            """,
+            params=[]
+        )).annotate(
+        customer_name_kanji=RawSQL(
+            """
+            select array_to_string(array_agg(concat_ws(' ', cc4.name_kanji->>'last_name', cc4.name_kanji->>'first_name')), '; ')
+            from crm_customer c
+            inner join crm_forestcustomer cf on c.id = cf.customer_id
+            inner join crm_customercontact cc3 on c.id = cc3.customer_id
+            inner join crm_contact cc4 on cc3.contact_id = cc4.id
+            where crm_forest.id = cf.forest_id and cc3.is_basic = true
+            """,
+            params=[]
+        )).annotate(
+        customer_internal_id=F("forestcustomer__customer__internal_id"))
+
+
+def forest_csv_data_mapping(forest):
+    return [
+        forest.forest_id,
+        forest.internal_id,
+        forest.cadastral.get('prefecture'),
+        forest.cadastral.get('municipality'),
+        forest.cadastral.get('sector'),
+        forest.cadastral.get('subsector'),
+        forest.land_attributes.get('地番本番'),
+        forest.land_attributes.get('地番支番'),
+        forest.land_attributes.get('地目'),
+        forest.land_attributes.get('林班'),
+        forest.land_attributes.get('小班'),
+        forest.land_attributes.get('区画'),
+        forest.customer_name_kanji,
+        forest.customer_name_kana,
+        forest.contracts[0].get('status'),
+        forest.contracts[0].get('start_date'),
+        forest.contracts[0].get('end_date'),
+        forest.contracts[1].get('status'),
+        forest.contracts[1].get('start_date'),
+        forest.contracts[1].get('end_date'),
+        forest.contracts[2].get('status'),
+        forest.contracts[2].get('start_date'),
+        forest.contracts[2].get('end_date'),
+        forest.tags.get('danchi'),
+        forest.tags.get('manage_type'),
+        forest.forest_attributes.get('地番面積_ha'),
+        forest.forest_attributes.get('面積_ha'),
+        forest.forest_attributes.get('面積_m2'),
+        forest.forest_attributes.get('平均傾斜度'),
+        forest.forest_attributes.get('第1林相ID'),
+        forest.forest_attributes.get('第1林相名'),
+        forest.forest_attributes.get('第1Area'),
+        forest.forest_attributes.get('第1面積_ha'),
+        forest.forest_attributes.get('第1立木本'),
+        forest.forest_attributes.get('第1立木密'),
+        forest.forest_attributes.get('第1平均樹'),
+        forest.forest_attributes.get('第1樹冠長'),
+        forest.forest_attributes.get('第1平均DBH'),
+        forest.forest_attributes.get('第1合計材'),
+        forest.forest_attributes.get('第1ha材積'),
+        forest.forest_attributes.get('第1収量比'),
+        forest.forest_attributes.get('第1相対幹'),
+        forest.forest_attributes.get('第1形状比'),
+        forest.forest_attributes.get('第2林相ID'),
+        forest.forest_attributes.get('第2林相名'),
+        forest.forest_attributes.get('第2Area'),
+        forest.forest_attributes.get('第2面積_ha'),
+        forest.forest_attributes.get('第2立木本'),
+        forest.forest_attributes.get('第2立木密'),
+        forest.forest_attributes.get('第2平均樹'),
+        forest.forest_attributes.get('第2樹冠長'),
+        forest.forest_attributes.get('第2平均DBH'),
+        forest.forest_attributes.get('第2合計材'),
+        forest.forest_attributes.get('第2ha材積'),
+        forest.forest_attributes.get('第2収量比'),
+        forest.forest_attributes.get('第2相対幹'),
+        forest.forest_attributes.get('第2形状比'),
+        forest.forest_attributes.get('第3林相ID'),
+        forest.forest_attributes.get('第3林相名'),
+        forest.forest_attributes.get('第3Area'),
+        forest.forest_attributes.get('第3面積_ha'),
+        forest.forest_attributes.get('第3立木本'),
+        forest.forest_attributes.get('第3立木密'),
+        forest.forest_attributes.get('第3平均樹'),
+        forest.forest_attributes.get('第3樹冠長'),
+        forest.forest_attributes.get('第3平均DBH'),
+        forest.forest_attributes.get('第3合計材'),
+        forest.forest_attributes.get('第3ha材積'),
+        forest.forest_attributes.get('第3収量比'),
+        forest.forest_attributes.get('第3相対幹'),
+        forest.forest_attributes.get('第3形状比')
+    ]

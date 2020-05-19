@@ -25,6 +25,7 @@
     "send": "送信",
     "set_as_default": "デフォルトとして設定",
     "csv_download": "csvダウンロード",
+    "csv_upload": "csvアップロード",
     "download_selected": "ダウンロードの選択",
     "download_all": "すべてダウンロード"
   },
