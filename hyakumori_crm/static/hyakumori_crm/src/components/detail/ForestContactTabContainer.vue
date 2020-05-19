@@ -53,8 +53,8 @@
           <customer-contact-card
             @click="
               (cId, inx) => {
-                modalSelectingCustomerId = cId;
-                modalSelectingCustomerIndex = inx;
+                modalSelectingId = cId;
+                modalSelectingIndex = inx;
               }
             "
             v-for="(item, indx) in itemsForAdding.results"
@@ -62,8 +62,8 @@
             :contact="item"
             :showAction="false"
             :index="indx"
-            :selectedId="modalSelectingCustomerId"
-            :selectedIndex="modalSelectingCustomerIndex"
+            :selectedId="modalSelectingId"
+            :selectedIndex="modalSelectingIndex"
             flat
             mode="search"
             :showRelationshipSelect="false"
@@ -152,8 +152,8 @@ export default {
       )[0];
       c.added = true;
       this.customersToAdd.push(c);
-      this.modalSelectingCustomerIndex = null;
-      this.modalSelectingCustomerId = null;
+      this.modalSelectingIndex = null;
+      this.modalSelectingId = null;
       if (this.itemsForAdding.results.length <= 3) {
         this.handleLoadMore();
       }
