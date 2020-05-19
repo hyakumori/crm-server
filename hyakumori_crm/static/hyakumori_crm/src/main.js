@@ -1,3 +1,5 @@
+import "web-streams-polyfill";
+
 import "vuetify-dialog/dist/vuetify-dialog.css";
 
 import AclSetup from "./plugins/acl";

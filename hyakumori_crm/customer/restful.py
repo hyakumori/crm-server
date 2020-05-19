@@ -1,8 +1,11 @@
+import csv
+
+from django.http.response import StreamingHttpResponse
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
-from hyakumori_crm.core.utils import default_paginator
+from hyakumori_crm.core.utils import default_paginator, Echo
 from hyakumori_crm.crm.restful.serializers import (
     ContactSerializer,
     CustomerContactSerializer,
@@ -42,6 +45,7 @@ from .service import (
     get_customer_archives,
     get_customer_contacts_forests,
     customercontacts_list_with_search,
+    get_list,
 )
 
 
@@ -195,6 +199,72 @@ class CustomerViewSets(ViewSet):
     def contacts_forests(self, request, *, customer=None):
         forests = get_customer_contacts_forests(pk=customer.pk)
         return Response(ForestSerializer(forests, many=True).data)
+
+    @action(detail=False, methods=["GET"])
+    def download_csv(self, request):
+        pks = request.GET.getlist("ids")
+        if len(pks) == 0:
+            filters = {}
+        else:
+            filters = {"id__in": pks}
+        customers, _ = get_list(per_page=None, filters=filters)
+        headers = [
+            "\ufeff所有者ID",  # contains BOM char for opening on windows excel
+            "新規ID発行",
+            "土地所有者名（漢字）",
+            "土地所有者名（カナ）",
+            "土地所有者住所_都道府県",
+            "土地所有者住所_市町村",
+            "土地所有者住所_大字",
+            "連絡先情報_郵便番号",
+            "連絡先情報_電話番号",
+            "連絡先情報_携帯電話",
+            "連絡先情報_メールアドレス",
+            "口座情報_銀行名",
+            "口座情報_支店名",
+            "口座情報_種別",
+            "口座情報_口座番号",
+            "口座情報_口座名義",
+            "所有者順位",
+            "登録/未登録",
+            "同姓同名",
+        ]
+
+        def generator(headers, rows):
+            yield headers
+            for row in rows:
+                yield [
+                    row["id"],
+                    row["internal_id"],
+                    row["fullname_kana"],
+                    row["fullname_kanji"],
+                    row["prefecture"],
+                    row["municipality"],
+                    row["address"],
+                    row["postal_code"],
+                    row["telephone"],
+                    row["mobilephone"],
+                    row["email"],
+                    row["bank_name"],
+                    row["bank_branch_name"],
+                    row["bank_account_type"],
+                    row["bank_account_number"],
+                    row["bank_account_name"],
+                    row["ranking"],
+                    row["status"],
+                    row["same_name"],
+                ]
+
+        pseudo_buffer = Echo()
+        writer = csv.writer(pseudo_buffer)
+        response = StreamingHttpResponse(
+            (writer.writerow(row) for row in generator(headers, customers)),
+            content_type="text/csv",
+        )
+        response[
+            "Content-Disposition"
+        ] = 'application/octet-stream; filename="customers.csv"'
+        return response
 
 
 @api_view(["GET"])
