@@ -10631,6 +10631,11 @@ stream-shift@^1.0.0:
   resolved "https://registry.npm.taobao.org/stream-shift/download/stream-shift-1.0.1.tgz#d7088281559ab2778424279b0877da3c392d5a3d"
   integrity sha1-1wiCgVWasneEJCebCHfaPDktWj0=
 
+streamsaver@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/streamsaver/-/streamsaver-2.0.4.tgz#ecd1b40749dc5a81d7c03c2bfdc842de372191e2"
+  integrity sha512-rGES0zmHIPxinV32H2Dz55qgOE5dXui8yfu+JEjPAI294cDmwX4Oe7tCZLrnhjc/1z7hyIv9H6TMH2kqN2Tdqw==
+
 streamsearch@0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/streamsearch/-/streamsearch-0.1.2.tgz#808b9d0e56fc273d809ba57338e929919a1a9f1a"
@@ -11799,6 +11804,11 @@ wcwidth@^1.0.1:
   integrity sha1-8LDc+RW8X/FSivrbLA4XtTLaL+g=
   dependencies:
     defaults "^1.0.3"
+
+web-streams-polyfill@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/web-streams-polyfill/-/web-streams-polyfill-2.1.1.tgz#2c82b6193849ccb9efaa267772c28260ef68d6d2"
+  integrity sha512-dlNpL2aab3g8CKfGz6rl8FNmGaRWLLn2g/DtSc9IjB30mEdE6XxzPfPSig5BwGSzI+oLxHyETrQGKjrVVhbLCg==
 
 webidl-conversions@^4.0.2:
   version "4.0.2"

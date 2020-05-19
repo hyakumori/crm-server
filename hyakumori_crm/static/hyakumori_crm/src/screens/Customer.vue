@@ -3,11 +3,38 @@
     <template #top>
       <page-header>
         <template #bottom-right>
-          <outline-round-btn
-            :icon="$t('icon.add')"
-            @click="$router.push({ name: 'customer-new' })"
-            :content="$t('buttons.add_customer')"
-          />
+          <div>
+            <v-menu offset-y nudge-bottom="4" class="pa-0">
+              <template v-slot:activator="{ on }">
+                <outline-round-btn
+                  icon="mdi-download"
+                  :content="$t('buttons.csv_download')"
+                  class="mr-2"
+                  v-on="on"
+                />
+              </template>
+              <v-list dense>
+                <v-list-item
+                  v-if="$refs.table && $refs.table.selected.length > 0"
+                  @click="handleDownloadSelected"
+                >
+                  <v-list-item-title>{{
+                    $t("buttons.download_selected")
+                  }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="handleDownloadAll">
+                  <v-list-item-title>{{
+                    $t("buttons.download_all")
+                  }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+            <outline-round-btn
+              :icon="$t('icon.add')"
+              @click="$router.push({ name: 'customer-new' })"
+              :content="$t('buttons.add_customer')"
+            />
+          </div>
         </template>
       </page-header>
     </template>
@@ -19,11 +46,12 @@
         ref="filter"
       />
       <data-list
+        ref="table"
         class="ml-7"
         itemKey="id"
         :headers="headers"
         :data="customers"
-        :showSelect="false"
+        showSelect
         :options.sync="options"
         :serverItemsLength="totalCustomers"
         :tableRowIcon="tableRowIcon"
@@ -44,6 +72,7 @@ import SearchCard from "../components/SearchCard";
 import OutlineRoundBtn from "../components/OutlineRoundBtn";
 import DataList from "../components/DataList";
 import BusEvent from "../BusEvent";
+import streamSaver from "../plugins/streamsaver";
 
 export default {
   components: {
@@ -84,6 +113,41 @@ export default {
     },
   },
   methods: {
+    downloadCsv(fileName, url) {
+      const fileStream = streamSaver.createWriteStream(fileName);
+
+      fetch(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      }).then(res => {
+        window.writer = fileStream.getWriter();
+
+        const reader = res.body.getReader();
+        const pump = () =>
+          reader
+            .read()
+            .then(res =>
+              res.done ? writer.close() : writer.write(res.value).then(pump),
+            );
+
+        pump();
+      });
+    },
+    handleDownloadSelected() {
+      const ids = Object.keys(this.$refs.table.$refs.dataTable.selection);
+      const qStr = ids.map(id => `ids=${id}`).join("&");
+      this.downloadCsv(
+        "customers_filtered.csv",
+        `${this.$rest.defaults.baseURL}/customers/download_csv?` + qStr,
+      );
+    },
+    handleDownloadAll() {
+      this.downloadCsv(
+        "customers.csv",
+        `${this.$rest.defaults.baseURL}/customers/download_csv`,
+      );
+    },
     rowData(val) {
       this.$router.push({
         name: "customer-detail",
