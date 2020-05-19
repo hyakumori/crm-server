@@ -1,5 +1,47 @@
 <template>
   <main-section class="forest">
+    <template #top>
+      <page-header>
+        <template #bottom-right>
+          <div>
+            <outline-round-btn
+              v-show="false"
+              class="mr-2"
+              :icon="$t('icon.add')"
+              :content="$t('buttons.csv_upload')"
+              @click="uploadCsv"
+            />
+            <v-menu offset-y nudge-bottom="4">
+              <template v-slot:activator="{ on }">
+                <outline-round-btn
+                  icon="mdi-download"
+                  :content="$t('buttons.csv_download')"
+                  :loading="downloadCsvLoading"
+                  class="mr-2"
+                  v-on="on"
+                />
+              </template>
+              <v-list dense class="pa-0">
+                <v-list-item
+                  v-if="tableSelectedRow && tableSelectedRow.length > 0"
+                  @click="downloadSelectedRows"
+                >
+                  <v-list-item-title>{{
+                    $t("buttons.download_selected")
+                  }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="downloadAllCsv">
+                  <v-list-item-title>{{
+                    $t("buttons.download_all")
+                  }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </div>
+        </template>
+      </page-header>
+    </template>
+
     <template #section>
       <search-card
         :searchCriteria="filterFields"
@@ -20,7 +62,7 @@
           itemKey="id"
           :headers="getHeaders"
           :data="getData"
-          :showSelect="false"
+          :showSelect="true"
           :isLoading="$apollo.queries.forestsInfo.loading"
           :serverItemsLength="getTotalForests"
           :tableRowIcon="tableRowIcon"
@@ -51,6 +93,9 @@ import GetForestList from "../graphql/GetForestList.gql";
 import SnackBar from "../components/SnackBar";
 import ScreenMixin from "./ScreenMixin";
 import MainSection from "../components/MainSection";
+import PageHeader from "../components/PageHeader";
+import OutlineRoundBtn from "../components/OutlineRoundBtn";
+import { saveAs } from "file-saver";
 
 export default {
   name: "forest",
@@ -63,6 +108,8 @@ export default {
     // TableAction,
     SnackBar,
     MainSection,
+    PageHeader,
+    OutlineRoundBtn,
   },
 
   data() {
@@ -78,6 +125,7 @@ export default {
       options: {},
       tableSelectedRow: [],
       headers: [],
+      downloadCsvLoading: false,
     };
   },
 
@@ -138,6 +186,38 @@ export default {
     onSearch() {
       this.filter = { ...this.filter, filters: this.requestFilters };
       this.$apollo.queries.forestsInfo.refetch();
+    },
+
+    uploadCsv() {
+      // TODO: handle upload forest as csv
+    },
+
+    async downloadAllCsv() {
+      try {
+        this.downloadCsvLoading = true;
+        let csvData = await this.$rest.get("/forests/download-csv");
+        const blob = new Blob([csvData], { type: "text/csv;charset=UTF-8" });
+        saveAs(blob, "all-forests.csv");
+      } catch (e) {
+      } finally {
+        this.downloadCsvLoading = false;
+      }
+    },
+
+    async downloadSelectedRows() {
+      try {
+        this.downloadCsvLoading = true;
+        const selectedRowIds = this.tableSelectedRow.map(row => row.id);
+        let csvData = await this.$rest.post(
+          "/forests/download-csv",
+          selectedRowIds,
+        );
+        const blob = new Blob([csvData], { type: "text/csv;charset=UTF-8" });
+        saveAs(blob, "selected_forests.csv");
+      } catch (e) {
+      } finally {
+        this.downloadCsvLoading = false;
+      }
     },
   },
 
