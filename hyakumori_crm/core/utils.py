@@ -9,11 +9,11 @@ from hyakumori_crm.crm.restful.paginations import StandardPagination
 
 
 def get_remote_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
-        remote_ip = x_forwarded_for.split(',')[0]
+        remote_ip = x_forwarded_for.split(",")[0]
     else:
-        remote_ip = request.META.get('REMOTE_ADDR')
+        remote_ip = request.META.get("REMOTE_ADDR")
 
     return remote_ip
 
@@ -51,9 +51,7 @@ def default_paginator():
 
 
 def make_error_json(message: str, status=HttpResponseBadRequest.status_code):
-    return JsonResponse(
-        status=status, data=dict(detail=message)
-    )
+    return JsonResponse(status=status, data=dict(detail=message))
 
 
 def make_success_json(data: any):
@@ -86,11 +84,19 @@ class SQLFormatter(logging.Formatter):
         if pygments:
             # Highlight the SQL query
             sql = pygments.highlight(
-                sql,
-                SqlLexer(),
-                TerminalTrueColorFormatter(style='monokai')
+                sql, SqlLexer(), TerminalTrueColorFormatter(style="monokai")
             )
 
         # Set the record's statement to the formatted query
         record.statement = sql
         return super(SQLFormatter, self).format(record)
+
+
+class Echo:
+    """An object that implements just the write method of the file-like
+    interface.
+    """
+
+    def write(self, value):
+        """Write the value by returning it, instead of storing in a buffer."""
+        return value
