@@ -23,7 +23,10 @@
     "reset": "リセット",
     "save": "保存",
     "send": "送信",
-    "set_as_default": "デフォルトとして設定"
+    "set_as_default": "デフォルトとして設定",
+    "csv_download": "csvダウンロード",
+    "download_selected": "ダウンロードの選択",
+    "download_all": "すべてダウンロード"
   },
   "detail": {
     "tabs": {

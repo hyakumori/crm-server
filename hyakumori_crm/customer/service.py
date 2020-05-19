@@ -142,40 +142,23 @@ def get_list(
     order_by: Union[Iterator, None] = None,
     filters: Union[dict, None] = None,
 ):
-    offset = (pre_per_page or per_page) * (page_num - 1)
+    if per_page is None:
+        offset = None
+    else:
+        offset = (pre_per_page or per_page) * (page_num - 1)
     if not order_by:
         order_by = []
-
-    representatives = (
-        Query()
-        .from_table(
-            {"contact": Contact},
-            [
-                {
-                    "fullname_kana": RawSQLField(
-                        "concat(contact.name_kana->>'last_name', ' ', contact.name_kana->>'first_name')"
-                    )
-                }
-            ],
-        )
-        .join(
-            {"contact_rel": CustomerContact},
-            condition="contact.id = contact_rel.contact_id",
-        )
-        .where(Q(customer_id=Expression("c.id")))
-        .where(~Q(is_basic=Expression("true")))
-        .order_by(
-            "attributes->>'default'", table="contact_rel", desc=True, nulls_last=True
-        )
-        .limit(1)
-    )
 
     tags_fields = get_tag_fields_for_query()
 
     fields = [
         "id",
         "internal_id",
-        {"representative": RawSQLField(representatives.get_sql(), enclose=True)},
+        {"bank_name": RawSQLField("banking->>'bank_name'")},
+        {"bank_branch_name": RawSQLField("banking->>'branch_name'")},
+        {"bank_account_type": RawSQLField("banking->>'account_type'")},
+        {"bank_account_number": RawSQLField("banking->>'account_number'")},
+        {"bank_account_name": RawSQLField("banking->>'account_name'")},
     ]
 
     fields += tags_fields
@@ -310,20 +293,24 @@ def customercontacts_list_with_search(search_str: str = None):
         .values("id", "customer_id")
         .annotate(forests_count=Count("customer__forestcustomer"))
     )
-    queryset = Contact.objects.annotate(
-        customer_id=F("customercontact__customer_id"),
-        is_basic=F("customercontact__is_basic"),
-        forests_count=Subquery(cc.values("forests_count")[:1]),
-        cc_attrs=F("customercontact__attributes"),
-        customer_name_kanji=RawSQL(
-            """(select C0.name_kanji
+    queryset = (
+        Contact.objects.annotate(
+            customer_id=F("customercontact__customer_id"),
+            is_basic=F("customercontact__is_basic"),
+            forests_count=Subquery(cc.values("forests_count")[:1]),
+            cc_attrs=F("customercontact__attributes"),
+            customer_name_kanji=RawSQL(
+                """(select C0.name_kanji
                     from crm_contact C0
                     join crm_customercontact CC0
                         on C0.id = CC0.contact_id and CC0.is_basic = true
                 where CC0.customer_id = crm_customercontact.customer_id)""",
-            params=[],
-        ),
-    ).filter(is_basic__isnull=False).all()
+                params=[],
+            ),
+        )
+        .filter(is_basic__isnull=False)
+        .all()
+    )
     if search_str:
         queryset = queryset.filter(
             Q(name_kanji__first_name__icontains=search_str)
