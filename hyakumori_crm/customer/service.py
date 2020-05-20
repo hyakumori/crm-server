@@ -1,12 +1,12 @@
-import logging
 from typing import Iterator, Union
 from uuid import UUID
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import DataError, IntegrityError, connection
 from django.db.models import Count, F, OuterRef, Q, Subquery
 from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
-from querybuilder.query import Expression, Query
+from querybuilder.query import Query
 
 from hyakumori_crm.core.models import RawSQLField
 from hyakumori_crm.crm.models import (
@@ -82,6 +82,9 @@ def get_customer_contacts(pk: UUID):
         .annotate(forests_count=Count("customer__forestcustomer"))
     )
     cc_is_basic = CustomerContact.objects.filter(is_basic=True, contact=OuterRef("pk"))
+    cc_is_basic_business_id = CustomerContact.objects.filter(
+        is_basic=True, contact=OuterRef("pk")
+    ).annotate(business_id=F("customer__business_id"))
     q = (
         Contact.objects.filter(
             customercontact__customer_id=pk, customercontact__is_basic=False,
@@ -105,6 +108,9 @@ def get_customer_contacts(pk: UUID):
         .annotate(forests_count=Subquery(cc_forest_counts.values("forests_count")[:1]))
         .annotate(is_basic=Subquery(cc_is_basic.values("is_basic")[:1]))
         .annotate(customer_id=Subquery(cc_is_basic.values("customer_id")[:1]))
+        .annotate(
+            business_id=Subquery(cc_is_basic_business_id.values("business_id")[:1])
+        )
         .order_by("created_at")
     )
     return q
@@ -154,6 +160,7 @@ def get_list(
     fields = [
         "id",
         "internal_id",
+        "business_id",
         {"bank_name": RawSQLField("banking->>'bank_name'")},
         {"bank_branch_name": RawSQLField("banking->>'branch_name'")},
         {"bank_account_type": RawSQLField("banking->>'account_type'")},
@@ -266,8 +273,12 @@ def contacts_list_with_search(search_str: str = None):
         .values("id", "customer_id")
         .annotate(forests_count=Count("customer__forestcustomer"))
     )
+    cc_business_id = CustomerContact.objects.filter(
+        is_basic=True, contact=OuterRef("pk")
+    ).annotate(business_id=F("customer__business_id"))
     queryset = Contact.objects.annotate(
         forests_count=Subquery(cc.values("forests_count")[:1]),
+        business_id=Subquery(cc_business_id.values("business_id")[:1]),
     ).all()
 
     if search_str:
@@ -296,6 +307,7 @@ def customercontacts_list_with_search(search_str: str = None):
     queryset = (
         Contact.objects.annotate(
             customer_id=F("customercontact__customer_id"),
+            business_id=F("customercontact__customer__business_id"),
             is_basic=F("customercontact__is_basic"),
             forests_count=Subquery(cc.values("forests_count")[:1]),
             cc_attrs=F("customercontact__attributes"),
@@ -469,3 +481,10 @@ def get_customer_contacts_forests(pk):
         .prefetch_related("forestcustomer_set")
         .order_by("created_at")
     )
+
+
+def get_customer_by_business_id(busines_id):
+    customer = Customer.objects.get(business_id=busines_id)
+    if not customer.business_id or len(customer.business_id) == 0:
+        raise ValueError(_("Customer ID is empty or not available"))
+    return customer

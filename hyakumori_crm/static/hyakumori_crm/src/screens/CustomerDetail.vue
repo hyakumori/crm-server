@@ -4,15 +4,15 @@
       <div class="customer-detail__section px-7">
         <basic-info-container
           headerContent="顧客情報"
-          toggleEditBtnContent="所有地を追加・編集"
+          toggleEditBtnContent="追加・編集"
           :displayAdditionBtn="isDetail"
           :isLoading="customerLoading"
           :info="basicInfo"
-          :id="id"
+          :id="pk"
         >
-          <template #form="props">
+          <template #form="props" v-if="!id">
             <contact-form
-              :id="id"
+              :id="pk"
               :formData="selfContactFormData"
               :toggleEditing="props.toggleEditing"
               :showCancel="isDetail"
@@ -22,28 +22,28 @@
         </basic-info-container>
 
         <forest-list-container
-          v-if="id"
+          v-if="pk"
           headerContent="所有林情報"
-          toggleEditBtnContent=" 所有林情報の追加・編集"
-          addBtnContent="所有地情報を追加"
+          toggleEditBtnContent="追加・編集"
+          addBtnContent="追加"
           :displayAdditionBtn="true"
           :isLoading="forestsLoading"
           :forests="forests"
-          :id="id"
+          :id="pk"
           @saved="handleForestsSaved"
           :selectingForestId.sync="selectingForestId"
           itemClickable
         />
 
         <customer-list-container
-          v-if="id"
+          v-if="pk"
           class="mt-12"
           headerContent="連絡者情報"
-          toggleEditBtnContent="連絡者を追加・編集"
-          addBtnContent="連絡者を追加"
+          toggleEditBtnContent="追加・編集"
+          addBtnContent="追加"
           :contacts="forestContacts"
           :isLoading="contactsLoading"
-          :id="id"
+          :id="pk"
           :customer="customer"
           @saved="handleForestContactsSave"
           contactType="FOREST"
@@ -52,11 +52,11 @@
         />
 
         <attachment-container
-          v-if="id"
+          v-if="pk"
           class="consultation-history mt-12"
           headerContent="協議履歴"
-          toggleEditBtnContent="協議記録を追加・編集"
-          addBtnContent="協議履歴を追加"
+          toggleEditBtnContent="追加・編集"
+          addBtnContent="追加"
           :archives="archives"
           :isLoading="archivesLoading"
         />
@@ -65,25 +65,25 @@
           v-if="id"
           class="mt-12"
           headerContent="家族情報"
-          toggleEditBtnContent="家族を追加・編集"
-          addBtnContent="連絡者を追加"
+          toggleEditBtnContent="追加・編集"
+          addBtnContent="追加"
           :contacts="familyContacts"
           :isLoading="contactsLoading"
-          :id="id"
+          :id="pk"
           :customer="customer"
           @saved="fetchContacts"
           contactType="FAMILY"
         />
 
         <customer-contacts-container
-          v-if="id"
+          v-if="pk"
           class="mt-12"
           headerContent="その他関係者情報"
-          toggleEditBtnContent="その他関係者を追加・編集"
-          addBtnContent="連絡者を追加"
+          toggleEditBtnContent="追加・編集"
+          addBtnContent="追加"
           :contacts="otherContacts"
           :isLoading="contactsLoading"
-          :id="id"
+          :id="pk"
           :customer="customer"
           @saved="fetchContacts"
           contactType="OTHERS"
@@ -92,27 +92,27 @@
         <forest-list-container
           class="mt-12"
           headerContent="顧客連絡者登録 森林"
-          addBtnContent="所有地情報を追加"
+          addBtnContent="追加"
           :displayAdditionBtn="false"
           :isLoading="contactsForestsLoading"
           :forests="contactsForests"
-          v-if="id"
+          v-if="pk"
           :itemClickable="false"
         />
 
         <basic-info-container
-          v-if="id"
+          v-if="pk"
           class="mt-12"
           headerContent="口座情報"
-          toggleEditBtnContent="口座情報を編集"
+          toggleEditBtnContent="編集"
           addBtnContent="口座情報を編集"
           :isLoading="customerLoading"
           :info="bankingInfo"
-          :id="id"
+          :id="pk"
         >
           <template #form="props">
             <banking-info-form
-              :id="id"
+              :id="pk"
               :formData="bankingInfoFormData"
               :toggleEditing="props.toggleEditing"
               @updated="fetchCustomer"
@@ -125,21 +125,23 @@
     <template #right v-if="isDetail">
       <div>
         <memo-input
-          :api-url="`/customers/${$route.params.id}/memo`"
+          :api-url="`/customers/${pk}/memo`"
           object-type="customer"
           v-model="customer"
+          v-if="pk"
         ></memo-input>
         <tag-detail-card
           app-name="crm"
           object-type="customer"
-          :object-id="$route.params.id"
+          :object-id="pk"
           :tags="customer && customer.tags"
           @input="customer.tags = $event"
         ></tag-detail-card>
         <action-log
+          v-if="pk"
           app-name="crm"
           object-type="customer"
-          :object-id="$route.params.id"
+          :object-id="pk"
         ></action-log>
       </div>
     </template>
@@ -205,20 +207,47 @@ export default {
     };
   },
 
-  created() {
-    this.fetchInitialData();
+  async created() {
+    await this.fetchInitialData();
   },
 
   mounted() {
-    const info = {
-      title: this.$t("page_header.customer_new"),
-      subTitle: "",
-      backUrl: "/customers",
-    };
+    let info = {};
+    if (!this.isDetail) {
+      info = {
+        title: this.$t("page_header.customer_new"),
+        subTitle: "",
+        backUrl: "/customers",
+      };
+    } else {
+      info = {
+        title: this.$t("page_header.customer_mgmt"),
+        subTitle: "",
+        backUrl: "/customers",
+      };
+    }
+
     this.$store.dispatch("setHeaderInfo", info);
   },
 
   methods: {
+    async resolveBusinessId() {
+      if (!this.isDetail) {
+        return;
+      }
+      try {
+        const customer = await this.$rest.get("/customers/by-business-id", {
+          params: { business_id: this.id },
+        });
+        if (customer && customer.business_id && customer.id) {
+          this.customer = customer;
+        } else {
+          this.$router.replace({ name: "not-found" });
+        }
+      } catch {
+        this.$router.replace({ name: "not-found" });
+      }
+    },
     checkAndShowLoading() {
       //only available under detail page
       return this.isDetail;
@@ -236,9 +265,9 @@ export default {
 
       return (nameObj && (nameObj.last_name || nameObj.first_name)) || "";
     },
-    fetchInitialData() {
+    async fetchInitialData() {
       if (this.isDetail) {
-        this.fetchCustomer();
+        await this.resolveBusinessId();
         this.fetchForests();
         this.fetchContacts();
         this.fetchArchives();
@@ -246,14 +275,14 @@ export default {
       }
     },
     fetchCustomer() {
-      this.$rest.get(`/customers/${this.id}`).then(data => {
+      this.$rest.get(`/customers/${this.pk}`).then(data => {
         this.customer = data;
         this.customerLoading = false;
       });
     },
     fetchForests() {
       this.forestsLoading = true;
-      this.$rest.get(`/customers/${this.id}/forests`).then(async data => {
+      this.$rest.get(`/customers/${this.pk}/forests`).then(async data => {
         let forests = data.results;
         let next = data.next;
         while (!!next) {
@@ -267,7 +296,7 @@ export default {
     },
     fetchContacts() {
       this.contactsLoading = true;
-      this.$rest.get(`/customers/${this.id}/contacts`).then(async data => {
+      this.$rest.get(`/customers/${this.pk}/contacts`).then(async data => {
         let contacts = data.results;
         let next = data.next;
         while (!!next) {
@@ -281,13 +310,13 @@ export default {
     },
     async fetchArchives() {
       this.archivesLoading = true;
-      this.archives = await this.$rest.get(`/customers/${this.id}/archives`);
+      this.archives = await this.$rest.get(`/customers/${this.pk}/archives`);
       this.archivesLoading = false;
     },
     async fetchContactsForests() {
       this.contactsForestsLoading = true;
       this.contactsForests = await this.$rest.get(
-        `/customers/${this.id}/contacts-forests`,
+        `/customers/${this.pk}/contacts-forests`,
       );
       this.contactsForestsLoading = false;
     },
@@ -303,6 +332,10 @@ export default {
   },
 
   computed: {
+    pk() {
+      return this.customer && this.customer.id;
+    },
+
     isDetail() {
       return !!this.id;
     },

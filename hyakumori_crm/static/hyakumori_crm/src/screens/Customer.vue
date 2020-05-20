@@ -56,8 +56,10 @@
         :options.sync="options"
         :serverItemsLength="totalCustomers"
         :tableRowIcon="tableRowIcon"
+        :icon-row-value-slice="{ enableSlice: false }"
+        iconRowValue="business_id"
         :autoHeaders="false"
-        @rowData="rowData"
+        @rowDataItem="rowData"
         :isLoading="$apollo.queries.customerList.loading"
       ></data-list>
     </template>
@@ -155,7 +157,7 @@ export default {
     rowData(val) {
       this.$router.push({
         name: "customer-detail",
-        params: { id: val },
+        params: { id: val.business_id },
       });
     },
     onSearch() {
@@ -199,7 +201,7 @@ export default {
             ok
             items {
               id
-              internal_id
+              business_id
               fullname_kana
               fullname_kanji
               postal_code

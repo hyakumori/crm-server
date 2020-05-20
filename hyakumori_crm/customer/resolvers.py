@@ -7,9 +7,6 @@ from django.utils.translation import gettext as _
 from hyakumori_crm.graphql.decorators import login_required
 from ..core.decorators import validate_model
 from .schemas import (
-    CustomerInputSchema,
-    CustomerRead,
-    CustomerUpdate,
     CustomerFilter,
     CustomerPaginator,
 )
@@ -39,7 +36,7 @@ def get_customer_by_id(
 @login_required(with_policies=["can_view_customers"])
 def get_customertable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dict:
     headers = [
-        {"text": _("Internal Id"), "value": "internal_id"},
+        {"text": _("Internal Id"), "value": "business_id"},
         {"text": _("Fullname Kanji"), "value": "fullname_kanji"},
         {"text": _("Fullname Kana"), "value": "fullname_kana"},
         {"text": _("Postal Code"), "value": "postal_code"},
