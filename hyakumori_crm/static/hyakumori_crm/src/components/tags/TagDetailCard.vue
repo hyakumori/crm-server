@@ -126,7 +126,7 @@ export default {
     tags: { type: Object },
     appName: { type: String, required: true },
     objectType: { type: String, required: true },
-    objectId: { type: String, required: true },
+    objectId: { type: String },
   },
   components: {
     UpdateButton,

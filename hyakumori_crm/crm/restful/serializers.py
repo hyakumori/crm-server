@@ -17,11 +17,13 @@ class ContactSerializer(ModelSerializer):
     forest_id = UUIDField(read_only=True)
     forestcustomer_id = UUIDField(read_only=True)
     customer_id = UUIDField(read_only=True)
+    owner_customer_id = UUIDField(read_only=True)
     cc_attrs = JSONField(read_only=True)
     # forest customer contact default
     default = BooleanField(read_only=True)
     is_basic = BooleanField(read_only=True)
     forests_count = IntegerField(read_only=True)
+    business_id = CharField(read_only=True)
 
     class Meta:
         model = Contact
@@ -34,6 +36,7 @@ class CustomerContactSerializer(ModelSerializer):
     cc_attrs = JSONField(read_only=True)
     is_basic = BooleanField(read_only=True)
     forests_count = IntegerField(read_only=True)
+    business_id = CharField(read_only=True)
 
     class Meta:
         model = Contact
@@ -50,6 +53,7 @@ class CustomerSerializer(ModelSerializer):
         model = Customer
         fields = [
             "id",
+            "business_id",
             "internal_id",
             "attributes",
             "tags",

@@ -19,7 +19,7 @@
         :selectedId="selectingId"
         :selectedIndex="selectingIndex"
         :customerName="
-          (!contact.is_basic && getCustomerName(contact.customer_id)) || ''
+          (isContactor && getCustomerName(contact.owner_customer_id)) || ''
         "
         :mode="mode"
         :showDefaultBadge="showDefaultBadge"
@@ -52,9 +52,9 @@ export default {
     showDefaultBadge: { type: Boolean, default: false },
   },
   methods: {
-    getCustomerName(customer_id) {
+    getCustomerName(owner_customer_id) {
       if (isEmpty(this.customerIdNameMap)) return null;
-      const nameObj = this.customerIdNameMap[customer_id];
+      const nameObj = this.customerIdNameMap[owner_customer_id];
       if (!nameObj) return null;
       return `${nameObj.last_name} ${nameObj.first_name}`;
     },

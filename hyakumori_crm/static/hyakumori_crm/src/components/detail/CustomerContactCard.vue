@@ -87,7 +87,7 @@
       v-if="showAction && !deleted"
       :to="
         customerId
-          ? { name: 'customer-detail', params: { id: customerId } }
+          ? { name: 'customer-detail', params: { id: contact.business_id } }
           : ''
       "
       v-slot="{ href }"

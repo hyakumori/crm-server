@@ -5,7 +5,12 @@ from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
-from hyakumori_crm.core.utils import default_paginator, Echo
+from hyakumori_crm.core.utils import (
+    default_paginator,
+    Echo,
+    make_success_json,
+    make_error_json,
+)
 from hyakumori_crm.crm.restful.serializers import (
     ContactSerializer,
     CustomerContactSerializer,
@@ -46,6 +51,7 @@ from .service import (
     get_customer_contacts_forests,
     customercontacts_list_with_search,
     get_list,
+    get_customer_by_business_id,
 )
 
 
@@ -71,7 +77,9 @@ class CustomerViewSets(ViewSet):
     def create(self, request, data: dict = None):
         customer = create(data)
         ActivityService.log(CustomerActions.created, customer, request=request)
-        return Response({"id": customer.id}, status=201)
+        return Response(
+            {"id": customer.id, "business_id": customer.business_id}, status=201
+        )
 
     @get_or_404(get_customer_by_pk, to_name="customer", remove=True)
     @api_validate_model(CustomerUpdateSchema)
@@ -200,6 +208,18 @@ class CustomerViewSets(ViewSet):
         forests = get_customer_contacts_forests(pk=customer.pk)
         return Response(ForestSerializer(forests, many=True).data)
 
+    @action(detail=False, methods=["GET"], url_path="by-business-id")
+    @action_login_required(with_permissions=["view_customer"])
+    def get_customer_business_id(self, request):
+        try:
+            business_id = request.query_params.get("business_id", None)
+            if business_id is None:
+                return make_success_json(data={})
+            customer = get_customer_by_business_id(business_id)
+            return make_success_json(data=CustomerSerializer(customer).data)
+        except ValueError as e:
+            return make_error_json(message=str(e))
+
     @action(detail=False, methods=["GET"])
     def download_csv(self, request):
         pks = request.GET.getlist("ids")
@@ -209,8 +229,8 @@ class CustomerViewSets(ViewSet):
             filters = {"id__in": pks}
         customers, _ = get_list(per_page=None, filters=filters)
         headers = [
-            "\ufeff所有者ID",  # contains BOM char for opening on windows excel
-            "新規ID発行",
+            "\ufeffID",  # contains BOM char for opening on windows excel
+            "所有者ID",
             "土地所有者名（漢字）",
             "土地所有者名（カナ）",
             "土地所有者住所_都道府県",
@@ -235,7 +255,7 @@ class CustomerViewSets(ViewSet):
             for row in rows:
                 yield [
                     row["id"],
-                    row["internal_id"],
+                    row["business_id"],
                     row["fullname_kana"],
                     row["fullname_kanji"],
                     row["prefecture"],

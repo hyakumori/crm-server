@@ -75,6 +75,7 @@ class CustomerUpdate:
 
 class CustomerFilter(FilterSet):
     internal_id = CharFilter(lookup_expr="icontains")
+    business_id = CharFilter(lookup_expr="icontains")
     fullname_kanji = CharFilter(lookup_expr="icontains")
     fullname_kana = CharFilter(lookup_expr="icontains")
     postal_code = CharFilter(lookup_expr="icontains")

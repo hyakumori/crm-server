@@ -25,7 +25,7 @@ type Customer implements Timestamp & Editor {
 
 type CustomerItem {
   id: String!
-  internal_id: String
+  business_id: String
   fullname_kana: String!
   fullname_kanji: String!
   postal_code: String
@@ -88,7 +88,7 @@ input TableCustomerFilterInput {
 }
 
 input UpdateCustomerInput {
-  internal_id: String
+  business_id: String
   profile: JSON
   attributes: JSON
   updated_at: DateTime!

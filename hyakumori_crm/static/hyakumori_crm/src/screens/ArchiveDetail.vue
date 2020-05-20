@@ -6,14 +6,14 @@
           :isDetail="isDetail"
           :id="id"
           @input="archive = $event"
-          toggleEditBtnContent="所有地を追加・編集"
+          toggleEditBtnContent="追加・編集"
           headerContent="協議情報"
         />
 
         <archive-document-container
           addBtnContent="さらに追加"
           class="mt-8"
-          toggleEditBtnContent="配布資料を追加・編集"
+          toggleEditBtnContent="追加・編集"
           headerContent="配布資料等"
           v-if="isDetail"
         />
@@ -21,7 +21,7 @@
         <archive-participant-container
           addBtnContent="さらに追加"
           class="mt-9"
-          toggleEditBtnContent="参加者を追加・編集"
+          toggleEditBtnContent="追加・編集"
           headerContent="先方参加者"
           v-if="isDetail"
           @saved="fetchParticipants"
@@ -32,7 +32,7 @@
         <archive-related-user-container
           addBtnContent="さらに追加"
           class="mt-9"
-          toggleEditBtnContent="参加者を追加・編集"
+          toggleEditBtnContent="追加・編集"
           headerContent="当方参加者"
           v-if="isDetail"
         />
@@ -40,7 +40,7 @@
         <archive-related-forest-container
           addBtnContent="さらに追加"
           class="mt-9"
-          toggleEditBtnContent="森林を追加・編集"
+          toggleEditBtnContent="追加・編集"
           headerContent="関連する森林"
           v-if="isDetail"
         />
