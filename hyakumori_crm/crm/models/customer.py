@@ -2,6 +2,8 @@ from django.contrib.postgres.fields.jsonb import JSONField
 from django.db import models
 from django.db.models import OuterRef, Subquery, Count, F
 
+from ..common.constants import CUSTOMER_ID_PREFIX, CUSTOMER_ID_SEQUENCE
+from ..common.utils import generate_sequential_id
 from ...activity.constants import CustomerActions
 from ...core.models import BaseResourceModel, BaseQuerySet
 from ..schemas.customer import Address, Banking
@@ -50,6 +52,7 @@ class Customer(BaseResourceModel):
     所有者ID    土地所有者名    土地所有者住所	連絡先情報  口座情報	タグ
     """
 
+    business_id = models.CharField(null=True, max_length=255, db_index=True)
     name_kanji = JSONField(default=DefaultCustomer.name_kanji, db_index=True)
     name_kana = JSONField(default=DefaultCustomer.name_kana, db_index=True)
     address = JSONField(default=DefaultCustomer.address, db_index=True)
@@ -62,6 +65,14 @@ class Customer(BaseResourceModel):
         permissions = [
             ("manage_customer", "All permissions for customer"),
         ]
+
+    def save(self, *args, **kwargs):
+        if not self.business_id or len(self.business_id) == 0:
+            self.business_id = generate_sequential_id(
+                CUSTOMER_ID_PREFIX, CUSTOMER_ID_SEQUENCE
+            )
+
+        super().save(*args, **kwargs)
 
     @property
     def self_contact(self):

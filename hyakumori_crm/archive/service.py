@@ -82,15 +82,28 @@ def edit_archive(archive: Archive, data: ArchiveInput):
 
 
 def check_valid_file_extension(files):
-    valid_extensions = ['xlsx', 'xls', 'csv', 'doc', 'docx', 'pdf', 'zip', 'png',
-                                                               'jpg', 'gif', 'bmp', 'tif', 'txt']
+    valid_extensions = [
+        "xlsx",
+        "xls",
+        "csv",
+        "doc",
+        "docx",
+        "pdf",
+        "zip",
+        "png",
+        "jpg",
+        "gif",
+        "bmp",
+        "tif",
+        "txt",
+    ]
     valid_files = []
     for file in files:
         file_extension = parse.unquote(file.name).split(".")[-1]
         if file_extension.lower() in valid_extensions:
             valid_files.append(file)
         else:
-            raise DjValidationError('Unsupported file extension')
+            raise DjValidationError("Unsupported file extension")
     return valid_files
 
 
@@ -190,6 +203,9 @@ def get_participants(archive: Archive):
         .values("id", "customer_id")
         .annotate(forests_count=Count("customer__forestcustomer"))
     )
+    cc_business_id = CustomerContact.objects.filter(
+        is_basic=True, contact=OuterRef("pk")
+    ).annotate(business_id=F("customer__business_id"))
     return (
         Contact.objects.filter(
             customercontact__archivecustomercontact__archivecustomer__archive_id=archive.id
@@ -198,7 +214,7 @@ def get_participants(archive: Archive):
             customer_id=F(
                 "customercontact__archivecustomercontact__archivecustomer__customer_id"
             ),
-            cc_attrs=F("customercontact__attributes")
+            cc_attrs=F("customercontact__attributes"),
         )
         .annotate(is_basic=F("customercontact__is_basic"))
         .annotate(
@@ -213,6 +229,7 @@ def get_participants(archive: Archive):
             )
         )
         .annotate(forests_count=Subquery(cc.values("forests_count")[:1]))
+        .annotate(business_id=Subquery(cc_business_id.values("business_id")[:1]))
     )
 
 
@@ -317,11 +334,17 @@ def get_filtered_archive_queryset(archive_filter: ArchiveFilter):
                 active_filters[mapping[k]] = v
 
         if len(active_filters.keys()) > 0:
-            return Archive.objects.annotate(
-                archive_date_text=Func(
-                    F("archive_date"), Value("YYYY-MM-DD HH24:MI"), function="to_char"
+            return (
+                Archive.objects.annotate(
+                    archive_date_text=Func(
+                        F("archive_date"),
+                        Value("YYYY-MM-DD HH24:MI"),
+                        function="to_char",
+                    )
                 )
-            ).select_related("author").filter(**active_filters)
+                .select_related("author")
+                .filter(**active_filters)
+            )
 
         return Archive.objects.select_related("author").all()
     except Exception as e:

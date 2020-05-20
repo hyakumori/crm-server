@@ -32,11 +32,17 @@
 
       <template v-if="tableRowIcon" v-slot:[`item.${iconRowValue}`]="{ item }">
         <div class="d-flex align-center justify-space-between">
-          <v-icon class="icon-mode mr-4 f14 mt-1 mb-1" small>{{
-            tableRowIcon
-          }}</v-icon>
+          <v-icon class="icon-mode mr-4 f14 mt-1 mb-1" small>
+            {{ tableRowIcon }}
+          </v-icon>
           <p class="mb-0">
-            {{ item[iconRowValue] ? item[iconRowValue].slice(0, 8) : "" }}
+            {{
+              item[iconRowValue]
+                ? (iconRowValueSlice.shouldSlice &&
+                    item[iconRowValue].slice(0, iconRowValueSlice.length)) ||
+                  item[iconRowValue]
+                : ""
+            }}
           </p>
         </div>
       </template>
@@ -75,6 +81,13 @@ export default {
     iconRowValue: {
       type: String,
       default: "internal_id",
+    },
+    iconRowValueSlice: {
+      type: Object,
+      default: () => ({
+        shouldSlice: true,
+        length: 8,
+      }),
     },
     itemKey: {
       type: String,
@@ -129,7 +142,8 @@ export default {
     },
 
     clickRow(value) {
-      this.$emit("rowData", value.id);
+      this.$emit("rowData", value[this.itemKey]);
+      this.$emit("rowDataItem", value);
       window.scrollTo(0, 0);
     },
 
@@ -218,6 +232,9 @@ export default {
         position: absolute;
         right: 0;
       }
+    }
+    th:nth-child(2) {
+      text-align: center !important;
     }
   }
 }

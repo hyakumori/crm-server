@@ -4,7 +4,7 @@
       <div class="forest-detail__section px-7">
         <forest-basic-info-container
           headerContent="基本情報 (登記情報)"
-          toggleEditBtnContent="所有地を追加・編集"
+          toggleEditBtnContent="追加・編集"
           @forest:basic-info-updated="$store.dispatch('forest/getForest', id)"
           :isLoading="$store.state.forest.forestLoading"
           :info="$store.state.forest.forest"
@@ -13,8 +13,8 @@
         <forest-contact-tab-container
           v-acl-only="['manage_customer', 'view_customer']"
           headerContent="所有者情報"
-          toggleEditBtnContent="所有者を追加・編集"
-          addBtnContent="連絡者を追加"
+          toggleEditBtnContent="追加・編集"
+          addBtnContent="追加"
           :customers="$store.state.forest.customers"
           :customersContacts="$store.state.forest.customersContacts"
           :customerIdNameMap="$store.getters['forest/customerIdNameMap']"
@@ -30,8 +30,8 @@
           v-acl-only="['manage_archive', 'view_archive']"
           class="consultation-history"
           headerContent="協議履歴"
-          toggleEditBtnContent="協議記録を追加・編集"
-          addBtnContent="協議履歴を追加"
+          toggleEditBtnContent="追加・編集"
+          addBtnContent="追加"
           :archives="$store.state.forest.archives"
         />
 
