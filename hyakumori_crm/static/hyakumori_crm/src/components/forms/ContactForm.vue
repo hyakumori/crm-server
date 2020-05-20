@@ -245,7 +245,7 @@ export default {
           this.submiting = false;
           this.$router.push({
             name: "customer-detail",
-            params: { id: data.id },
+            params: { id: data.business_id },
           });
         } else {
           await this.$rest.put(`/customers/${this.id}`, customerInput);

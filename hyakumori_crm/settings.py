@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "django_filters",
     "django_cleanup",
     "django_q",
+    "sequences.apps.SequencesConfig",
     # ─── HYAKUMORI APPS ─────────────────────────────────────────────────────────────
     "hyakumori_crm.crm",
     "hyakumori_crm.users",
