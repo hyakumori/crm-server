@@ -19,15 +19,15 @@
     "back": "前のページに戻る",
     "cancel": "キャンセル",
     "continue": "継続する",
+    "csv_download": "csvダウンロード",
+    "csv_upload": "csvアップロード",
+    "download_all": "すべてダウンロード",
+    "download_selected": "ダウンロードの選択",
     "login": "ログイン",
     "reset": "リセット",
     "save": "保存",
     "send": "送信",
-    "set_as_default": "デフォルトとして設定",
-    "csv_download": "csvダウンロード",
-    "csv_upload": "csvアップロード",
-    "download_selected": "ダウンロードの選択",
-    "download_all": "すべてダウンロード"
+    "set_as_default": "デフォルトとして設定"
   },
   "detail": {
     "tabs": {
@@ -198,8 +198,8 @@
   },
   "site_name": "Hyakumori CRM",
   "tables": {
-    "another_item_human_kanji": "他{count}名",
     "another_item_human_kana": "ホカ{count}メイ",
+    "another_item_human_kanji": "他{count}名",
     "another_item_thing": "他{count}件",
     "headers": {},
     "item_forest": "",
@@ -208,6 +208,8 @@
   "tags": {
     "confirm_migrate": "{total} 個のデータが該当のタグを使用中です。本当に更新したいでしょうか？ これが完了するにはしばらく時間がかかる場合があります。",
     "migrate_title": "確認",
+    "no_tags": "タグがありません。クリックして追加・編集。",
+    "no_tags_view_only": "タグがありません。",
     "required_fields": "`すべてのフィールドに値を入力してください`"
   },
   "user_management": {

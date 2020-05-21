@@ -4,7 +4,7 @@ from django.http.response import StreamingHttpResponse
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-
+from django.utils.translation import gettext_lazy as _
 from hyakumori_crm.core.utils import (
     default_paginator,
     Echo,
@@ -17,9 +17,6 @@ from hyakumori_crm.crm.restful.serializers import (
     CustomerSerializer,
     ArchiveSerializer,
 )
-from ..activity.services import ActivityService, CustomerActions
-from ..api.decorators import action_login_required, api_validate_model, get_or_404
-
 from .schemas import (
     BankingInput,
     ContactsInput,
@@ -29,7 +26,6 @@ from .schemas import (
     ForestPksInput,
     ForestSerializer,
     CustomerMemoInput,
-    RequiredContactInput,
     ContactType,
     required_contact_input_wrapper,
 )
@@ -53,6 +49,9 @@ from .service import (
     get_list,
     get_customer_by_business_id,
 )
+from ..activity.services import ActivityService, CustomerActions
+from ..api.decorators import action_login_required, api_validate_model, get_or_404
+from ..forest.service import parse_tags_for_csv
 
 
 class CustomerViewSets(ViewSet):
@@ -227,7 +226,7 @@ class CustomerViewSets(ViewSet):
             filters = {}
         else:
             filters = {"id__in": pks}
-        customers, _ = get_list(per_page=None, filters=filters)
+        customers, total = get_list(per_page=None, filters=filters)
         headers = [
             "\ufeffID",  # contains BOM char for opening on windows excel
             "所有者ID",
@@ -245,6 +244,7 @@ class CustomerViewSets(ViewSet):
             "口座情報_種別",
             "口座情報_口座番号",
             "口座情報_口座名義",
+            _("Tag"),
         ]
 
         def generator(headers, rows):
@@ -267,6 +267,7 @@ class CustomerViewSets(ViewSet):
                     row["bank_account_type"],
                     row["bank_account_number"],
                     row["bank_account_name"],
+                    parse_tags_for_csv(row["tags"]),
                 ]
 
         pseudo_buffer = Echo()
