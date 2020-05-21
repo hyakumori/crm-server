@@ -128,7 +128,8 @@
     "password": "パスワード"
   },
   "memo": {
-    "empty": "備考がありません。クリックして編集します。"
+    "empty": "備考がありません。クリックして編集します。",
+    "empty_view_only": "備考がありません"
   },
   "messages": {
     "activate_account_success": "アカウントの有効化に成功しました。{seconds}秒後にログイン画面にリダイレクトします。",
