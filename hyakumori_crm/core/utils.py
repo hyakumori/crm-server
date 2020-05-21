@@ -2,7 +2,6 @@ import logging
 
 from itertools import chain
 
-from rest_framework.pagination import PageNumberPagination
 from django.http import JsonResponse, HttpResponseBadRequest
 
 from hyakumori_crm.crm.restful.paginations import StandardPagination

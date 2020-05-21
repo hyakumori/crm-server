@@ -96,6 +96,7 @@ import MainSection from "../components/MainSection";
 import PageHeader from "../components/PageHeader";
 import OutlineRoundBtn from "../components/OutlineRoundBtn";
 import { saveAs } from "file-saver";
+import { get as _get } from "lodash";
 
 export default {
   name: "forest",
@@ -219,6 +220,39 @@ export default {
         this.downloadCsvLoading = false;
       }
     },
+
+    renderCustomers(data, nameType) {
+      const list = _get(data, "attributes.customer_cache.list", {});
+      const itemCount = Object.keys(list).length;
+      if (itemCount > 0) {
+        const firstKeyAsId = Object.keys(list)[0];
+        let results = _get(
+          list[firstKeyAsId],
+          `name_${nameType}.last_name`,
+          "",
+        );
+
+        const firstName = _get(
+          list[firstKeyAsId],
+          `name_${nameType}.first_name`,
+          "",
+        );
+
+        if (firstName && firstName.length > 0) {
+          results += " " + firstName;
+        }
+
+        if (itemCount > 1) {
+          results +=
+            " " +
+            this.$t(`tables.another_item_human_${nameType}`, {
+              count: itemCount - 1,
+            });
+        }
+        return results;
+      }
+      return "";
+    },
   },
 
   watch: {
@@ -247,7 +281,6 @@ export default {
       if (this.forestsInfo) {
         return this.forestsInfo.forests.map(element => {
           const fCadastral = element.cadastral;
-          const owner = element.owner;
           const contract = element.contracts;
           const tags = element.tags;
 
@@ -258,8 +291,8 @@ export default {
             cadastral__municipality: fCadastral.municipality,
             cadastral__sector: fCadastral.sector,
             cadastral__subsector: fCadastral.subsector,
-            owner__name_kanji: owner.name_kanji,
-            owner__name_kana: owner.name_kana,
+            owner__name_kanji: this.renderCustomers(element, "kanji"),
+            owner__name_kana: this.renderCustomers(element, "kana"),
             contracts__0__status: contract[0].status,
             contracts__0__start_date: contract[0].start_date,
             contracts__0__end_date: contract[0].end_date,

@@ -9,11 +9,11 @@
     />
     <div class="my-4">
       <slot
-        v-if="isUpdate || !id"
+        v-if="isUpdate || !businessId"
         name="form"
         :toggleEditing="handleToggleEdit"
       ></slot>
-      <basic-info v-if="!!id && !isUpdate" :infos="info" />
+      <basic-info v-if="!!businessId && !isUpdate" :infos="info" />
     </div>
   </div>
 </template>
@@ -33,6 +33,7 @@ export default {
     BasicInfo,
   },
   props: {
+    businessId: String,
     id: String,
     info: Array,
     displayAdditionBtn: { type: Boolean, default: true },

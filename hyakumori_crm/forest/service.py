@@ -6,6 +6,7 @@ from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
 
 from .schemas import ForestFilter, CustomerDefaultInput, CustomerContactDefaultInput
+from ..cache.forest import refresh_customer_forest_cache
 from ..crm.models import (
     Forest,
     ForestCustomer,
@@ -82,8 +83,12 @@ def update_owners(owner_pks_in):
             customer_id=added_owner_pk, forest_id=forest.pk,
         )
         added_forest_customers.append(forest_customer)
+
     ForestCustomer.objects.bulk_create(added_forest_customers)
     forest.save(update_fields=["updated_at"])
+    forest.refresh_from_db()
+    refresh_customer_forest_cache(forest_ids=[str(forest.id)])
+
     return forest
 
 
