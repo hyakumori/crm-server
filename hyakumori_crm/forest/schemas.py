@@ -1,15 +1,16 @@
 from typing import Optional, List
 from datetime import date
 from uuid import UUID
-from enum import Enum
-from django.core.exceptions import ValidationError as DjValidationError
+import operator
+from functools import reduce
+
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import FilterSet, CharFilter, DateFilter
 from pydantic import validator, root_validator
 
 from hyakumori_crm.core.models import HyakumoriDanticModel, Paginator
 from hyakumori_crm.crm.models import (
-    Contact,
     Forest,
     ForestCustomer,
     Customer,
@@ -20,48 +21,43 @@ from hyakumori_crm.crm.schemas.contract import ContractType
 
 
 class ForestFilter(FilterSet):
-    internal_id = CharFilter(lookup_expr="icontains", method="icontains_filter")
-    cadastral__prefecture = CharFilter(
-        lookup_expr="icontains", method="icontains_filter"
-    )
-    cadastral__municipality = CharFilter(
-        lookup_expr="icontains", method="icontains_filter"
-    )
-    cadastral__sector = CharFilter(lookup_expr="icontains", method="icontains_filter")
-    cadastral__subsector = CharFilter(
-        lookup_expr="icontains", method="icontains_filter"
-    )
-    owner__name_kana = CharFilter(lookup_expr="icontains", method="icontains_filter")
-    owner__name_kanji = CharFilter(lookup_expr="icontains", method="icontains_filter")
-    owner__address__prefecture = CharFilter(
-        lookup_expr="icontains", method="icontains_filter"
-    )
-    owner__address__municipality = CharFilter(
-        lookup_expr="icontains", method="icontains_filter"
-    )
-    owner__address__sector = CharFilter(
-        lookup_expr="icontains", method="icontains_filter"
-    )
-    contracts__0__status = CharFilter(
-        lookup_expr="icontains", method="icontains_filter"
-    )
+    internal_id = CharFilter(method="icontains_filter")
+    cadastral__prefecture = CharFilter(method="icontains_filter")
+    cadastral__municipality = CharFilter(method="icontains_filter")
+    cadastral__sector = CharFilter(method="icontains_filter")
+    cadastral__subsector = CharFilter(method="icontains_filter")
+    owner__name_kana = CharFilter(method="owner_icontains_filter")
+    owner__name_kanji = CharFilter(method="owner_icontains_filter")
+    contracts__0__status = CharFilter(method="icontains_filter")
     contracts__0__start_date = DateFilter(method="exact_date_filter")
     contracts__0__end_date = DateFilter(method="exact_date_filter")
-    contracts__1__status = CharFilter(
-        lookup_expr="icontains", method="icontains_filter"
-    )
+    contracts__1__status = CharFilter(method="icontains_filter")
     contracts__1__start_date = DateFilter(method="exact_date_filter")
     contracts__1__end_date = DateFilter(method="exact_date_filter")
-    contracts__2__status = CharFilter(
-        lookup_expr="icontains", method="icontains_filter"
-    )
+    contracts__2__status = CharFilter(method="icontains_filter")
     contracts__2__start_date = DateFilter(method="exact_date_filter")
     contracts__2__end_date = DateFilter(method="exact_date_filter")
-    tag__danchi = CharFilter(lookup_expr="icontains", method="icontains_filter")
-    tag__manage_type = CharFilter(lookup_expr="icontains", method="icontains_filter")
+    tag__danchi = CharFilter(method="icontains_filter")
+    tag__manage_type = CharFilter(method="icontains_filter")
 
     def icontains_filter(self, queryset, name, value):
         return queryset.filter(**{name + "__icontains": value})
+
+    def owner_icontains_filter(self, queryset, name, value):
+        search_field = ""
+        if name.find("name_kana") >= 0:
+            search_field = f"attributes__customer_cache__repr_name_kana"
+        if name.find("name_kanji") >= 0:
+            search_field = f"attributes__customer_cache__repr_name_kanji"
+
+        search_field_filter = search_field + "__icontains"
+        values = value.split(" ")
+        qs = queryset.filter(
+            reduce(
+                operator.and_, (Q(**{search_field_filter: value}) for value in values)
+            )
+        )
+        return qs
 
     def exact_date_filter(self, queryset, name, value):
         return queryset.filter(**{name: value})

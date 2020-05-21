@@ -49,3 +49,13 @@ def generate_sequential_id(prefix, id_sequence):
     index = get_next_value(id_sequence)
     formatted_index = "{:08d}".format(index)
     return f"{prefix}{formatted_index}{rand}"
+
+
+def get_customer_name(name_dict):
+    customer_name = ""
+    if name_dict.get("last_name", None) is not None:
+        customer_name = name_dict.get("last_name")
+    if name_dict.get("first_name", None) is not None:
+        customer_name += name_dict.get("first_name")
+
+    return customer_name

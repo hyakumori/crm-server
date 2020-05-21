@@ -5,8 +5,11 @@ from django.db.models.functions import Concat
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from hyakumori_crm.crm.common.utils import get_customer_name
 from hyakumori_crm.crm.models import Archive, Customer, Forest
 from hyakumori_crm.users.models import User
+
+logger = logging.Logger(__name__)
 
 
 def refresh_user_participants_cache(archive: Archive, save=False):
@@ -51,9 +54,7 @@ def refresh_forest_cache(archive: Archive, save=False):
         if save:
             archive.save()
     except:
-        logging.warning(
-            f"could not refresh user cache for archive: {archive.pk}"
-        )
+        logging.warning(f"could not refresh user cache for archive: {archive.pk}")
     finally:
         return archive
 
@@ -71,20 +72,14 @@ def refresh_customers_cache(archive: Archive, save=False):
         customer_repr = []
         for c in archive.attributes["customer_cache"]["list"]:
             kanji_name = c["customer__name_kanji"]
-            customer_name = ""
-            if kanji_name.get("last_name", None) is not None:
-                customer_name = kanji_name.get("last_name")
-            if kanji_name.get("first_name", None) is not None:
-                customer_name += kanji_name.get("last_name")
+            customer_name = get_customer_name(kanji_name)
             customer_repr.append(customer_name)
 
         archive.attributes["customer_cache"]["repr"] = ",".join(customer_repr)
         if save:
             archive.save()
     except:
-        logging.warning(
-            f"could not refresh user cache for archive: {archive.pk}"
-        )
+        logging.warning(f"could not refresh user cache for archive: {archive.pk}")
     finally:
         return archive
 
@@ -104,7 +99,7 @@ def update_customer_cache(sender, instance, created, **kwargs):
             for archivecustomer in instance.archivecustomer_set.iterator():
                 refresh_customers_cache(archivecustomer.archive, save=True)
         except:
-            logging.warning(
+            logger.warning(
                 f"could not refresh customer cache for archive, customer: {instance.pk}"
             )
 
@@ -116,7 +111,7 @@ def update_user_cache(sender, instance, created, **kwargs):
             for archiveuser in instance.archiveuser_set.iterator():
                 refresh_user_participants_cache(archiveuser.archive, save=True)
         except:
-            logging.warning(
+            logger.warning(
                 f"could not refresh user cache for archive, user: {instance.pk}"
             )
 
@@ -128,6 +123,6 @@ def update_forest_cache(sender, instance, created, **kwargs):
             for archiveforest in instance.archiveforest_set.iterator():
                 refresh_forest_cache(archiveforest.archive, save=True)
         except:
-            logging.warning(
+            logger.warning(
                 f"could not refresh forest cache for archive, forest: {instance.pk}"
             )
