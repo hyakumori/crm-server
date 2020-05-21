@@ -35,10 +35,8 @@ type CustomerItem {
   telephone: String
   mobilephone: String
   email: String
-  status: String
-  ranking: String
-  same_name: String
   representative: String
+  tags: JSON
 }
 
 type CustomerList implements HyakumoriResponse {

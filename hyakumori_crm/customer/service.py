@@ -126,22 +126,6 @@ def get_customer_forests(pk: UUID):
     )
 
 
-def get_customer_tags_keys():
-    with connection.cursor() as c:
-        raw_query = "select distinct (jsonb_object_keys(tags)) from crm_customer"
-        c.execute(raw_query)
-        result = [row[0] for row in c.fetchall()]
-        return result
-
-
-def get_tag_fields_for_query():
-    tags_keys = get_customer_tags_keys()
-    # only mapping keys available in DB
-    tags = [(k, v) for k, v in CUSTOMER_TAG_KEYS.items() if v in tags_keys]
-    tags_fields = [{tag[0]: f"tags->>'{tag[1]}'"} for tag in tags]
-    return tags_fields
-
-
 def get_list(
     page_num: int = 1,
     per_page: int = 10,
@@ -156,8 +140,6 @@ def get_list(
     if not order_by:
         order_by = []
 
-    tags_fields = get_tag_fields_for_query()
-
     fields = [
         "id",
         "internal_id",
@@ -167,9 +149,8 @@ def get_list(
         {"bank_account_type": RawSQLField("banking->>'account_type'")},
         {"bank_account_number": RawSQLField("banking->>'account_number'")},
         {"bank_account_name": RawSQLField("banking->>'account_name'")},
+        "tags",
     ]
-
-    fields += tags_fields
 
     query = (
         Query()

@@ -107,15 +107,9 @@ def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dic
             "sortable": False,
         },
         {
-            "text": _("Tag danchi"),
+            "text": _("Tag"),
             "align": "center",
-            "value": "tags__danchi",
-            "sortable": False,
-        },
-        {
-            "text": _("Tag Manage Type"),
-            "align": "center",
-            "value": "tags__manage_type",
+            "value": "tags",
             "sortable": False,
         },
     ]

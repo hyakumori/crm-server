@@ -302,8 +302,7 @@ export default {
             contracts__2__status: contract[2].status,
             contracts__2__start_date: contract[2].start_date,
             contracts__2__end_date: contract[2].end_date,
-            tags__danchi: tags["団地"],
-            tags__manage_type: tags["管理形態"],
+            tags: tags,
           };
         });
       } else {
