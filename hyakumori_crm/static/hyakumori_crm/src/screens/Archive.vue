@@ -48,10 +48,8 @@ import SearchCard from "../components/SearchCard";
 import MainSection from "../components/MainSection";
 import DataList from "../components/DataList";
 import ScreenMixin from "./ScreenMixin";
-import archiveHeaders from "../assets/dump/archive_header.json";
 import PageHeader from "../components/PageHeader";
 import OutlineRoundBtn from "../components/OutlineRoundBtn";
-import TableAction from "../components/TableAction";
 import {
   commonDatetimeFormat,
   dateTimeKeywordSearchFormat,
@@ -86,8 +84,17 @@ export default {
       currentPage: 1,
       filterQueryString: "",
       options: {},
-      headers: [...archiveHeaders],
+      headers: [],
     };
+  },
+
+  async created() {
+    try {
+      const response = await this.$rest.get("/archives/headers");
+      if (response && response.data) {
+        this.headers = [...response.data];
+      }
+    } catch {}
   },
 
   methods: {
@@ -181,6 +188,7 @@ export default {
         their_participants: this.renderParticipants(data),
         our_participants: this.renderUsers(data),
         associated_forest: this.renderForests(data),
+        tags: data.tags,
       }));
     },
 

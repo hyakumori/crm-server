@@ -109,6 +109,7 @@
           addBtnContent="口座情報を編集"
           :isLoading="customerLoading"
           :info="bankingInfo"
+          :businessId="id"
           :id="pk"
         >
           <template #form="props">

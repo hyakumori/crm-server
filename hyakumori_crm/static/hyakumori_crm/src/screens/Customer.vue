@@ -56,7 +56,7 @@
         :options.sync="options"
         :serverItemsLength="totalCustomers"
         :tableRowIcon="tableRowIcon"
-        :icon-row-value-slice="{ enableSlice: false }"
+        :icon-row-value-slice="{ shouldSlice: false }"
         iconRowValue="business_id"
         :autoHeaders="false"
         @rowDataItem="rowData"
@@ -211,8 +211,7 @@ export default {
               telephone
               mobilephone
               email
-              status
-              ranking
+              tags
             }
             total
           }

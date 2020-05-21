@@ -245,9 +245,6 @@ class CustomerViewSets(ViewSet):
             "口座情報_種別",
             "口座情報_口座番号",
             "口座情報_口座名義",
-            "所有者順位",
-            "登録/未登録",
-            "同姓同名",
         ]
 
         def generator(headers, rows):
@@ -270,9 +267,6 @@ class CustomerViewSets(ViewSet):
                     row["bank_account_type"],
                     row["bank_account_number"],
                     row["bank_account_name"],
-                    row["ranking"],
-                    row["status"],
-                    row["same_name"],
                 ]
 
         pseudo_buffer = Echo()

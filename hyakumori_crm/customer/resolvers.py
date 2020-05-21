@@ -36,19 +36,17 @@ def get_customer_by_id(
 @login_required(with_policies=["can_view_customers"])
 def get_customertable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dict:
     headers = [
-        {"text": _("Internal Id"), "value": "business_id"},
-        {"text": _("Fullname Kanji"), "value": "fullname_kanji"},
-        {"text": _("Fullname Kana"), "value": "fullname_kana"},
-        {"text": _("Postal Code"), "value": "postal_code"},
-        {"text": _("Prefecture"), "value": "prefecture"},
-        {"text": _("Municipality"), "value": "municipality"},
-        {"text": _("Address"), "value": "address"},
-        {"text": _("Ranking"), "value": "ranking"},
-        {"text": _("Status"), "value": "status"},
-        {"text": _("Same name"), "value": "same_name"},
-        {"text": _("Telephone"), "value": "telephone"},
-        {"text": _("Mobilephone"), "value": "mobilephone"},
-        {"text": _("Email"), "value": "email"},
+        {"text": _("Internal Id"), "value": "business_id", "align": "center"},
+        {"text": _("Fullname Kanji"), "value": "fullname_kanji", "align": "center"},
+        {"text": _("Fullname Kana"), "value": "fullname_kana", "align": "center"},
+        {"text": _("Postal Code"), "value": "postal_code", "align": "center"},
+        {"text": _("Prefecture"), "value": "prefecture", "align": "center"},
+        {"text": _("Municipality"), "value": "municipality", "align": "center"},
+        {"text": _("Address"), "value": "address", "align": "center"},
+        {"text": _("Telephone"), "value": "telephone", "align": "center"},
+        {"text": _("Mobilephone"), "value": "mobilephone", "align": "center"},
+        {"text": _("Email"), "value": "email", "align": "center"},
+        {"text": _("Tag"), "value": "tags", "align": "center"},
     ]
     filters = CustomerFilter.get_filters()
     for header_define in headers:
