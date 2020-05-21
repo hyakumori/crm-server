@@ -11,7 +11,7 @@
         />
 
         <archive-document-container
-          addBtnContent="さらに追加"
+          addBtnContent="追加"
           class="mt-8"
           toggleEditBtnContent="追加・編集"
           headerContent="配布資料等"
@@ -19,7 +19,7 @@
         />
 
         <archive-participant-container
-          addBtnContent="さらに追加"
+          addBtnContent="追加"
           class="mt-9"
           toggleEditBtnContent="追加・編集"
           headerContent="先方参加者"
@@ -30,7 +30,7 @@
         />
 
         <archive-related-user-container
-          addBtnContent="さらに追加"
+          addBtnContent="追加"
           class="mt-9"
           toggleEditBtnContent="追加・編集"
           headerContent="当方参加者"
@@ -38,7 +38,7 @@
         />
 
         <archive-related-forest-container
-          addBtnContent="さらに追加"
+          addBtnContent="追加"
           class="mt-9"
           toggleEditBtnContent="追加・編集"
           headerContent="関連する森林"

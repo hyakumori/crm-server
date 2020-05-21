@@ -84,7 +84,14 @@
                     ></v-combobox>
                   </v-col>
                   <v-col cols="1" class="mt-1 pl-1">
-                    <v-btn icon color="primary" @click.stop="addTag">
+                    <v-btn
+                      icon
+                      color="primary"
+                      @click.stop="addTag"
+                      :disabled="
+                        !trimmedSelectedTagKey || !trimmedTagValueSearchInput
+                      "
+                    >
                       <v-icon>mdi-plus</v-icon>
                     </v-btn>
                   </v-col>
@@ -224,13 +231,16 @@ export default {
       return item.includes(queryText);
     },
     async addTag() {
-      if (!this.tagValueSearchInput || this.tagValueSearchInput.length === 0) {
+      if (
+        !this.trimmedTagValueSearchInput ||
+        this.trimmedTagValueSearchInput.length === 0
+      ) {
         return;
       }
       let hasItem = false;
       for (let item of this.editingTags) {
         if (this.selectedTagKey === item.key) {
-          item.value = this.tagValueSearchInput;
+          item.value = this.trimmedTagValueSearchInput;
           item.deleted = false;
           item.edited = true;
           hasItem = true;
@@ -240,7 +250,7 @@ export default {
       if (!hasItem) {
         this.editingTags.push({
           key: this.selectedTagKey,
-          value: this.tagValueSearchInput,
+          value: this.trimmedTagValueSearchInput,
           added: true,
           deleted: false,
         });
@@ -290,6 +300,12 @@ export default {
     tagValueItems() {
       const tags = this.tagValues[this.selectedTagKey];
       return tags && tags.length > 0 && tags.filter(item => !!item);
+    },
+    trimmedTagValueSearchInput() {
+      return this.tagValueSearchInput && this.tagValueSearchInput.trim();
+    },
+    trimmedSelectedTagKey() {
+      return this.selectedTagKey && this.selectedTagKey.trim();
     },
   },
   watch: {

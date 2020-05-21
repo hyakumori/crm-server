@@ -229,7 +229,7 @@ class CustomerViewSets(ViewSet):
         customers, total = get_list(per_page=None, filters=filters)
         headers = [
             "\ufeffID",  # contains BOM char for opening on windows excel
-            "所有者ID",
+            "新規ID発行",
             "土地所有者名（漢字）",
             "土地所有者名（カナ）",
             "土地所有者住所_都道府県",
@@ -253,8 +253,8 @@ class CustomerViewSets(ViewSet):
                 yield [
                     row["id"],
                     row["business_id"],
-                    row["fullname_kana"],
                     row["fullname_kanji"],
+                    row["fullname_kana"],
                     row["prefecture"],
                     row["municipality"],
                     row["address"],
