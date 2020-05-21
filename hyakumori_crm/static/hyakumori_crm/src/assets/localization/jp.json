@@ -197,7 +197,8 @@
   },
   "site_name": "Hyakumori CRM",
   "tables": {
-    "another_item_human": "他{count}名",
+    "another_item_human_kanji": "他{count}名",
+    "another_item_human_kana": "ホカ{count}メイ",
     "another_item_thing": "他{count}件",
     "headers": {},
     "item_forest": "",

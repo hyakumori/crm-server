@@ -9,8 +9,9 @@
           :isLoading="customerLoading"
           :info="basicInfo"
           :id="pk"
+          :businessId="id"
         >
-          <template #form="props" v-if="!id">
+          <template #form="props">
             <contact-form
               :id="pk"
               :formData="selfContactFormData"

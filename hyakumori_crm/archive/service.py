@@ -12,7 +12,6 @@ from rest_framework.request import Request
 from ..crm.models import (
     Archive,
     Attachment,
-    Customer,
     Contact,
     Forest,
     ArchiveForest,
@@ -24,7 +23,7 @@ from ..crm.models import (
 from ..customer.service import get_customer_by_pk
 from ..forest.service import get_forest_by_pk
 
-from .cache import (
+from hyakumori_crm.cache.archive import (
     refresh_customers_cache,
     refresh_forest_cache,
     refresh_user_participants_cache,
