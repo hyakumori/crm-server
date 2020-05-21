@@ -18,7 +18,7 @@ class Address(BaseModel):
     都道府県	市町村	大字/字
     """
 
-    prefecture: Union[str, None] = UNKNOWN
+    prefecture: Union[str, None] = EMPTY
     municipality: Union[str, None] = EMPTY
     sector: Union[str, None] = EMPTY
 
@@ -50,11 +50,11 @@ class Banking(BaseModel):
     銀行名	支店名	種類	口座番号	口座名義
     """
 
-    bank_name: Union[str, None] = UNKNOWN
-    branch_name: Union[str, None] = UNKNOWN
+    bank_name: Union[str, None] = EMPTY
+    branch_name: Union[str, None] = EMPTY
     account_type: Union[str, None] = EMPTY
     account_number: Union[constr(regex=regexes.BANKING_ACCOUNT_NUMBER), None] = None
-    account_name: Union[str, None] = UNKNOWN
+    account_name: Union[str, None] = EMPTY
 
 
 class CustomerStatus(str, Enum):

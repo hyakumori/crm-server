@@ -14,6 +14,7 @@
         v-model="item.color"
         hide-details
         outlined
+        readonly
         label="色彩"
         dense
       >
@@ -31,6 +32,7 @@
             <v-card>
               <v-card-text class="pa-0">
                 <v-color-picker
+                  v-mask="'######'"
                   v-model="item.color"
                   @update:color="$event => _updateTagItemColor($event, item)"
                   hide-mode-switch
