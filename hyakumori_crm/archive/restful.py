@@ -64,6 +64,67 @@ def archives(request, data: ArchiveInput = None):
         return Response(data=ArchiveSerializer(archive).data)
 
 
+@api_view(["GET"])
+@action_login_required(with_permissions=["view_archive"])
+def archive_headers(request):
+    headers = [
+        {
+            "value": "id",
+            "text": "交渉履歴ID",
+            "align": "center"
+        },
+        {
+            "value": "archive_date",
+            "text": "日付",
+            "sortable": False,
+            "align": "center"
+        },
+        {
+            "value": "title",
+            "text": "タイトル",
+            "sortable": False,
+            "align": "center"
+        },
+        {
+            "value": "content",
+            "text": "内容",
+            "sortable": False,
+            "align": "center"
+        },
+        {
+            "value": "author",
+            "text": "作成者",
+            "sortable": False,
+            "align": "center"
+        },
+        {
+            "value": "their_participants",
+            "text": "先方参加者",
+            "sortable": False,
+            "align": "center"
+        },
+        {
+            "value": "our_participants",
+            "text": "当方参加者",
+            "sortable": False,
+            "align": "center"
+        },
+        {
+            "value": "associated_forest",
+            "text": "関連する森林",
+            "sortable": False,
+            "align": "center"
+        },
+        {
+            "value": "tags",
+            "text": "タグ",
+            "sortable": False,
+            "align": "center"
+        }
+    ]
+    return Response({"data": headers})
+
+
 @api_view(["GET", "PUT", "PATCH"])
 @api_validate_model(ArchiveInput)
 @get_or_404(

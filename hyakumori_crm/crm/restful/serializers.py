@@ -136,4 +136,5 @@ class ArchiveListingSerializer(ModelSerializer):
             "future_action",
             "archive_date",
             "attributes",
+            "tags",
         ]
