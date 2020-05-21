@@ -3,6 +3,7 @@ import itertools
 
 from django.db.models import Q, F, Count
 from django.http import HttpResponse
+from django.utils.translation import gettext as _
 from rest_framework import mixins
 from rest_framework.decorators import action, api_view
 from rest_framework.permissions import IsAuthenticated
@@ -32,7 +33,8 @@ from .service import (
     get_customer_contacts_of_forest,
     set_default_customer,
     set_default_customer_contact,
-    update_forest_memo, forest_csv_data_mapping, get_all_forest_csv_data, get_specific_forest_csv_data, )
+    update_forest_memo, forest_csv_data_mapping,
+    get_forests_for_csv, )
 from ..activity.services import ActivityService, ForestActions
 from ..api.decorators import (
     api_validate_model,
@@ -145,16 +147,16 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     @action_login_required(with_permissions=["change_forest"])
     def download_all_csv(self, request):
         if request.data is None or len(request.data) == 0:
-            csv_data = get_all_forest_csv_data()
+            csv_data = get_forests_for_csv()
         else:
-            csv_data = get_specific_forest_csv_data(request.data)
-        response = HttpResponse(content_type='text/csv')
+            csv_data = get_forests_for_csv(request.data)
+        response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
         response['Content-Disposition'] = 'attachment'
         header = ["\ufeff内部ID", "土地管理ID"]
         flatten_header = list(itertools.chain(header, FOREST_CADASTRAL, FOREST_LAND_ATTRIBUTES, FOREST_OWNER_NAME,
-                                              FOREST_CONTRACT, list(FOREST_TAG_KEYS.values()),
+                                              FOREST_CONTRACT, [_("Tag")],
                                               FOREST_ATTRIBUTES))
-        writer = csv.writer(response, dialect='excel')
+        writer = csv.writer(response)
         writer.writerow(flatten_header)
         for forest in csv_data:
             csv_row = forest_csv_data_mapping(forest)
