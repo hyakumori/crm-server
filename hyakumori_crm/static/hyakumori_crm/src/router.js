@@ -41,8 +41,7 @@ const AdminRoutes = [
         meta: {
           title: "page_header.user_mgmt",
           isPublic: false,
-          isAdmin: true,
-          scopes: [],
+          scopes: ["group_admin"],
         },
         component: () => import("./screens/UserList.vue"),
       },
@@ -52,8 +51,7 @@ const AdminRoutes = [
         meta: {
           title: "page_header.user_detail",
           isPublic: false,
-          isAdmin: true,
-          scopes: [],
+          scopes: ["group_admin"],
         },
         component: () => import("./screens/UserDetail.vue"),
       },

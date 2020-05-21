@@ -20,9 +20,15 @@
     >
       <div class="d-flex pa-4">
         <div v-if="!isUpdate">
+          <p class="ma-0" v-if="isEmpty" :class="{ 'grey--text': isEmpty }">
+            {{
+              (hasPermission && $t("memo.empty")) || $t("memo.empty_view_only")
+            }}
+          </p>
           <p
+            v-else
             class="ma-0"
-            v-html="formattedMemo || (isEmpty && $t('memo.empty'))"
+            v-html="formattedMemo"
             :class="{ 'grey--text': isEmpty }"
           ></p>
         </div>
@@ -39,7 +45,7 @@
 
             <update-button
               class="mb-2"
-              :saveDisabled="isEmpty"
+              :saveDisabled="!hasChanged"
               :cancel="onCancel"
               :save="onSave"
               :saving="isLoading"
@@ -71,6 +77,7 @@ export default {
       isLoading: false,
       isUpdate: false,
       memo: "",
+      originalMemo: "",
     };
   },
   methods: {
@@ -109,10 +116,14 @@ export default {
     isEmpty() {
       return !this.memo;
     },
+    hasChanged() {
+      return this.originalMemo !== this.memo;
+    },
   },
   watch: {
     "value.attributes.memo"() {
       this.memo = this.value.attributes["memo"];
+      this.originalMemo = this.value.attributes["memo"];
     },
   },
 };

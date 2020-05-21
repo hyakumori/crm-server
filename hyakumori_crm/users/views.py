@@ -8,7 +8,7 @@ from djoser.views import UserViewSet
 from rest_framework import serializers, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import IsAdminUser
+from ..permissions import IsAdminUser, is_admin_request
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenViewBase
 from rest_typed_views import Body, typed_action
@@ -90,7 +90,7 @@ class CustomUserViewSet(UserViewSet):
     @action(detail=True, url_path="permissions", methods=["get"])
     def list_permissions(self, request, pk: UUID):
         try:
-            if request.user.is_superuser or str(request.user.pk) == pk:
+            if is_admin_request(request) or str(request.user.pk) == pk:
                 permissions = PermissionService.get_user_permissions(pk)
                 return make_success_json(permissions)
             else:
@@ -105,7 +105,7 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=[IsAdminOrSelf],
     )
     def forests(self, request, pk: UUID):
-        if not request.user.is_superuser and str(request.user.id) != str(pk):
+        if not is_admin_request(request) and str(request.user.id) != str(pk):
             raise PermissionDenied()
         try:
             queryset = PermissionService.get_user_manage_resource(pk, "crm", "forest")
@@ -130,8 +130,9 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=[IsAdminOrSelf],
     )
     def customers(self, request, pk: UUID):
-        if not request.user.is_superuser and str(request.user.id) != str(pk):
+        if not is_admin_request(request) and str(request.user.id) != str(pk):
             raise PermissionDenied()
+
         try:
             queryset = PermissionService.get_user_manage_resource(pk, "crm", "customer")
             paginator = default_paginator()
