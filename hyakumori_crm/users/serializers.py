@@ -26,6 +26,7 @@ from hyakumori_crm.permissions.enums import SystemGroups
 from .types import UserUpdateInput
 from ..activity.constants import UserActions
 from ..activity.services import ActivityService
+from ..permissions import is_admin_request
 
 
 def _is_user_self(request, instance):
@@ -33,9 +34,7 @@ def _is_user_self(request, instance):
 
 
 def _only_admin(request):
-    return not request.user.is_anonymous and (
-        request.user.is_superuser or request.user.member_of(SystemGroups.GROUP_ADMIN)
-    )
+    return not request.user.is_anonymous and is_admin_request(request)
 
 
 class ActivationSerializer(DjActivationSerializer, PasswordRetypeSerializer):

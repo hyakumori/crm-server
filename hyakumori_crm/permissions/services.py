@@ -129,6 +129,7 @@ class PermissionService:
                 "manage_forest",
                 "manage_customer",
                 "manage_archive",
+                "manage_tagsetting",
                 "add_forest",
                 "change_forest",
                 "delete_forest",
