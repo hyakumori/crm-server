@@ -16,6 +16,7 @@ api_urls = [
         attachment_download,
     ),
     path("archives/attachment/<str:code>", download_file),
+    path("archives/headers", archive_headers),
 ]
 
 view_urls = [
