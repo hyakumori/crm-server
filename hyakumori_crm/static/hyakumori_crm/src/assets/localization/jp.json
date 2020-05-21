@@ -22,7 +22,7 @@
     "csv_download": "csvダウンロード",
     "csv_upload": "csvアップロード",
     "download_all": "すべてダウンロード",
-    "download_selected": "ダウンロードの選択",
+    "download_selected": "選択した物をダウンロード",
     "login": "ログイン",
     "reset": "リセット",
     "save": "保存",

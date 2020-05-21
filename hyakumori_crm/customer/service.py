@@ -164,13 +164,13 @@ def get_list(
             condition="self_contact_rel.contact_id=self_contact.id",
             fields=[
                 {
-                    "fullname_kana": RawSQLField(
-                        "concat(self_contact.name_kana->>'last_name', ' ', self_contact.name_kana->>'first_name')"
+                    "fullname_kanji": RawSQLField(
+                        "concat(self_contact.name_kanji->>'last_name', ' ', self_contact.name_kanji->>'first_name')"
                     )
                 },
                 {
-                    "fullname_kanji": RawSQLField(
-                        "concat(self_contact.name_kanji->>'last_name', ' ', self_contact.name_kanji->>'first_name')"
+                    "fullname_kana": RawSQLField(
+                        "concat(self_contact.name_kana->>'last_name', ' ', self_contact.name_kana->>'first_name')"
                     )
                 },
                 "mobilephone",

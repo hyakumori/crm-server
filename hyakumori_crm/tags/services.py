@@ -100,7 +100,7 @@ class TagService:
         previous_tag_name = tag_setting.name
         tag_setting.name = tag_setting_input.name
         tag_setting.code = tag_setting_input.code
-        tag_setting.attributes["colors"] = list(map(lambda item: dict(value=item.value, color=item.color.as_hex()),
+        tag_setting.attributes["colors"] = list(map(lambda item: dict(value=item.value, color=item.color.original()),
                                                     tag_setting_input.color_maps))
         tag_setting.save()
         content_type = tag_setting.content_type
