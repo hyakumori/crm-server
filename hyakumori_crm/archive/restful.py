@@ -9,7 +9,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from hyakumori_crm.crm.common.utils import EncryptError, encrypt_string
-from .cache import refresh_single_archive_cache
+from hyakumori_crm.cache.archive import refresh_single_archive_cache
 from .schemas import ArchiveFilter, ArchiveInput, ArchiveCustomerInput
 from .service import (
     add_related_forest,
@@ -62,16 +62,6 @@ def archives(request, data: ArchiveInput = None):
         archive = create_archive(author, data)
         ActivityService.log(ArchiveActions.created, archive, request=request)
         return Response(data=ArchiveSerializer(archive).data)
-
-
-@api_view(["POST"])
-@get_or_404(
-    get_archive_by_pk, to_name="archive", pass_to=["kwargs", "request"], remove=True
-)
-@action_login_required(with_permissions=["manage_archive"])
-def reload_cache(request, *, archive: Archive = None):
-    refresh_single_archive_cache(archive)
-    return Response()
 
 
 @api_view(["GET", "PUT", "PATCH"])

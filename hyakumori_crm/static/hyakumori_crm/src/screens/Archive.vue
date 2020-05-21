@@ -99,7 +99,9 @@ export default {
         if (list.length > 1) {
           results +=
             " " +
-            this.$t("tables.another_item_human", { count: list.length - 1 });
+            this.$t("tables.another_item_human_kanji", {
+              count: list.length - 1,
+            });
         }
         return results;
       }
@@ -113,7 +115,9 @@ export default {
         if (list.length > 1) {
           results +=
             " " +
-            this.$t("tables.another_item_human", { count: list.length - 1 });
+            this.$t("tables.another_item_human_kanji", {
+              count: list.length - 1,
+            });
         }
         return results;
       }
