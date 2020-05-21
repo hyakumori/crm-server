@@ -18,20 +18,31 @@
       <v-container class="pa-0">
         <v-row class="pa-0 tag-list" no-gutters>
           <v-col class="pa-2 d-flex align-center flex-wrap">
-            <div v-for="(item, index) in editingTags" :key="index">
-              <v-chip
-                color="primary"
-                @click:close="() => deleteTag(item)"
-                :ripple="false"
-                class="ma-1"
-                draggable
-                pill
-                v-if="item.value && !!!item.deleted"
-                :close="isUpdate"
-              >
-                {{ item.key }}: {{ item.value }}
-              </v-chip>
-            </div>
+            <template v-if="editingTags.length">
+              <div v-for="(item, index) in editingTags" :key="index">
+                <v-chip
+                  color="primary"
+                  @click:close="() => deleteTag(item)"
+                  :ripple="false"
+                  class="ma-1"
+                  draggable
+                  pill
+                  v-if="item.value && !!!item.deleted"
+                  :close="isUpdate"
+                >
+                  {{ item.key }}: {{ item.value }}
+                </v-chip>
+              </div>
+            </template>
+            <template v-else>
+              <p class="ma-0 grey--text justify-center">
+                {{
+                  hasPermission && !isUpdate
+                    ? $t("tags.no_tags")
+                    : (!isUpdate && $t("tags.no_tags_view_only")) || ""
+                }}
+              </p>
+            </template>
           </v-col>
         </v-row>
 

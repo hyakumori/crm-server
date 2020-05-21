@@ -45,6 +45,12 @@ $body-font-family: "Roboto", "Noto Sans JP", sans-serif !important;
   margin-right: 0;
 }
 
-.v-data-table td, .v-data-table th {
+.v-data-table td,
+.v-data-table th {
   padding: 0 8px;
+}
+
+::placeholder {
+  color: #ccc !important;
+  opacity: 1;
 }
