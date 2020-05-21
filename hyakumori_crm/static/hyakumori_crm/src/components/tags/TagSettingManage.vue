@@ -3,7 +3,7 @@
     no-click-animation
     :value="showDialog"
     @input="$emit('update:showDialog', $event)"
-    width="600"
+    width="640"
   >
     <v-card class="dialog-content" :loading="loading">
       <v-card-title class="title px-4 py-2">
@@ -150,7 +150,7 @@
 
 <script>
 import TagSettingColorItem from "./TagSettingColorItem";
-import { debounce, isEqual, get as _get } from "lodash";
+import { debounce, get as _get, isEqual, cloneDeep } from "lodash";
 
 export default {
   props: {
@@ -244,7 +244,7 @@ export default {
     },
     switchToAddNew() {
       this.selectedTag = { ...this.buildTagSetting() };
-      this.originalSelectedTag = { ...this.selectedTag };
+      this.originalSelectedTag = { ...this.buildTagSetting() };
     },
     onClose() {
       this.$emit("update:showDialog", false);
@@ -413,9 +413,7 @@ export default {
       } else {
         this.selectedTag = { ...tag };
       }
-      this.originalSelectedTag = {
-        ...this.selectedTag,
-      };
+      this.originalSelectedTag = cloneDeep(this.selectedTag);
     },
   },
   computed: {
@@ -424,21 +422,16 @@ export default {
     },
     hasChanged() {
       const colors = this.colorMaps.map(item => ({
-        value: item.value,
         color: item.color,
+        value: item.value,
       }));
-
-      const check =
+      const originalColorsAttrs = JSON.parse(
+        JSON.stringify(_get(this.originalSelectedTag, "attributes.colors", [])),
+      );
+      return (
         !isEqual(this.selectedTag, this.originalSelectedTag) ||
-        !isEqual(
-          JSON.parse(
-            JSON.stringify(
-              _get(this.originalSelectedTag, "attributes.colors", []),
-            ),
-          ),
-          colors,
-        );
-      return check;
+        !isEqual(originalColorsAttrs, colors)
+      );
     },
     canSave() {
       return this.selectedTag.name && this.selectedTag.name.length > 0;

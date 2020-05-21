@@ -189,3 +189,4 @@ class ForestMemoInput(HyakumoriDanticModel):
 
     class Config:
         arbitrary_types_allowed = True
+        min_anystr_length = 0
