@@ -219,9 +219,12 @@ DJOSER = {
         "user_create": "hyakumori_crm.users.serializers.UserCreateSerializer",
     },
     "EMAIL": {"activation": "hyakumori_crm.users.emails.ActivationEmail"},
-    "PERMISSIONS": {"user_list": ["rest_framework.permissions.IsAdminUser"]},
+    "PERMISSIONS": {
+        "user_list": ["hyakumori_crm.permissions.IsAdminUser"],
+        "user": ["hyakumori_crm.permissions.CurrentUserOrAdmin"]
+    },
     "LOGIN_FIELD": "email",
-    "HIDE_USERS": True,
+    "HIDE_USERS": False,
 }
 
 # Simple JWT
