@@ -37,7 +37,7 @@
           @selected="
             (pId, pIndex) => {
               modalSelectingId = pId;
-              modelSelectingIndex = pIndex;
+              modalSelectingIndex = pIndex;
             }
           "
           flat
