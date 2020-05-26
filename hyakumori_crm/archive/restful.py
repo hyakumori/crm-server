@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.core.exceptions import ValidationError
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.utils.timezone import now
 from django.utils.translation import gettext as _
 from rest_framework.decorators import api_view, parser_classes
@@ -26,8 +26,7 @@ from .service import (
     get_filtered_archive_queryset,
     get_participants,
     get_related_forests,
-    get_archive_by_ids,
-    update_archive_tag,
+    update_archive_tag, get_archives_tag_by_ids,
 )
 from ..activity.services import ActivityService, ArchiveActions
 from ..api.decorators import action_login_required, api_validate_model, get_or_404
@@ -255,8 +254,8 @@ def archive_ids(request):
     if ids is None or len(ids) == 0:
         return Response({"data": []})
     else:
-        archives = get_archive_by_ids(ids)
-        return Response(ArchiveListingSerializer(archives, many=True).data)
+        archive_tags = get_archives_tag_by_ids(ids)
+        return JsonResponse(data={"data": archive_tags})
 
 
 @api_view(["PUT"])
