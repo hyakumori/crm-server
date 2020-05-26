@@ -217,7 +217,7 @@ def update_forest_memo(forest, memo):
 
 
 def csv_headers():
-    header = ["内部ID", "土地管理ID"]
+    header = ["\ufeff内部ID", "土地管理ID"]
     return list(
         itertools.chain(
             header,

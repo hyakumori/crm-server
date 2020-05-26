@@ -25,7 +25,7 @@ def get_customertable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> d
         {"text": _("Postal Code"), "value": "postal_code", "align": "center"},
         {"text": _("Prefecture"), "value": "prefecture", "align": "left"},
         {"text": _("Municipality"), "value": "municipality", "align": "left"},
-        {"text": _("Address"), "value": "address", "align": "left"},
+        {"text": _("Address"), "value": "sector", "align": "left"},
         {"text": _("Telephone"), "value": "telephone", "align": "center"},
         {"text": _("Mobilephone"), "value": "mobilephone", "align": "center"},
         {"text": _("Email"), "value": "email", "align": "center"},

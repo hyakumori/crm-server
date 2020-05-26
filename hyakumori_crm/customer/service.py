@@ -175,7 +175,7 @@ def get_list(
                 "telephone",
                 "email",
                 "postal_code",
-                {"address": "address->>'sector'"},
+                {"sector": "address->>'sector'"},
                 {"prefecture": "address->>'prefecture'"},
                 {"municipality": "address->>'municipality'"},
             ],
