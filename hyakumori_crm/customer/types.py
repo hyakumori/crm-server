@@ -31,7 +31,7 @@ type CustomerItem {
   postal_code: String
   prefecture: String
   municipality: String
-  address: String
+  sector: String
   telephone: String
   mobilephone: String
   email: String

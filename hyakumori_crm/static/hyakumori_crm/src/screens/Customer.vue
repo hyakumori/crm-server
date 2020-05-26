@@ -360,7 +360,7 @@ export default {
               postal_code
               prefecture
               municipality
-              address
+              sector
               telephone
               mobilephone
               email
