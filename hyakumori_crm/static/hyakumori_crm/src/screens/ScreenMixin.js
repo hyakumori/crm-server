@@ -25,10 +25,7 @@ export default {
     async getSelectedObject(apiUrl) {
       try {
         const objects = await this.$rest.put(apiUrl, this.selectedRowIds);
-        this.tagKeys = [];
-        const tags = objects.map(obj => obj.tags);
-        tags.forEach(tag => this.tagKeys.push(Object.keys(tag)));
-        this.tagKeys = [...new Set(flatten(this.tagKeys))];
+        this.tagKeys = objects.data;
       } catch (e) {
         this.showChangeTagDialog = false;
       } finally {

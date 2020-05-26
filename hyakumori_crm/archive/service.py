@@ -1,10 +1,11 @@
+import itertools
 import time
 from urllib import parse
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError as DjValidationError
-from django.db import transaction, OperationalError
+from django.db import transaction, OperationalError, connection
 from django.db.models import F, Subquery, OuterRef, Count
 from django.db.models.expressions import Func, RawSQL, Value
 from django.utils.translation import gettext_lazy as _
@@ -38,15 +39,13 @@ def get_archive_by_pk(pk):
         raise ValueError("Archive not found")
 
 
-def get_archive_by_ids(ids: list):
-    archives = []
-    for pk in ids:
-        try:
-            archive = get_archive_by_pk(pk)
-            archives.append(archive)
-        except ValueError:
-            continue
-    return archives
+def get_archives_tag_by_ids(ids: list):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "select distinct jsonb_object_keys(tags) from crm_archive where id in %(ids)s", {"ids": tuple(ids)}
+        )
+        tags = cursor.fetchall()
+    return list(itertools.chain(*tags))
 
 
 def get_attachment_by_pk(attachment_pk):

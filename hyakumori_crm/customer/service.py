@@ -1,8 +1,9 @@
 import uuid
+import itertools
 from typing import Iterator, Union
 from uuid import UUID
 
-from django.db import DataError, IntegrityError, transaction, OperationalError
+from django.db import DataError, IntegrityError, connection
 from django.db.models import Count, F, OuterRef, Q, Subquery
 from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
@@ -242,8 +243,11 @@ def update_basic_info(data):
     # cache saving for forest
     values_list = customer.forestcustomer_set.values_list("forest_id", flat=True)
     if len(values_list) > 0:
-        async_task(refresh_customer_forest_cache, list(values_list),
-                   task_name=f"update_basic_info__forest_cache__{uuid.uuid4().hex.replace('-','')}")
+        async_task(
+            refresh_customer_forest_cache,
+            list(values_list),
+            task_name=f"update_basic_info__forest_cache__{uuid.uuid4().hex.replace('-','')}",
+        )
 
     return customer
 
@@ -378,8 +382,11 @@ def update_forests(data):
     customer.refresh_from_db()
 
     if len(data.added + data.deleted) > 0:
-        async_task(refresh_customer_forest_cache, data.added + data.deleted,
-                   task_name=f"update_forests__forest_cache__{uuid.uuid4().hex.replace('-', '')}")
+        async_task(
+            refresh_customer_forest_cache,
+            data.added + data.deleted,
+            task_name=f"update_forests__forest_cache__{uuid.uuid4().hex.replace('-', '')}",
+        )
 
     return customer
 
@@ -495,15 +502,14 @@ def get_customer_by_business_id(busines_id):
     return customer
 
 
-def get_customers_by_ids(ids: list):
-    customers = []
-    for pk in ids:
-        try:
-            customer = get_customer_by_pk(pk)
-            customers.append(customer)
-        except ValueError:
-            continue
-    return customers
+def get_customers_tag_by_ids(ids: list):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "select distinct jsonb_object_keys(tags) from crm_customer where id in %(ids)s",
+            {"ids": tuple(ids)},
+        )
+        tags = cursor.fetchall()
+    return list(itertools.chain(*tags))
 
 
 def update_customer_tags(data: dict):
