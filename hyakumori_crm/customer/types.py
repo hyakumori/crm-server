@@ -58,12 +58,6 @@ type CustomerTableHeaderResponse  implements HyakumoriResponse {
   headers: JSON
 }
 
-type Mutation {
-  create_customer(data: CreateCustomerInput!): CustomerResponse
-  delete_customer(pk: ID!): CustomerResponse
-  update_customer(pk: ID!, data: UpdateCustomerInput!): CustomerResponse
-}
-
 type Query {
   get_customer(id: ID!): CustomerResponse
   list_customers(data: TableCustomerFilterInput!): CustomerList!
@@ -83,13 +77,6 @@ input TableCustomerFilterInput {
   sortBy: [String]
   sortDesc: [Boolean]
   filters: JSON
-}
-
-input UpdateCustomerInput {
-  business_id: String
-  profile: JSON
-  attributes: JSON
-  updated_at: DateTime!
 }
 """
 )

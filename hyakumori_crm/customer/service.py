@@ -57,16 +57,16 @@ group by crm_customer.id
 """
     if search:
         where = """
-and (concat(sc.name_kanji->>'last_name', ' ',
+and (concat(sc.name_kanji->>'last_name', '\u3000',
     sc.name_kanji->>'first_name') ilike %(search)s
-or concat(sc.name_kana->>'last_name', ' ',
+or concat(sc.name_kana->>'last_name', '\u3000',
     sc.name_kana->>'first_name') ilike %(search)s
 or crm_customer.internal_id ilike %(search)s
 or sc.email ilike %(search)s
 or sc.telephone ilike %(search)s
 or sc.mobilephone ilike %(search)s
-or concat(sc.postal_code, ' ', sc.address->>'sector', ' ',
-    sc.address->>'municipality', ' ', sc.address->>'prefecture') ilike %(search)s)
+or concat(sc.postal_code, '\u3000', sc.address->>'sector', '\u3000',
+    sc.address->>'municipality', '\u3000', sc.address->>'prefecture') ilike %(search)s)
 """
     else:
         where = ""
@@ -162,13 +162,13 @@ def get_list(
             condition="self_contact_rel.contact_id=self_contact.id",
             fields=[
                 {
-                    "fullname_kanji": RawSQLField(
-                        "concat(self_contact.name_kanji->>'last_name', ' ', self_contact.name_kanji->>'first_name')"
+                    "fullname_kana": RawSQLField(
+                        "concat(self_contact.name_kana->>'last_name', '\u3000', self_contact.name_kana->>'first_name')"
                     )
                 },
                 {
-                    "fullname_kana": RawSQLField(
-                        "concat(self_contact.name_kana->>'last_name', ' ', self_contact.name_kana->>'first_name')"
+                    "fullname_kanji": RawSQLField(
+                        "concat(self_contact.name_kanji->>'last_name', '\u3000', self_contact.name_kanji->>'first_name')"
                     )
                 },
                 "mobilephone",
@@ -507,3 +507,18 @@ def update_customer_tags(data: dict):
     Customer.objects.filter(id__in=ids, tags__has_key=tag_key).update(
         tags=RawSQL("tags || jsonb_build_object(%s, %s)", params=[tag_key, new_value])
     )
+
+
+def save_customer_from_csv_data(customer, data):
+    self_contact = customer.self_contact
+    self_contact.name_kanji = data.name_kanji
+    self_contact.name_kana = data.name_kana
+    self_contact.postal_code = data.postal_code
+    self_contact.address = data.address
+    self_contact.telephone = data.telephone
+    self_contact.mobilephone = data.mobilephone
+    self_contact.email = data.email
+    self_contact.save()
+    customer.tags = data.tags_json
+    customer.banking = data.banking
+    customer.save()

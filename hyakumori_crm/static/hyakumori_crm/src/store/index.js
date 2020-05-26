@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import forest from "./modules/forest";
+import * as api from "../api";
 
 Vue.use(Vuex);
 
@@ -11,6 +12,7 @@ export default new Vuex.Store({
     headerInfo: {},
     headerTagColor: "transparent",
     backBtnContent: "",
+    inMaintain: false,
   },
   mutations: {
     setPageHeader(state, pageHeader) {
@@ -31,6 +33,9 @@ export default new Vuex.Store({
     setBackBtnContent(state, content) {
       state.backBtnContent = content;
     },
+    setInMaintain(state, value) {
+      state.inMaintain = value;
+    },
   },
   actions: {
     setPageHeader({ commit }, pageHeader) {
@@ -50,6 +55,12 @@ export default new Vuex.Store({
     },
     setBackBtnContent({ commit }, content) {
       commit("setBackBtnContent", content);
+    },
+    async getMaintenanceStatus({ commit }) {
+      try {
+        const status = await api.getMaintenanceStatus();
+        commit("setInMaintain", status.in_maintain);
+      } catch {}
     },
   },
   modules: {

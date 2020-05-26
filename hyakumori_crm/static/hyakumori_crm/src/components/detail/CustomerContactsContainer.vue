@@ -189,7 +189,8 @@ export default {
         this.showNewContactDialog = false;
         this.$emit("saved");
       } catch (error) {
-        this.formErrors = error.response.data.errors;
+        if (error.response && error.response.status < 500)
+          this.formErrors = error.response.data.errors;
       }
     },
   },

@@ -42,13 +42,13 @@ def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dic
         },
         {
             "text": _("Owner name Kanji"),
-            "align": "center",
+            "align": "left",
             "value": "owner__name_kanji",
             "sortable": False,
         },
         {
             "text": _("Owner name Kana"),
-            "align": "center",
+            "align": "left",
             "value": "owner__name_kana",
             "sortable": False,
         },
@@ -108,7 +108,7 @@ def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dic
         },
         {
             "text": _("Tag"),
-            "align": "center",
+            "align": "left",
             "value": "tags",
             "sortable": False,
         },

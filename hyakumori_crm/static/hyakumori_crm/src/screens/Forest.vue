@@ -3,15 +3,44 @@
     <template #top>
       <page-header>
         <template #bottom-right>
-          <div>
+          <div class="forest__csv-section">
             <outline-round-btn
+              v-acl-only="[
+                'admin',
+                'group_admin',
+                'group_normal_user',
+                'manage_forest',
+              ]"
               :content="$t('buttons.csv_upload')"
-              :icon="$t('icon.add')"
+              icon="mdi-upload"
+              :loading="uploadCsvLoading"
               @click="uploadCsv"
               class="mr-2"
-              v-show="false"
+              v-show="true"
             />
-            <v-menu nudge-bottom="4" offset-y>
+            <input
+              v-acl-only="[
+                'admin',
+                'group_admin',
+                'group_normal_user',
+                'manage_forest',
+              ]"
+              @change="onCsvInputChange"
+              accept=".csv"
+              class="forest__csv-section__upload"
+              ref="uploadCsv"
+              type="file"
+            />
+            <v-menu
+              nudge-bottom="4"
+              offset-y
+              v-acl-only="[
+                'admin',
+                'group_admin',
+                'group_normal_user',
+                'manage_forest',
+              ]"
+            >
               <template v-slot:activator="{ on }">
                 <outline-round-btn
                   :content="$t('buttons.csv_download')"
@@ -103,16 +132,17 @@
 import gql from "graphql-tag";
 import DataList from "../components/DataList";
 import SearchCard from "../components/SearchCard";
-import TableAction from "../components/TableAction";
 import GetForestList from "../graphql/GetForestList.gql";
 import SnackBar from "../components/SnackBar";
 import ScreenMixin from "./ScreenMixin";
 import MainSection from "../components/MainSection";
 import PageHeader from "../components/PageHeader";
 import OutlineRoundBtn from "../components/OutlineRoundBtn";
+import ErrorCard from "../components/ErrorsCard";
 import { saveAs } from "file-saver";
 import { get as _get } from "lodash";
 import UpdateActionsDialog from "../components/dialogs/UpdateActionsDialog";
+import TableAction from "../components/TableAction";
 
 export default {
   name: "forest",
@@ -162,6 +192,7 @@ export default {
       headers: [],
       downloadCsvLoading: false,
       newTagValue: null,
+      uploadCsvLoading: false,
     };
   },
 
@@ -191,8 +222,15 @@ export default {
       },
     },
   },
-
+  beforeRouteLeave(to, from, next) {
+    if (this.uploadCsvLoading && !confirm(this.$t("messages.confirm_leave")))
+      next(false);
+    else next();
+  },
   methods: {
+    confirmReload(e) {
+      e.returnValue = this.$t("messages.confirm_leave");
+    },
     rowData(val) {
       this.$router.push(`forests/${val}`);
     },
@@ -221,7 +259,51 @@ export default {
     },
 
     uploadCsv() {
-      // TODO: handle upload forest as csv
+      if (this.$refs.uploadCsv) {
+        const confirmUpload = confirm(this.$t("messages.confirm_upload_csv"));
+        if (!confirmUpload) return;
+        this.$refs.uploadCsv.click();
+      }
+    },
+
+    checkCsvExtension(filename) {
+      const filenameSplitByDot = filename.split(".");
+      const fileExtension = filenameSplitByDot[filenameSplitByDot.length - 1];
+      return fileExtension === "csv";
+    },
+
+    async onCsvInputChange(e) {
+      const file = e.target.files[0];
+      if (file.type === "text/csv" && this.checkCsvExtension(file.name)) {
+        const requestFile = new FormData();
+        requestFile.append("file", file);
+        try {
+          this.uploadCsvLoading = true;
+          window.addEventListener("beforeunload", this.confirmReload);
+          await this.$rest.post("/forests/upload-csv", requestFile);
+          this.$apollo.queries.forestsInfo.refetch();
+          this.$dialog.notify.success(this.$t("messages.upload_successfully"));
+        } catch (error) {
+          if (
+            error.response &&
+            error.response.status < 500 &&
+            error.response.data
+          ) {
+            this.$dialog.show(ErrorCard, {
+              line: error.response.data.line,
+              errors: error.response.data.errors,
+            });
+          }
+        } finally {
+          window.removeEventListener("beforeunload", this.confirmReload);
+          this.uploadCsvLoading = false;
+        }
+      } else {
+        this.$dialog.notify.error("Invalid file input", {
+          timeout: 5000,
+        });
+      }
+      this.$refs.uploadCsv.value = "";
     },
 
     async downloadAllCsv() {
@@ -407,6 +489,14 @@ export default {
   &__data-section {
     flex: 1;
     overflow: hidden;
+  }
+
+  &__csv-section {
+    &__upload {
+      height: 1px;
+      width: 1px;
+      visibility: hidden;
+    }
   }
 }
 </style>

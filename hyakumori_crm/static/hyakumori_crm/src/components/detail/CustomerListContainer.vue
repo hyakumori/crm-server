@@ -195,7 +195,9 @@ export default {
         this.contactsToAdd = [];
         this.relationshipChanges = [];
         this.itemsForAdding = { results: [] };
-      } catch (error) {}
+      } catch (error) {
+        this.saving = false;
+      }
     },
   },
   watch: {

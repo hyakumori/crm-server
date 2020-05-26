@@ -110,11 +110,13 @@ export default {
 
     async updateParticipant() {
       this.saving = true;
-      await this.deleteParticipants();
-      await this.addParticipants();
+      try {
+        await this.deleteParticipants();
+        await this.addParticipants();
+        this.fetchRelatedParticipants();
+        this.isEditing = false;
+      } catch (err) {}
       this.saving = false;
-      this.isEditing = false;
-      this.fetchRelatedParticipants();
     },
 
     async deleteParticipants() {

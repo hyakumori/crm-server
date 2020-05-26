@@ -253,9 +253,11 @@ export default {
           this.toggleEditing();
         }
       } catch (error) {
-        if (error.response) {
+        if (error.response && error.response.status < 500) {
           this.$refs.form.setErrors(error.response.data.errors);
         }
+      } finally {
+        this.submiting = false;
       }
     },
   },

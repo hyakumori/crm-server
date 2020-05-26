@@ -149,7 +149,12 @@
     "reset_password_success": "パスワードが変更できました。{seconds}秒後にログイン画面にリダイレクトします。",
     "reset_password_url_sent": "再発行用のURLをご登録のメールアドレス宛てに送信しました。",
     "token_stale": "無効または期限切リンク",
-    "uid_not_found": "無効なユーザーまたはユーザーが存在しません。"
+    "uid_not_found": "無効なユーザーまたはユーザーが存在しません。",
+    "maintenance_1": "ウェブサイトはメンテナンスモードです。",
+    "maintenance_2": "更新操作は許可されていません。",
+    "confirm_upload_csv": "アップロードはウェブサイトを維持モードにします。 継続する？",
+    "upload_successfully": "正常にアップロード",
+    "confirm_leave": "帰りたい？"
   },
   "not_available_field": "一時不明",
   "page_header": {

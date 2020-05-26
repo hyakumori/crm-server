@@ -2,6 +2,7 @@ import logging
 
 from itertools import chain
 
+from django.core.cache import cache
 from django.http import JsonResponse, HttpResponseBadRequest
 
 from hyakumori_crm.crm.restful.paginations import StandardPagination
@@ -99,3 +100,7 @@ class Echo:
     def write(self, value):
         """Write the value by returning it, instead of storing in a buffer."""
         return value
+
+
+def clear_maintain_task_id_cache(task=None):
+    cache.delete("maintain_task_id")

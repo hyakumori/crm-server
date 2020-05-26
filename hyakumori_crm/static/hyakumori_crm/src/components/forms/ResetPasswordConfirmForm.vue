@@ -134,8 +134,9 @@ export default {
           this.redirectCount -= 1;
         }, 1000);
       } catch (err) {
-        this.formError = this.$t("messages.error_set_new_password");
         this.success = false;
+        if (err.response && err.response.status < 500)
+          this.formError = this.$t("messages.error_set_new_password");
       } finally {
         this.loading = false;
       }
