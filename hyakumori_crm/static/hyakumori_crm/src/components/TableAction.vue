@@ -6,7 +6,7 @@
 
     <select-list
       class="ml-12 table-action__select"
-      :actions="getActions"
+      :actions="actions"
       :placeHolder="$t('search.select_action')"
       @selectedAction="onSelected"
     />
@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import actions from "../assets/dump/table_actions.json";
 import SelectList from "./SelectList";
 
 export default {
@@ -26,17 +25,12 @@ export default {
 
   props: {
     selectedCount: Number,
+    actions: Array,
   },
 
   methods: {
-    onSelected() {
-      // console.log(val)
-    },
-  },
-
-  computed: {
-    getActions() {
-      return actions;
+    onSelected(val) {
+      this.$emit("selected-action", val);
     },
   },
 };
@@ -64,7 +58,7 @@ $action-list-color: #825929;
     .v-select__selections,
     .v-select__selection,
     input::placeholder {
-      color: $action-list-color;
+      color: $action-list-color !important;
     }
 
     .mdi-chevron-down {

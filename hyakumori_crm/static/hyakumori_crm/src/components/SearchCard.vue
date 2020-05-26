@@ -221,6 +221,7 @@ $text-font-size: 14px;
 
       .v-input__icon > i {
         color: $text-color !important;
+        margin-top: 4px !important;
       }
     }
   }

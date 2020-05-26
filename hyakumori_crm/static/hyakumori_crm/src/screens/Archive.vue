@@ -18,27 +18,41 @@
         ref="searchRef"
       />
       <div class="archives__data-section">
-        <!--   For now it has no function, so remove it temporary  -->
-        <!--        <table-action-->
-        <!--          class="mb-4"-->
-        <!--          v-if="selectedRows.length > 0"-->
-        <!--          :selected-count="selectedRows.length"-->
-        <!--        />-->
+        <table-action
+          ref="actionRef"
+          class="mb-4"
+          v-if="tableSelectedRows.length > 0"
+          :actions="actions"
+          :selected-count="tableSelectedRows.length"
+          @selected-action="selectedAction"
+        />
         <data-list
           :auto-headers="false"
           :headers="headers"
           :is-loading="isLoading"
-          :showSelect="false"
+          :showSelect="true"
           :data="data"
           :tableRowIcon="pageIcon"
           :serverItemsLength="totalItems"
           @rowData="rowData"
           :options.sync="options"
           @update:options="paginationHandler"
-          @selectedRow="val => (selectedRows = val)"
+          @selectedRow="val => (tableSelectedRows = val)"
           iconRowValue="id"
         />
       </div>
+      <update-actions-dialog
+        :items="tagKeys"
+        :show-dialog="showChangeTagDialog"
+        :isDisableUpdate="!selectedTagForUpdate"
+        :loadingItems="fetchTagsLoading"
+        :updateData="updateTagForSelectedArchives"
+        :cancel="resetActionChoices"
+        :updating="updatingTags"
+        @update-value="val => (newTagValue = val)"
+        @selected-tag="val => (selectedTagForUpdate = val)"
+        @toggle-show-dialog="val => (showChangeTagDialog = val)"
+      />
     </template>
   </main-section>
 </template>
@@ -50,6 +64,8 @@ import DataList from "../components/DataList";
 import ScreenMixin from "./ScreenMixin";
 import PageHeader from "../components/PageHeader";
 import OutlineRoundBtn from "../components/OutlineRoundBtn";
+import TableAction from "../components/TableAction";
+import UpdateActionsDialog from "../components/dialogs/UpdateActionsDialog";
 import {
   commonDatetimeFormat,
   dateTimeKeywordSearchFormat,
@@ -67,16 +83,22 @@ export default {
     DataList,
     PageHeader,
     OutlineRoundBtn,
-    // TableAction,
+    TableAction,
+    UpdateActionsDialog,
   },
 
   data() {
     return {
+      actions: [
+        {
+          text: this.$t("action.change_tag_value"),
+          value: 0,
+        },
+      ],
       pageIcon: this.$t("icon.archive_icon"),
       pageHeader: this.$t("page_header.archive_detail"),
       tableRowIcon: this.$t("icon.archive_icon"),
       data: [],
-      selectedRows: [],
       isLoading: false,
       totalItems: 0,
       next: null,
@@ -85,6 +107,7 @@ export default {
       filterQueryString: "",
       options: {},
       headers: [],
+      newTagValue: null,
     };
   },
 
@@ -206,6 +229,39 @@ export default {
       } else {
         const api_url = `/archives?page_size=${val.itemsPerPage}&${this.filterQueryString}`;
         this.fetchArchives(api_url);
+      }
+    },
+
+    async updateTagForSelectedArchives() {
+      const params = {
+        ids: this.selectedRowIds,
+        key: this.selectedTagForUpdate,
+        value: this.newTagValue,
+      };
+      try {
+        this.updatingTags = true;
+        await this.$rest.put("/archives/ids/tags", params);
+      } catch (e) {
+        await this.$dialog.notify.error(e);
+      } finally {
+        const api_url = `/archives?page_size=${this.options.itemsPerPage}&${this.filterQueryString}`;
+        this.updatingTags = false;
+        this.showChangeTagDialog = false;
+        this.selectedTagForUpdate = null;
+        this.resetActionChoices();
+        await this.fetchArchives(api_url);
+      }
+    },
+
+    selectedAction(index) {
+      switch (index) {
+        case 0:
+          this.showChangeTagDialog = true;
+          this.fetchTagsLoading = true;
+          this.getSelectedObject("/archives/ids");
+          break;
+        default:
+          return;
       }
     },
   },
