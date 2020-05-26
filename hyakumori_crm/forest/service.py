@@ -129,6 +129,7 @@ def update_owners(owner_pks_in):
     ForestCustomer.objects.bulk_create(added_forest_customers)
     forest.save(update_fields=["updated_at"])
     forest.refresh_from_db()
+
     refresh_customer_forest_cache(forest_ids=[str(forest.id)])
 
     return forest

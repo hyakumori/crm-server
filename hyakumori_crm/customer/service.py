@@ -1,3 +1,4 @@
+import uuid
 from typing import Iterator, Union
 from uuid import UUID
 
@@ -5,6 +6,7 @@ from django.db import DataError, IntegrityError, transaction, OperationalError
 from django.db.models import Count, F, OuterRef, Q, Subquery
 from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
+from django_q.tasks import async_task
 from querybuilder.query import Query
 
 from hyakumori_crm.core.models import RawSQLField
@@ -238,9 +240,10 @@ def update_basic_info(data):
     customer.save(update_fields=["address", "name_kana", "name_kanji", "updated_at"])
 
     # cache saving for forest
-    refresh_customer_forest_cache(
-        list(customer.forestcustomer_set.values_list("forest_id", flat=True))
-    )
+    values_list = customer.forestcustomer_set.values_list("forest_id", flat=True)
+    if len(values_list) > 0:
+        async_task(refresh_customer_forest_cache, list(values_list),
+                   task_name=f"update_basic_info__forest_cache__{uuid.uuid4().hex.replace('-','')}")
 
     return customer
 
@@ -373,7 +376,10 @@ def update_forests(data):
     customer.save(update_fields=["updated_at"])
 
     customer.refresh_from_db()
-    refresh_customer_forest_cache(data.added + data.deleted)
+
+    if len(data.added + data.deleted) > 0:
+        async_task(refresh_customer_forest_cache, data.added + data.deleted,
+                   task_name=f"update_forests__forest_cache__{uuid.uuid4().hex.replace('-', '')}")
 
     return customer
 
