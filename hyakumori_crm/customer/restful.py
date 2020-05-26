@@ -1,5 +1,9 @@
 import csv
+import pathlib
+import time
+import json
 
+from django.core.cache import cache
 from django.http.response import StreamingHttpResponse
 from django.utils.translation import gettext_lazy as _
 from rest_framework.decorators import action, api_view
@@ -18,6 +22,10 @@ from hyakumori_crm.crm.restful.serializers import (
     CustomerSerializer,
     ArchiveSerializer,
 )
+from ..core.utils import clear_maintain_task_id_cache
+from ..activity.services import ActivityService, CustomerActions
+from ..api.decorators import action_login_required, api_validate_model, get_or_404
+
 from .schemas import (
     BankingInput,
     ContactsInput,
@@ -29,6 +37,7 @@ from .schemas import (
     CustomerMemoInput,
     ContactType,
     required_contact_input_wrapper,
+    CustomerUploadCsv,
 )
 from .service import (
     contacts_list_with_search,
@@ -52,9 +61,8 @@ from .service import (
     get_customers_by_ids,
     update_customer_tags,
 )
-from ..activity.services import ActivityService, CustomerActions
-from ..api.decorators import action_login_required, api_validate_model, get_or_404
 from ..forest.service import parse_tags_for_csv
+from .tasks import csv_upload
 
 
 class CustomerViewSets(ViewSet):
@@ -248,8 +256,7 @@ class CustomerViewSets(ViewSet):
             filters = {"id__in": pks}
         customers, total = get_list(per_page=None, filters=filters)
         headers = [
-            "\ufeffID",  # contains BOM char for opening on windows excel
-            "新規ID発行",
+            "\ufeff所有者ID",  # contains BOM char for opening on windows excel
             "土地所有者名（漢字）",
             "土地所有者名（カナ）",
             "土地所有者住所_都道府県",
@@ -271,13 +278,12 @@ class CustomerViewSets(ViewSet):
             yield headers
             for row in rows:
                 yield [
-                    row["id"],
                     row["business_id"],
                     row["fullname_kanji"],
                     row["fullname_kana"],
                     row["prefecture"],
                     row["municipality"],
-                    row["address"],
+                    row["sector"],
                     row["postal_code"],
                     row["telephone"],
                     row["mobilephone"],
@@ -300,6 +306,25 @@ class CustomerViewSets(ViewSet):
             "Content-Disposition"
         ] = 'application/octet-stream; filename="customers.csv"'
         return response
+
+    @action(detail=False, methods=["POST"])
+    def upload_csv(self, request):
+        csv_file = request.data["file"]
+        if csv_file.content_type != "text/csv":
+            return Response({"errors": _("Please upload a csv file!!")}, 400)
+        pathlib.Path("media/upload/customer").mkdir(parents=True, exist_ok=True)
+        file_name = f"{pathlib.Path(csv_file.name).stem}-{int(time.time())}.csv"
+        fp = f"media/upload/customer/{file_name}"
+        with open(fp, "wb+") as destination:
+            for chunk in csv_file.chunks():
+                destination.write(chunk)
+        cache.set("maintain_task_id", f"customers/{file_name}", None)
+        result = csv_upload(fp)
+        clear_maintain_task_id_cache()
+        if type(result) is int:
+            return Response({"msg": "OK"}, status=200)
+        else:
+            return Response(result, status=400)
 
 
 @api_view(["GET"])

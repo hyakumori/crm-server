@@ -128,12 +128,14 @@ export default {
     async submit(data) {
       this.createLoading = true;
       data.archive_date = toUtcDatetime(data.archive_date);
-      const newData = await this.$rest.post("/archives", data);
-      if (newData) {
-        this.dataMapping(newData);
-        this.createLoading = false;
-        await this.$router.push(`/archives/${newData.id}`);
-      }
+      try {
+        const newData = await this.$rest.post("/archives", data);
+        if (newData) {
+          this.dataMapping(newData);
+          await this.$router.push(`/archives/${newData.id}`);
+        }
+      } catch (err) {}
+      this.createLoading = false;
     },
 
     save() {
@@ -144,12 +146,18 @@ export default {
       if (val) {
         this.updateLoading = true;
         val.archive_date = toUtcDatetime(val.archive_date);
-        this.$rest.put(`/archives/${val.id}`, val).then(res => {
-          this.updateLoading = false;
-          this.dataMapping(res.data);
-          this.isUpdate = false;
-          this.isSave = false;
-        });
+        this.$rest
+          .put(`/archives/${val.id}`, val)
+          .then(res => {
+            this.updateLoading = false;
+            this.dataMapping(res.data);
+            this.isUpdate = false;
+            this.isSave = false;
+          })
+          .catch(() => {
+            this.updateLoading = false;
+            this.isSave = false;
+          });
       }
     },
   },

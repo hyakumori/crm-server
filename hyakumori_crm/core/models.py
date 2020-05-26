@@ -84,6 +84,7 @@ class HyakumoriDanticModel(BaseModel):
         orm_mode = True
         validate_assignment = True
         min_anystr_length = 1
+        max_anystr_length = 255
         anystr_strip_whitespace = True
         error_msg_templates = {
             "type_error.none.not_allowed": _("Required"),

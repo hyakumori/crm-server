@@ -28,14 +28,15 @@ export default {
       this.submiting = true;
       try {
         await this.$rest.put(`/customers/${this.id}/bank`, this.form);
-        this.submiting = false;
         this.$emit("updated");
         this.toggleEditing();
       } catch (error) {
-        this.submiting = false;
-        if (error.response) {
-          this.$refs.form.setErrors(error.response.data.errors);
+        if (error.response && error.response.status < 500) {
+          if (error.response.data)
+            this.$refs.form.setErrors(error.response.data.errors);
         }
+      } finally {
+        this.submiting = false;
       }
     },
     handleCancel() {
