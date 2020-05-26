@@ -3,7 +3,7 @@ import logging
 from django.utils.translation import gettext as _
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 
 from .exceptions import (
     ContentTypeNotFound,
@@ -21,8 +21,9 @@ from .schemas import (
     TagKeyMigrateAllInput,
 )
 from ..activity.services import ActivityService
-from ..api.decorators import action_login_required, api_validate_model
+from ..api.decorators import api_validate_model
 from ..core.utils import make_success_json, make_error_json
+from ..permissions import IsAdminUser
 from ..permissions.services import PermissionService
 
 
@@ -70,9 +71,8 @@ def get_tags_for_type(request, app_name, object_type):
 
 
 @api_view(["POST", "PUT", "DELETE"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 @api_validate_model(TagSettingInput, "tag_setting_input")
-@action_login_required(with_permissions=["change_tagsetting"])
 def modify_tag_for_type(
     request, app_name, object_type, tag_setting_input, *args, **kwargs
 ):
@@ -104,9 +104,8 @@ def modify_tag_for_type(
 
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 @api_validate_model(TagDeleteInput, "tag_delete_input")
-@action_login_required(with_permissions=["delete_tagsetting"])
 def delete_tag_for_type(
     request, app_name, object_type, tag_delete_input, *args, **kwargs
 ):
