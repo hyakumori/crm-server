@@ -61,6 +61,7 @@
 import { ValidationProvider } from "vee-validate";
 import UpdateButton from "./UpdateButton";
 import { hasScope } from "../../helpers/security";
+import { get as _get } from "lodash";
 
 export default {
   props: {
@@ -76,7 +77,7 @@ export default {
     return {
       isLoading: false,
       isUpdate: false,
-      memo: "",
+      memo: _get(this.value, "attributes.memo", ""),
       originalMemo: "",
     };
   },
