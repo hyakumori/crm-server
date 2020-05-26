@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-21 07:04+0000\n"
+"POT-Creation-Date: 2020-05-26 17:11+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,396 +18,385 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: hyakumori_crm/activity/models.py:13 hyakumori_crm/tags/models.py:12
+#: activity/models.py:13 tags/models.py:12
 msgid "content type"
 msgstr ""
 
-#: hyakumori_crm/activity/models.py:19
+#: activity/models.py:19
 msgid "object pk"
 msgstr ""
 
-#: hyakumori_crm/activity/models.py:27 hyakumori_crm/tags/models.py:22
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/token_blacklist/admin.py:77
+#: activity/models.py:27 tags/models.py:22
 msgid "user"
 msgstr ""
 
-#: hyakumori_crm/activity/models.py:34
+#: activity/models.py:34
 msgid "template rendering data"
 msgstr ""
 
-#: hyakumori_crm/activity/models.py:35
+#: activity/models.py:35
 msgid "change diff"
 msgstr ""
 
-#: hyakumori_crm/activity/models.py:36
+#: activity/models.py:36
 msgid "remote IP"
 msgstr ""
 
-#: hyakumori_crm/activity/models.py:37
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/token_blacklist/admin.py:82
+#: activity/models.py:37
 msgid "created at"
 msgstr ""
 
-#: hyakumori_crm/activity/models.py:41
+#: activity/models.py:41
 msgid "log action"
 msgstr ""
 
-#: hyakumori_crm/activity/models.py:42
+#: activity/models.py:42
 msgid "log actions"
 msgstr ""
 
-#: hyakumori_crm/activity/models.py:45
+#: activity/models.py:45
 #, python-brace-format
 msgid "Logged action, id: {id}"
-msgstr ""
+msgstr "ログに記録されたアクション、ID：{id}"
 
-#: hyakumori_crm/archive/restful.py:184
+#: archive/restful.py:155
 msgid "Could not get download url"
-msgstr ""
+msgstr "ダウンロードURLを取得できませんでした"
 
-#: hyakumori_crm/archive/schemas.py:91 hyakumori_crm/archive/schemas.py:95
-#: hyakumori_crm/archive/schemas.py:99 hyakumori_crm/archive/schemas.py:113
-#: hyakumori_crm/customer/schemas.py:223 hyakumori_crm/customer/schemas.py:267
-#, fuzzy
-#| msgid "Contact not found"
+#: archive/schemas.py:91 archive/schemas.py:95 archive/schemas.py:99
+#: archive/schemas.py:113 customer/schemas.py:216 customer/schemas.py:260
 msgid "Contact {} not found"
-msgstr "連絡先が見つかりません"
+msgstr "連絡先{}が見つかりません"
 
-#: hyakumori_crm/archive/schemas.py:121
+#: archive/schemas.py:121
 msgid "Contact {} already exists"
-msgstr ""
+msgstr "連絡先{}は既に存在します"
 
-#: hyakumori_crm/archive/service.py:45 hyakumori_crm/archive/service.py:58
-#, fuzzy
-#| msgid "Contact not found"
+#: archive/service.py:55 archive/service.py:68
 msgid "Attachment not found"
-msgstr "連絡先が見つかりません"
+msgstr "添付ファイルが見つかりません"
 
-#: hyakumori_crm/archive/views.py:17
+#: archive/views.py:17
 msgid "expired url"
-msgstr ""
+msgstr "期限切れのURL"
 
-#: hyakumori_crm/archive/views.py:26
-#, fuzzy
-#| msgid "Forest not found"
+#: archive/views.py:26
 msgid "file not found"
-msgstr "森が見つかりません"
+msgstr "ファイルが見つかりません"
 
-#: hyakumori_crm/core/http.py:12
+#: core/http.py:12
 msgid "Not found"
 msgstr "見つかりません"
 
-#: hyakumori_crm/core/models.py:89 hyakumori_crm/core/models.py:91
+#: core/models.py:90 core/models.py:92
 msgid "Required"
 msgstr "必須"
 
-#: hyakumori_crm/core/models.py:90
+#: core/models.py:91
 msgid "Bad format"
 msgstr "形式が正しくありません"
 
-#: hyakumori_crm/core/models.py:92
+#: core/models.py:93
 msgid "Invalid Email"
 msgstr "無効なメール"
 
-#: hyakumori_crm/core/models.py:94
+#: core/models.py:95
 #, python-brace-format
 msgid "Required at least {limit_value} character"
 msgstr "{limit_value}文字以上入力する必要があります。"
 
-#: hyakumori_crm/customer/resolvers.py:39
+#: core/models.py:97
+msgid "Invalid date format"
+msgstr "無効な日付形式"
+
+#: customer/resolvers.py:22
 msgid "Internal Id"
 msgstr "新規ID発行"
 
-#: hyakumori_crm/customer/resolvers.py:40
+#: customer/resolvers.py:23
 msgid "Fullname Kanji"
 msgstr "土地所有者名"
 
-#: hyakumori_crm/customer/resolvers.py:41
+#: customer/resolvers.py:24
 msgid "Fullname Kana"
 msgstr "土地所有者名（ｶﾅ）"
 
-#: hyakumori_crm/customer/resolvers.py:42
+#: customer/resolvers.py:25
 msgid "Postal Code"
 msgstr "郵便番号"
 
-#: hyakumori_crm/customer/resolvers.py:43 hyakumori_crm/forest/resolvers.py:20
+#: customer/resolvers.py:26 forest/resolvers.py:20
 msgid "Prefecture"
 msgstr "地籍_都道府県"
 
-#: hyakumori_crm/customer/resolvers.py:44 hyakumori_crm/forest/resolvers.py:26
+#: customer/resolvers.py:27 forest/resolvers.py:26
 msgid "Municipality"
 msgstr "地籍_市町村"
 
-#: hyakumori_crm/customer/resolvers.py:45
+#: customer/resolvers.py:28
 msgid "Address"
 msgstr "住所"
 
-#: hyakumori_crm/customer/resolvers.py:46
+#: customer/resolvers.py:29
 msgid "Telephone"
 msgstr "電話番号"
 
-#: hyakumori_crm/customer/resolvers.py:47
+#: customer/resolvers.py:30
 msgid "Mobilephone"
 msgstr "携帯番号"
 
-#: hyakumori_crm/customer/resolvers.py:48
+#: customer/resolvers.py:31
 msgid "Email"
 msgstr "メールアドレス"
 
-#: hyakumori_crm/customer/resolvers.py:49 hyakumori_crm/customer/restful.py:247
-#: hyakumori_crm/forest/resolvers.py:110 hyakumori_crm/forest/service.py:183
+#: customer/resolvers.py:32 customer/restful.py:270 customer/tasks.py:33
+#: forest/resolvers.py:110 forest/service.py:223
 msgid "Tag"
 msgstr "タグ"
 
-#: hyakumori_crm/customer/schemas.py:137
-msgid "Duplicate contacts"
-msgstr ""
+#: customer/restful.py:311 customer/restful.py:324 forest/restful.py:189
+#: forest/restful.py:202
+msgid "Please upload a csv file!!"
+msgstr "csvファイルをアップロードしてください!!"
 
-#: hyakumori_crm/customer/schemas.py:147
+#: customer/schemas.py:130
+msgid "Duplicate contacts"
+msgstr "重複する連絡先"
+
+#: customer/schemas.py:140
 #, python-brace-format
 msgid "Contact {c} not belong to forest and customer"
 msgstr "連絡先{c}はフォレストと顧客に属していません"
 
-#: hyakumori_crm/customer/schemas.py:159
+#: customer/schemas.py:152
 #, python-brace-format
 msgid "Contact {pk} not found"
 msgstr "連絡先{pk}が見つかりません"
 
-#: hyakumori_crm/customer/schemas.py:178 hyakumori_crm/customer/schemas.py:186
+#: customer/schemas.py:171 customer/schemas.py:179
 #, fuzzy
 #| msgid "Forest not found"
 msgid "Forest Id {} not found"
 msgstr "森が見つかりません"
 
-#: hyakumori_crm/customer/schemas.py:255
+#: customer/schemas.py:248
 msgid "forest_id not provied for contact_type FOREST"
-msgstr ""
+msgstr "連絡先タイプFORESTにフォレストIDが指定されていません"
 
-#: hyakumori_crm/customer/schemas.py:261
+#: customer/schemas.py:254
 msgid "Forest {} not found"
 msgstr "森{}が見つかりません"
 
-#: hyakumori_crm/customer/schemas.py:306
+#: customer/schemas.py:299 customer/schemas.py:348
 msgid "Enter at least telephone or mobilephone or email."
 msgstr "少なくとも電話、携帯電話、または電子メールを入力してください。"
 
-#: hyakumori_crm/customer/service.py:38 hyakumori_crm/forest/service.py:42
+#: customer/service.py:39 forest/service.py:66
 msgid "Customer not found"
 msgstr "顧客が見つかりません"
 
-#: hyakumori_crm/customer/service.py:490
+#: customer/service.py:501
 msgid "Customer ID is empty or not available"
-msgstr ""
+msgstr "お客様IDが空か、使用できません"
 
-#: hyakumori_crm/forest/resolvers.py:18
+#: forest/resolvers.py:18
 msgid "Forest ID"
 msgstr "土地管理ID"
 
-#: hyakumori_crm/forest/resolvers.py:32
+#: forest/resolvers.py:32
 msgid "Sector"
 msgstr "地籍_大字"
 
-#: hyakumori_crm/forest/resolvers.py:38
+#: forest/resolvers.py:38
 msgid "Subsector"
 msgstr "地籍_字"
 
-#: hyakumori_crm/forest/resolvers.py:44
+#: forest/resolvers.py:44
 msgid "Owner name Kanji"
 msgstr "土地所有者名_漢字"
 
-#: hyakumori_crm/forest/resolvers.py:50
+#: forest/resolvers.py:50
 msgid "Owner name Kana"
 msgstr "土地所有者名_カナ"
 
-#: hyakumori_crm/forest/resolvers.py:56
+#: forest/resolvers.py:56
 msgid "Long term contract"
 msgstr "長期契約"
 
-#: hyakumori_crm/forest/resolvers.py:62
+#: forest/resolvers.py:62
 msgid "Long term start"
 msgstr "開始日"
 
-#: hyakumori_crm/forest/resolvers.py:68
+#: forest/resolvers.py:68
 msgid "Long term end"
 msgstr "終了日"
 
-#: hyakumori_crm/forest/resolvers.py:74
+#: forest/resolvers.py:74
 msgid "Work load contract"
 msgstr "作業道契約"
 
-#: hyakumori_crm/forest/resolvers.py:80
+#: forest/resolvers.py:80
 msgid "Work load start"
 msgstr "開始日"
 
-#: hyakumori_crm/forest/resolvers.py:86
+#: forest/resolvers.py:86
 msgid "Work load end"
 msgstr "終了日"
 
-#: hyakumori_crm/forest/resolvers.py:92
+#: forest/resolvers.py:92
 msgid "FSC certification participation"
 msgstr "FSC認証加入"
 
-#: hyakumori_crm/forest/resolvers.py:98
+#: forest/resolvers.py:98
 msgid "FSC start"
 msgstr "開始日"
 
-#: hyakumori_crm/forest/resolvers.py:104
+#: forest/resolvers.py:104
 msgid "FSC end"
 msgstr "終了日"
 
-#: hyakumori_crm/forest/schemas.py:115 hyakumori_crm/forest/schemas.py:125
+#: forest/schemas.py:117 forest/schemas.py:127
 #, fuzzy
 #| msgid "Customer Id {v} not found"
 msgid "Customer Id {} not found"
 msgstr "カスタマーID {v}が見つかりません"
 
-#: hyakumori_crm/forest/schemas.py:147 hyakumori_crm/forest/schemas.py:172
+#: forest/schemas.py:149 forest/schemas.py:174
 #, fuzzy, python-brace-format
 #| msgid "Customer Id {v} not found"
 msgid "Customer {v} not found"
 msgstr "カスタマーID {v}が見つかりません"
 
-#: hyakumori_crm/forest/schemas.py:181
+#: forest/schemas.py:183
 #, fuzzy, python-brace-format
 #| msgid "Contact not found"
 msgid "Contact {v} not found"
 msgstr "連絡先が見つかりません"
 
-#: hyakumori_crm/forest/service.py:27 tests/test_api/test_forest_api.py:66
+#: forest/service.py:41 forest/service.py:475
 msgid "Forest not found"
 msgstr "森が見つかりません"
 
-#: hyakumori_crm/forest/service.py:326
-#, python-brace-format
-msgid "{column} error at line {row_num}"
-msgstr "{column}カラムの{row_num}行目の値が不正です。"
-
-#: hyakumori_crm/settings.py:165
+#: settings.py:166
 msgid "Japan"
 msgstr "Japan"
 
-#: hyakumori_crm/tags/models.py:17
-#, fuzzy
-#| msgid "Same name"
+#: tags/models.py:17
 msgid "tag name"
-msgstr "同姓同名"
+msgstr "タグ名"
 
-#: hyakumori_crm/tags/models.py:19
+#: tags/models.py:19
 msgid "slug alike sanitized"
 msgstr ""
 
-#: hyakumori_crm/tags/models.py:31
+#: tags/models.py:31
 msgid "tag setting"
 msgstr ""
 
-#: hyakumori_crm/tags/models.py:32
+#: tags/models.py:32
 msgid "tag settings"
 msgstr ""
 
-#: hyakumori_crm/tags/models.py:38
+#: tags/models.py:38
 #, python-brace-format
 msgid "TagSettings, id: {id}"
 msgstr ""
 
-#: hyakumori_crm/tags/restful.py:43 hyakumori_crm/tags/restful.py:65
-#: hyakumori_crm/tags/restful.py:80 hyakumori_crm/tags/restful.py:114
-#: hyakumori_crm/tags/restful.py:129 hyakumori_crm/tags/restful.py:158
-#: hyakumori_crm/tags/restful.py:190
+#: tags/restful.py:44 tags/restful.py:66 tags/restful.py:80 tags/restful.py:113
+#: tags/restful.py:128 tags/restful.py:157 tags/restful.py:189
 msgid "Wrong parameters"
 msgstr ""
 
-#: hyakumori_crm/tags/services.py:22
+#: tags/services.py:22
 #, python-format
 msgid "Could not resolve content type for %(app_name)s, model %(object_type)s"
 msgstr ""
 
-#: hyakumori_crm/tags/services.py:93
+#: tags/services.py:93
 #, python-format
 msgid "Setting for tag %(tag)s already existed"
 msgstr ""
 
-#: hyakumori_crm/tags/services.py:99 hyakumori_crm/tags/services.py:162
+#: tags/services.py:99 tags/services.py:162
 #, python-format
 msgid "Could not find tag setting %(id)s"
 msgstr ""
 
-#: hyakumori_crm/tags/services.py:121
-#, fuzzy
-#| msgid "Email existed"
+#: tags/services.py:121
 msgid "tags field not existed"
-msgstr "メールが存在します"
+msgstr "タグフィールドが存在しません"
 
-#: hyakumori_crm/tags/services.py:125
+#: tags/services.py:125
 #, python-format
 msgid "Could not retrieve object: %(object_type)s, with ID: %(object_id)s"
 msgstr ""
 
-#: hyakumori_crm/users/managers.py:16
+#: users/managers.py:16
 msgid "The Email must be set"
 msgstr "The Email must be set"
 
-#: hyakumori_crm/users/managers.py:32
+#: users/managers.py:32
 msgid "Superuser must have is_staff=True."
 msgstr "Superuser must have is_staff=True."
 
-#: hyakumori_crm/users/managers.py:34
+#: users/managers.py:34
 msgid "Superuser must have is_superuser=True."
 msgstr "Superuser must have is_superuser=True."
 
-#: hyakumori_crm/users/models.py:20
+#: users/models.py:20
 msgid "email address"
 msgstr "メールアドレス"
 
-#: hyakumori_crm/users/serializers.py:108
+#: users/serializers.py:108
 msgid "Email existed"
 msgstr "メールが存在します"
 
-#: hyakumori_crm/users/serializers.py:122
+#: users/serializers.py:122
 msgid "Username existed"
 msgstr "ユーザー名が存在します"
 
-#: hyakumori_crm/users/templates/email/confirmation.html:4
-#: hyakumori_crm/users/templates/email/en/confirmation.html:4
+#: users/templates/email/confirmation.html:4
+#: users/templates/email/en/confirmation.html:4
 #, python-format
 msgid ""
 "%(site_name)s - Your account has been successfully created and activated!"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/confirmation.html:8
-#: hyakumori_crm/users/templates/email/confirmation.html:16
-#: hyakumori_crm/users/templates/email/en/confirmation.html:8
-#: hyakumori_crm/users/templates/email/en/confirmation.html:16
+#: users/templates/email/confirmation.html:8
+#: users/templates/email/confirmation.html:16
+#: users/templates/email/en/confirmation.html:8
+#: users/templates/email/en/confirmation.html:16
 msgid "Your account has been created and is ready to use!"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/confirmation.html:10
-#: hyakumori_crm/users/templates/email/confirmation.html:18
-#: hyakumori_crm/users/templates/email/en/confirmation.html:10
-#: hyakumori_crm/users/templates/email/en/confirmation.html:18
-#: hyakumori_crm/users/templates/email/en/password_reset.html:14
-#: hyakumori_crm/users/templates/email/en/username_reset.html:14
-#: hyakumori_crm/users/templates/email/username_reset.html:14
+#: users/templates/email/confirmation.html:10
+#: users/templates/email/confirmation.html:18
+#: users/templates/email/en/confirmation.html:10
+#: users/templates/email/en/confirmation.html:18
+#: users/templates/email/en/password_reset.html:14
+#: users/templates/email/en/username_reset.html:14
+#: users/templates/email/username_reset.html:14
 msgid "Thanks for using our site!"
 msgstr "アカウントが作成され、使用できるようになりました！"
 
-#: hyakumori_crm/users/templates/email/confirmation.html:12
-#: hyakumori_crm/users/templates/email/confirmation.html:20
-#: hyakumori_crm/users/templates/email/en/confirmation.html:12
-#: hyakumori_crm/users/templates/email/en/confirmation.html:20
-#: hyakumori_crm/users/templates/email/en/password_reset.html:16
-#: hyakumori_crm/users/templates/email/en/username_reset.html:16
-#: hyakumori_crm/users/templates/email/username_reset.html:16
+#: users/templates/email/confirmation.html:12
+#: users/templates/email/confirmation.html:20
+#: users/templates/email/en/confirmation.html:12
+#: users/templates/email/en/confirmation.html:20
+#: users/templates/email/en/password_reset.html:16
+#: users/templates/email/en/username_reset.html:16
+#: users/templates/email/username_reset.html:16
 #, python-format
 msgid "The %(site_name)s team"
 msgstr "%(site_name)sチーム"
 
-#: hyakumori_crm/users/templates/email/en/activation.html:4
-#: hyakumori_crm/users/templates/email/en/activation.html:22
+#: users/templates/email/en/activation.html:4
+#: users/templates/email/en/activation.html:22
 #, python-format
 msgid "Account activation on %(site_name)s"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/activation.html:8
+#: users/templates/email/en/activation.html:8
 #, python-format
 msgid ""
 "\n"
@@ -415,16 +404,16 @@ msgid ""
 "process on %(site_name)s.\n"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/activation.html:12
-#: hyakumori_crm/users/templates/email/en/activation.html:401
+#: users/templates/email/en/activation.html:12
+#: users/templates/email/en/activation.html:401
 msgid "Please go to the following page to activate account"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/activation.html:375
+#: users/templates/email/en/activation.html:375
 msgid "Please activate your account"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/activation.html:396
+#: users/templates/email/en/activation.html:396
 #, python-format
 msgid ""
 "\n"
@@ -435,1402 +424,220 @@ msgid ""
 "                                            "
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/activation.html:415
+#: users/templates/email/en/activation.html:415
 msgid "Activate account"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/activation.html:425
+#: users/templates/email/en/activation.html:425
 msgid ""
 "Or copy following url and paste into your browser address to activate your "
 "account:"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/password_reset.html:4
-#: hyakumori_crm/users/templates/email/en/password_reset.html:24
+#: users/templates/email/en/password_reset.html:4
+#: users/templates/email/en/password_reset.html:24
 #, python-format
 msgid "Password reset on %(site_name)s"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/password_reset.html:8
+#: users/templates/email/en/password_reset.html:8
 #, python-format
 msgid ""
 "You're receiving this email because you requested a password reset for your "
 "user account at %(site_name)s."
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/password_reset.html:10
-#: hyakumori_crm/users/templates/email/en/password_reset.html:398
+#: users/templates/email/en/password_reset.html:10
+#: users/templates/email/en/password_reset.html:398
 msgid "Please go to the following page and choose a new password:"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/password_reset.html:12
-#: hyakumori_crm/users/templates/email/en/username_reset.html:12
-#: hyakumori_crm/users/templates/email/username_reset.html:12
+#: users/templates/email/en/password_reset.html:12
+#: users/templates/email/en/username_reset.html:12
+#: users/templates/email/username_reset.html:12
 msgid "Your username, in case you've forgotten:"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/password_reset.html:377
+#: users/templates/email/en/password_reset.html:377
 msgid "Reset password for your account"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/password_reset.html:397
+#: users/templates/email/en/password_reset.html:397
 #, python-format
 msgid ""
 " You're receiving this email because you requested a password reset for your "
 "user account at %(site_name)s."
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/password_reset.html:400
-#: hyakumori_crm/users/templates/email/en/username_reset.html:400
-#: hyakumori_crm/users/templates/email/username_reset.html:400
+#: users/templates/email/en/password_reset.html:400
+#: users/templates/email/en/username_reset.html:400
+#: users/templates/email/username_reset.html:400
 msgid "Your email, in case you've forgotten:"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/password_reset.html:413
-#: hyakumori_crm/users/templates/email/en/username_reset.html:413
-#: hyakumori_crm/users/templates/email/username_reset.html:413
+#: users/templates/email/en/password_reset.html:413
+#: users/templates/email/en/username_reset.html:413
+#: users/templates/email/username_reset.html:413
 msgid "Reset password"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/password_reset.html:424
-#: hyakumori_crm/users/templates/email/en/username_reset.html:424
-#: hyakumori_crm/users/templates/email/username_reset.html:424
+#: users/templates/email/en/password_reset.html:424
+#: users/templates/email/en/username_reset.html:424
+#: users/templates/email/username_reset.html:424
 msgid ""
 "Or copy following url and paste into your browser address to reset your "
 "password:"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/username_reset.html:4
-#: hyakumori_crm/users/templates/email/username_reset.html:4
+#: users/templates/email/en/username_reset.html:4
+#: users/templates/email/username_reset.html:4
 #, python-format
 msgid "Username reset on %(site_name)s"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/username_reset.html:8
-#: hyakumori_crm/users/templates/email/username_reset.html:8
+#: users/templates/email/en/username_reset.html:8
+#: users/templates/email/username_reset.html:8
 #, python-format
 msgid ""
 "You're receiving this email because you requested a username reset for your "
 "user account at %(site_name)s."
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/username_reset.html:10
-#: hyakumori_crm/users/templates/email/username_reset.html:10
+#: users/templates/email/en/username_reset.html:10
+#: users/templates/email/username_reset.html:10
 msgid "Please go to the following page and choose a new username:"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/username_reset.html:24
-#: hyakumori_crm/users/templates/email/username_reset.html:24
+#: users/templates/email/en/username_reset.html:24
+#: users/templates/email/username_reset.html:24
 #, python-format
 msgid "Request changing email on %(site_name)s"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/username_reset.html:377
-#: hyakumori_crm/users/templates/email/username_reset.html:377
+#: users/templates/email/en/username_reset.html:377
+#: users/templates/email/username_reset.html:377
 msgid "Change email for your account"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/username_reset.html:397
-#: hyakumori_crm/users/templates/email/username_reset.html:397
+#: users/templates/email/en/username_reset.html:397
+#: users/templates/email/username_reset.html:397
 #, python-format
 msgid ""
 " You're receiving this email because you requested changing your email for "
 "your user account at %(site_name)s."
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/en/username_reset.html:398
-#: hyakumori_crm/users/templates/email/username_reset.html:398
+#: users/templates/email/en/username_reset.html:398
+#: users/templates/email/username_reset.html:398
 msgid "Please go to the following page and define reset email:"
 msgstr ""
 
-#: hyakumori_crm/users/templates/email/password_reset.html:435
+#: users/templates/email/password_reset.html:435
 msgid "パスワードリセット"
 msgstr ""
 
-#: venv/lib/python3.7/site-packages/_pytest/config/argparsing.py:443
-#, python-format
-msgid "ambiguous option: %(option)s could match %(matches)s"
-msgstr ""
+#~ msgid "{column} error at line {row_num}"
+#~ msgstr "{column}カラムの{row_num}行目の値が不正です。"
 
-#: venv/lib/python3.7/site-packages/ariadne/contrib/django/scalars.py:30
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:397
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:1127
 #, fuzzy
-#| msgid "email address"
-msgid "Enter a valid date."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Enter a valid date."
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/ariadne/contrib/django/scalars.py:43
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:443
 #, fuzzy
-#| msgid "email address"
-msgid "Enter a valid date/time."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Enter a valid date/time."
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/django/contrib/messages/apps.py:7
-msgid "Messages"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/contrib/sitemaps/apps.py:7
-msgid "Site Maps"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/contrib/staticfiles/apps.py:9
-msgid "Static Files"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/contrib/syndication/apps.py:7
-msgid "Syndication"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/core/paginator.py:45
-msgid "That page number is not an integer"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/core/paginator.py:47
-msgid "That page number is less than 1"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/core/paginator.py:52
-msgid "That page contains no results"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:32
 #, fuzzy
-#| msgid "email address"
-msgid "Enter a valid value."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Enter a valid value."
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/django/core/validators.py:103
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:659
 #, fuzzy
-#| msgid "email address"
-msgid "Enter a valid URL."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Enter a valid URL."
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/django/core/validators.py:155
 #, fuzzy
-#| msgid "email address"
-msgid "Enter a valid integer."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Enter a valid integer."
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/django/core/validators.py:166
 #, fuzzy
-#| msgid "email address"
-msgid "Enter a valid email address."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Enter a valid email address."
+#~ msgstr "メールアドレス"
 
-#. Translators: "letters" means latin letters: a-z and A-Z.
-#: venv/lib/python3.7/site-packages/django/core/validators.py:240
-msgid ""
-"Enter a valid “slug” consisting of letters, numbers, underscores or hyphens."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:247
-msgid ""
-"Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or "
-"hyphens."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:256
-#: venv/lib/python3.7/site-packages/django/core/validators.py:276
 #, fuzzy
-#| msgid "email address"
-msgid "Enter a valid IPv4 address."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Enter a valid IPv4 address."
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/django/core/validators.py:261
-#: venv/lib/python3.7/site-packages/django/core/validators.py:277
 #, fuzzy
-#| msgid "email address"
-msgid "Enter a valid IPv6 address."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Enter a valid IPv6 address."
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/django/core/validators.py:271
-#: venv/lib/python3.7/site-packages/django/core/validators.py:275
 #, fuzzy
-#| msgid "email address"
-msgid "Enter a valid IPv4 or IPv6 address."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Enter a valid IPv4 or IPv6 address."
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/django/core/validators.py:305
-msgid "Enter only digits separated by commas."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:311
-#, python-format
-msgid "Ensure this value is %(limit_value)s (it is %(show_value)s)."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:343
-#, python-format
-msgid "Ensure this value is less than or equal to %(limit_value)s."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:352
-#, python-format
-msgid "Ensure this value is greater than or equal to %(limit_value)s."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:362
-#, python-format
-msgid ""
-"Ensure this value has at least %(limit_value)d character (it has "
-"%(show_value)d)."
-msgid_plural ""
-"Ensure this value has at least %(limit_value)d characters (it has "
-"%(show_value)d)."
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:377
-#, python-format
-msgid ""
-"Ensure this value has at most %(limit_value)d character (it has "
-"%(show_value)d)."
-msgid_plural ""
-"Ensure this value has at most %(limit_value)d characters (it has "
-"%(show_value)d)."
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:396
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:291
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:326
-msgid "Enter a number."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:398
-#, python-format
-msgid "Ensure that there are no more than %(max)s digit in total."
-msgid_plural "Ensure that there are no more than %(max)s digits in total."
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:403
-#, python-format
-msgid "Ensure that there are no more than %(max)s decimal place."
-msgid_plural "Ensure that there are no more than %(max)s decimal places."
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:408
-#, python-format
-msgid ""
-"Ensure that there are no more than %(max)s digit before the decimal point."
-msgid_plural ""
-"Ensure that there are no more than %(max)s digits before the decimal point."
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:470
-#, python-format
-msgid ""
-"File extension “%(extension)s” is not allowed. Allowed extensions are: "
-"%(allowed_extensions)s."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/core/validators.py:522
-msgid "Null characters are not allowed."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/base.py:1181
-#: venv/lib/python3.7/site-packages/django/forms/models.py:759
-msgid "and"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/base.py:1183
-#, python-format
-msgid "%(model_name)s with this %(field_labels)s already exists."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:104
-#, python-format
-msgid "Value %(value)r is not a valid choice."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:105
-msgid "This field cannot be null."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:106
-msgid "This field cannot be blank."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:107
-#, python-format
-msgid "%(model_name)s with this %(field_label)s already exists."
-msgstr ""
-
-#. Translators: The 'lookup_type' is one of 'date', 'year' or 'month'.
-#. Eg: "Title must be unique for pub_date year"
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:111
-#, python-format
-msgid ""
-"%(field_label)s must be unique for %(date_field_label)s %(lookup_type)s."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:130
-#, python-format
-msgid "Field of type: %(field_type)s"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:937
-#, python-format
-msgid "“%(value)s” value must be either True or False."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:938
-#, python-format
-msgid "“%(value)s” value must be either True, False, or None."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:940
-msgid "Boolean (Either True or False)"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:981
-#, python-format
-msgid "String (up to %(max_length)s)"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1045
-msgid "Comma-separated integers"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1094
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid date format. It must be in YYYY-MM-DD "
-"format."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1096
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1239
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (YYYY-MM-DD) but it is an invalid "
-"date."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1099
-msgid "Date (without time)"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1237
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in YYYY-MM-DD HH:MM[:ss[."
-"uuuuuu]][TZ] format."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1241
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]]"
-"[TZ]) but it is an invalid date/time."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1245
-msgid "Date (with time)"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1393
-#, python-format
-msgid "“%(value)s” value must be a decimal number."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1395
-msgid "Decimal number"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1534
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in [DD] [[HH:]MM:]ss[."
-"uuuuuu] format."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1537
-msgid "Duration"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1587
 #, fuzzy
-#| msgid "email address"
-msgid "Email address"
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Email address"
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1610
-msgid "File path"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1676
-#, python-format
-msgid "“%(value)s” value must be a float."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1678
-msgid "Floating point number"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1716
-#, python-format
-msgid "“%(value)s” value must be an integer."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1718
-msgid "Integer"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1801
-msgid "Big (8 byte) integer"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1817
 #, fuzzy
-#| msgid "email address"
-msgid "IPv4 address"
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "IPv4 address"
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1848
 #, fuzzy
-#| msgid "Address"
-msgid "IP address"
-msgstr "住所"
+#~| msgid "Address"
+#~ msgid "IP address"
+#~ msgstr "住所"
 
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1928
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1929
-#, python-format
-msgid "“%(value)s” value must be either None, True or False."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1931
-msgid "Boolean (Either True, False or None)"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1966
-msgid "Positive integer"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1979
-msgid "Positive small integer"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:1993
-#, python-format
-msgid "Slug (up to %(max_length)s)"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:2025
-msgid "Small integer"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:2032
-msgid "Text"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:2060
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] "
-"format."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:2062
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (HH:MM[:ss[.uuuuuu]]) but it is an "
-"invalid time."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:2065
-msgid "Time"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:2191
-msgid "URL"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:2213
-msgid "Raw binary data"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:2278
-#, python-format
-msgid "“%(value)s” is not a valid UUID."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/__init__.py:2280
-msgid "Universally unique identifier"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/files.py:221
-msgid "File"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/files.py:360
-msgid "Image"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/related.py:778
-#, python-format
-msgid "%(model)s instance with %(field)s %(value)r does not exist."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/related.py:780
-msgid "Foreign Key (type determined by related field)"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/related.py:1012
-msgid "One-to-one relationship"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/related.py:1066
-#, python-format
-msgid "%(from)s-%(to)s relationship"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/related.py:1067
-#, python-format
-msgid "%(from)s-%(to)s relationships"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/db/models/fields/related.py:1109
-msgid "Many-to-many relationship"
-msgstr ""
-
-#. Translators: If found as last label character, these punctuation
-#. characters will prevent the default label_suffix to be appended to the label
-#: venv/lib/python3.7/site-packages/django/forms/boundfield.py:149
-msgid ":?.!"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:53
-msgid "This field is required."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:246
-msgid "Enter a whole number."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:421
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:1128
 #, fuzzy
-#| msgid "email address"
-msgid "Enter a valid time."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Enter a valid time."
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:472
 #, fuzzy
-#| msgid "email address"
-msgid "Enter a valid duration."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Enter a valid duration."
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:473
-#, python-brace-format
-msgid "The number of days must be between {min_days} and {max_days}."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:533
-msgid "No file was submitted. Check the encoding type on the form."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:534
-msgid "No file was submitted."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:535
-msgid "The submitted file is empty."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:537
-#, python-format
-msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
-msgid_plural ""
-"Ensure this filename has at most %(max)d characters (it has %(length)d)."
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:540
-msgid "Please either submit a file or check the clear checkbox, not both."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:601
-msgid ""
-"Upload a valid image. The file you uploaded was either not an image or a "
-"corrupted image."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:763
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:853
-#: venv/lib/python3.7/site-packages/django/forms/models.py:1275
-#, python-format
-msgid "Select a valid choice. %(value)s is not one of the available choices."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:854
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:969
-#: venv/lib/python3.7/site-packages/django/forms/models.py:1274
 #, fuzzy
-#| msgid "email address"
-msgid "Enter a list of values."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Enter a list of values."
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:970
-msgid "Enter a complete value."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/fields.py:1186
 #, fuzzy
-#| msgid "email address"
-msgid "Enter a valid UUID."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "Enter a valid UUID."
+#~ msgstr "メールアドレス"
 
-#. Translators: This is the default suffix added to form field labels
-#: venv/lib/python3.7/site-packages/django/forms/forms.py:81
-msgid ":"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/forms.py:207
-#, python-format
-msgid "(Hidden field %(name)s) %(error)s"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/formsets.py:93
-msgid "ManagementForm data is missing or has been tampered with"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/formsets.py:345
-#, python-format
-msgid "Please submit %d or fewer forms."
-msgid_plural "Please submit %d or fewer forms."
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/forms/formsets.py:352
-#, python-format
-msgid "Please submit %d or more forms."
-msgid_plural "Please submit %d or more forms."
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/forms/formsets.py:379
-#: venv/lib/python3.7/site-packages/django/forms/formsets.py:386
-msgid "Order"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/formsets.py:391
-msgid "Delete"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/models.py:754
-#, python-format
-msgid "Please correct the duplicate data for %(field)s."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/models.py:758
-#, python-format
-msgid "Please correct the duplicate data for %(field)s, which must be unique."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/models.py:764
-#, python-format
-msgid ""
-"Please correct the duplicate data for %(field_name)s which must be unique "
-"for the %(lookup)s in %(date_field)s."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/models.py:773
-msgid "Please correct the duplicate values below."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/models.py:1094
-msgid "The inline value did not match the parent instance."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/models.py:1161
-msgid "Select a valid choice. That choice is not one of the available choices."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/models.py:1277
-#, python-format
-msgid "“%(pk)s” is not a valid value."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/utils.py:162
-#, python-format
-msgid ""
-"%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
-"may be ambiguous or it may not exist."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/widgets.py:395
-msgid "Clear"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/widgets.py:396
-msgid "Currently"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/widgets.py:397
-msgid "Change"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/widgets.py:709
-msgid "Unknown"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/widgets.py:710
-msgid "Yes"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/forms/widgets.py:711
-msgid "No"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/template/defaultfilters.py:788
-msgid "yes,no,maybe"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/template/defaultfilters.py:817
-#: venv/lib/python3.7/site-packages/django/template/defaultfilters.py:834
-#, python-format
-msgid "%(size)d byte"
-msgid_plural "%(size)d bytes"
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/template/defaultfilters.py:836
-#, python-format
-msgid "%s KB"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/template/defaultfilters.py:838
-#, python-format
-msgid "%s MB"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/template/defaultfilters.py:840
-#, python-format
-msgid "%s GB"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/template/defaultfilters.py:842
-#, python-format
-msgid "%s TB"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/template/defaultfilters.py:844
-#, python-format
-msgid "%s PB"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dateformat.py:62
-msgid "p.m."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dateformat.py:63
-msgid "a.m."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dateformat.py:68
-msgid "PM"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dateformat.py:69
-msgid "AM"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dateformat.py:150
-msgid "midnight"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dateformat.py:152
-msgid "noon"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:6
-msgid "Monday"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:6
-msgid "Tuesday"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:6
-msgid "Wednesday"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:6
-msgid "Thursday"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:6
-msgid "Friday"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:7
-msgid "Saturday"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:7
-msgid "Sunday"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:10
-msgid "Mon"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:10
-msgid "Tue"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:10
-msgid "Wed"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:10
-msgid "Thu"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:10
-msgid "Fri"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:11
 #, fuzzy
-#| msgid "Status"
-msgid "Sat"
-msgstr "未登録/登録"
+#~| msgid "Status"
+#~ msgid "Sat"
+#~ msgstr "未登録/登録"
 
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:11
-msgid "Sun"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:14
-msgid "January"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:14
-msgid "February"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:14
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:14
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:14
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:14
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:15
-msgid "July"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:15
-msgid "August"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:15
-msgid "September"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:15
-msgid "October"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:15
-msgid "November"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:16
-msgid "December"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:19
-msgid "jan"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:19
-msgid "feb"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:19
-msgid "mar"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:19
-msgid "apr"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:19
-msgid "may"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:19
-msgid "jun"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:20
-msgid "jul"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:20
-msgid "aug"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:20
-msgid "sep"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:20
-msgid "oct"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:20
-msgid "nov"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:20
-msgid "dec"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:23
-msgctxt "abbrev. month"
-msgid "Jan."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:24
-msgctxt "abbrev. month"
-msgid "Feb."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:25
-msgctxt "abbrev. month"
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:26
-msgctxt "abbrev. month"
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:27
-msgctxt "abbrev. month"
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:28
-msgctxt "abbrev. month"
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:29
-msgctxt "abbrev. month"
-msgid "July"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:30
-msgctxt "abbrev. month"
-msgid "Aug."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:31
-msgctxt "abbrev. month"
-msgid "Sept."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:32
-msgctxt "abbrev. month"
-msgid "Oct."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:33
-msgctxt "abbrev. month"
-msgid "Nov."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:34
-msgctxt "abbrev. month"
-msgid "Dec."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:37
-msgctxt "alt. month"
-msgid "January"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:38
-msgctxt "alt. month"
-msgid "February"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:39
-msgctxt "alt. month"
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:40
-msgctxt "alt. month"
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:41
-msgctxt "alt. month"
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:42
-msgctxt "alt. month"
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:43
-msgctxt "alt. month"
-msgid "July"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:44
-msgctxt "alt. month"
-msgid "August"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:45
-msgctxt "alt. month"
-msgid "September"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:46
-msgctxt "alt. month"
-msgid "October"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:47
-msgctxt "alt. month"
-msgid "November"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/dates.py:48
-msgctxt "alt. month"
-msgid "December"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/ipv6.py:8
 #, fuzzy
-#| msgid "email address"
-msgid "This is not a valid IPv6 address."
-msgstr "メールアドレス"
+#~| msgid "email address"
+#~ msgid "This is not a valid IPv6 address."
+#~ msgstr "メールアドレス"
 
-#: venv/lib/python3.7/site-packages/django/utils/text.py:69
-#, python-format
-msgctxt "String to return when truncating text"
-msgid "%(truncated_text)s…"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/text.py:235
-msgid "or"
-msgstr ""
-
-#. Translators: This string is used as a separator between list elements
-#: venv/lib/python3.7/site-packages/django/utils/text.py:254
-#: venv/lib/python3.7/site-packages/django/utils/timesince.py:83
-msgid ", "
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/utils/timesince.py:9
-#, python-format
-msgid "%d year"
-msgid_plural "%d years"
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/utils/timesince.py:10
-#, python-format
-msgid "%d month"
-msgid_plural "%d months"
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/utils/timesince.py:11
-#, python-format
-msgid "%d week"
-msgid_plural "%d weeks"
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/utils/timesince.py:12
-#, python-format
-msgid "%d day"
-msgid_plural "%d days"
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/utils/timesince.py:13
-#, python-format
-msgid "%d hour"
-msgid_plural "%d hours"
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/utils/timesince.py:14
-#, python-format
-msgid "%d minute"
-msgid_plural "%d minutes"
-msgstr[0] ""
-
-#: venv/lib/python3.7/site-packages/django/utils/timesince.py:72
-msgid "0 minutes"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/csrf.py:110
-msgid "Forbidden"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/csrf.py:111
-msgid "CSRF verification failed. Request aborted."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/csrf.py:115
-msgid ""
-"You are seeing this message because this HTTPS site requires a “Referer "
-"header” to be sent by your Web browser, but none was sent. This header is "
-"required for security reasons, to ensure that your browser is not being "
-"hijacked by third parties."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/csrf.py:120
-msgid ""
-"If you have configured your browser to disable “Referer” headers, please re-"
-"enable them, at least for this site, or for HTTPS connections, or for “same-"
-"origin” requests."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/csrf.py:124
-msgid ""
-"If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or "
-"including the “Referrer-Policy: no-referrer” header, please remove them. The "
-"CSRF protection requires the “Referer” header to do strict referer checking. "
-"If you’re concerned about privacy, use alternatives like <a rel=\"noreferrer"
-"\" …> for links to third-party sites."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/csrf.py:132
-msgid ""
-"You are seeing this message because this site requires a CSRF cookie when "
-"submitting forms. This cookie is required for security reasons, to ensure "
-"that your browser is not being hijacked by third parties."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/csrf.py:137
-msgid ""
-"If you have configured your browser to disable cookies, please re-enable "
-"them, at least for this site, or for “same-origin” requests."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/csrf.py:142
-msgid "More information is available with DEBUG=True."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/generic/dates.py:41
-msgid "No year specified"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/generic/dates.py:61
-#: venv/lib/python3.7/site-packages/django/views/generic/dates.py:111
-#: venv/lib/python3.7/site-packages/django/views/generic/dates.py:208
-msgid "Date out of range"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/generic/dates.py:90
-msgid "No month specified"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/generic/dates.py:142
-msgid "No day specified"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/generic/dates.py:188
-msgid "No week specified"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/generic/dates.py:338
-#: venv/lib/python3.7/site-packages/django/views/generic/dates.py:367
-#, python-format
-msgid "No %(verbose_name_plural)s available"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/generic/dates.py:589
-#, python-format
-msgid ""
-"Future %(verbose_name_plural)s not available because %(class_name)s."
-"allow_future is False."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/generic/dates.py:623
-#, python-format
-msgid "Invalid date string “%(datestr)s” given format “%(format)s”"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/generic/detail.py:54
-#, python-format
-msgid "No %(verbose_name)s found matching the query"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/generic/list.py:67
-msgid "Page is not “last”, nor can it be converted to an int."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/generic/list.py:72
-#, python-format
-msgid "Invalid page (%(page_number)s): %(message)s"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/generic/list.py:154
-#, python-format
-msgid "Empty list and “%(class_name)s.allow_empty” is False."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/static.py:40
-msgid "Directory indexes are not allowed here."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/static.py:42
-#, python-format
-msgid "“%(path)s” does not exist"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/static.py:80
-#, python-format
-msgid "Index of %(directory)s"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/templates/default_urlconf.html:7
-msgid "Django: the Web framework for perfectionists with deadlines."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/templates/default_urlconf.html:346
-#, python-format
-msgid ""
-"View <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" "
-"target=\"_blank\" rel=\"noopener\">release notes</a> for Django %(version)s"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/templates/default_urlconf.html:368
-msgid "The install worked successfully! Congratulations!"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/templates/default_urlconf.html:369
-#, python-format
-msgid ""
-"You are seeing this page because <a href=\"https://docs.djangoproject.com/en/"
-"%(version)s/ref/settings/#debug\" target=\"_blank\" rel=\"noopener"
-"\">DEBUG=True</a> is in your settings file and you have not configured any "
-"URLs."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/templates/default_urlconf.html:384
-msgid "Django Documentation"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/templates/default_urlconf.html:385
-msgid "Topics, references, &amp; how-to’s"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/templates/default_urlconf.html:396
-msgid "Tutorial: A Polling App"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/templates/default_urlconf.html:397
-msgid "Get started with Django"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/templates/default_urlconf.html:408
-msgid "Django Community"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/django/views/templates/default_urlconf.html:409
-msgid "Connect, get help, or contribute"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/authentication.py:76
-msgid "Authorization header must contain two space-delimited values"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/authentication.py:97
-msgid "Given token not valid for any token type"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/authentication.py:108
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/authentication.py:130
-msgid "Token contained no recognizable user identification"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/authentication.py:113
 #, fuzzy
-#| msgid "Customer not found"
-msgid "User not found"
-msgstr "顧客が見つかりません"
+#~| msgid "Customer not found"
+#~ msgid "User not found"
+#~ msgstr "顧客が見つかりません"
 
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/authentication.py:116
 #, fuzzy
-#| msgid "Representative"
-msgid "User is inactive"
-msgstr "代表"
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/backends.py:21
-msgid "Unrecognized algorithm type '{}'"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/backends.py:58
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/exceptions.py:38
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/tokens.py:44
-msgid "Token is invalid or expired"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/serializers.py:24
-msgid "No active account found with the given credentials"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/settings.py:57
-msgid ""
-"The '{}' setting has been removed. Please refer to '{}' for available "
-"settings."
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/token_blacklist/admin.py:72
-msgid "jti"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/token_blacklist/admin.py:87
-msgid "expires at"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/token_blacklist/apps.py:7
-msgid "Token Blacklist"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/tokens.py:30
-msgid "Cannot create token with no type or lifetime"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/tokens.py:98
-msgid "Token has no id"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/tokens.py:109
-msgid "Token has no type"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/tokens.py:112
-msgid "Token has wrong type"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/tokens.py:149
-msgid "Token has no '{}' claim"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/tokens.py:153
-msgid "Token '{}' claim has expired"
-msgstr ""
-
-#: venv/lib/python3.7/site-packages/rest_framework_simplejwt/tokens.py:192
-msgid "Token is blacklisted"
-msgstr ""
+#~| msgid "Representative"
+#~ msgid "User is inactive"
+#~ msgstr "代表"
 
 #~ msgid "Ranking"
 #~ msgstr "所有者順位"

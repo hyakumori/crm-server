@@ -306,8 +306,10 @@ class CustomerViewSets(ViewSet):
     @action(detail=False, methods=["POST"])
     def upload_csv(self, request):
         csv_file = request.data["file"]
-        if csv_file.content_type != "text/csv":
-            return Response({"errors": _("Please upload a csv file!!")}, 400)
+        if pathlib.Path(csv_file.name).suffix != ".csv":
+            return Response(
+                {"errors": {"__root__": [_("Please upload a csv file!!")]}}, 400
+            )
         pathlib.Path("media/upload/customer").mkdir(parents=True, exist_ok=True)
         file_name = f"{pathlib.Path(csv_file.name).stem}-{int(time.time())}.csv"
         fp = f"media/upload/customer/{file_name}"
@@ -315,12 +317,19 @@ class CustomerViewSets(ViewSet):
             for chunk in csv_file.chunks():
                 destination.write(chunk)
         cache.set("maintain_task_id", f"customers/{file_name}", None)
-        result = csv_upload(fp)
-        clear_maintain_task_id_cache()
-        if type(result) is int:
-            return Response({"msg": "OK"}, status=200)
+        try:
+            r = csv_upload(fp)
+        except UnicodeDecodeError:
+            return Response(
+                {"errors": {"__root__": [_("Please upload a csv file!!")]}}, 400
+            )
         else:
-            return Response(result, status=400)
+            if type(r) is int:
+                return Response({"msg": "OK"}, status=200)
+            else:
+                return Response(r, status=400)
+        finally:
+            clear_maintain_task_id_cache()
 
 
 @api_view(["GET"])
