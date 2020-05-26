@@ -110,7 +110,7 @@
                 :save="onSave"
                 :saving="isLoading"
               />
-              <template v-acl-only="['admin', 'group_admin']">
+              <div v-acl-only="['admin', 'group_admin']">
                 <tag-setting-manage
                   :app-name="appName"
                   :object-type="objectType"
@@ -120,12 +120,11 @@
                   icon
                   color="primary"
                   @click.stop="tagSettingDialog = true"
-                  v-acl-only="['admin', 'group_admin']"
                   class="edit-tag-btn"
                 >
                   <v-icon>mdi-cog</v-icon>
                 </v-btn>
-              </template>
+              </div>
             </v-col>
           </v-row>
         </template>
