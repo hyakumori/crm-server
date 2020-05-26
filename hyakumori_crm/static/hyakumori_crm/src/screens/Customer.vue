@@ -204,7 +204,11 @@ export default {
     async handleUploadBtnClick() {
       if (this.selectedFileName !== "") {
         const confirmUpload = confirm(this.$t("messages.confirm_upload_csv"));
-        if (!confirmUpload) return;
+        if (!confirmUpload) {
+          this.$refs.csvUploadInput.value = null;
+          this.selectedFileName = "";
+          return;
+        }
         this.uploadCsvLoading = true;
         window.addEventListener("beforeunload", this.confirmReload);
         const formData = new FormData();

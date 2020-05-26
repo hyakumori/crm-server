@@ -94,6 +94,7 @@ class HyakumoriDanticModel(BaseModel):
             "value_error.any_str.min_length": _(
                 "Required at least {limit_value} character"
             ),
+            "value_error.date": _("Invalid date format"),
         }
 
     @validator("*", pre=True)
