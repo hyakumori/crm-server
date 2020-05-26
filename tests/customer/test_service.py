@@ -36,4 +36,4 @@ def test_get_list(customer_input, admin_user):
 
     customers, total = get_list()
     assert total == 1
-    assert customers[0]["fullname_kana"] == "Bar Foo"
+    assert customers[0]["fullname_kana"] == "Bar\u3000Foo"

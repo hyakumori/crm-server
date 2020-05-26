@@ -15,6 +15,7 @@ from ..core.models import HyakumoriDanticModel, HyakumoriDanticUpdateModel, Pagi
 from ..crm.common import regexes
 from ..crm.common.constants import DEFAULT_EMAIL, EMPTY, UNKNOWN
 from ..crm.models import Customer, Forest, ForestCustomer, Contact
+from ..forest.service import tags_csv_to_dict
 
 
 class Name(HyakumoriDanticModel):
@@ -63,14 +64,6 @@ class CustomerUpdateSchema(CustomerInputSchema):
 
     class Config:
         arbitrary_types_allowed = True
-
-
-class CustomerRead:
-    pass
-
-
-class CustomerUpdate:
-    pass
 
 
 class CustomerFilter(FilterSet):
@@ -318,3 +311,83 @@ def required_contact_input_wrapper(**kwargs):
         except StopIteration:
             pass
         raise e
+
+
+class CustomerUploadCsv(HyakumoriDanticModel):
+    business_id: constr(regex=regexes.CUSTOMER_ID, strip_whitespace=True)
+    fullname_kana: str
+    fullname_kanji: str
+    prefecture: Optional[str] = EMPTY
+    municipality: Optional[str] = EMPTY
+    sector: str  # sector
+    postal_code: Optional[
+        constr(regex=regexes.POSTAL_CODE, strip_whitespace=True)
+    ] = EMPTY
+
+    telephone: Optional[
+        constr(regex=regexes.TELEPHONE_NUMBER, strip_whitespace=True)
+    ] = EMPTY
+
+    mobilephone: Optional[
+        constr(regex=regexes.MOBILEPHONE_NUMBER, strip_whitespace=True)
+    ] = EMPTY
+    email: Optional[EmailStr] = EMPTY
+    bank_name: Optional[str] = EMPTY
+    bank_branch_name: Optional[str] = EMPTY
+    bank_account_type: Optional[str] = EMPTY
+    bank_account_number: Optional[constr(regex=regexes.BANKING_ACCOUNT_NUMBER)]
+    bank_account_name: Optional[str] = EMPTY
+    tags: Optional[str]
+
+    @root_validator
+    def validate_atleast_one_way_to_contact(cls, values):
+        telephone = values.get("telephone")
+        mobilephone = values.get("mobilephone")
+        email = values.get("email")
+        if not telephone and not mobilephone and not email:
+            raise ValueError(_("Enter at least telephone or mobilephone or email."))
+        return values
+
+    @validator("tags")
+    def tags_validator(cls, value):
+        try:
+            tags_csv_to_dict(value)
+        except ValueError:
+            raise ValueError("Invalid format")
+        return value
+
+    @property
+    def name_kana(self):
+        name_parts = self.fullname_kana.split("\u3000")
+        if len(name_parts) == 2:
+            return {"first_name": name_parts[1], "last_name": name_parts[0]}
+        return {"first_name": "", "last_name": name_parts[0]}
+
+    @property
+    def name_kanji(self):
+        name_parts = self.fullname_kanji.split("\u3000")
+        if len(name_parts) == 2:
+            return {"first_name": name_parts[1], "last_name": name_parts[0]}
+        return {"first_name": "", "last_name": name_parts[0]}
+
+    @property
+    def address(self):
+        return {
+            "prefecture": self.prefecture,
+            "municipality": self.municipality,
+            "sector": self.sector,
+        }
+
+    @property
+    def banking(self):
+        return {
+            "bank_name": self.bank_name,
+            "branch_name": self.bank_branch_name,
+            "account_type": self.bank_account_type,
+            "account_number": self.bank_account_number,
+            "account_name": self.bank_account_name,
+        }
+
+    @property
+    def tags_json(self):
+        return tags_csv_to_dict(self.tags)

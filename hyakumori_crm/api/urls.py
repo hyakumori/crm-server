@@ -1,4 +1,4 @@
-from django.urls import re_path
+from django.urls import re_path, path
 
 from hyakumori_crm.forest.urls import api_urls as forest_api_urls
 from hyakumori_crm.customer.urls import api_urls as customer_api_urls
@@ -9,7 +9,7 @@ from hyakumori_crm.archive.urls import view_urls as archive_view_urls
 from hyakumori_crm.activity.urls import api_urls as activity_api_urls
 from hyakumori_crm.tags.urls import api_urls as tags_api_urls
 from hyakumori_crm.cache.urls import api_urls as cache_api_urls
-from .views import notfound_view
+from .views import notfound_view, maintenance_status
 
 urlpatterns = (
     forest_api_urls
@@ -20,7 +20,7 @@ urlpatterns = (
     + activity_api_urls
     + tags_api_urls
     + cache_api_urls
-    + [re_path(".*", notfound_view)]
+    + [path("maintenance/status", maintenance_status), re_path(".*", notfound_view)]
 )
 
 view_urls = []

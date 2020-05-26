@@ -1,14 +1,20 @@
 import csv
-import itertools
+import json
+import pathlib
+import time
+import functools
 
+from django.core.cache import cache
 from django.db.models import Q, F, Count
 from django.http import HttpResponse
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
+from pydantic import ValidationError
 from rest_framework import mixins
 from rest_framework.decorators import action, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from django_q.tasks import async_task, result
 
 from hyakumori_crm.core.utils import default_paginator, make_error_json
 from hyakumori_crm.crm.models import Forest, Archive
@@ -25,6 +31,7 @@ from .schemas import (
     CustomerDefaultInput,
     CustomerContactDefaultInput,
     ForestMemoInput,
+    ForestCsvInput,
 )
 from .service import (
     get_forest_by_pk,
@@ -39,7 +46,10 @@ from .service import (
     get_forests_for_csv,
     get_forests_by_ids,
     update_forest_tags,
+    csv_headers,
+    csv_upload,
 )
+
 from ..activity.services import ActivityService, ForestActions
 from ..api.decorators import (
     api_validate_model,
@@ -54,6 +64,7 @@ from ..crm.common.constants import (
     FOREST_ATTRIBUTES,
 )
 from ..permissions.services import PermissionService
+from ..core.utils import clear_maintain_task_id_cache
 
 
 class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericViewSet):
@@ -160,20 +171,9 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
             csv_data = get_forests_for_csv(request.data)
         response = HttpResponse(content_type="text/csv; charset=utf-8-sig")
         response["Content-Disposition"] = "attachment"
-        header = ["\ufeff内部ID", "土地管理ID"]
-        flatten_header = list(
-            itertools.chain(
-                header,
-                FOREST_CADASTRAL,
-                FOREST_LAND_ATTRIBUTES,
-                FOREST_OWNER_NAME,
-                FOREST_CONTRACT,
-                [_("Tag")],
-                FOREST_ATTRIBUTES,
-            )
-        )
-        writer = csv.writer(response)
-        writer.writerow(flatten_header)
+        headers = csv_headers()
+        writer = csv.writer(response, dialect="excel")
+        writer.writerow(headers)
         for forest in csv_data:
             csv_row = forest_csv_data_mapping(forest)
             writer.writerow(csv_row)
@@ -194,6 +194,26 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     def tags(self, request):
         update_forest_tags(request.data)
         return Response({"msg": "OK"})
+
+    @action(detail=False, methods=["POST"], url_path="upload-csv")
+    @action_login_required(with_permissions=["change_forest"])
+    def upload_csv(self, request):
+        csv_file = request.data["file"]
+        if csv_file.content_type != "text/csv":
+            return Response({"errors": _("Please upload a csv file!!")}, 400)
+        pathlib.Path("media/upload/forest").mkdir(parents=True, exist_ok=True)
+        file_name = f"{pathlib.Path(csv_file.name).stem}-{int(time.time())}.csv"
+        fp = f"media/upload/forest/{file_name}"
+        with open(fp, "wb+") as destination:
+            for chunk in csv_file.chunks():
+                destination.write(chunk)
+        cache.set("maintain_task_id", f"forests/{file_name}", None)
+        r = csv_upload(fp)
+        clear_maintain_task_id_cache()
+        if type(r) is int:
+            return Response({"msg": "OK"}, status=200)
+        else:
+            return Response(r, status=400)
 
 
 @api_view(["PUT", "PATCH"])

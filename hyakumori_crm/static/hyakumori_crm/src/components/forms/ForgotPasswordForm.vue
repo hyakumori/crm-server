@@ -102,7 +102,8 @@ export default {
         });
         this.success = true;
       } catch (err) {
-        this.formError = this.$t("messages.email_not_found");
+        if (err.response && err.response.status < 500)
+          this.formError = this.$t("messages.email_not_found");
       } finally {
         this.loading = false;
       }

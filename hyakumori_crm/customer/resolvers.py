@@ -13,23 +13,6 @@ from .schemas import (
 from .service import get_list
 
 query = ObjectType("Query")
-mutation = ObjectType("Mutation")
-
-
-@query.field("get_customer")
-@login_required(with_policies=["can_view_customers"])
-def get_customer_by_id(
-    obj: Any, info: GraphQLResolveInfo, id: str = None, **kwargs
-) -> dict:
-    return {
-        "ok": True,
-        "customer": {
-            "id": uuid.uuid4(),
-            "internal_id": "ajshdq8w123",
-            "profile": {"first_name": "Ha", "last_name": "Tran", "middle_name": None},
-            "attributes": None,
-        },
-    }
 
 
 @query.field("customertable_headers")
@@ -37,16 +20,16 @@ def get_customer_by_id(
 def get_customertable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dict:
     headers = [
         {"text": _("Internal Id"), "value": "business_id", "align": "center"},
-        {"text": _("Fullname Kanji"), "value": "fullname_kanji", "align": "center"},
-        {"text": _("Fullname Kana"), "value": "fullname_kana", "align": "center"},
+        {"text": _("Fullname Kanji"), "value": "fullname_kanji", "align": "left"},
+        {"text": _("Fullname Kana"), "value": "fullname_kana", "align": "left"},
         {"text": _("Postal Code"), "value": "postal_code", "align": "center"},
-        {"text": _("Prefecture"), "value": "prefecture", "align": "center"},
-        {"text": _("Municipality"), "value": "municipality", "align": "center"},
-        {"text": _("Address"), "value": "address", "align": "center"},
+        {"text": _("Prefecture"), "value": "prefecture", "align": "left"},
+        {"text": _("Municipality"), "value": "municipality", "align": "left"},
+        {"text": _("Address"), "value": "address", "align": "left"},
         {"text": _("Telephone"), "value": "telephone", "align": "center"},
         {"text": _("Mobilephone"), "value": "mobilephone", "align": "center"},
         {"text": _("Email"), "value": "email", "align": "center"},
-        {"text": _("Tag"), "value": "tags", "align": "center"},
+        {"text": _("Tag"), "value": "tags", "align": "left"},
     ]
     filters = CustomerFilter.get_filters()
     for header_define in headers:
@@ -72,4 +55,4 @@ def list_customers(obj: Any, info: GraphQLResolveInfo, data=None, **kwargs) -> d
     return {"items": customers, "total": total}
 
 
-resolvers = [query, mutation]
+resolvers = [query]

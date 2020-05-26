@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-20 08:16+0000\n"
+"POT-Creation-Date: 2020-05-21 07:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,13 +61,13 @@ msgstr ""
 msgid "Logged action, id: {id}"
 msgstr ""
 
-#: hyakumori_crm/archive/restful.py:133
+#: hyakumori_crm/archive/restful.py:184
 msgid "Could not get download url"
 msgstr ""
 
 #: hyakumori_crm/archive/schemas.py:91 hyakumori_crm/archive/schemas.py:95
 #: hyakumori_crm/archive/schemas.py:99 hyakumori_crm/archive/schemas.py:113
-#: hyakumori_crm/customer/schemas.py:222 hyakumori_crm/customer/schemas.py:266
+#: hyakumori_crm/customer/schemas.py:223 hyakumori_crm/customer/schemas.py:267
 #, fuzzy
 #| msgid "Contact not found"
 msgid "Contact {} not found"
@@ -77,7 +77,7 @@ msgstr "連絡先が見つかりません"
 msgid "Contact {} already exists"
 msgstr ""
 
-#: hyakumori_crm/archive/service.py:46 hyakumori_crm/archive/service.py:59
+#: hyakumori_crm/archive/service.py:45 hyakumori_crm/archive/service.py:58
 #, fuzzy
 #| msgid "Contact not found"
 msgid "Attachment not found"
@@ -114,93 +114,90 @@ msgstr "無効なメール"
 msgid "Required at least {limit_value} character"
 msgstr "{limit_value}文字以上入力する必要があります。"
 
-#: hyakumori_crm/customer/resolvers.py:42
+#: hyakumori_crm/customer/resolvers.py:39
 msgid "Internal Id"
 msgstr "新規ID発行"
 
-#: hyakumori_crm/customer/resolvers.py:43
+#: hyakumori_crm/customer/resolvers.py:40
 msgid "Fullname Kanji"
 msgstr "土地所有者名"
 
-#: hyakumori_crm/customer/resolvers.py:44
+#: hyakumori_crm/customer/resolvers.py:41
 msgid "Fullname Kana"
 msgstr "土地所有者名（ｶﾅ）"
 
-#: hyakumori_crm/customer/resolvers.py:45
+#: hyakumori_crm/customer/resolvers.py:42
 msgid "Postal Code"
 msgstr "郵便番号"
 
-#: hyakumori_crm/customer/resolvers.py:46 hyakumori_crm/forest/resolvers.py:20
+#: hyakumori_crm/customer/resolvers.py:43 hyakumori_crm/forest/resolvers.py:20
 msgid "Prefecture"
 msgstr "都道府県"
 
-#: hyakumori_crm/customer/resolvers.py:47 hyakumori_crm/forest/resolvers.py:26
+#: hyakumori_crm/customer/resolvers.py:44 hyakumori_crm/forest/resolvers.py:26
 msgid "Municipality"
 msgstr "市町村"
 
-#: hyakumori_crm/customer/resolvers.py:48
+#: hyakumori_crm/customer/resolvers.py:45
 msgid "Address"
 msgstr "住所"
 
-#: hyakumori_crm/customer/resolvers.py:49
-msgid "Ranking"
-msgstr "所有者順位"
-
-#: hyakumori_crm/customer/resolvers.py:50
-msgid "Status"
-msgstr "未登録/登録"
-
-#: hyakumori_crm/customer/resolvers.py:51
-msgid "Same name"
-msgstr "同姓同名"
-
-#: hyakumori_crm/customer/resolvers.py:52
+#: hyakumori_crm/customer/resolvers.py:46
 msgid "Telephone"
 msgstr "電話番号"
 
-#: hyakumori_crm/customer/resolvers.py:53
+#: hyakumori_crm/customer/resolvers.py:47
 msgid "Mobilephone"
 msgstr "携帯番号"
 
-#: hyakumori_crm/customer/resolvers.py:54
+#: hyakumori_crm/customer/resolvers.py:48
 msgid "Email"
 msgstr "メールアドレス"
 
-#: hyakumori_crm/customer/schemas.py:136
+#: hyakumori_crm/customer/resolvers.py:49 hyakumori_crm/customer/restful.py:247
+#: hyakumori_crm/forest/resolvers.py:110 hyakumori_crm/forest/service.py:183
+msgid "Tag"
+msgstr "タグ"
+
+#: hyakumori_crm/customer/schemas.py:137
 msgid "Duplicate contacts"
 msgstr ""
 
-#: hyakumori_crm/customer/schemas.py:146
+#: hyakumori_crm/customer/schemas.py:147
 #, python-brace-format
 msgid "Contact {c} not belong to forest and customer"
 msgstr "連絡先{c}はフォレストと顧客に属していません"
 
-#: hyakumori_crm/customer/schemas.py:158
+#: hyakumori_crm/customer/schemas.py:159
 #, python-brace-format
 msgid "Contact {pk} not found"
 msgstr "連絡先{pk}が見つかりません"
 
-#: hyakumori_crm/customer/schemas.py:177 hyakumori_crm/customer/schemas.py:185
+#: hyakumori_crm/customer/schemas.py:178 hyakumori_crm/customer/schemas.py:186
 #, fuzzy
 #| msgid "Forest not found"
 msgid "Forest Id {} not found"
 msgstr "森が見つかりません"
 
-#: hyakumori_crm/customer/schemas.py:254
+#: hyakumori_crm/customer/schemas.py:255
 msgid "forest_id not provied for contact_type FOREST"
 msgstr ""
 
-#: hyakumori_crm/customer/schemas.py:260
+#: hyakumori_crm/customer/schemas.py:261
 msgid "Forest {} not found"
 msgstr "森{}が見つかりません"
 
-#: hyakumori_crm/customer/schemas.py:305
+#: hyakumori_crm/customer/schemas.py:306
 msgid "Enter at least telephone or mobilephone or email."
 msgstr "少なくとも電話、携帯電話、または電子メールを入力してください。"
 
-#: hyakumori_crm/customer/service.py:37 hyakumori_crm/forest/service.py:38
+#: hyakumori_crm/customer/service.py:38 hyakumori_crm/forest/service.py:42
 msgid "Customer not found"
 msgstr "顧客が見つかりません"
+
+#: hyakumori_crm/customer/service.py:490
+msgid "Customer ID is empty or not available"
+msgstr ""
 
 #: hyakumori_crm/forest/resolvers.py:18
 msgid "Forest ID"
@@ -258,33 +255,34 @@ msgstr "開始日"
 msgid "FSC end"
 msgstr "終了日"
 
-#: hyakumori_crm/forest/resolvers.py:110
-msgid "Tag"
-msgstr "タグ"
-
-#: hyakumori_crm/forest/schemas.py:119 hyakumori_crm/forest/schemas.py:129
+#: hyakumori_crm/forest/schemas.py:115 hyakumori_crm/forest/schemas.py:125
 #, fuzzy
 #| msgid "Customer Id {v} not found"
 msgid "Customer Id {} not found"
 msgstr "カスタマーID {v}が見つかりません"
 
-#: hyakumori_crm/forest/schemas.py:151 hyakumori_crm/forest/schemas.py:176
+#: hyakumori_crm/forest/schemas.py:147 hyakumori_crm/forest/schemas.py:172
 #, fuzzy, python-brace-format
 #| msgid "Customer Id {v} not found"
 msgid "Customer {v} not found"
 msgstr "カスタマーID {v}が見つかりません"
 
-#: hyakumori_crm/forest/schemas.py:185
+#: hyakumori_crm/forest/schemas.py:181
 #, fuzzy, python-brace-format
 #| msgid "Contact not found"
 msgid "Contact {v} not found"
 msgstr "連絡先が見つかりません"
 
-#: hyakumori_crm/forest/service.py:23 tests/test_api/test_forest_api.py:66
+#: hyakumori_crm/forest/service.py:27 tests/test_api/test_forest_api.py:66
 msgid "Forest not found"
 msgstr "森が見つかりません"
 
-#: hyakumori_crm/settings.py:164
+#: hyakumori_crm/forest/service.py:326
+#, python-brace-format
+msgid "{column} error at line {row_num}"
+msgstr "{column}カラムの{row_num}行目の値が不正です。"
+
+#: hyakumori_crm/settings.py:165
 msgid "Japan"
 msgstr "Japan"
 
@@ -360,11 +358,11 @@ msgstr "Superuser must have is_superuser=True."
 msgid "email address"
 msgstr "メールアドレス"
 
-#: hyakumori_crm/users/serializers.py:109
+#: hyakumori_crm/users/serializers.py:108
 msgid "Email existed"
 msgstr "メールが存在します"
 
-#: hyakumori_crm/users/serializers.py:123
+#: hyakumori_crm/users/serializers.py:122
 msgid "Username existed"
 msgstr "ユーザー名が存在します"
 
@@ -1833,6 +1831,15 @@ msgstr ""
 #: venv/lib/python3.7/site-packages/rest_framework_simplejwt/tokens.py:192
 msgid "Token is blacklisted"
 msgstr ""
+
+#~ msgid "Ranking"
+#~ msgstr "所有者順位"
+
+#~ msgid "Status"
+#~ msgstr "未登録/登録"
+
+#~ msgid "Same name"
+#~ msgstr "同姓同名"
 
 #~ msgid "Owner address prefecture"
 #~ msgstr "土地所有者住所_都道府県"

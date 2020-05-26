@@ -65,6 +65,14 @@ const setupRestClient = options => {
         return new Promise((resolve, reject) => {
           reject(error);
         });
+      } else if (error.response && error.response.status === 503) {
+        axios.$v.$dialog.notify.error("Maintain", {
+          position: "top-right",
+          timeout: 5000,
+        });
+        return new Promise((resolve, reject) => {
+          reject(error);
+        });
       } else {
         axios.$v.$dialog.notify.error(`${error}`, {
           position: "top-right",
