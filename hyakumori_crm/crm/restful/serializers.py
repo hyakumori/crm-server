@@ -73,7 +73,7 @@ class ForestSerializer(ModelSerializer):
 class ForestListingSerializer(ModelSerializer):
     class Meta:
         model = Forest
-        fields = ["id", "internal_id", "cadastral", "customers_count"]
+        fields = ["id", "internal_id", "cadastral", "customers_count", "tags"]
 
 
 class AttachmentSerializer(ModelSerializer):

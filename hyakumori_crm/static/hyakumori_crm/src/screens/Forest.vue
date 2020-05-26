@@ -5,35 +5,35 @@
         <template #bottom-right>
           <div>
             <outline-round-btn
-              v-show="false"
-              class="mr-2"
-              :icon="$t('icon.add')"
               :content="$t('buttons.csv_upload')"
+              :icon="$t('icon.add')"
               @click="uploadCsv"
+              class="mr-2"
+              v-show="false"
             />
-            <v-menu offset-y nudge-bottom="4">
+            <v-menu nudge-bottom="4" offset-y>
               <template v-slot:activator="{ on }">
                 <outline-round-btn
-                  icon="mdi-download"
                   :content="$t('buttons.csv_download')"
                   :loading="downloadCsvLoading"
                   class="mr-2"
+                  icon="mdi-download"
                   v-on="on"
                 />
               </template>
-              <v-list dense class="pa-0">
+              <v-list class="pa-0" dense>
                 <v-list-item
-                  v-if="tableSelectedRow && tableSelectedRow.length > 0"
                   @click="downloadSelectedRows"
+                  v-if="tableSelectedRows && tableSelectedRows.length > 0"
                 >
-                  <v-list-item-title>{{
-                    $t("buttons.download_selected")
-                  }}</v-list-item-title>
+                  <v-list-item-title
+                    >{{ $t("buttons.download_selected") }}
+                  </v-list-item-title>
                 </v-list-item>
                 <v-list-item @click="downloadAllCsv">
-                  <v-list-item-title>{{
-                    $t("buttons.download_all")
-                  }}</v-list-item-title>
+                  <v-list-item-title
+                    >{{ $t("buttons.download_all") }}
+                  </v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -44,41 +44,56 @@
 
     <template #section>
       <search-card
-        :searchCriteria="filterFields"
         :onSearch="onSearch"
+        :searchCriteria="filterFields"
         ref="filter"
       />
 
       <div class="ml-7 forest__data-section">
-        <!--   For now it has no function, so remove it temporary  -->
-        <!--        <table-action-->
-        <!--          class="forest__data-section__table-action mb-4"-->
-        <!--          v-if="tableSelectedRow.length > 0"-->
-        <!--          :selectedCount="tableSelectedRow.length"-->
-        <!--        />-->
+        <table-action
+          ref="actionRef"
+          :actions="actions"
+          :selectedCount="tableSelectedRows.length"
+          @selected-action="selectedAction"
+          class="mb-4"
+          v-if="tableSelectedRows.length > 0"
+        />
 
         <data-list
-          mode="forest"
-          itemKey="id"
-          :headers="getHeaders"
-          :data="getData"
-          :showSelect="true"
-          :isLoading="$apollo.queries.forestsInfo.loading"
-          :serverItemsLength="getTotalForests"
-          :tableRowIcon="tableRowIcon"
-          :options.sync="options"
-          @rowData="rowData"
-          @selectedRow="selectedRow"
           :autoHeaders="false"
+          :data="getData"
+          :headers="getHeaders"
+          :isLoading="$apollo.queries.forestsInfo.loading"
+          :options.sync="options"
+          :serverItemsLength="getTotalForests"
+          :showSelect="true"
+          :tableRowIcon="tableRowIcon"
+          @rowData="rowData"
+          @selectedRow="selectedRows"
+          itemKey="id"
+          mode="forest"
         ></data-list>
       </div>
 
       <snack-bar
-        color="error"
         :isShow="isShowErr"
         :msg="errMsg"
         :timeout="sbTimeout"
         @dismiss="onDismissSb"
+        color="error"
+      />
+
+      <update-actions-dialog
+        :items="tagKeys"
+        :isDisableUpdate="!selectedTagForUpdate"
+        :updateData="updateTagForSelectedForests"
+        :showDialog="showChangeTagDialog"
+        :loadingItems="fetchTagsLoading"
+        :updating="updatingTags"
+        :cancel="resetActionChoices"
+        @update-value="val => (newTagValue = val)"
+        @selected-tag="val => (selectedTagForUpdate = val)"
+        @toggle-show-dialog="val => (showChangeTagDialog = val)"
       />
     </template>
   </main-section>
@@ -97,6 +112,7 @@ import PageHeader from "../components/PageHeader";
 import OutlineRoundBtn from "../components/OutlineRoundBtn";
 import { saveAs } from "file-saver";
 import { get as _get } from "lodash";
+import UpdateActionsDialog from "../components/dialogs/UpdateActionsDialog";
 
 export default {
   name: "forest",
@@ -106,15 +122,34 @@ export default {
   components: {
     DataList,
     SearchCard,
-    // TableAction,
+    TableAction,
     SnackBar,
     MainSection,
     PageHeader,
     OutlineRoundBtn,
+    UpdateActionsDialog,
   },
 
   data() {
     return {
+      actions: [
+        {
+          text: this.$t("action.contract_status_to_contracted"),
+          value: 0,
+        },
+        {
+          text: this.$t("action.contract_status_to_unsigned"),
+          value: 1,
+        },
+        {
+          text: this.$t("action.contract_status_to_expired"),
+          value: 2,
+        },
+        {
+          text: this.$t("action.change_tag_value"),
+          value: 3,
+        },
+      ],
       pageIcon: this.$t("icon.forest_icon"),
       pageHeader: this.$t("page_header.forest_mgmt"),
       tableRowIcon: this.$t("icon.forest_icon"),
@@ -124,9 +159,9 @@ export default {
       sbTimeout: 5000,
       filter: {},
       options: {},
-      tableSelectedRow: [],
       headers: [],
       downloadCsvLoading: false,
+      newTagValue: null,
     };
   },
 
@@ -180,10 +215,6 @@ export default {
       }
     },
 
-    selectedRow(val) {
-      this.tableSelectedRow = val;
-    },
-
     onSearch() {
       this.filter = { ...this.filter, filters: this.requestFilters };
       this.$apollo.queries.forestsInfo.refetch();
@@ -208,10 +239,9 @@ export default {
     async downloadSelectedRows() {
       try {
         this.downloadCsvLoading = true;
-        const selectedRowIds = this.tableSelectedRow.map(row => row.id);
         let csvData = await this.$rest.post(
           "/forests/download-csv",
-          selectedRowIds,
+          this.selectedRowIds,
         );
         const blob = new Blob([csvData], { type: "text/csv;charset=UTF-8" });
         saveAs(blob, "selected_forests.csv");
@@ -252,6 +282,47 @@ export default {
         return results;
       }
       return "";
+    },
+
+    async updateTagForSelectedForests() {
+      const params = {
+        ids: this.selectedRowIds,
+        key: this.selectedTagForUpdate,
+        value: this.newTagValue,
+      };
+      try {
+        this.updatingTags = true;
+        await this.$rest.put("/forests/tags", params);
+      } catch (e) {
+        await this.$dialog.notify.error(e);
+      } finally {
+        this.updatingTags = false;
+        this.showChangeTagDialog = false;
+        this.selectedTagForUpdate = null;
+        this.resetActionChoices();
+        await this.$apollo.queries.forestsInfo.refetch();
+      }
+    },
+
+    selectedAction(index) {
+      switch (index) {
+        case 0:
+          // update forest contract
+          break;
+        case 1:
+          // update forest contract
+          break;
+        case 2:
+          // update forest contract
+          break;
+        case 3:
+          this.showChangeTagDialog = true;
+          this.fetchTagsLoading = true;
+          this.getSelectedObject("/forests/ids");
+          break;
+        default:
+          return;
+      }
     },
   },
 

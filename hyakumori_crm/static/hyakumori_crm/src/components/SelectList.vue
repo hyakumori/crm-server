@@ -1,5 +1,6 @@
 <template>
   <v-select
+    :v-model="value || innerValue"
     dense
     ref="selectList"
     append-icon="mdi-chevron-down"
@@ -25,13 +26,19 @@ export default {
     value: String,
   },
 
+  data() {
+    return {
+      innerValue: null,
+    };
+  },
+
   mounted() {
     this.resizeInputPlaceholderWidth();
   },
 
   methods: {
     resizeInputPlaceholderWidth() {
-      const additionWidthSize = 2;
+      const additionWidthSize = 3;
       const input = select(this.$refs.selectList)._groups[0][0].$refs.input;
       const placeHolderLength = input.placeholder.length;
       input.size = placeHolderLength + additionWidthSize;
@@ -39,7 +46,11 @@ export default {
 
     resizeInputWidth() {
       const input = select(this.$refs.selectList)._groups[0][0].$refs.input;
-      input.style.width = "1ch";
+      if (this.innerValue) {
+        input.style.width = "3ch";
+      } else {
+        input.style.width = "auto";
+      }
     },
 
     onChangeSelectedItem(val) {

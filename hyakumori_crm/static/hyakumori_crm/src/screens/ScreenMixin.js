@@ -1,4 +1,16 @@
+import { flatten } from "lodash";
+
 export default {
+  data() {
+    return {
+      tableSelectedRows: [],
+      tagKeys: [],
+      showChangeTagDialog: false,
+      fetchTagsLoading: false,
+      updatingTags: false,
+      selectedTagForUpdate: null,
+    };
+  },
   mounted() {
     this.populateAppHeader();
   },
@@ -8,6 +20,32 @@ export default {
       this.$store.dispatch("setPageIcon", this.pageIcon);
       this.$store.dispatch("setHeaderTagColor", this.headerTagColor);
       this.$store.dispatch("setBackBtnContent", this.backBtnContent);
+    },
+
+    async getSelectedObject(apiUrl) {
+      try {
+        const objects = await this.$rest.put(apiUrl, this.selectedRowIds);
+        this.tagKeys = [];
+        const tags = objects.map(obj => obj.tags);
+        tags.forEach(tag => this.tagKeys.push(Object.keys(tag)));
+        this.tagKeys = [...new Set(flatten(this.tagKeys))];
+      } catch (e) {
+        this.showChangeTagDialog = false;
+      } finally {
+        this.fetchTagsLoading = false;
+      }
+    },
+
+    selectedRows(val) {
+      this.tableSelectedRows = val;
+    },
+
+    resetActionChoices() {
+      const actionListRef = this.$refs.actionRef.$children[0];
+      const actionListRefChild = actionListRef.$children[0];
+      this.selectedTagForUpdate = null;
+      actionListRefChild.reset();
+      actionListRef.resizeInputWidth();
     },
   },
   computed: {
@@ -20,6 +58,13 @@ export default {
             };
           })
         : [];
+    },
+
+    selectedRowIds() {
+      return (
+        this.tableSelectedRows.length > 0 &&
+        this.tableSelectedRows.map(row => row.id)
+      );
     },
   },
 };
