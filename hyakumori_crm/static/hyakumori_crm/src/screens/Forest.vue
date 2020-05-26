@@ -449,12 +449,12 @@ export default {
             contracts__0__status: contract[0].status,
             contracts__0__start_date: contract[0].start_date,
             contracts__0__end_date: contract[0].end_date,
-            contracts__1__status: contract[1].status,
-            contracts__1__start_date: contract[1].start_date,
-            contracts__1__end_date: contract[1].end_date,
-            contracts__2__status: contract[2].status,
-            contracts__2__start_date: contract[2].start_date,
-            contracts__2__end_date: contract[2].end_date,
+            contracts__1__status: contract[1] && contract[1].status,
+            contracts__1__start_date: contract[1] && contract[1].start_date,
+            contracts__1__end_date: contract[1] && contract[1].end_date,
+            contracts__2__status: contract[2] && contract[2].status,
+            contracts__2__start_date: contract[2] && contract[2].start_date,
+            contracts__2__end_date: contract[2] && contract[2].end_date,
             tags: tags,
           };
         });
