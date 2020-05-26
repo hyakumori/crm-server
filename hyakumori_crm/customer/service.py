@@ -1,8 +1,7 @@
 from typing import Iterator, Union
 from uuid import UUID
 
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import DataError, IntegrityError, connection
+from django.db import DataError, IntegrityError, transaction, OperationalError
 from django.db.models import Count, F, OuterRef, Q, Subquery
 from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
@@ -20,7 +19,6 @@ from hyakumori_crm.crm.models import (
 )
 from .schemas import ContactType, CustomerInputSchema, ContactsInput
 from ..cache.forest import refresh_customer_forest_cache
-from ..crm.common.constants import CUSTOMER_TAG_KEYS
 
 
 def get_customer_by_pk(pk):
@@ -489,3 +487,23 @@ def get_customer_by_business_id(busines_id):
     if not customer.business_id or len(customer.business_id) == 0:
         raise ValueError(_("Customer ID is empty or not available"))
     return customer
+
+
+def get_customers_by_ids(ids: list):
+    customers = []
+    for pk in ids:
+        try:
+            customer = get_customer_by_pk(pk)
+            customers.append(customer)
+        except ValueError:
+            continue
+    return customers
+
+
+def update_customer_tags(data: dict):
+    ids = data.get("ids")
+    tag_key = data.get("key")
+    new_value = data.get("value")
+    Customer.objects.filter(id__in=ids, tags__has_key=tag_key).update(
+        tags=RawSQL("tags || jsonb_build_object(%s, %s)", params=[tag_key, new_value])
+    )

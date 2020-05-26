@@ -1,10 +1,11 @@
 import csv
 
 from django.http.response import StreamingHttpResponse
+from django.utils.translation import gettext_lazy as _
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-from django.utils.translation import gettext_lazy as _
+
 from hyakumori_crm.core.utils import (
     default_paginator,
     Echo,
@@ -48,6 +49,8 @@ from .service import (
     customercontacts_list_with_search,
     get_list,
     get_customer_by_business_id,
+    get_customers_by_ids,
+    update_customer_tags,
 )
 from ..activity.services import ActivityService, CustomerActions
 from ..api.decorators import action_login_required, api_validate_model, get_or_404
@@ -218,6 +221,23 @@ class CustomerViewSets(ViewSet):
             return make_success_json(data=CustomerSerializer(customer).data)
         except ValueError as e:
             return make_error_json(message=str(e))
+
+    @action(detail=False, methods=["PUT"], url_path="ids")
+    # currently this api is using change status/tag actions, the permission maybe change later
+    @action_login_required(with_permissions=["change_customer"])
+    def get_customers_by_ids(self, request):
+        ids = request.data
+        if ids is None or len(ids) == 0:
+            return Response({"data": []})
+        else:
+            customers = get_customers_by_ids(ids)
+            return Response(CustomerSerializer(customers, many=True).data)
+
+    @action(detail=False, methods=["PUT"], url_path="tags")
+    @action_login_required(with_permissions=["change_customer"])
+    def tags(self, request):
+        update_customer_tags(request.data)
+        return Response({"msg": "OK"})
 
     @action(detail=False, methods=["GET"])
     def download_csv(self, request):

@@ -46,22 +46,45 @@
         :onSearch="onSearch"
         ref="filter"
       />
-      <data-list
-        ref="table"
-        class="ml-7"
-        itemKey="id"
-        :headers="headers"
-        :data="customers"
-        showSelect
-        :options.sync="options"
-        :serverItemsLength="totalCustomers"
-        :tableRowIcon="tableRowIcon"
-        :icon-row-value-slice="{ shouldSlice: false }"
-        iconRowValue="business_id"
-        :autoHeaders="false"
-        @rowDataItem="rowData"
-        :isLoading="$apollo.queries.customerList.loading"
-      ></data-list>
+      <div class="ml-7 customer__data-section">
+        <table-action
+          ref="actionRef"
+          :actions="actions"
+          :selectedCount="tableSelectedRows.length"
+          @selected-action="selectedAction"
+          class="mb-4"
+          v-if="tableSelectedRows.length > 0"
+        />
+
+        <data-list
+          ref="table"
+          itemKey="id"
+          :headers="headers"
+          :data="customers"
+          showSelect
+          :options.sync="options"
+          :serverItemsLength="totalCustomers"
+          :tableRowIcon="tableRowIcon"
+          :icon-row-value-slice="{ shouldSlice: false }"
+          iconRowValue="business_id"
+          :autoHeaders="false"
+          @rowDataItem="rowData"
+          @selectedRow="selectedRows"
+          :isLoading="$apollo.queries.customerList.loading"
+        />
+      </div>
+      <update-actions-dialog
+        :items="tagKeys"
+        :isDisableUpdate="!selectedTagForUpdate"
+        :showDialog="showChangeTagDialog"
+        :loadingItems="fetchTagsLoading"
+        :updating="updatingTags"
+        :cancel="resetActionChoices"
+        :updateData="updateTagForSelectedCustomers"
+        @update-value="val => (newTagValue = val)"
+        @selected-tag="val => (selectedTagForUpdate = val)"
+        @toggle-show-dialog="val => (showChangeTagDialog = val)"
+      />
     </template>
   </main-section>
 </template>
@@ -76,6 +99,8 @@ import OutlineRoundBtn from "../components/OutlineRoundBtn";
 import DataList from "../components/DataList";
 import BusEvent from "../BusEvent";
 import streamSaver from "../plugins/streamsaver";
+import UpdateActionsDialog from "../components/dialogs/UpdateActionsDialog";
+import TableAction from "../components/TableAction";
 
 export default {
   components: {
@@ -84,10 +109,18 @@ export default {
     DataList,
     PageHeader,
     OutlineRoundBtn,
+    UpdateActionsDialog,
+    TableAction,
   },
   mixins: [ScreenMixin],
   data() {
     return {
+      actions: [
+        {
+          text: this.$t("action.change_tag_value"),
+          value: 0,
+        },
+      ],
       customerList: {},
       pageIcon: "mdi-account-outline",
       pageHeader: this.$t("page_header.customer_mgmt"),
@@ -96,6 +129,7 @@ export default {
       tableRowIcon: this.$t("icon.customer_icon"),
       headers: [],
       downloadCsvLoading: false,
+      newTagValue: null,
     };
   },
   mounted() {
@@ -163,6 +197,36 @@ export default {
     onSearch() {
       this.filter = { ...this.filter, filters: this.requestFilters };
       this.$apollo.queries.customerList.refetch();
+    },
+    async updateTagForSelectedCustomers() {
+      const params = {
+        ids: this.selectedRowIds,
+        key: this.selectedTagForUpdate,
+        value: this.newTagValue,
+      };
+      try {
+        this.updatingTags = true;
+        await this.$rest.put("/customers/tags", params);
+      } catch (e) {
+        await this.$dialog.notify.error(e);
+      } finally {
+        this.updatingTags = false;
+        this.showChangeTagDialog = false;
+        this.selectedTagForUpdate = null;
+        this.resetActionChoices();
+        await this.$apollo.queries.customerList.refetch();
+      }
+    },
+    selectedAction(index) {
+      switch (index) {
+        case 0:
+          this.showChangeTagDialog = true;
+          this.fetchTagsLoading = true;
+          this.getSelectedObject("/customers/ids");
+          break;
+        default:
+          return;
+      }
     },
   },
   watch: {
@@ -235,3 +299,12 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.customer {
+  &__data-section {
+    flex: 1;
+    overflow: hidden;
+  }
+}
+</style>

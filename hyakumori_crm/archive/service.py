@@ -1,14 +1,22 @@
+import time
 from urllib import parse
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError as DjValidationError
+from django.db import transaction, OperationalError
 from django.db.models import F, Subquery, OuterRef, Count
 from django.db.models.expressions import Func, RawSQL, Value
 from django.utils.translation import gettext_lazy as _
 from pydantic import ValidationError
-from django.core.exceptions import ValidationError as DjValidationError
 from rest_framework.request import Request
 
+from hyakumori_crm.cache.archive import (
+    refresh_customers_cache,
+    refresh_forest_cache,
+    refresh_user_participants_cache,
+)
+from .schemas import ArchiveInput, ArchiveCustomerInput, ArchiveFilter
 from ..crm.models import (
     Archive,
     Attachment,
@@ -20,15 +28,7 @@ from ..crm.models import (
     ArchiveCustomerContact,
     CustomerContact,
 )
-from ..customer.service import get_customer_by_pk
 from ..forest.service import get_forest_by_pk
-
-from hyakumori_crm.cache.archive import (
-    refresh_customers_cache,
-    refresh_forest_cache,
-    refresh_user_participants_cache,
-)
-from .schemas import ArchiveInput, ArchiveCustomerInput, ArchiveFilter
 
 
 def get_archive_by_pk(pk):
@@ -36,6 +36,17 @@ def get_archive_by_pk(pk):
         return Archive.objects.get(pk=pk)
     except (Archive.DoesNotExist, ValidationError):
         raise ValueError("Archive not found")
+
+
+def get_archive_by_ids(ids: list):
+    archives = []
+    for pk in ids:
+        try:
+            archive = get_archive_by_pk(pk)
+            archives.append(archive)
+        except ValueError:
+            continue
+    return archives
 
 
 def get_attachment_by_pk(attachment_pk):
@@ -407,3 +418,12 @@ def _archives_list_raw_sql(page_size, page, filters, order_by):
         -- offset 0
     """
     return query
+
+
+def update_archive_tag(data: dict):
+    ids = data.get("ids")
+    tag_key = data.get("key")
+    new_value = data.get("value")
+    Archive.objects.filter(id__in=ids, tags__has_key=tag_key).update(
+        tags=RawSQL("tags || jsonb_build_object(%s, %s)", params=[tag_key, new_value])
+    )
