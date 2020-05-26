@@ -132,11 +132,11 @@ msgstr "郵便番号"
 
 #: hyakumori_crm/customer/resolvers.py:43 hyakumori_crm/forest/resolvers.py:20
 msgid "Prefecture"
-msgstr "都道府県"
+msgstr "地籍_都道府県"
 
 #: hyakumori_crm/customer/resolvers.py:44 hyakumori_crm/forest/resolvers.py:26
 msgid "Municipality"
-msgstr "市町村"
+msgstr "地籍_市町村"
 
 #: hyakumori_crm/customer/resolvers.py:45
 msgid "Address"
