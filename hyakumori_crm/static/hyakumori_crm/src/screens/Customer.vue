@@ -4,7 +4,46 @@
       <page-header>
         <template #bottom-right>
           <div>
-            <v-menu offset-y nudge-bottom="4">
+            <outline-round-btn
+              v-acl-only="[
+                'admin',
+                'group_admin',
+                'group_normal_user',
+                'manage_customer',
+              ]"
+              icon="mdi-upload"
+              :content="
+                selectedFileName
+                  ? `${selectedFileName}`
+                  : $t('buttons.csv_upload')
+              "
+              class="mr-2"
+              @click="handleUploadBtnClick"
+              :loading="uploadCsvLoading"
+            />
+            <input
+              v-acl-only="[
+                'admin',
+                'group_admin',
+                'group_normal_user',
+                'manage_customer',
+              ]"
+              ref="csvUploadInput"
+              type="file"
+              style="height:0;width:0;"
+              accept=".csv"
+              @change="handleFileChange"
+            />
+            <v-menu
+              offset-y
+              nudge-bottom="4"
+              v-acl-only="[
+                'admin',
+                'group_admin',
+                'group_normal_user',
+                'manage_customer',
+              ]"
+            >
               <template v-slot:activator="{ on }">
                 <outline-round-btn
                   icon="mdi-download"
@@ -101,6 +140,7 @@ import BusEvent from "../BusEvent";
 import streamSaver from "../plugins/streamsaver";
 import UpdateActionsDialog from "../components/dialogs/UpdateActionsDialog";
 import TableAction from "../components/TableAction";
+import ErrorCard from "../components/ErrorsCard";
 
 export default {
   components: {
@@ -130,6 +170,8 @@ export default {
       headers: [],
       downloadCsvLoading: false,
       newTagValue: null,
+      selectedFileName: "",
+      uploadCsvLoading: false,
     };
   },
   mounted() {
@@ -150,7 +192,54 @@ export default {
         .filter(f => f.value !== undefined);
     },
   },
+  beforeRouteLeave(to, from, next) {
+    if (this.uploadCsvLoading && !confirm(this.$t("messages.confirm_leave")))
+      next(false);
+    else next();
+  },
   methods: {
+    confirmReload(e) {
+      e.returnValue = this.$t("messages.confirm_leave");
+    },
+    async handleUploadBtnClick() {
+      if (this.selectedFileName !== "") {
+        const confirmUpload = confirm(this.$t("messages.confirm_upload_csv"));
+        if (!confirmUpload) return;
+        this.uploadCsvLoading = true;
+        window.addEventListener("beforeunload", this.confirmReload);
+        const formData = new FormData();
+        formData.append("file", this.$refs.csvUploadInput.files[0]);
+        try {
+          await this.$rest.post("/customers/upload_csv", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          this.$apollo.queries.customerList.refetch();
+          this.$dialog.notify.success(this.$t("messages.upload_successfully"));
+        } catch (error) {
+          if (
+            error.response &&
+            error.response.status < 500 &&
+            error.response.data
+          ) {
+            this.$dialog.show(ErrorCard, {
+              line: error.response.data.line,
+              errors: error.response.data.errors,
+            });
+          }
+        } finally {
+          window.removeEventListener("beforeunload", this.confirmReload);
+        }
+        this.uploadCsvLoading = false;
+        this.$refs.csvUploadInput.value = null;
+        this.selectedFileName = "";
+      } else {
+        this.$refs.csvUploadInput.click();
+      }
+    },
+    handleFileChange(e) {
+      if (e.target.files[0]) this.selectedFileName = e.target.files[0].name;
+      else this.selectedFileName = "";
+    },
     downloadCsv(fileName, url) {
       this.downloadCsvLoading = true;
       const fileStream = streamSaver.createWriteStream(fileName);

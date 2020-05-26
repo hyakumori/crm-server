@@ -4,3 +4,5 @@ MOBILEPHONE_NUMBER = (
 )
 TELEPHONE_NUMBER = r"^\d{2}-\d{4}-\d{4}$"
 POSTAL_CODE = r"^(?:\d{3}-\d{4})$"
+
+CUSTOMER_ID = r"DFFC\d{10}"

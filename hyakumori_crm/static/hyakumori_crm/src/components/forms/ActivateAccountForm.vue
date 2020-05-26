@@ -158,13 +158,15 @@ export default {
         }, 1000);
       } catch (err) {
         this.success = false;
-        const error_data = err.response.data;
-        if (Object.keys(error_data).indexOf("uid") > -1) {
-          this.formError = this.$t("messages.uid_not_found");
-        } else if (Object.keys(error_data).indexOf("token") > -1) {
-          this.formError = this.$t("messages.token_stale");
-        } else {
-          this.formError = this.$t("messages.error_set_new_password");
+        if (err.response && err.response.status < 500) {
+          const error_data = err.response.data;
+          if (Object.keys(error_data).indexOf("uid") > -1) {
+            this.formError = this.$t("messages.uid_not_found");
+          } else if (Object.keys(error_data).indexOf("token") > -1) {
+            this.formError = this.$t("messages.token_stale");
+          } else {
+            this.formError = this.$t("messages.error_set_new_password");
+          }
         }
       } finally {
         this.loading = false;

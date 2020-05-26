@@ -1,13 +1,14 @@
-from typing import Optional, List
-from datetime import date
-from uuid import UUID
 import operator
+from datetime import date
 from functools import reduce
+from typing import Optional, List
+from uuid import UUID
 
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import FilterSet, CharFilter, DateFilter
 from pydantic import validator, root_validator
+from pydantic.dataclasses import dataclass
 
 from hyakumori_crm.core.models import HyakumoriDanticModel, Paginator
 from hyakumori_crm.crm.models import (
@@ -18,6 +19,7 @@ from hyakumori_crm.crm.models import (
     ForestCustomerContact,
 )
 from hyakumori_crm.crm.schemas.contract import ContractType
+from hyakumori_crm.crm.schemas.forest import LandAttribute, ForestAttribute
 
 
 class ForestFilter(FilterSet):
@@ -190,3 +192,16 @@ class ForestMemoInput(HyakumoriDanticModel):
     class Config:
         arbitrary_types_allowed = True
         min_anystr_length = 0
+
+
+class ForestCsvInput(HyakumoriDanticModel):
+    id: Optional[UUID]
+    internal_id: str
+    cadastral: Cadastral
+    contracts: List[Contract]
+    land_attributes: List[LandAttribute]
+    forest_attributes: List[ForestAttribute]
+    tags: Optional[dict]
+
+    class CsvConfig:
+        arbitrary_types_allowed = True

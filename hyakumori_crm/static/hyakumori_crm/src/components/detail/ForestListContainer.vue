@@ -177,9 +177,10 @@ export default {
         this.itemsForAdding = { results: [] };
       } catch (error) {
         this.saving = false;
-        this.$dialog.notify.error(
-          error.response.data.detail || error.response.statusText,
-        );
+        if (error.response && error.response.status < 500)
+          this.$dialog.notify.error(
+            error.response.data.detail || error.response.statusText,
+          );
       }
     },
   },

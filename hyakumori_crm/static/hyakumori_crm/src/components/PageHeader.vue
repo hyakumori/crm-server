@@ -7,7 +7,23 @@
       <div class="page-header__content--center">
         <div class="d-flex justify-space-between">
           <div class="logo-section">
-            <img src="../assets/img/crm-logo.png" height="20" />
+            <img
+              style="vertical-align:middle;"
+              src="../assets/img/crm-logo.png"
+              height="20"
+            />
+            <v-chip
+              v-if="inMaintain"
+              class="ml-2"
+              color="orange"
+              text-color="white"
+              label
+              small
+              pill
+            >
+              <v-icon dense size="small" left>mdi-wrench</v-icon>
+              MAINTENANCE
+            </v-chip>
           </div>
 
           <div class="menu caption pa-7">
@@ -129,6 +145,7 @@
 
 <script>
 import busEvent from "../BusEvent";
+import { mapState } from "vuex";
 
 export default {
   name: "page-header",
@@ -138,7 +155,6 @@ export default {
       user: null,
     };
   },
-
   methods: {
     onBack() {
       this.$router.push(this.$store.state.headerInfo.backUrl || -1);
@@ -156,6 +172,7 @@ export default {
   },
 
   computed: {
+    ...mapState({ inMaintain: "inMaintain" }),
     isDetail() {
       return (
         (this.$route.meta && this.$route.meta.detail) ||

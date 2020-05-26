@@ -88,6 +88,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "hyakumori_crm.crm.middlewares.in_maintain_middleware",
 ]
 
 ROOT_URLCONF = "hyakumori_crm.urls"
@@ -221,7 +222,7 @@ DJOSER = {
     "EMAIL": {"activation": "hyakumori_crm.users.emails.ActivationEmail"},
     "PERMISSIONS": {
         "user_list": ["hyakumori_crm.permissions.IsAdminUser"],
-        "user": ["hyakumori_crm.permissions.CurrentUserOrAdmin"]
+        "user": ["hyakumori_crm.permissions.CurrentUserOrAdmin"],
     },
     "LOGIN_FIELD": "email",
     "HIDE_USERS": False,
@@ -242,6 +243,7 @@ SIMPLE_JWT = {
 
 # Django Rest Framework
 REST_FRAMEWORK = {
+    "EXCEPTION_HANDLER": "hyakumori_crm.api.views.exception_handler",
     "DEFAULT_PAGINATION_CLASS": "hyakumori_crm.crm.restful.paginations.StandardPagination",  # noqa
     "PAGE_SIZE": int(os.getenv("DJANGO_PAGINATION_LIMIT", 10)),
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S%z",
