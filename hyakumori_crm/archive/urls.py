@@ -5,6 +5,8 @@ from .views import download_file
 
 api_urls = [
     path("archives", archives),
+    path("archives/ids", archive_ids),
+    path("archives/ids/tags", archive_tags),
     path("archives/<uuid:pk>", archive),
     path("archives/<uuid:pk>/users", archive_users),
     path("archives/<uuid:pk>/forests", archive_forests),

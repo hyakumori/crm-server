@@ -225,5 +225,11 @@
         "username": "ユーザー名"
       }
     }
+  },
+  "action": {
+    "contract_status_to_contracted": "契約ステータスを「契約済」に変更",
+    "contract_status_to_unsigned": "契約ステータスを「未契約」に変更",
+    "contract_status_to_expired": "契約ステータスを「期限切」に変更",
+    "change_tag_value": "タグを変更"
   }
 }
