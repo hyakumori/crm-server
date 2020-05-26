@@ -1,29 +1,24 @@
 import csv
-import json
 import pathlib
 import time
-import functools
 
 from django.core.cache import cache
 from django.db.models import Q, F, Count
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils.translation import gettext_lazy as _
-from pydantic import ValidationError
 from rest_framework import mixins
 from rest_framework.decorators import action, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from django_q.tasks import async_task, result
 
-from hyakumori_crm.core.utils import default_paginator, make_error_json
+from hyakumori_crm.core.utils import default_paginator
 from hyakumori_crm.crm.models import Forest, Archive
 from hyakumori_crm.crm.restful.serializers import (
     CustomerSerializer,
     ForestSerializer,
     ContactSerializer,
     ArchiveSerializer,
-    ForestListingSerializer,
 )
 from .schemas import (
     ForestInput,
@@ -31,7 +26,6 @@ from .schemas import (
     CustomerDefaultInput,
     CustomerContactDefaultInput,
     ForestMemoInput,
-    ForestCsvInput,
 )
 from .service import (
     get_forest_by_pk,
@@ -44,27 +38,18 @@ from .service import (
     update_forest_memo,
     forest_csv_data_mapping,
     get_forests_for_csv,
-    get_forests_by_ids,
     update_forest_tags,
     csv_headers,
-    csv_upload,
+    csv_upload, get_forests_tag_by_ids,
 )
-
 from ..activity.services import ActivityService, ForestActions
 from ..api.decorators import (
     api_validate_model,
     get_or_404,
     action_login_required,
 )
-from ..crm.common.constants import (
-    FOREST_CADASTRAL,
-    FOREST_LAND_ATTRIBUTES,
-    FOREST_OWNER_NAME,
-    FOREST_CONTRACT,
-    FOREST_ATTRIBUTES,
-)
-from ..permissions.services import PermissionService
 from ..core.utils import clear_maintain_task_id_cache
+from ..permissions.services import PermissionService
 
 
 class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericViewSet):
@@ -83,8 +68,8 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     def list_minimal(self, request):
         query = (
             self.get_queryset()
-            .annotate(customers_count=Count(F("forestcustomer__customer_id")))
-            .values("id", "internal_id", "cadastral", "customers_count")
+                .annotate(customers_count=Count(F("forestcustomer__customer_id")))
+                .values("id", "internal_id", "cadastral", "customers_count")
         )
         search_str = request.GET.get("search")
         if search_str:
@@ -186,8 +171,8 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
         if ids is None or len(ids) == 0:
             return Response({"data": []})
         else:
-            forests = get_forests_by_ids(ids)
-            return Response(ForestListingSerializer(forests, many=True).data)
+            forest_tags = get_forests_tag_by_ids(ids)
+            return JsonResponse(data={"data": forest_tags})
 
     @action(detail=False, methods=["PUT"], url_path="tags")
     @action_login_required(with_permissions=["change_forest"])

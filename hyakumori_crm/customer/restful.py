@@ -1,10 +1,9 @@
 import csv
 import pathlib
 import time
-import json
 
 from django.core.cache import cache
-from django.http.response import StreamingHttpResponse
+from django.http.response import StreamingHttpResponse, JsonResponse
 from django.utils.translation import gettext_lazy as _
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
@@ -22,10 +21,6 @@ from hyakumori_crm.crm.restful.serializers import (
     CustomerSerializer,
     ArchiveSerializer,
 )
-from ..core.utils import clear_maintain_task_id_cache
-from ..activity.services import ActivityService, CustomerActions
-from ..api.decorators import action_login_required, api_validate_model, get_or_404
-
 from .schemas import (
     BankingInput,
     ContactsInput,
@@ -37,7 +32,6 @@ from .schemas import (
     CustomerMemoInput,
     ContactType,
     required_contact_input_wrapper,
-    CustomerUploadCsv,
 )
 from .service import (
     contacts_list_with_search,
@@ -58,11 +52,13 @@ from .service import (
     customercontacts_list_with_search,
     get_list,
     get_customer_by_business_id,
-    get_customers_by_ids,
-    update_customer_tags,
+    update_customer_tags, get_customers_tag_by_ids,
 )
-from ..forest.service import parse_tags_for_csv
 from .tasks import csv_upload
+from ..activity.services import ActivityService, CustomerActions
+from ..api.decorators import action_login_required, api_validate_model, get_or_404
+from ..core.utils import clear_maintain_task_id_cache
+from ..forest.service import parse_tags_for_csv
 
 
 class CustomerViewSets(ViewSet):
@@ -238,8 +234,8 @@ class CustomerViewSets(ViewSet):
         if ids is None or len(ids) == 0:
             return Response({"data": []})
         else:
-            customers = get_customers_by_ids(ids)
-            return Response(CustomerSerializer(customers, many=True).data)
+            customer_tags = get_customers_tag_by_ids(ids)
+            return JsonResponse(data={"data": customer_tags})
 
     @action(detail=False, methods=["PUT"], url_path="tags")
     @action_login_required(with_permissions=["change_customer"])
