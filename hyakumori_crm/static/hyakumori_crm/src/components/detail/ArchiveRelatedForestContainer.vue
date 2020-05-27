@@ -32,7 +32,8 @@
       :loading="fetchAllForestLoading"
       :submitBtnText="$t('buttons.add')"
       :handleSubmitClick="submitRelatedForest.bind(this)"
-      :disableAdditionBtn="fetchAllForestLoading"
+      :disableAdditionBtn="fetchAllForestLoading || !selectingForestId"
+      :handle-cancel-click="onCancel"
       submitBtnIcon="mdi-plus"
       @search="deboundGetSearch"
       @needToLoad="handleLoadMore"
@@ -112,6 +113,10 @@ export default {
   },
 
   methods: {
+    onCancel() {
+      this.selectingForestId = null;
+      this.selectingForestIndex = null;
+    },
     handleForestSelected(fId, fIndex) {
       this.selectingForestId = fId;
       this.selectingForestIndex = fIndex;

@@ -28,6 +28,8 @@
       :submitBtnText="$t('buttons.add')"
       submitBtnIcon="mdi-plus"
       :handleSubmitClick="handleAdd"
+      :handleCancelClick="onCancel"
+      :disableAdditionBtn="!modalSelectingId"
       @needToLoad="handleLoadMore"
       @search="debounceLoadInitItemsForAdding"
       ref="selectListModal"
