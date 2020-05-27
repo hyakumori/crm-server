@@ -12,6 +12,7 @@
           v-model="keyword"
           @input="val => $emit('search', val)"
           placeholder="姓、名、キーワード"
+          clearable
         />
       </v-card-title>
       <v-progress-linear v-if="loading" height="2" indeterminate />

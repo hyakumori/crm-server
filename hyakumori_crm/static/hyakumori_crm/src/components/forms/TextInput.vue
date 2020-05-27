@@ -19,6 +19,7 @@
       :type="type"
       :placeholder="placeholder"
       :error-messages="errors[0]"
+      :clearable="clearable"
     ></v-text-field>
   </ValidationProvider>
 </template>
@@ -77,6 +78,10 @@ export default {
       default: "",
     },
     maxLength: Number,
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     innerValue: "",
