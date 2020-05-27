@@ -31,6 +31,8 @@
       :submitBtnText="$t('buttons.add')"
       submitBtnIcon="mdi-plus"
       :handleSubmitClick="handleAdd"
+      :handleCancelClick="onCancel"
+      :disableAdditionBtn="!modalSelectingId"
       @needToLoad="handleLoadMore"
       @search="debounceLoadInitItemsForAdding"
       ref="selectListModal"
@@ -158,7 +160,7 @@ export default {
         contactItem.contact_type = this.contactType;
         this.contactsToAdd.push(contactItem);
         this.modalSelectingIndex = null;
-        this.modalSelectingForestId = null;
+        this.modalSelectingId = null;
         if (this.itemsForAdding.results.length <= 3) this.handleLoadMore();
       }
     },
