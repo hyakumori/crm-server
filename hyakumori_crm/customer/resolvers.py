@@ -1,16 +1,14 @@
-import uuid
 from typing import Any
+
 from ariadne import ObjectType
-from graphql import GraphQLResolveInfo
 from django.utils.translation import gettext as _
+from graphql import GraphQLResolveInfo
 
 from hyakumori_crm.graphql.decorators import login_required
-from ..core.decorators import validate_model
-from .schemas import (
-    CustomerFilter,
-    CustomerPaginator,
-)
+from .filters import CustomerFilter
+from .schemas import CustomerPaginator
 from .service import get_list
+from ..core.decorators import validate_model
 
 query = ObjectType("Query")
 
