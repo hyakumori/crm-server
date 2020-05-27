@@ -44,7 +44,8 @@ def get_forest_by_pk(pk):
 def get_forests_tag_by_ids(ids):
     with connection.cursor() as cursor:
         cursor.execute(
-            "select distinct jsonb_object_keys(tags) from crm_forest where id in %(ids)s", {"ids": tuple(ids)}
+            "select distinct jsonb_object_keys(tags) from crm_forest where id in %(ids)s",
+            {"ids": tuple(ids)},
         )
         tags = cursor.fetchall()
     return list(itertools.chain(*tags))
@@ -54,8 +55,8 @@ def get_customer_of_forest(pk, customer_pk):
     try:
         return (
             ForestCustomer.objects.select_related("customer")
-                .get(customer_id=customer_pk, forest_id=pk)
-                .customer
+            .get(customer_id=customer_pk, forest_id=pk)
+            .customer
         )
     except (
         ForestCustomer.DoesNotExist,
@@ -79,7 +80,7 @@ def get_forests_by_condition(
         return [], 0
     query = filters.qs if filters else Forest.objects.all()
     total = query.count()
-    forests = query.order_by("internal_id")[offset: offset + per_page]
+    forests = query.order_by("internal_id")[offset : offset + per_page]
     return forests, total
 
 
@@ -165,17 +166,17 @@ def get_customer_contacts_of_forest(pk):
             customercontact__forestcustomercontact__forestcustomer__forest_id=pk,
             customercontact__is_basic=False,
         )
-            .annotate(customer_id=F("customercontact__customer_id"))
-            .annotate(
+        .annotate(customer_id=F("customercontact__customer_id"))
+        .annotate(
             default=RawSQL(
                 "crm_forestcustomercontact.attributes->>'default'", params=[]
             )
         )
-            .annotate(cc_attrs=F("customercontact__attributes"))
-            .annotate(is_basic=Subquery(cc.values("is_basic")[:1]))
-            .annotate(customer_id=Subquery(cc.values("customer_id")[:1]))
-            .annotate(owner_customer_id=F("customercontact__customer_id"))
-            .annotate(business_id=Subquery(cc_business_id.values("business_id")[:1]))
+        .annotate(cc_attrs=F("customercontact__attributes"))
+        .annotate(is_basic=Subquery(cc.values("is_basic")[:1]))
+        .annotate(customer_id=Subquery(cc.values("customer_id")[:1]))
+        .annotate(owner_customer_id=F("customercontact__customer_id"))
+        .annotate(business_id=Subquery(cc_business_id.values("business_id")[:1]))
     )
 
 
@@ -232,8 +233,8 @@ def get_forests_for_csv(forest_ids: list = None):
         queryset = Forest.objects.all()
     return (
         queryset.distinct("id")
-            .annotate(forest_id=F("id"))
-            .annotate(
+        .annotate(forest_id=F("id"))
+        .annotate(
             customer_name_kana=RawSQL(
                 """
             select array_to_string(array_agg(concat_ws(' ', cc2.name_kana->>'last_name', cc2.name_kana->>'first_name')), '; ')
@@ -246,7 +247,7 @@ def get_forests_for_csv(forest_ids: list = None):
                 params=[],
             )
         )
-            .annotate(
+        .annotate(
             customer_name_kanji=RawSQL(
                 """
             select array_to_string(array_agg(concat_ws(' ', cc4.name_kanji->>'last_name', cc4.name_kanji->>'first_name')), '; ')
@@ -259,7 +260,7 @@ def get_forests_for_csv(forest_ids: list = None):
                 params=[],
             )
         )
-            .annotate(customer_internal_id=F("forestcustomer__customer__internal_id"))
+        .annotate(customer_internal_id=F("forestcustomer__customer__internal_id"))
     )
 
 
@@ -272,7 +273,7 @@ def parse_tags_for_csv(tags: dict):
             if k is not None and v is not None:
                 result += f"{k}:{v}; "
         # remove the last semicolon
-        return result[0: len(result) - 2]
+        return result[0 : len(result) - 2]
 
 
 def forest_csv_data_mapping(forest):

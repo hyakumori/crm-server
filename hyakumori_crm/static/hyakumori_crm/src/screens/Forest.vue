@@ -9,27 +9,30 @@
                 'admin',
                 'group_admin',
                 'group_normal_user',
-                'manage_forest',
+                'manage_customer',
               ]"
-              :content="$t('buttons.csv_upload')"
               icon="mdi-upload"
-              :loading="uploadCsvLoading"
-              @click="uploadCsv"
+              :content="
+                selectedFileName
+                  ? `${selectedFileName}`
+                  : $t('buttons.csv_upload')
+              "
               class="mr-2"
-              v-show="true"
+              @click="handleUploadBtnClick"
+              :loading="uploadCsvLoading"
             />
             <input
               v-acl-only="[
                 'admin',
                 'group_admin',
                 'group_normal_user',
-                'manage_forest',
+                'manage_customer',
               ]"
-              @change="onCsvInputChange"
-              accept=".csv"
-              class="forest__csv-section__upload"
-              ref="uploadCsv"
+              ref="csvUploadInput"
               type="file"
+              style="height:0;width:0;"
+              accept=".csv"
+              @change="handleFileChange"
             />
             <v-menu
               nudge-bottom="4"
@@ -192,6 +195,7 @@ export default {
       headers: [],
       downloadCsvLoading: false,
       newTagValue: null,
+      selectedFileName: "",
       uploadCsvLoading: false,
     };
   },
@@ -265,22 +269,26 @@ export default {
         this.$refs.uploadCsv.click();
       }
     },
-
-    checkCsvExtension(filename) {
-      const filenameSplitByDot = filename.split(".");
-      const fileExtension = filenameSplitByDot[filenameSplitByDot.length - 1];
-      return fileExtension === "csv";
+    handleFileChange(e) {
+      if (e.target.files[0]) this.selectedFileName = e.target.files[0].name;
+      else this.selectedFileName = "";
     },
-
-    async onCsvInputChange(e) {
-      const file = e.target.files[0];
-      if (file.type === "text/csv" && this.checkCsvExtension(file.name)) {
-        const requestFile = new FormData();
-        requestFile.append("file", file);
+    async handleUploadBtnClick() {
+      if (this.selectedFileName !== "") {
+        const confirmUpload = confirm(this.$t("messages.confirm_upload_csv"));
+        if (!confirmUpload) {
+          this.$refs.csvUploadInput.value = null;
+          this.selectedFileName = "";
+          return;
+        }
+        this.uploadCsvLoading = true;
+        window.addEventListener("beforeunload", this.confirmReload);
+        const formData = new FormData();
+        formData.append("file", this.$refs.csvUploadInput.files[0]);
         try {
-          this.uploadCsvLoading = true;
-          window.addEventListener("beforeunload", this.confirmReload);
-          await this.$rest.post("/forests/upload-csv", requestFile);
+          await this.$rest.post("/forests/upload-csv", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
           this.$apollo.queries.forestsInfo.refetch();
           this.$dialog.notify.success(this.$t("messages.upload_successfully"));
         } catch (error) {
@@ -296,14 +304,13 @@ export default {
           }
         } finally {
           window.removeEventListener("beforeunload", this.confirmReload);
-          this.uploadCsvLoading = false;
         }
+        this.uploadCsvLoading = false;
+        this.$refs.csvUploadInput.value = null;
+        this.selectedFileName = "";
       } else {
-        this.$dialog.notify.error("Invalid file input", {
-          timeout: 5000,
-        });
+        this.$refs.csvUploadInput.click();
       }
-      this.$refs.uploadCsv.value = "";
     },
 
     async downloadAllCsv() {
@@ -312,7 +319,7 @@ export default {
         let csvData = await this.$rest.get("/forests/download-csv");
         const blob = new Blob([csvData], { type: "text/csv;charset=UTF-8" });
         saveAs(blob, "all-forests.csv");
-      } catch (e) {
+      } catch {
       } finally {
         this.downloadCsvLoading = false;
       }

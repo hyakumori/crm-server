@@ -184,8 +184,10 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     @action_login_required(with_permissions=["change_forest"])
     def upload_csv(self, request):
         csv_file = request.data["file"]
-        if csv_file.content_type != "text/csv":
-            return Response({"errors": _("Please upload a csv file!!")}, 400)
+        if pathlib.Path(csv_file.name).suffix != ".csv":
+            return Response(
+                {"errors": {"__root__": [_("Please upload a csv file!!")]}}, 400
+            )
         pathlib.Path("media/upload/forest").mkdir(parents=True, exist_ok=True)
         file_name = f"{pathlib.Path(csv_file.name).stem}-{int(time.time())}.csv"
         fp = f"media/upload/forest/{file_name}"
@@ -193,12 +195,19 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
             for chunk in csv_file.chunks():
                 destination.write(chunk)
         cache.set("maintain_task_id", f"forests/{file_name}", None)
-        r = csv_upload(fp)
-        clear_maintain_task_id_cache()
-        if type(r) is int:
-            return Response({"msg": "OK"}, status=200)
+        try:
+            r = csv_upload(fp)
+        except UnicodeDecodeError:
+            return Response(
+                {"errors": {"__root__": [_("Please upload a csv file!!")]}}, 400
+            )
         else:
-            return Response(r, status=400)
+            if type(r) is int:
+                return Response({"msg": "OK"}, status=200)
+            else:
+                return Response(r, status=400)
+        finally:
+            clear_maintain_task_id_cache()
 
 
 @api_view(["PUT", "PATCH"])
