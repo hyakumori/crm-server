@@ -37,6 +37,7 @@ class ArchiveFilter(HyakumoriDanticModel):
     their_participants: str = None
     our_participants: str = None
     associated_forest: str = None
+    tags: str = None
 
     class Config:
         arbitrary_types_allowed = True

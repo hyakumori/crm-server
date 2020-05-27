@@ -5,7 +5,8 @@ from django.utils.translation import gettext as _
 
 from ..core.decorators import validate_model
 from .service import get_forests_by_condition
-from .schemas import ForestFilter, ForestPaginator
+from .schemas import ForestPaginator
+from .filters import ForestFilter
 from ..graphql.decorators import login_required
 
 query = QueryType()
