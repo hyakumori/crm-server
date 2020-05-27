@@ -293,14 +293,14 @@ def forest_csv_data_mapping(forest):
         forest.customer_name_kanji,
         forest.customer_name_kana,
         forest.contracts[0].get("status"),
-        forest.contracts[0].get("start_date"),
-        forest.contracts[0].get("end_date"),
+        f'"{forest.contracts[0].get("start_date")}"',
+        f'"{forest.contracts[0].get("end_date")}"',
         forest.contracts[1].get("status"),
-        forest.contracts[1].get("start_date"),
-        forest.contracts[1].get("end_date"),
+        f'"{forest.contracts[1].get("start_date")}"',
+        f'"{forest.contracts[1].get("end_date")}"',
         forest.contracts[2].get("status"),
-        forest.contracts[2].get("start_date"),
-        forest.contracts[2].get("end_date"),
+        f'"{forest.contracts[2].get("start_date")}"',
+        f'"{forest.contracts[2].get("end_date")}"',
         parse_tags_for_csv(forest.tags),
         forest.forest_attributes.get("地番面積_ha"),
         forest.forest_attributes.get("面積_ha"),
@@ -359,22 +359,6 @@ def csv_column_to_dict(keys, values):
     return result
 
 
-def tags_csv_to_dict(tags_data: str):
-    result = {}
-    if tags_data is None:
-        return result
-    else:
-        tags_data_split = tags_data.split("; ")
-        for tag in tags_data_split:
-            tag_k_v = tag.split(":")
-            if len(tag_k_v) == 2:
-                tag_key, tag_val = tag_k_v[0], tag_k_v[1]
-                result[tag_key] = tag_val
-            else:
-                raise ValueError()
-        return result
-
-
 def dict_to_list(data: dict):
     return [{"key": key, "value": value} for key, value in data.items()]
 
@@ -399,7 +383,10 @@ def parse_csv_data_to_dict(row_data):
     forest_attributes = []
     for i in range(len(row_data)):
         if i == 0:
-            new_forest["id"] = row_data[i][1:]  # exluce BOM char
+            if row_data[i][0] == "\ufeff":
+                new_forest["id"] = row_data[i][1:]  # exluce BOM char
+            else:
+                new_forest["id"] = row_data[i]
         elif i == 1:
             new_forest["internal_id"] = row_data[i]
         elif 1 < i <= 5:
@@ -413,7 +400,7 @@ def parse_csv_data_to_dict(row_data):
         elif 19 < i <= 22:
             fsc_contract.append(row_data[i])
         elif i == 23:
-            new_forest["tags"] = tags_csv_to_dict(row_data[i])
+            new_forest["tags"] = row_data[i]
         elif 23 < i <= len(row_data) - 1:
             forest_attributes.append(row_data[i])
     new_forest["cadastral"] = csv_column_to_dict(cadastral_keys, cadastral)
@@ -438,7 +425,7 @@ def update_forest_csv(forest, data: ForestCsvInput):
     forest.cadastral = data.cadastral.dict()
     forest.land_attributes = list_to_dict(data.land_attributes)
     forest.contracts = [c.dict() for c in data.contracts]
-    forest.tags = data.tags
+    forest.tags = data.tags_json
     forest.forest_attributes = list_to_dict(data.forest_attributes)
     forest.save()
 
@@ -501,4 +488,5 @@ csv_errors_map = {
     "contracts.2.status": "FSC認証",
     "contracts.2.start_date": "開始日",
     "contracts.2.end_date": "終了日",
+    "tags": "タグ",
 }
