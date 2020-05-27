@@ -124,6 +124,7 @@ export default {
 
     async onSubmit() {
       try {
+        this.loading = true;
         const response = await this.$rest.post(
           "/token/create/",
           {
@@ -136,7 +137,6 @@ export default {
 
         if (response) {
           const { access, refresh } = response;
-          this.loading = true;
 
           localStorage.setItem("accessToken", access);
           localStorage.setItem("refreshToken", refresh);
