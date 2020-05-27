@@ -20,6 +20,10 @@ export default {
     };
   },
   methods: {
+    onCancel() {
+      this.modalSelectingId = null;
+      this.modalSelectingIndex = null;
+    },
     async loadInitItemsForAdding(keyword) {
       let reqConfig = keyword
         ? {
