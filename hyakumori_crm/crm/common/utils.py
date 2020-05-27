@@ -59,3 +59,19 @@ def get_customer_name(name_dict):
         customer_name += name_dict.get("first_name")
 
     return customer_name
+
+
+def tags_csv_to_dict(tags_data: str):
+    result = {}
+    if not tags_data:
+        return result
+    else:
+        tags_data_split = tags_data.split("; ")
+        for tag in tags_data_split:
+            tag_k_v = tag.split(":")
+            if len(tag_k_v) == 2:
+                tag_key, tag_val = tag_k_v[0], tag_k_v[1]
+                result[tag_key] = tag_val
+            else:
+                raise ValueError()
+        return result

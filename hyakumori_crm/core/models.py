@@ -95,6 +95,7 @@ class HyakumoriDanticModel(BaseModel):
                 "Required at least {limit_value} character"
             ),
             "value_error.date": _("Invalid date format"),
+            "type_error.uuid": _("Invalid UUID"),
         }
 
     @validator("*", pre=True)
