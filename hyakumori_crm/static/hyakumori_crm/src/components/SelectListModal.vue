@@ -1,5 +1,11 @@
 <template>
-  <v-dialog eager v-model="shown_" scrollable width="400">
+  <v-dialog
+    eager
+    v-model="shown_"
+    scrollable
+    width="400"
+    @click:outside="onCancel"
+  >
     <v-card class="select-list-dialog">
       <v-card-title class="px-4 py-2">
         <TextInput
@@ -17,9 +23,7 @@
       <v-divider></v-divider>
 
       <v-card-actions>
-        <v-btn text rounded @click="shown_ = false">{{
-          $t("buttons.cancel")
-        }}</v-btn>
+        <v-btn text rounded @click="onCancel">{{ $t("buttons.cancel") }}</v-btn>
         <v-spacer />
         <v-btn
           rounded
@@ -49,6 +53,7 @@ export default {
     "loading",
     "handleSubmitClick",
     "disableAdditionBtn",
+    "handleCancelClick",
   ],
   data() {
     return {
@@ -70,6 +75,10 @@ export default {
     },
   },
   methods: {
+    onCancel() {
+      this.handleCancelClick();
+      this.shown_ = false;
+    },
     clearSearch() {
       this.keyword = "";
     },
