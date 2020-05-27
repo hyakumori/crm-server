@@ -10,11 +10,11 @@ from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
 
 from .schemas import (
-    ForestFilter,
     CustomerDefaultInput,
     CustomerContactDefaultInput,
     ForestCsvInput,
 )
+from .filters import ForestFilter
 from ..cache.forest import refresh_customer_forest_cache
 from ..core.decorators import errors_wrapper
 from ..crm.common.constants import (

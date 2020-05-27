@@ -5,7 +5,8 @@ from uuid import UUID
 
 from django.db import DataError, IntegrityError, connection
 from django.db.models import Count, F, OuterRef, Q, Subquery
-from django.db.models.expressions import RawSQL
+from django.db.models.expressions import RawSQL, Value
+from django.db.models.functions import Concat
 from django.utils.translation import gettext_lazy as _
 from django_q.tasks import async_task
 from querybuilder.query import Query
@@ -20,6 +21,7 @@ from hyakumori_crm.crm.models import (
     ForestCustomer,
     ForestCustomerContact,
 )
+from .filters import CustomerFilter
 from .schemas import ContactType, CustomerInputSchema, ContactsInput
 from ..cache.forest import refresh_customer_forest_cache
 
@@ -132,7 +134,7 @@ def get_list(
     per_page: int = 10,
     pre_per_page: Union[int, None] = None,
     order_by: Union[Iterator, None] = None,
-    filters: Union[dict, None] = None,
+    filters: Union[Iterator, None] = None,
 ):
     if per_page is None:
         offset = None
@@ -151,6 +153,14 @@ def get_list(
         {"bank_account_number": RawSQLField("banking->>'account_number'")},
         {"bank_account_name": RawSQLField("banking->>'account_name'")},
         "tags",
+        {"tags_repr": RawSQLField("""
+              (select string_agg(tags_repr, ',') tags_repr
+              from (
+                select concat_ws(':', key, value) as tags_repr
+                from jsonb_each_text(tags) as x
+                where value is not null
+              ) as ss)::text
+            """)}
     ]
 
     query = (
@@ -186,7 +196,7 @@ def get_list(
     )
     query = query.wrap()
     if filters:
-        query.where(**filters)
+        query.where(filters)
     total = query.copy().count()
 
     for order_field in order_by:
@@ -246,7 +256,7 @@ def update_basic_info(data):
         async_task(
             refresh_customer_forest_cache,
             list(values_list),
-            task_name=f"update_basic_info__forest_cache__{uuid.uuid4().hex.replace('-','')}",
+            task_name=f"update_basic_info__forest_cache__{uuid.uuid4().hex.replace('-', '')}",
         )
 
     return customer
