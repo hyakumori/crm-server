@@ -184,6 +184,7 @@ export default {
       this.filterQueryString = this.arrayToQueryString(filter);
       const api_url = `/archives?page_size=${this.options.itemsPerPage}&${this.filterQueryString}`;
       await this.fetchArchives(api_url);
+      this.options = { ...this.options, page: 1 };
     },
 
     arrayToQueryString(filters) {
@@ -273,6 +274,7 @@ export default {
   &__data-section {
     flex: 1;
     margin-left: 29px;
+    overflow: hidden;
   }
 }
 </style>
