@@ -159,6 +159,10 @@ export default {
   },
 
   watch: {
+    "options.page"(val) {
+      this.innerOptions = { ...this.innerOptions, page: val };
+    },
+
     innerOptions: {
       handler() {
         this.$emit("update:options", this.innerOptions);
