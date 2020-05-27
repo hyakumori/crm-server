@@ -220,7 +220,7 @@
   "user_management": {
     "tables": {
       "headers": {
-        "email": "ユーザーID",
+        "email": "メールアドレス",
         "first_name": "名",
         "full_name": "氏名",
         "last_login": "最終ログイン",
