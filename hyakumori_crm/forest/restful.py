@@ -40,7 +40,8 @@ from .service import (
     get_forests_for_csv,
     update_forest_tags,
     csv_headers,
-    csv_upload, get_forests_tag_by_ids,
+    csv_upload,
+    get_forests_tag_by_ids,
 )
 from ..activity.services import ActivityService, ForestActions
 from ..api.decorators import (
@@ -68,8 +69,8 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     def list_minimal(self, request):
         query = (
             self.get_queryset()
-                .annotate(customers_count=Count(F("forestcustomer__customer_id")))
-                .values("id", "internal_id", "cadastral", "customers_count")
+            .annotate(customers_count=Count(F("forestcustomer__customer_id")))
+            .values("id", "internal_id", "cadastral", "customers_count")
         )
         search_str = request.GET.get("search")
         if search_str:

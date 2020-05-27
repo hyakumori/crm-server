@@ -20,6 +20,7 @@ from hyakumori_crm.crm.models import (
 )
 from hyakumori_crm.crm.schemas.contract import ContractType
 from hyakumori_crm.crm.schemas.forest import LandAttribute, ForestAttribute
+from hyakumori_crm.crm.common.utils import tags_csv_to_dict
 
 
 class ForestFilter(FilterSet):
@@ -194,14 +195,39 @@ class ForestMemoInput(HyakumoriDanticModel):
         min_anystr_length = 0
 
 
+def csv_contract_date_normalize(quoted_date_str):
+    return quoted_date_str[1:-1]
+
+
+class CsvContract(Contract):
+    _normalize_start_date = validator("start_date", allow_reuse=True, pre=True)(
+        csv_contract_date_normalize
+    )
+    _normalize_end_date = validator("end_date", allow_reuse=True, pre=True)(
+        csv_contract_date_normalize
+    )
+
+
 class ForestCsvInput(HyakumoriDanticModel):
     id: Optional[UUID]
     internal_id: str
     cadastral: Cadastral
-    contracts: List[Contract]
+    contracts: List[CsvContract]
     land_attributes: List[LandAttribute]
     forest_attributes: List[ForestAttribute]
-    tags: Optional[dict]
+    tags: Optional[str]
 
     class CsvConfig:
         arbitrary_types_allowed = True
+
+    @validator("tags")
+    def tags_validator(cls, value):
+        try:
+            tags_csv_to_dict(value)
+        except ValueError:
+            raise ValueError(_("Invalid format (tag1:value1; tag2:value2)"))
+        return value
+
+    @property
+    def tags_json(self):
+        return tags_csv_to_dict(self.tags)

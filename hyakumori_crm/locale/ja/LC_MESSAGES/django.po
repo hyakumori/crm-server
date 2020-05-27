@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-26 17:11+0700\n"
+"POT-Creation-Date: 2020-05-27 16:37+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -107,7 +107,11 @@ msgstr "{limit_value}文字以上入力する必要があります。"
 
 #: core/models.py:97
 msgid "Invalid date format"
-msgstr "無効な日付形式"
+msgstr "不正な日付形式（YYYY-MM-DD）"
+
+#: core/models.py:98
+msgid "Invalid UUID"
+msgstr "不正なUUID"
 
 #: customer/resolvers.py:22
 msgid "Internal Id"
@@ -154,8 +158,8 @@ msgstr "メールアドレス"
 msgid "Tag"
 msgstr "タグ"
 
-#: customer/restful.py:311 customer/restful.py:324 forest/restful.py:189
-#: forest/restful.py:202
+#: customer/restful.py:311 customer/restful.py:324 forest/restful.py:190
+#: forest/restful.py:203
 msgid "Please upload a csv file!!"
 msgstr "csvファイルをアップロードしてください!!"
 
@@ -255,25 +259,29 @@ msgstr "開始日"
 msgid "FSC end"
 msgstr "終了日"
 
-#: forest/schemas.py:117 forest/schemas.py:127
+#: forest/schemas.py:118 forest/schemas.py:128
 #, fuzzy
 #| msgid "Customer Id {v} not found"
 msgid "Customer Id {} not found"
 msgstr "カスタマーID {v}が見つかりません"
 
-#: forest/schemas.py:149 forest/schemas.py:174
+#: forest/schemas.py:150 forest/schemas.py:175
 #, fuzzy, python-brace-format
 #| msgid "Customer Id {v} not found"
 msgid "Customer {v} not found"
 msgstr "カスタマーID {v}が見つかりません"
 
-#: forest/schemas.py:183
+#: forest/schemas.py:184
 #, fuzzy, python-brace-format
 #| msgid "Contact not found"
 msgid "Contact {v} not found"
 msgstr "連絡先が見つかりません"
 
-#: forest/service.py:41 forest/service.py:475
+#: forest/schemas.py:228
+msgid "Invalid format (tag1:value1; tag2:value2)"
+msgstr "無効な形式（タグ1：値1; タグ2：値2）"
+
+#: forest/service.py:41 forest/service.py:462
 msgid "Forest not found"
 msgstr "森が見つかりません"
 
@@ -662,6 +670,3 @@ msgstr ""
 
 #~ msgid "Tag Manage Type"
 #~ msgstr "管理形態"
-
-#~ msgid "Invalid"
-#~ msgstr "無効"
