@@ -147,7 +147,7 @@ export default {
     },
     handleAdd() {
       const c = this.itemsForAdding.results.splice(
-        this.modalSelectingCustomerIndex,
+        this.modalSelectingIndex,
         1,
       )[0];
       c.added = true;
