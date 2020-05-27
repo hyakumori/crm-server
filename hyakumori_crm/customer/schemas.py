@@ -14,8 +14,8 @@ from pydantic.errors import MissingError
 from ..core.models import HyakumoriDanticModel, HyakumoriDanticUpdateModel, Paginator
 from ..crm.common import regexes
 from ..crm.common.constants import DEFAULT_EMAIL, EMPTY, UNKNOWN
+from ..crm.common.utils import tags_csv_to_dict
 from ..crm.models import Customer, Forest, ForestCustomer, Contact
-from ..forest.service import tags_csv_to_dict
 
 
 class Name(HyakumoriDanticModel):
@@ -353,7 +353,7 @@ class CustomerUploadCsv(HyakumoriDanticModel):
         try:
             tags_csv_to_dict(value)
         except ValueError:
-            raise ValueError("Invalid format")
+            raise ValueError("Invalid format (tag1:value1; tag2:value2)")
         return value
 
     @property
