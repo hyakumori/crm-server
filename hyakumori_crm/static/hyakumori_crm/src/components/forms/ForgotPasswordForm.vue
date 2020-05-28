@@ -2,7 +2,7 @@
   <v-card class="pa-0 elevation-24">
     <ValidationObserver v-slot="{ invalid }">
       <form>
-        <v-card-title class="justify-start pb-0 px-6 pt-6">
+        <v-card-title class="justify-start pb-0 px-6 pt-6 text-color-444444">
           {{ $t("page_header.forgot_password") }}
         </v-card-title>
 
@@ -16,13 +16,13 @@
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <p class="grey--text text--darken-3">
+              <p class="text--darken-3 text-color-444444">
                 {{ $t("messages.forgot_password_help_text") }}
               </p>
             </v-row>
             <v-row no-gutters>
               <v-col cols="12">
-                <label class="font-weight-bold">{{
+                <label class="font-weight-bold text-color-444444">{{
                   $t("login_form.email")
                 }}</label>
                 <text-input
@@ -44,6 +44,7 @@
             <v-row class="fill-height">
               <v-col class="pt-0 pb-0 text-right" cols="12">
                 <v-btn
+                  class="font-weight-bold"
                   color="primary"
                   depressed
                   width="100%"

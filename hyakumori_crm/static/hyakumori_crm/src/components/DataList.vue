@@ -192,6 +192,13 @@ export default {
   white-space: nowrap;
 }
 
+%row-text-style {
+  font-size: 12px;
+  line-height: 10px;
+  color: #444444;
+  font-weight: normal;
+}
+
 .v-data-table {
   padding: 10px;
   width: 100%;
@@ -205,18 +212,25 @@ export default {
     border-radius: 50%;
   }
 
+  & .icon-mode:before {
+    color: #aaaaaa;
+  }
+
   & .tag {
     display: inline-block;
     background: #12c7a6;
     border-radius: 4px;
     color: white;
     margin: 0 2px;
-    padding: 1px 4px !important;
-    font-size: 12px;
+    padding: 4px 6px !important;
   }
 
   & ::v-deep tr {
+    td:first-child i:before {
+      color: #aaaaaa;
+    }
     td {
+      @extend %row-text-style;
       max-width: 300px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -232,10 +246,18 @@ export default {
       position: relative;
       @extend %text-overflow-shared;
 
+      span {
+        font-weight: bold;
+        @extend %row-text-style;
+      }
+
       & .mdi-chevron-up {
         position: absolute;
         right: 0;
       }
+    }
+    th:first-child i:before {
+      color: #aaaaaa;
     }
     th:nth-child(2) {
       text-align: center !important;
