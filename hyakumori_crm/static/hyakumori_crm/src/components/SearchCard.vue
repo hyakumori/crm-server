@@ -138,6 +138,7 @@ export default {
           keyword: null,
         },
       ];
+      this.usedFields = new Set();
 
       if (this.onSearch) {
         this.onSearch();
@@ -162,10 +163,11 @@ export default {
 
     onSelected(item, index) {
       const oldField = this.conditions[index].criteria;
-      this.usedFields.has(oldField) && this.usedFields.delete(oldField);
+      const usedFields = new Set(this.usedFields);
+      usedFields.has(oldField) && usedFields.delete(oldField);
       this.conditions[index].criteria = item;
-      this.usedFields.add(item);
-      this.usedFields = new Set(this.usedFields);
+      usedFields.add(item);
+      this.usedFields = usedFields;
     },
 
     deleteSearchField(index) {

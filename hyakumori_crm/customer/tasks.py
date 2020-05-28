@@ -37,6 +37,8 @@ header_map = {
 def csv_upload(fp):
     with open(fp, mode="r", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
+        if list(header_map.values()) != reader.fieldnames:
+            return {"errors": {"__root__": [_("Invalid csv file!")]}}
         line_count = 0
         customer_ids = []
         for row in reader:
@@ -56,7 +58,7 @@ def csv_upload(fp):
             except OperationalError:
                 return {
                     "errors": {
-                        "__root__": ["Current resources are not ready for update!!"]
+                        "__root__": [_("Current resources are not ready for update!!")]
                     }
                 }
             else:
