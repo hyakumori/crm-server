@@ -228,7 +228,10 @@ def csv_headers():
 
 def get_forests_for_csv(forest_ids: list = None):
     if forest_ids is not None and len(forest_ids) > 0:
-        queryset = Forest.objects.filter(id__in=forest_ids)
+        try:
+            queryset = Forest.objects.filter(id__in=forest_ids)
+        except ValidationError:
+            return []
     else:
         queryset = Forest.objects.all()
     return (
@@ -293,14 +296,14 @@ def forest_csv_data_mapping(forest):
         forest.customer_name_kanji,
         forest.customer_name_kana,
         forest.contracts[0].get("status"),
-        f'"{forest.contracts[0].get("start_date")}"',
-        f'"{forest.contracts[0].get("end_date")}"',
+        f'"{forest.contracts[0].get("start_date") or ""}"',
+        f'"{forest.contracts[0].get("end_date") or ""}"',
         forest.contracts[1].get("status"),
-        f'"{forest.contracts[1].get("start_date")}"',
-        f'"{forest.contracts[1].get("end_date")}"',
+        f'"{forest.contracts[1].get("start_date") or ""}"',
+        f'"{forest.contracts[1].get("end_date") or ""}"',
         forest.contracts[2].get("status"),
-        f'"{forest.contracts[2].get("start_date")}"',
-        f'"{forest.contracts[2].get("end_date")}"',
+        f'"{forest.contracts[2].get("start_date") or ""}"',
+        f'"{forest.contracts[2].get("end_date") or ""}"',
         parse_tags_for_csv(forest.tags),
         forest.forest_attributes.get("地番面積_ha"),
         forest.forest_attributes.get("面積_ha"),
@@ -434,9 +437,13 @@ def csv_upload(fp):
     with open(fp, mode="r", encoding="utf-8-sig") as f:
         reader = csv.reader(f)
         line_count = 0
+        headers = csv_headers()
+        headers[0] = headers[0][1:]
         for row in reader:
             if line_count == 0:
                 line_count += 1
+                if row != headers:
+                    return {"errors": {"__root__": [_("Invalid csv file!")]}}
                 continue
             row_data = parse_csv_data_to_dict(row)
             try:
@@ -469,6 +476,8 @@ def csv_upload(fp):
                 }
             else:
                 update_forest_csv(forest, clean_forest)
+        if line_count == 0:
+            return {"errors": {"__root__": [_("Invalid csv file!")]}}
         return line_count
 
 

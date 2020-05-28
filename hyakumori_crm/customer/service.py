@@ -160,7 +160,6 @@ def get_list(
               from (
                 select concat_ws(':', key, value) as tags_repr
                 from jsonb_each_text(tags) as x
-                where value is not null
               ) as ss)::text
             """
             )

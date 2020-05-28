@@ -145,7 +145,12 @@ class ForestMemoInput(HyakumoriDanticModel):
 
 
 def csv_contract_date_normalize(quoted_date_str):
-    return quoted_date_str[1:-1]
+    if quoted_date_str is None:
+        return quoted_date_str
+    date_str = quoted_date_str[1:-1]
+    if date_str == "":
+        return None
+    return date_str
 
 
 class CsvContract(Contract):
