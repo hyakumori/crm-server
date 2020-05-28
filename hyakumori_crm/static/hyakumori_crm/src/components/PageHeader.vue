@@ -31,7 +31,7 @@
               class="menu--item"
               v-acl-only="['manage_forest', 'view_forest']"
             >
-              <router-link to="/forests">
+              <router-link class="f14" to="/forests">
                 {{ $t("page_header.forest_mgmt") }}
               </router-link>
             </div>
@@ -40,7 +40,7 @@
               class="menu--item"
               v-acl-only="['manage_customer', 'view_customer']"
             >
-              <router-link to="/customers">
+              <router-link class="f14" to="/customers">
                 {{ $t("page_header.customer_mgmt") }}
               </router-link>
             </div>
@@ -49,30 +49,30 @@
               class="menu--item"
               v-acl-only="['manage_archive', 'view_archive']"
             >
-              <router-link to="/archives">
+              <router-link class="f14" to="/archives">
                 {{ $t("page_header.archive_mgmt") }}
               </router-link>
             </div>
 
             <div class="menu--item" v-acl-only="['admin', 'group_admin']">
-              <router-link to="/users">
+              <router-link class="f14" to="/users">
                 {{ $t("page_header.user_mgmt") }}
               </router-link>
             </div>
 
-            <span class="menu--spacer">|</span>
+            <span class="menu--spacer f14">|</span>
 
             <div class="menu--item">
               <router-link to="/me" class="me">
                 <v-icon class="white--text">mdi-account-circle</v-icon>
-                <span>{{ userDisplayName }}</span>
+                <span class="f14">{{ userDisplayName }}</span>
               </router-link>
             </div>
 
-            <span class="menu--spacer">|</span>
+            <span class="menu--spacer f14">|</span>
 
             <div class="menu--item">
-              <router-link to="/auth/logout">
+              <router-link class="f14" to="/auth/logout">
                 {{ $t("page_header.logout") }}
               </router-link>
             </div>
@@ -131,7 +131,7 @@
               <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
             </template>
 
-            <span v-if="!isDetail" class="ml-3 white--text">
+            <span v-if="!isDetail" class="f20 fw-normal ml-3 white--text">
               {{ $store.state.pageHeader }}
             </span>
           </div>
@@ -300,11 +300,15 @@ export default {
       }
 
       .icon-mode {
-        background-color: white;
+        background-color: #f5f5f5;
         height: 40px;
         width: 40px;
         padding: 15px;
         border-radius: 50%;
+      }
+
+      .icon-mode:before {
+        color: #aaaaaa;
       }
 
       .tag {
