@@ -47,6 +47,7 @@ $action-list-color: #825929;
   &__text {
     font-size: 14px;
     font-weight: bold;
+    color: $action-list-color;
   }
 
   &__select ::v-deep {

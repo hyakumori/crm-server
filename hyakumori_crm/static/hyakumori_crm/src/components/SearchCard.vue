@@ -49,9 +49,7 @@
         <div class="d-flex align-center" @click="addSearchField">
           <v-icon>mdi-plus</v-icon>
 
-          <span class="ml-1 caption">{{
-            $t("search.add_search_condition")
-          }}</span>
+          <span class="f14 ml-1">{{ $t("search.add_search_condition") }}</span>
         </div>
 
         <v-btn

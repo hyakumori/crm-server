@@ -2,7 +2,7 @@
   <v-card class="pa-0 elevation-24">
     <ValidationObserver v-slot="{ invalid }">
       <form @submit.prevent="onSubmit" v-on:keyup.enter="onSubmit">
-        <v-card-title class="justify-start pb-0 px-6 pt-6">
+        <v-card-title class="justify-start pb-0 px-6 pt-6 text-color-444444">
           {{ $t("page_header.login") }}
         </v-card-title>
 
@@ -17,7 +17,7 @@
             </v-row>
             <v-row no-gutters>
               <v-col cols="12">
-                <label class="font-weight-bold">{{
+                <label class="font-weight-bold text-color-444444">{{
                   $t("login_form.email")
                 }}</label>
                 <text-input
@@ -31,7 +31,7 @@
             </v-row>
             <v-row no-gutters class="mt-4">
               <v-col cols="12" class="relative">
-                <label class="font-weight-bold">
+                <label class="font-weight-bold text-color-444444">
                   {{ $t("login_form.password") }}
                 </label>
                 <div class="forgot-password-hint">
@@ -59,6 +59,7 @@
             <v-row class="fill-height">
               <v-col class="pt-0 pb-0 text-right" cols="12">
                 <v-btn
+                  class="font-weight-bold"
                   color="primary"
                   depressed
                   width="100%"
