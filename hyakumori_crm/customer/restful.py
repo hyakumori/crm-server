@@ -5,6 +5,8 @@ import time
 from django.core.cache import cache
 from django.http.response import StreamingHttpResponse, JsonResponse
 from django.utils.translation import gettext_lazy as _
+from django.db.models import Q
+from django.core.exceptions import ValidationError
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -52,7 +54,8 @@ from .service import (
     customercontacts_list_with_search,
     get_list,
     get_customer_by_business_id,
-    update_customer_tags, get_customers_tag_by_ids,
+    update_customer_tags,
+    get_customers_tag_by_ids,
 )
 from .tasks import csv_upload
 from ..activity.services import ActivityService, CustomerActions
@@ -227,7 +230,8 @@ class CustomerViewSets(ViewSet):
             return make_error_json(message=str(e))
 
     @action(detail=False, methods=["PUT"], url_path="ids")
-    # currently this api is using change status/tag actions, the permission maybe change later
+    # currently this api is using change status/tag actions,
+    # the permission maybe change later
     @action_login_required(with_permissions=["change_customer"])
     def get_customers_by_ids(self, request):
         ids = request.data
@@ -243,14 +247,17 @@ class CustomerViewSets(ViewSet):
         update_customer_tags(request.data)
         return Response({"msg": "OK"})
 
-    @action(detail=False, methods=["GET"])
+    @action(detail=False, methods=["GET", "POST"])
     def download_csv(self, request):
-        pks = request.GET.getlist("ids")
+        pks = request.data.get("ids", [])
         if len(pks) == 0:
-            filters = {}
+            filters = None
         else:
-            filters = {"id__in": pks}
-        customers, total = get_list(per_page=None, filters=filters)
+            filters = Q(id__in=pks)
+        try:
+            customers = get_list(per_page=None, filters=filters)[0]
+        except ValidationError:
+            customers = []
         headers = [
             "\ufeff所有者ID",  # contains BOM char for opening on windows excel
             "土地所有者名（漢字）",
