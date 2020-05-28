@@ -153,14 +153,18 @@ def get_list(
         {"bank_account_number": RawSQLField("banking->>'account_number'")},
         {"bank_account_name": RawSQLField("banking->>'account_name'")},
         "tags",
-        {"tags_repr": RawSQLField("""
+        {
+            "tags_repr": RawSQLField(
+                """
               (select string_agg(tags_repr, ',') tags_repr
               from (
                 select concat_ws(':', key, value) as tags_repr
                 from jsonb_each_text(tags) as x
                 where value is not null
               ) as ss)::text
-            """)}
+            """
+            )
+        },
     ]
 
     query = (
@@ -301,17 +305,16 @@ def contacts_list_with_search(search_str: str = None):
 
 
 def customercontacts_list_with_search(search_str: str = None):
-    cc = (
-        CustomerContact.objects.filter(is_basic=True, contact=OuterRef("pk"))
-        .values("id", "customer_id")
-        .annotate(forests_count=Count("customer__forestcustomer"))
+    cc = CustomerContact.objects.filter(is_basic=True, contact=OuterRef("pk"))
+    cc_forests_count = cc.values("id", "customer_id").annotate(
+        forests_count=Count("customer__forestcustomer")
     )
     queryset = (
         Contact.objects.annotate(
             customer_id=F("customercontact__customer_id"),
             business_id=F("customercontact__customer__business_id"),
             is_basic=F("customercontact__is_basic"),
-            forests_count=Subquery(cc.values("forests_count")[:1]),
+            forests_count=Subquery(cc_forests_count.values("forests_count")[:1]),
             cc_attrs=F("customercontact__attributes"),
             customer_name_kanji=RawSQL(
                 """(select C0.name_kanji
@@ -404,19 +407,6 @@ def update_forests(data):
 def update_contacts(contacts_in: ContactsInput):
     customer = contacts_in.customer
     adding = contacts_in.adding
-    customercontacts = CustomerContact.objects.filter(
-        contact_id__in=contacts_in.deleting, customer_id=customer.id,
-    ).prefetch_related("contact")
-    for cc in customercontacts:
-        contact = cc.contact
-        if contacts_in.contact_type == ContactType.forest:
-            cc.forestcustomercontact_set.all().delete()
-            if cc.attributes.get("contact_type") == ContactType.forest:
-                cc.force_delete()
-        else:
-            cc.force_delete()
-            contact.force_delete()
-
     for contact_data in adding:
         customer_contact, created = CustomerContact.objects.get_or_create(
             customer_id=customer.id, contact_id=contact_data.contact.pk
@@ -442,6 +432,20 @@ def update_contacts(contacts_in: ContactsInput):
                 "relationship_type"
             ] = contact_data.relationship_type.value
         customer_contact.save(update_fields=["attributes", "updated_at"])
+
+    customercontacts = CustomerContact.objects.filter(
+        contact_id__in=contacts_in.deleting, customer_id=customer.id,
+    ).prefetch_related("contact")
+    for cc in customercontacts:
+        contact = cc.contact
+        if contacts_in.contact_type == ContactType.forest:
+            cc.forestcustomercontact_set.all().delete()
+            if cc.attributes.get("contact_type") == ContactType.forest:
+                cc.force_delete()
+        else:
+            cc.force_delete()
+            contact.force_delete()
+
     customer.save(update_fields=["updated_at"])
     return customer
 

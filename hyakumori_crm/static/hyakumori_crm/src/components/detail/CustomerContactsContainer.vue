@@ -56,7 +56,7 @@ import CustomerContactList from "./CustomerContactList";
 import ContainerMixin from "./ContainerMixin";
 import ContactForm from "../forms/ContactForm";
 
-import { reject, cloneDeep } from "lodash";
+import { reject, cloneDeep, find } from "lodash";
 
 export default {
   mixins: [ContainerMixin],
@@ -100,7 +100,9 @@ export default {
       );
     },
     contactsAddData() {
-      return this.relationshipChanges.map(i => ({
+      return reject(this.relationshipChanges, i =>
+        this.contactIdsToDelete.includes(i.contact),
+      ).map(i => ({
         contact: i.contact,
         relationship_type: i.val,
       }));
@@ -116,7 +118,12 @@ export default {
       const others = reject(this.relationshipChanges, {
         contact: contact_id,
       });
-      this.relationshipChanges = [...others, { contact: contact_id, val }];
+      const contact = find(this.contacts, { id: contact_id });
+      if (contact.cc_attrs.relationship_type === val) {
+        this.relationshipChanges = others;
+      } else {
+        this.relationshipChanges = [...others, { contact: contact_id, val }];
+      }
     },
     handleDelete(contact) {
       if (contact.added) {

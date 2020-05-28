@@ -19,7 +19,10 @@
         :selectedId="selectingId"
         :selectedIndex="selectingIndex"
         :customerName="
-          (isContactor && getCustomerName(contact.owner_customer_id)) || ''
+          (isContactor &&
+            !contact.is_basic &&
+            getCustomerName(contact.customer_id)) ||
+            ''
         "
         :mode="mode"
         :showDefaultBadge="showDefaultBadge"
@@ -52,17 +55,17 @@ export default {
     showDefaultBadge: { type: Boolean, default: false },
   },
   methods: {
-    getCustomerName(owner_customer_id) {
+    getCustomerName(customer_id) {
       if (isEmpty(this.customerIdNameMap)) return null;
-      const nameObj = this.customerIdNameMap[owner_customer_id];
+      const nameObj = this.customerIdNameMap[customer_id];
       if (!nameObj) return null;
       return `${nameObj.last_name} ${nameObj.first_name}`;
     },
     handleToggleCustomerDefault(val, customer_id) {
       this.$emit("toggleDefault", val, customer_id);
     },
-    handleToggleContactDefault(val, customer_id, contact_id) {
-      this.$emit("toggleContactDefault", val, customer_id, contact_id);
+    handleToggleContactDefault(val, owner_customer_id, contact_id) {
+      this.$emit("toggleContactDefault", val, owner_customer_id, contact_id);
     },
     handleRelationshipChange(contact_id, val) {
       this.$emit("relationshipChange", contact_id, val);
