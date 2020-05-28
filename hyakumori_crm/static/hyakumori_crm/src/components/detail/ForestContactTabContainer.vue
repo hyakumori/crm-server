@@ -241,19 +241,20 @@ export default {
       const c = find(this.tempCustomers, { id: customer_id });
       this.$set(c, "default", val);
     },
-    handleToggleContactDefault(val, customer_id, contact_id) {
+    handleToggleContactDefault(val, owner_customer_id, contact_id) {
       if (
-        this.defaultCustomersContactsEdit[`${customer_id},${contact_id}`] ===
-        undefined
+        this.defaultCustomersContactsEdit[
+          `${owner_customer_id},${contact_id}`
+        ] === undefined
       )
         this.$set(
           this.defaultCustomersContactsEdit,
-          `${customer_id},${contact_id}`,
+          `${owner_customer_id},${contact_id}`,
           val,
         );
       else {
         delete this.defaultCustomersContactsEdit[
-          `${customer_id},${contact_id}`
+          `${owner_customer_id},${contact_id}`
         ];
         this.defaultCustomersContactsEdit = {
           ...this.defaultCustomersContactsEdit,
@@ -261,7 +262,7 @@ export default {
       }
       const c = find(this.customersContacts, {
         id: contact_id,
-        customer_id: customer_id,
+        owner_customer_id: owner_customer_id,
       });
       this.$set(c, "default", val);
     },
