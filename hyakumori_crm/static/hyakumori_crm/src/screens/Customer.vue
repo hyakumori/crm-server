@@ -244,13 +244,15 @@ export default {
       if (e.target.files[0]) this.selectedFileName = e.target.files[0].name;
       else this.selectedFileName = "";
     },
-    downloadCsv(fileName, url) {
+    downloadCsv(fileName, url, config = {}) {
       this.downloadCsvLoading = true;
       const fileStream = streamSaver.createWriteStream(fileName);
 
       fetch(url, {
+        ...config,
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          ...(config.headers || {}),
         },
       }).then(res => {
         window.writer = fileStream.getWriter();
@@ -272,7 +274,12 @@ export default {
       const qStr = ids.map(id => `ids=${id}`).join("&");
       this.downloadCsv(
         "customers_filtered.csv",
-        `${this.$rest.defaults.baseURL}/customers/download_csv?` + qStr,
+        `${this.$rest.defaults.baseURL}/customers/download_csv`,
+        {
+          method: "POST",
+          body: JSON.stringify({ ids }),
+          headers: { "Content-Type": "application/json" },
+        },
       );
     },
     handleDownloadAll() {

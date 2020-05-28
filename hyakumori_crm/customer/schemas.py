@@ -72,21 +72,27 @@ class CustomerPaginator(Paginator):
     def validate_filters(cls, filters_input):
         defined_filters = []
         for k, value in filters_input.items():
-            values = value.split(",")
-            if k == "tags":
-                search_field_filter = "tags_repr__icontains"
+            values = list(set(map(lambda v: v.strip(), value.split(","))))
+            if len(values) == 1 and values[0] == "":
+                if k == "tags":
+                    name = "tags_repr"
+                else:
+                    name = k
+                conditions = Q(**{f"{name}__exact": None})
             else:
-                search_field_filter = k + "__icontains"
-            defined_filters.append(
-                reduce(
+                if k == "tags":
+                    search_field_filter = "tags_repr__icontains"
+                else:
+                    search_field_filter = k + "__icontains"
+                conditions = reduce(
                     operator.or_,
                     (
-                        Q(**{search_field_filter: value.strip()})
+                        Q(**{search_field_filter: value})
                         for value in values
                         if len(value) > 0
                     ),
                 )
-            )
+            defined_filters.append(conditions)
 
         if len(defined_filters) > 0:
             return reduce(operator.and_, defined_filters)
