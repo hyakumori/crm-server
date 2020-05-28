@@ -31,7 +31,7 @@
       <!--      </template>-->
 
       <template v-if="tableRowIcon" v-slot:[`item.${iconRowValue}`]="{ item }">
-        <div class="d-flex align-center justify-space-between">
+        <div class="d-flex align-center justify-center">
           <v-icon class="icon-mode mr-4 f14 mt-1 mb-1" small>
             {{ tableRowIcon }}
           </v-icon>
