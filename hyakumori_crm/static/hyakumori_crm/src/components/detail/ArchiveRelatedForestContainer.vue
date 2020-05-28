@@ -247,9 +247,8 @@ export default {
     },
 
     handleLoadMore() {
-      if (this.next !== null) {
-        this.fetchAllForests(this.next);
-      }
+      if (!this.next || this.fetchAllForestLoading) return;
+      this.fetchAllForests(this.next);
     },
 
     submitRelatedForest() {

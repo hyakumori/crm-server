@@ -56,7 +56,7 @@
       </div>
 
       <v-select
-        v-if="isUpdate && showRelationshipSelect"
+        v-if="isUpdate && !contact.deleted && showRelationshipSelect"
         class="customer-contact-card__select-relationship mt-2"
         outlined
         dense
@@ -93,7 +93,9 @@
       v-slot="{ href }"
     >
       <v-btn
-        v-if="isUpdate || customerId"
+        v-if="
+          (isUpdate && !contact.owner_customer_id) || (customerId && !isUpdate)
+        "
         class="align-self-center"
         icon
         @click.stop="isUpdate ? $emit('deleteContact') : undefined"
@@ -170,7 +172,7 @@ export default {
         this.$emit(
           "toggleContactDefault",
           !this.contact.default,
-          this.contact.customer_id,
+          this.contact.owner_customer_id,
           this.contact.id,
         );
     },
