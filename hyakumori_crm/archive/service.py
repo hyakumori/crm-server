@@ -44,7 +44,8 @@ def get_archive_by_pk(pk):
 def get_archives_tag_by_ids(ids: list):
     with connection.cursor() as cursor:
         cursor.execute(
-            "select distinct jsonb_object_keys(tags) from crm_archive where id in %(ids)s", {"ids": tuple(ids)}
+            "select distinct jsonb_object_keys(tags) from crm_archive where id in %(ids)s",
+            {"ids": tuple(ids)},
         )
         tags = cursor.fetchall()
     return list(itertools.chain(*tags))
@@ -209,14 +210,11 @@ def is_archive_customer_exist(archive_pk, customer_pk):
 
 
 def get_participants(archive: Archive):
-    cc = (
-        CustomerContact.objects.filter(is_basic=True, contact=OuterRef("pk"))
-        .values("id", "customer_id")
-        .annotate(forests_count=Count("customer__forestcustomer"))
+    cc = CustomerContact.objects.filter(is_basic=True, contact=OuterRef("pk"))
+    cc_forests_count = cc.values("id", "customer_id").annotate(
+        forests_count=Count("customer__forestcustomer")
     )
-    cc_business_id = CustomerContact.objects.filter(
-        is_basic=True, contact=OuterRef("pk")
-    ).annotate(business_id=F("customer__business_id"))
+    cc_business_id = cc.annotate(business_id=F("customer__business_id"))
     return (
         Contact.objects.filter(
             customercontact__archivecustomercontact__archivecustomer__archive_id=archive.id
@@ -239,7 +237,7 @@ def get_participants(archive: Archive):
                 params=[],
             )
         )
-        .annotate(forests_count=Subquery(cc.values("forests_count")[:1]))
+        .annotate(forests_count=Subquery(cc_forests_count.values("forests_count")[:1]))
         .annotate(business_id=Subquery(cc_business_id.values("business_id")[:1]))
     )
 
@@ -338,7 +336,7 @@ def get_filtered_archive_queryset(archive_filter: ArchiveFilter):
             "associated_forest": "attributes__forest_cache__repr__icontains",
             "our_participants": "attributes__user_cache__repr__icontains",
             "their_participants": "attributes__customer_cache__repr__icontains",
-            "tags": "tags_repr__icontains"
+            "tags": "tags_repr__icontains",
         }
 
         for k, v in archive_filter.items():
@@ -347,19 +345,22 @@ def get_filtered_archive_queryset(archive_filter: ArchiveFilter):
 
         if len(active_filters.keys()) > 0:
             qs = Archive.objects.annotate(
-                    archive_date_text=Func(
-                        F("archive_date"),
-                        Value("YYYY-MM-DD HH24:MI"),
-                        function="to_char",
-                    )
-                ).select_related("author")
+                archive_date_text=Func(
+                    F("archive_date"), Value("YYYY-MM-DD HH24:MI"), function="to_char",
+                )
+            ).select_related("author")
             qs = TagsFilterSet.get_tags_repr_queryset(qs)
             for k, v in active_filters.items():
                 values = v.split(",")
                 if len(values) > 0:
                     qs = qs.filter(
                         reduce(
-                            operator.or_, (Q(**{k: value.strip()}) for value in values if len(value) > 0)
+                            operator.or_,
+                            (
+                                Q(**{k: value.strip()})
+                                for value in values
+                                if len(value) > 0
+                            ),
                         )
                     )
             return qs

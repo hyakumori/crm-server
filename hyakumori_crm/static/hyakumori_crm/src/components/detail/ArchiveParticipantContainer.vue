@@ -14,6 +14,7 @@
       @deleteContact="handleDelete"
       @undoDeleteContact="handleUndoDelete"
       :customerIdNameMap="customerIdNameMap"
+      isContactor
     />
     <addition-button
       ref="addBtn"
