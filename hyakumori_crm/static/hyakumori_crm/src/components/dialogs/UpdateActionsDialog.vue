@@ -31,9 +31,9 @@
           </v-row>
         </v-card-text>
         <v-card-actions class="px-4">
-          <v-btn text color="primary" :disabled="updating" @click="onCancel"
-            >Cancel</v-btn
-          >
+          <v-btn text color="primary" :disabled="updating" @click="onCancel">{{
+            $t("buttons.cancel")
+          }}</v-btn>
           <v-spacer></v-spacer>
           <v-btn
             text
