@@ -26,6 +26,15 @@
       ref="selectListModal"
     >
       <template #list>
+        <p v-if="showNotFoundMsg" class="text-center">
+          {{ $t("messages.not_found") }}
+        </p>
+        <p
+          class="text-center"
+          v-if="itemsForAdding.results.length === 0 && !showNotFoundMsg"
+        >
+          {{ $t("messages.out_of_data") }}
+        </p>
         <archive-participant-card
           v-for="(participant, index) in itemsForAdding.results"
           showPointer
