@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="isShowDialog" max-width="700" transition persistent>
-    <ValidationObserver v-slot="{ invalid }">
+    <ValidationObserver ref="form" v-slot="{ invalid }">
       <v-card>
         <v-card-title class="display-0">
           {{ $t("action.change_tag_value") }}
@@ -90,6 +90,7 @@ export default {
       this.newValue = null;
       this.$refs.tagList.internalValue = null;
       this.isShowDialog = false;
+      this.$refs.form.reset();
       this.$emit("toggle-show-dialog", this.isShowDialog);
     },
 

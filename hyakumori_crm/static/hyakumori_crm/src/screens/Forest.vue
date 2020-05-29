@@ -166,18 +166,19 @@ export default {
   data() {
     return {
       actions: [
-        {
-          text: this.$t("action.contract_status_to_contracted"),
-          value: 0,
-        },
-        {
-          text: this.$t("action.contract_status_to_unsigned"),
-          value: 1,
-        },
-        {
-          text: this.$t("action.contract_status_to_expired"),
-          value: 2,
-        },
+        // Remove temporary
+        // {
+        //   text: this.$t("action.contract_status_to_contracted"),
+        //   value: 0,
+        // },
+        // {
+        //   text: this.$t("action.contract_status_to_unsigned"),
+        //   value: 1,
+        // },
+        // {
+        //   text: this.$t("action.contract_status_to_expired"),
+        //   value: 2,
+        // },
         {
           text: this.$t("action.change_tag_value"),
           value: 3,
@@ -395,16 +396,17 @@ export default {
     },
 
     selectedAction(index) {
+      this.resetActionChoices();
       switch (index) {
-        case 0:
-          // update forest contract
-          break;
-        case 1:
-          // update forest contract
-          break;
-        case 2:
-          // update forest contract
-          break;
+        // case 0:
+        //   // update forest contract
+        //   break;
+        // case 1:
+        //   // update forest contract
+        //   break;
+        // case 2:
+        //   // update forest contract
+        //   break;
         case 3:
           this.showChangeTagDialog = true;
           this.fetchTagsLoading = true;
