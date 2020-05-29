@@ -36,12 +36,15 @@
       ref="selectListModal"
     >
       <template #list>
-        <div
-          v-if="itemsForAdding.results.length === 0 && !itemsForAddingLoading"
-          class="text-center"
-        >
+        <p v-if="showNotFoundMsg" class="text-center">
           {{ $t("messages.not_found") }}
-        </div>
+        </p>
+        <p
+          class="text-center"
+          v-if="itemsForAdding.results.length === 0 && !showNotFoundMsg"
+        >
+          {{ $t("messages.out_of_data") }}
+        </p>
         <customer-contact-card
           v-else
           @click="
