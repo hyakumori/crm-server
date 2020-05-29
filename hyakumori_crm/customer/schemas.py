@@ -33,7 +33,7 @@ class Address(HyakumoriDanticModel):
 class ContactInput(HyakumoriDanticModel):
     name_kanji: Name
     name_kana: Name
-    postal_code: constr(regex=regexes.POSTAL_CODE, strip_whitespace=True)
+    postal_code: Optional[constr(regex=regexes.POSTAL_CODE, strip_whitespace=True)]
     address: Optional[Address] = {}
     telephone: Optional[constr(regex=regexes.TELEPHONE_NUMBER, strip_whitespace=True)]
     mobilephone: Optional[
