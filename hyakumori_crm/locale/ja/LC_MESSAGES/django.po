@@ -115,7 +115,7 @@ msgstr "不正なUUID"
 
 #: customer/resolvers.py:20
 msgid "Internal Id"
-msgstr "新規ID発行"
+msgstr "ID"
 
 #: customer/resolvers.py:21
 msgid "Fullname Kanji"
