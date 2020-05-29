@@ -177,7 +177,7 @@ msgstr "地籍_市町村"
 
 #: customer/resolvers.py:26
 msgid "Address"
-msgstr "住所"
+msgstr "丁目番地"
 
 #: customer/resolvers.py:27
 msgid "Telephone"
