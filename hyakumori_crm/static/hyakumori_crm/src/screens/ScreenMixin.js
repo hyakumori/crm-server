@@ -1,5 +1,3 @@
-import { flatten } from "lodash";
-
 export default {
   data() {
     return {
