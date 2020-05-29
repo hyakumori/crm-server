@@ -84,7 +84,7 @@ class ArchiveActions:
         "mdi-image-filter-hdr",
     )
     tags_updated = (
-        "customer.tags_updated",
+        "archive.tags_updated",
         "タグ情報が更新されました。",
         "mdi-tag-outline",
     )
