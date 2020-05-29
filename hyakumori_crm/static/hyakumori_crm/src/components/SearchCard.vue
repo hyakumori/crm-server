@@ -231,7 +231,6 @@ $text-font-size: 14px;
     color: $action-color;
     align-items: center;
     justify-content: space-between;
-    cursor: pointer;
     margin-top: 5px !important;
 
     & i {
