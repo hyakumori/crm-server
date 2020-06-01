@@ -12,8 +12,10 @@
 """
 from typing import Any, List, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, root_validator
 from typing_extensions import Literal
+
+from django.utils.translation import gettext_lazy as _
 
 from ..common.constants import EMPTY, UNKNOWN
 from .contract import Contract
@@ -37,6 +39,7 @@ class ForestOwner(BaseModel):
     土地所有者住所
     郵便番号	都道府県	市町村	大字/字
     """
+
     name_kanji: Union[Name, str, None] = Name()
     name_kana: Union[Name, str, None] = Name()
     address: Address = Address()
@@ -55,6 +58,24 @@ class Tags(BaseModel):
 class LandAttribute(BaseModel):
     key: Literal["地番本番", "地番支番", "地目", "林班", "小班", "区画"]
     value: Any
+
+    @root_validator
+    def validate_land_attributes(cls, values):
+        key = values.get("key")
+        value = values.get("value")
+        if not key:
+            return values
+        if key == "地番本番":
+            if not value:
+                raise ValueError(_("地番本番 is required"))
+            try:
+                int_val = int(value)
+            except ValueError:
+                raise ValueError(_("地番本番 must be a number"))
+            if int_val < 0:
+                raise ValueError(_("地番本番 must be greater than 0"))
+            values["value"] = int_val
+        return values
 
 
 class ForestAttribute(BaseModel):

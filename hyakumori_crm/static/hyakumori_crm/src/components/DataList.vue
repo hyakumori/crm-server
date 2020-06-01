@@ -8,7 +8,7 @@
       :dense="dense"
       light
       :height="tableHeight"
-      :fixed-header="true"
+      fixed-header
       :mobile-breakpoint="0"
       :item-key="itemKey"
       :multi-sort="multiSort"
@@ -53,6 +53,29 @@
             {{ `${name}: ${tag}` }}
           </p>
         </template>
+      </template>
+
+      <!--      TODO: need a way to inject this instead of writing customized logic here    -->
+      <template v-slot:item.contract_status="{ item }" class="text-truncate">
+        <v-chip
+          v-if="item['contract_status']"
+          small
+          outlined
+          :color="colorMaps[item['contract_status']]"
+        >
+          {{ item["contract_status"] }}
+        </v-chip>
+      </template>
+
+      <template v-slot:item.fsc_status="{ item }" class="text-truncate">
+        <v-chip
+          v-if="item['fsc_status']"
+          small
+          outlined
+          :color="colorMaps[item['fsc_status']]"
+        >
+          {{ item["fsc_status"] }}
+        </v-chip>
       </template>
     </v-data-table>
   </v-layout>
@@ -110,10 +133,17 @@ export default {
   },
 
   mounted() {
-    this.changeSortIcon();
+    // this.changeSortIcon();
   },
 
   computed: {
+    colorMaps() {
+      return {
+        未契約: "grey--lighten",
+        期限切: "orange lighten-2",
+        契約済: "primary",
+      };
+    },
     dynamicHeaders() {
       if (this.data && this.headers.length > 1 && this.autoHeaders) {
         const headers = [];
@@ -202,8 +232,6 @@ export default {
 .v-data-table {
   padding: 10px;
   width: 100%;
-  height: fit-content;
-  overflow: hidden;
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
 
   & .icon-mode {
@@ -243,7 +271,6 @@ export default {
     }
 
     th {
-      position: relative;
       @extend %text-overflow-shared;
 
       span {

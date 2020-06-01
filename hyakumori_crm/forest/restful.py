@@ -29,7 +29,7 @@ from .schemas import (
 )
 from .service import (
     get_forest_by_pk,
-    update,
+    update_basic_info,
     update_owners,
     get_forest_customers,
     get_customer_contacts_of_forest,
@@ -116,7 +116,7 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     @api_validate_model(ForestInput, "forest_in")
     @action_login_required(with_permissions=["change_forest"])
     def basic_info(self, request, *, forest_in: ForestInput):
-        update(forest_in.forest, forest_in.dict())
+        update_basic_info(forest_in.forest, forest_in)
         ActivityService.log(
             ForestActions.basic_info_updated, forest_in.forest, request=request
         )

@@ -1,4 +1,8 @@
 import querybuilder.query
+import pydantic
+from pydantic import errors
+from typing import Any
+from enum import Enum
 
 
 class CompleteSorter(querybuilder.query.Sorter):
@@ -29,3 +33,20 @@ class Query(querybuilder.query.Query):
 # TODO: provide documents for these patches
 querybuilder.query.Sorter = CompleteSorter
 querybuilder.query.Query = Query
+
+
+def enum_validator(v: Any, field: "ModelField", config: "BaseConfig") -> Enum:
+    try:
+        enum_v = field.type_(v)
+    except ValueError:
+        # field.type_ should be an enum, so will be iterable
+        enum_values = list(field.type_)
+        permitted = ", ".join(repr(v.value) for v in enum_values)  # type: ignore
+        raise errors.EnumError(enum_values=enum_values, permitted=permitted)
+    return enum_v.value if config.use_enum_values else enum_v
+
+
+pydantic.validators.enum_validator = enum_validator
+# https://github.com/samuelcolvin/pydantic/blob/2eb62a3b2f/pydantic/validators.py#L500
+pydantic.validators._VALIDATORS[0][1][1] = enum_validator
+pydantic.validators._VALIDATORS[1][1][0] = enum_validator

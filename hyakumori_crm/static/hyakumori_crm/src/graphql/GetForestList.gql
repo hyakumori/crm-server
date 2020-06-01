@@ -1,4 +1,4 @@
-query getForestList($filter: ForestListFilterInput!){
+query getForestList($filter: ForestListFilterInput!) {
   list_forests(data: $filter) {
     ok
     total
@@ -12,13 +12,6 @@ query getForestList($filter: ForestListFilterInput!){
       contracts
       tags
       land_attributes
-      forest_attributes
-      geodata
-      updated_by {
-        id
-      }
-      updated_at
-      created_at
     }
   }
 }

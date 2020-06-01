@@ -91,8 +91,7 @@ class Customer(BaseResourceModel):
 class Contact(BaseResourceModel):
     contact_info = JSONField(
         default=DefaultContact.contact_info
-    )  # TODO: keep for migration, will drop later
-
+    )
     name_kanji = JSONField(default=DefaultCustomer.name_kanji, db_index=True)
     name_kana = JSONField(default=DefaultCustomer.name_kana, db_index=True)
     address = JSONField(default=DefaultCustomer.address, db_index=True)
