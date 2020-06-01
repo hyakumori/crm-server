@@ -17,6 +17,8 @@ export default {
       showSelect: false,
       modalSelectingId: null,
       modalSelectingIndex: null,
+      showNotFoundMsg: false,
+      showOutOfDataMsg: false,
     };
   },
   methods: {
@@ -41,6 +43,8 @@ export default {
           previous: resp.previous,
           results: reject(resp.results, this.itemsForAddingResultFilter),
         };
+        this.showNotFoundMsg =
+          !resp.next && !resp.previous && resp.results.length === 0;
         if (this.itemsForAdding.results.length > 5) break;
         if (resp.next && resp.next.indexOf("page=") > -1) reqConfig = {};
       }

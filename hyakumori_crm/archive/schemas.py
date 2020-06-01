@@ -21,8 +21,9 @@ from ..crm.models import (
 class ArchiveInput(HyakumoriDanticModel):
     title: str = Field(..., max_length=255)
     content: Optional[str]
-    location: Optional[str] = Field(..., max_length=255)
-    future_action: Optional[str] = Field(..., max_length=255)
+    location: str = Field(..., max_length=255)
+    # future_action allow None value
+    future_action: Optional[str] = Field(None, max_length=255)
     archive_date: Optional[datetime]
 
 

@@ -125,6 +125,15 @@ export default {
       }
     },
 
+    setHeaderWithoutParticipant() {
+      this.$store.dispatch("setHeaderInfo", {
+        title: this.info.title,
+        subTitle: getDate(this.info.archive_date),
+        backUrl: "/archives",
+        tags: this.info.tags,
+      });
+    },
+
     async submit(data) {
       this.createLoading = true;
       data.archive_date = toUtcDatetime(data.archive_date);
@@ -132,6 +141,7 @@ export default {
         const newData = await this.$rest.post("/archives", data);
         if (newData) {
           this.dataMapping(newData);
+          this.setHeaderWithoutParticipant();
           await this.$router.push(`/archives/${newData.id}`);
         }
       } catch (err) {}
