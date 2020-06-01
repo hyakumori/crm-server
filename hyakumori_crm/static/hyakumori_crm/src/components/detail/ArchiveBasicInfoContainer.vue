@@ -46,7 +46,6 @@ import ArchiveBasicInfo from "./ArchiveBasicInfo";
 import UpdateButton from "./UpdateButton";
 import { cloneDeep } from "lodash";
 import { toUtcDatetime, getDate } from "../../helpers/datetime";
-import { get as _get } from "lodash";
 
 export default {
   name: "archive-basic-info-container",

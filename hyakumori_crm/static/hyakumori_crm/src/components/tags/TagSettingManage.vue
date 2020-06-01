@@ -275,6 +275,7 @@ export default {
       }
 
       try {
+        this.errors = "";
         this.loading = true;
         const response = await this.$rest.put(
           `/tags/${this.appName}/${this.objectType}/modify`,
@@ -312,6 +313,7 @@ export default {
         return;
       }
       try {
+        this.errors = "";
         this.loading = true;
         const response = await this.$rest.post(
           `/tags/${this.appName}/${this.objectType}/modify`,
@@ -476,9 +478,7 @@ export default {
       }
     },
     errors() {
-      if (this.errors && this.errors.length > 0) {
-        this.hasError = true;
-      }
+      this.hasError = !!(this.errors && this.errors.length > 0);
     },
     hasError() {
       if (this.hasError === false) {
