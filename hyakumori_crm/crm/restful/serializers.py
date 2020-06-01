@@ -9,6 +9,8 @@ from rest_framework.serializers import (
 )
 
 from ..models import Customer, Contact, Forest, Attachment, Archive
+from ...contracts.models import ContractType
+from ...forest.service import map_forests_contracts
 from ...users.serializers import UserSerializer
 
 
@@ -65,9 +67,15 @@ class CustomerSerializer(ModelSerializer):
 
 
 class ForestSerializer(ModelSerializer):
+    contracts = SerializerMethodField()
+
     class Meta:
         model = Forest
         exclude = ["deleted"]
+
+    def get_contracts(self, forest):
+        contract_types = dict(ContractType.objects.values_list("code", "name"))
+        return map_forests_contracts(forest, contract_types).contracts
 
 
 class ForestListingSerializer(ModelSerializer):

@@ -3,7 +3,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from ...activity.constants import ForestActions
 from ...core.models import BaseResourceModel, JSONField
 from ..schemas.contract import Contract, ContractType
-from ..schemas.forest import Cadastral, ForestOwner, GeoData, Tags
+from ..schemas.forest import Cadastral, ForestOwner, GeoData
 
 
 class DefaultForest:

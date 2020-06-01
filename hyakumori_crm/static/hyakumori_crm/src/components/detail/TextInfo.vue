@@ -8,7 +8,9 @@
       :name="name"
       @input="$emit('input', $event)"
     />
-    <p class="text-break" v-else>{{ value }}</p>
+    <p class="text-break" v-else>
+      {{ value }} <slot name="readonly-extend"></slot>
+    </p>
   </div>
 </template>
 
@@ -24,7 +26,7 @@ export default {
 
   props: {
     label: String,
-    value: String,
+    value: [String, Number],
     rules: String,
     name: String,
     isUpdate: Boolean,
@@ -50,7 +52,7 @@ $font-size: 14px;
 
     input {
       font-size: 14px;
-      color: #999999;
+      color: #333;
     }
   }
 

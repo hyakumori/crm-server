@@ -13,7 +13,7 @@ query = QueryType()
 
 
 @query.field("foresttable_headers")
-@login_required(with_policies=['can_view_forests'])
+@login_required(with_policies=["can_view_forests"])
 def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dict:
     headers = [
         {"text": _("Forest ID"), "align": "right", "value": "internal_id"},
@@ -54,65 +54,48 @@ def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dic
             "sortable": False,
         },
         {
-            "text": _("Long term contract"),
+            "text": _("Contract type"),
             "align": "center",
-            "value": "contracts__0__status",
+            "value": "contract_type",
             "sortable": False,
         },
         {
-            "text": _("Long term start"),
+            "text": _("Contract status"),
             "align": "center",
-            "value": "contracts__0__start_date",
+            "value": "contract_status",
             "sortable": False,
         },
         {
-            "text": _("Long term end"),
+            "text": _("Contract start date"),
             "align": "center",
-            "value": "contracts__0__end_date",
+            "value": "contract_start_date",
             "sortable": False,
         },
         {
-            "text": _("Work load contract"),
+            "text": _("Contract end date"),
             "align": "center",
-            "value": "contracts__1__status",
-            "sortable": False,
-        },
-        {
-            "text": _("Work load start"),
-            "align": "center",
-            "value": "contracts__1__start_date",
-            "sortable": False,
-        },
-        {
-            "text": _("Work load end"),
-            "align": "center",
-            "value": "contracts__1__end_date",
+            "value": "contract_end_date",
             "sortable": False,
         },
         {
             "text": _("FSC certification participation"),
             "align": "center",
-            "value": "contracts__2__status",
+            "value": "fsc_status",
             "sortable": False,
         },
         {
             "text": _("FSC start"),
             "align": "center",
-            "value": "contracts__2__start_date",
+            "value": "fsc_start_date",
             "sortable": False,
         },
         {
             "text": _("FSC end"),
             "align": "center",
-            "value": "contracts__2__end_date",
+            "value": "fsc_end_date",
             "sortable": False,
         },
-        {
-            "text": _("Tag"),
-            "align": "left",
-            "value": "tags",
-            "sortable": False,
-        },
+        {"text": _("Tag"), "align": "left", "value": "tags", "sortable": False},
     ]
     filters = {**ForestFilter.declared_filters, **ForestFilter.get_fields()}
     for header_define in headers:
@@ -124,7 +107,7 @@ def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dic
 
 
 @query.field("list_forests")
-@login_required(with_policies=['can_view_forests'])
+@login_required(with_policies=["can_view_forests"])
 @validate_model(ForestPaginator)
 def get_list_forests(obj, info, data, **kwargs) -> dict:
     pager_input = data.dict()

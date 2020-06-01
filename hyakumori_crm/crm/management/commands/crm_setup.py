@@ -3,6 +3,7 @@ from distutils.util import strtobool
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 
+from hyakumori_crm.contracts.services import ContractService
 from hyakumori_crm.permissions.services import PermissionService
 from hyakumori_crm.activity.services import ActivityService
 from hyakumori_crm.tags.services import TagService
@@ -50,5 +51,8 @@ class Command(BaseCommand):
 
         self.stdout.write("SETUP TAG SETTINGS")
         TagService.setup_tags()
+
+        self.stdout.write("SETUP CONTRACT TYPES")
+        ContractService.setup_contracts()
 
         self.stdout.write("DONE")

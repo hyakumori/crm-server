@@ -11,7 +11,7 @@ ariadne==0.10.0 \
 arrow==0.15.6 \
     --hash=sha256:a24c1de90850f6fb2033fd6bf8a11f281e84cb54825e5eabdda219e673b52aac \
     --hash=sha256:eb5d339f00072cc297d7de252a2e75f272085d1231a3723f1026d1fa91367118 \
-    # via django-q
+    # via django-q, hyakumori_crm (setup.py)
 asgiref==3.2.6 \
     --hash=sha256:63007b556233381c5f22ae4c7e4292c9f1b953dc8909ae8fd268f611dc23cbd0 \
     --hash=sha256:9c65b42045910c159ad41fc33692a8a6e6e154d8d05244ea69a0cbc617edad31 \

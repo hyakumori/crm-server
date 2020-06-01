@@ -7,7 +7,6 @@ from .base import BaseDbImporter
 class ForestDbImporter(BaseDbImporter):
     @staticmethod
     def insert_db(results: dict):
-        # TODO: should we provide way to customize this?
         processed_count = 0
         total = len(results.keys())
         batch = int(total / 50)

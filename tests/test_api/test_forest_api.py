@@ -11,9 +11,9 @@ from hyakumori_crm.crm.models import (
     Contact,
     ForestCustomer,
 )
-from hyakumori_crm.crm.schemas.contract import ContractType
+from hyakumori_crm.crm.schemas.contract import ContractType, ContractTypeStatus
 from hyakumori_crm.forest.restful import (
-    update,
+    update_basic_info,
     update_owners_view,
     ForestViewSets,
 )
@@ -43,7 +43,16 @@ def test_update_forest_basic_info(api_rf, admin_user, forest):
         f"/api/v1/forests/{forest.pk}/basic-info",
         {
             "cadastral": {"prefecture": "foo", "municipality": "foo", "sector": "bar"},
-            "contracts": [{"type": ContractType.long_term.value}],
+            "contracts": {
+                "contact_type": ContractType.long_term.value,
+                "contact_status": ContractTypeStatus.negotiated,
+                "contact_start_date": "2020-05-20",
+                "contact_end_date": "2022-05-20",
+                "fsc_start_date": "2020-05-20",
+                "fsc_end_date": "2022-05-20",
+                "fsc_status": ContractTypeStatus.negotiated,
+            },
+            "land_attributes": {"地番本番": "10", "地番支番": None},
         },
         format="json",
     )
