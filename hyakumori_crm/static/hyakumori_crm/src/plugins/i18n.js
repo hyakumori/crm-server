@@ -22,6 +22,7 @@ const i18n = new VueI18n({
   fallbackLocale: "jp",
   locale: "jp",
   messages,
+  silentTranslationWarn: process.env.NODE_ENV === "production",
 });
 
 export default i18n;

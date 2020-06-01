@@ -4,19 +4,20 @@ from functools import reduce
 from typing import List, Optional
 from uuid import UUID
 
+from django.core.exceptions import ValidationError as DjValidationError
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError as DjValidationError
-from rest_framework.serializers import ModelSerializer, UUIDField
-from pydantic import EmailStr, constr, validator, root_validator
+from django_filters import CharFilter, FilterSet
+from pydantic import EmailStr, constr, root_validator, validator
 from pydantic.error_wrappers import ValidationError
+from rest_framework.serializers import ModelSerializer, UUIDField
 
-from .filters import CustomerFilter
 from ..core.models import HyakumoriDanticModel, Paginator
 from ..crm.common import regexes
 from ..crm.common.constants import DEFAULT_EMAIL, EMPTY, UNKNOWN
 from ..crm.common.utils import tags_csv_to_dict
-from ..crm.models import Customer, Forest, ForestCustomer, Contact
+from ..crm.models import Contact, Customer, Forest, ForestCustomer
+from .filters import CustomerFilter
 
 
 class Name(HyakumoriDanticModel):

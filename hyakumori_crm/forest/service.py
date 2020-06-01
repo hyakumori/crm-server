@@ -12,9 +12,12 @@ from django.utils.translation import gettext_lazy as _
 from .schemas import (
     CustomerDefaultInput,
     CustomerContactDefaultInput,
+    ContractUpdateInput,
+    ContractType as ContractTypeEnum,
+    ForestInput,
     ForestCsvInput,
+    Contract,
 )
-from .filters import ForestFilter
 from ..cache.forest import refresh_customer_forest_cache
 from ..core.decorators import errors_wrapper
 from ..crm.common.constants import (
@@ -32,6 +35,10 @@ from ..crm.models import (
     ForestCustomerContact,
     Contact,
 )
+from ..contracts.models import ContractType
+from ..contracts.services import get_all_contracttypes_map
+
+from .filters import ForestFilter
 
 
 def get_forest_by_pk(pk):
@@ -66,6 +73,75 @@ def get_customer_of_forest(pk, customer_pk):
         raise ValueError(_("Customer not found"))
 
 
+def get_contract_by_type(contracts, contract_type):
+    result = next(
+        iter(
+            [
+                contract
+                for contract in contracts
+                if contract.get("type") == contract_type
+                and contract.get("status") is not None
+                and len(contract.get("status")) > 0
+            ]
+        ),
+        None,
+    )
+    if result is None:
+        result = {"type": None, "status": None, "start_date": None, "end_date": None}
+    return result
+
+
+def map_forests_contracts(forest, contract_types):
+    work_road = get_contract_by_type(forest.contracts, contract_types["work_road"])
+    long_term = get_contract_by_type(forest.contracts, contract_types["long_term"])
+    fsc = get_contract_by_type(forest.contracts, contract_types["fsc"])
+    contract = long_term if long_term.get("type") is not None else work_road
+
+    forest.contracts = dict(
+        contract_type=contract.get("type"),
+        contract_status=contract.get("status"),
+        contract_start_date=contract.get("start_date"),
+        contract_end_date=contract.get("end_date"),
+        fsc_status=fsc.get("status"),
+        fsc_start_date=fsc.get("start_date"),
+        fsc_end_date=fsc.get("end_date"),
+    )
+
+    return forest
+
+
+def map_input_to_contracts(forest, contracts_in: ContractUpdateInput):
+    fsc = Contract(
+        type=ContractTypeEnum.fsc,
+        status=contracts_in.fsc_status,
+        start_date=contracts_in.fsc_start_date,
+        end_date=contracts_in.fsc_end_date,
+    )
+    update_contracts = []
+    for contract in forest.contracts:
+        if contract.get("type") == ContractTypeEnum.fsc:
+            continue
+        if contract.get("type") == contracts_in.contract_type:
+            contract["start_date"] = contracts_in.contract_start_date
+            contract["end_date"] = contracts_in.contract_end_date
+            contract["status"] = contracts_in.contract_status
+            update_contracts.append(contract)
+
+    if len(update_contracts) == 0:
+        update_contracts.append(
+            Contract(
+                type=contracts_in.contract_type,
+                status=contracts_in.contract_status,
+                start_date=contracts_in.contract_start_date,
+                end_date=contracts_in.contract_end_date,
+            ).dict()
+        )
+
+    update_contracts.append(fsc.dict())
+
+    return update_contracts
+
+
 def get_forests_by_condition(
     page_num: int = 1,
     per_page: int = 10,
@@ -81,13 +157,17 @@ def get_forests_by_condition(
     query = filters.qs if filters else Forest.objects.all()
     total = query.count()
     forests = query.order_by("internal_id")[offset : offset + per_page]
-    return forests, total
+    contract_types = get_all_contracttypes_map()
+    results = [map_forests_contracts(forest, contract_types) for forest in forests]
+    return results, total
 
 
-def update(forest: Forest, forest_in: dict):
-    forest.cadastral = forest_in["cadastral"]
-    forest.contracts = forest_in["contracts"]
-    forest.save()
+def update_basic_info(forest: Forest, forest_in: ForestInput):
+    forest.cadastral = forest_in.cadastral.dict()
+    forest.land_attributes['地番本番'] = forest_in.land_attributes.get("地番本番")
+    forest.land_attributes['地番支番'] = forest_in.land_attributes.get("地番支番")
+    forest.contracts = map_input_to_contracts(forest, forest_in.contracts)
+    forest.save(update_fields=["cadastral", "contracts", "land_attributes", "updated_at"])
     return forest
 
 
@@ -279,7 +359,9 @@ def parse_tags_for_csv(tags: dict):
         return result[0 : len(result) - 2]
 
 
-def forest_csv_data_mapping(forest):
+def forest_csv_data_mapping(f):
+    contract_types = get_all_contracttypes_map()
+    forest = map_forests_contracts(f, contract_types)
     return [
         forest.forest_id,
         forest.internal_id,
@@ -295,15 +377,13 @@ def forest_csv_data_mapping(forest):
         forest.land_attributes.get("区画"),
         forest.customer_name_kanji,
         forest.customer_name_kana,
-        forest.contracts[0].get("status"),
-        f'"{forest.contracts[0].get("start_date") or ""}"',
-        f'"{forest.contracts[0].get("end_date") or ""}"',
-        forest.contracts[1].get("status"),
-        f'"{forest.contracts[1].get("start_date") or ""}"',
-        f'"{forest.contracts[1].get("end_date") or ""}"',
-        forest.contracts[2].get("status"),
-        f'"{forest.contracts[2].get("start_date") or ""}"',
-        f'"{forest.contracts[2].get("end_date") or ""}"',
+        forest.contracts.get("contract_type"),
+        forest.contracts.get("contract_status"),
+        f'"{forest.contracts.get("contract_start_date") or ""}"',
+        f'"{forest.contracts.get("contract_end_date") or ""}"',
+        forest.contracts.get("fsc_status"),
+        f'"{forest.contracts.get("fsc_start_date") or ""}"',
+        f'"{forest.contracts.get("fsc_end_date") or ""}"',
         parse_tags_for_csv(forest.tags),
         forest.forest_attributes.get("地番面積_ha"),
         forest.forest_attributes.get("面積_ha"),
@@ -355,11 +435,7 @@ def forest_csv_data_mapping(forest):
 
 
 def csv_column_to_dict(keys, values):
-    result = {}
-    if keys is not None and values is not None and len(keys) == len(values):
-        for i in range(len(keys)):
-            result[keys[i]] = values[i]
-    return result
+    return dict(zip(keys, values))
 
 
 def dict_to_list(data: dict):
@@ -379,7 +455,7 @@ def parse_csv_data_to_dict(row_data):
     cadastral = []
     land_attributes = []
     contract_keys = ["type", "status", "start_date", "end_date"]
-    long_term_contract = []
+    contract = []
     work_load_contract = []
     fsc_contract = []
     contracts = []
@@ -396,25 +472,20 @@ def parse_csv_data_to_dict(row_data):
             cadastral.append(row_data[i])
         elif 5 < i <= 11:
             land_attributes.append(row_data[i])
-        elif 13 < i <= 16:
-            long_term_contract.append(row_data[i])
-        elif 16 < i <= 19:
-            work_load_contract.append(row_data[i])
-        elif 19 < i <= 22:
+        elif 13 < i <= 17:
+            contract.append(row_data[i])
+        elif 17 < i <= 20:
             fsc_contract.append(row_data[i])
-        elif i == 23:
+        elif i == 21:
             new_forest["tags"] = row_data[i]
-        elif 23 < i <= len(row_data) - 1:
+        elif 21 < i <= len(row_data) - 1:
             forest_attributes.append(row_data[i])
     new_forest["cadastral"] = csv_column_to_dict(cadastral_keys, cadastral)
     new_forest["land_attributes"] = dict_to_list(
         csv_column_to_dict(FOREST_LAND_ATTRIBUTES, land_attributes)
     )
-    long_term_contract.insert(0, FOREST_CONTRACT[0])
-    work_load_contract.insert(0, FOREST_CONTRACT[3])
-    fsc_contract.insert(0, FOREST_CONTRACT[6])
-    contracts.append(csv_column_to_dict(contract_keys, long_term_contract))
-    contracts.append(csv_column_to_dict(contract_keys, work_load_contract))
+    fsc_contract.insert(0, ContractTypeEnum.fsc)
+    contracts.append(csv_column_to_dict(contract_keys, contract))
     contracts.append(csv_column_to_dict(contract_keys, fsc_contract))
     new_forest["contracts"] = contracts
     new_forest["forest_attributes"] = dict_to_list(
@@ -497,5 +568,6 @@ csv_errors_map = {
     "contracts.2.status": "FSC認証",
     "contracts.2.start_date": "開始日",
     "contracts.2.end_date": "終了日",
+    "land_attributes.0.__root__": "土地属性",
     "tags": "タグ",
 }

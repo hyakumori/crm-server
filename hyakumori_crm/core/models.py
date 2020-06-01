@@ -96,6 +96,7 @@ class HyakumoriDanticModel(BaseModel):
             ),
             "value_error.date": _("Invalid date format"),
             "type_error.uuid": _("Invalid UUID"),
+            "type_error.enum": _("Invalid value, choices are: {permitted}"),
         }
 
     @validator("*", pre=True)

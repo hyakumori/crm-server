@@ -13,6 +13,12 @@ class ContractType(str, Enum):
     fsc = "FSC認証"
 
 
+class ContractTypeStatus(str, Enum):
+    expired = "期限切"
+    negotiated = "契約済"
+    unnegotiated = "未契約"
+
+
 class Contract(BaseModel):
     """
     契約ステータス
