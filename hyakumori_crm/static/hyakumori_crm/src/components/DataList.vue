@@ -25,11 +25,6 @@
       }"
       @click:row="clickRow"
     >
-      <!--   For now it has no function, so remove it temporary  -->
-      <!--      <template v-slot:header.options>-->
-      <!--        <v-icon @click="viewMore">mdi-dots-vertical</v-icon>-->
-      <!--      </template>-->
-
       <template v-if="tableRowIcon" v-slot:[`item.${iconRowValue}`]="{ item }">
         <div class="d-flex align-center justify-center">
           <v-icon class="icon-mode mr-4 f14 mt-1 mb-1" small>
@@ -82,7 +77,7 @@
 </template>
 
 <script>
-import { selectAll } from "d3-selection";
+import { throttle } from "lodash";
 
 const headerSelection = { value: "options", align: "center", sortable: false };
 
@@ -129,11 +124,9 @@ export default {
       selected: [],
       innerOptions: {},
       tableHeight: window.innerHeight,
+      isRowMouseDown: false,
+      isRowDrag: false,
     };
-  },
-
-  mounted() {
-    // this.changeSortIcon();
   },
 
   computed: {
@@ -159,17 +152,48 @@ export default {
       return [...this.headers, headerSelection];
     },
   },
+  created() {
+    this.throttleRowMouseMoveHandler = throttle(this.rowMouseMoveHandler, 80, {
+      trailing: true,
+      leading: false,
+    });
+  },
 
   methods: {
-    changeSortIcon() {
-      if (this.$refs.dataTable) {
-        selectAll("i.mdi-arrow-up")
-          .classed("mdi-chevron-up", true)
-          .classed("mdi-arrow-up", false);
-      }
+    rowMouseDownHandler() {
+      this.isRowMouseDown = true;
+    },
+    rowMouseMoveHandler() {
+      if (this.isRowMouseDown) {
+        this.isRowDrag = true;
+      } else this.isRowDrag = false;
+    },
+    rowMouseUpHandler() {
+      this.isRowMouseDown = false;
+    },
+    registerMouseEventToRows() {
+      const rows = this.$refs.dataTable.$el.querySelectorAll("table tbody tr");
+      rows.forEach(row => {
+        row.addEventListener("mousedown", this.rowMouseDownHandler);
+        row.addEventListener("mousemove", this.throttleRowMouseMoveHandler);
+        row.addEventListener("mouseup", this.rowMouseUpHandler);
+      });
+    },
+    unregisterMouseEventToRows() {
+      const rows = this.$refs.dataTable.$el.querySelectorAll("table tbody tr");
+      rows.forEach(row => {
+        row.removeEventListener("mousedown", this.rowMouseDownHandler);
+        row.removeEventListener("mousemove", this.throttleRowMouseMoveHandler);
+        row.removeEventListener("mouseup", this.rowMouseUpHandler);
+      });
     },
 
     clickRow(value) {
+      this.isRowMouseDown = false;
+      if (this.isRowDrag) {
+        this.isRowDrag = false;
+        return;
+      }
       this.$emit("rowData", value[this.itemKey]);
       this.$emit("rowDataItem", value);
       window.scrollTo(0, 0);
@@ -179,13 +203,18 @@ export default {
       return val === "negotiation";
     },
 
-    viewMore() {
-      // Add more column to the table
-    },
-
     onResize() {
       this.tableHeight = window.innerHeight - 280;
     },
+  },
+  beforeUpdate() {
+    this.unregisterMouseEventToRows();
+  },
+  beforeDestroy() {
+    this.unregisterMouseEventToRows();
+  },
+  updated() {
+    this.registerMouseEventToRows();
   },
 
   watch: {

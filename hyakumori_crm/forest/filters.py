@@ -27,6 +27,17 @@ class ForestFilter(TagsFilterSet, MultipleOrFilterSet):
     contracts__2__start_date = DateFilter(method="exact_date_filter")
     contracts__2__end_date = DateFilter(method="exact_date_filter")
 
+    def _filter_name_with_space(self, search_field_filter, value):
+        keywords = list(
+            filter(lambda item: item is not None,
+                   map(lambda item: item if item else None, value.split(" "))))
+        if len(keywords) > 0:
+            return reduce(
+                operator.and_,
+                (Q(**{search_field_filter: keyword.strip()}) for keyword in keywords if len(keyword) > 0)
+            )
+        return None
+
     def owner_icontains_filter(self, queryset, name, value):
         search_field = ""
         if name.find("name_kana") >= 0:
@@ -35,12 +46,17 @@ class ForestFilter(TagsFilterSet, MultipleOrFilterSet):
             search_field = f"attributes__customer_cache__repr_name_kanji"
 
         search_field_filter = search_field + "__icontains"
-        values = value.split(" ")
-        queryset = queryset.filter(
-            reduce(
-                operator.and_, (Q(**{search_field_filter: value.strip()}) for value in values if len(value) > 0)
-            )
-        )
+        keywords = value.replace("\u3000", "").split(",")
+        filters = []
+        for keyword in keywords:
+            _f = self._filter_name_with_space(search_field_filter, keyword)
+            if _f is not None:
+                filters.append(_f)
+        query = Q()
+        for _f in filters:
+            query |= _f
+        queryset = queryset.filter(query)
+
         return queryset
 
     def exact_date_filter(self, queryset, name, value):

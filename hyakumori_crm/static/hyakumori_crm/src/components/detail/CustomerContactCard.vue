@@ -94,7 +94,8 @@
     >
       <v-btn
         v-if="
-          (isUpdate && !contact.owner_customer_id) || (customerId && !isUpdate)
+          (isUpdate && !contact.owner_customer_id) ||
+            (contact.business_id && !isUpdate)
         "
         class="align-self-center"
         icon
@@ -191,13 +192,9 @@ export default {
         : this.contact;
     },
     customerId() {
-      if (this.contact.self_contact) {
-        return this.contact.id;
-      } else {
-        return this.contact.is_basic
-          ? this.contact.customer_id || this.contact.id
-          : null;
-      }
+      return this.contact.self_contact
+        ? this.contact.id
+        : this.contact.customer_id;
     },
     fullname() {
       if (

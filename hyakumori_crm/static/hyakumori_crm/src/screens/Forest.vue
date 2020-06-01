@@ -262,7 +262,7 @@ export default {
     onSearch() {
       this.filter = { ...this.filter, page: 1, filters: this.requestFilters };
       this.options = { ...this.options, page: 1 };
-      this.$apollo.queries.forestsInfo.refetch();
+      // this.$apollo.queries.forestsInfo.refetch();
     },
 
     uploadCsv() {

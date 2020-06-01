@@ -93,7 +93,7 @@ import UpdateButton from "./UpdateButton";
 import AdditionButton from "../AdditionButton";
 import SelectListModal from "../SelectListModal";
 import ForestInfoCard from "../detail/ForestInfoCard";
-import { reject, debounce } from "lodash";
+import { reject } from "lodash";
 
 export default {
   name: "forest-list-container",

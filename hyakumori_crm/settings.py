@@ -149,7 +149,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "ja"
 
+# Use UTC for most of date time task
 TIME_ZONE = "UTC"
+
+# Only for in DB timezone converting (support fuzzy searching datetime text)
+TIME_ZONE_PRIMARY = os.getenv("TIME_ZONE_PRIMARY", "Asia/Tokyo")
 
 USE_I18N = True
 
