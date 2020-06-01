@@ -6,9 +6,10 @@ from urllib import parse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError as DjValidationError
-from django.db import transaction, OperationalError, connection
+from django.db import connection
 from django.db.models import F, Subquery, OuterRef, Count, Q
 from django.db.models.expressions import Func, RawSQL, Value
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from pydantic import ValidationError
 from rest_framework.request import Request
@@ -345,8 +346,8 @@ def get_filtered_archive_queryset(archive_filter: ArchiveFilter):
 
         if len(active_filters.keys()) > 0:
             qs = Archive.objects.annotate(
-                archive_date_text=Func(
-                    F("archive_date"), Value("YYYY-MM-DD HH24:MI"), function="to_char",
+                archive_date_text=RawSQL(
+                    "to_char((archive_date at time zone %s), 'YYYY-MM-DD HH24:MI')", [settings.TIME_ZONE_PRIMARY]
                 )
             ).select_related("author")
             qs = TagsFilterSet.get_tags_repr_queryset(qs)

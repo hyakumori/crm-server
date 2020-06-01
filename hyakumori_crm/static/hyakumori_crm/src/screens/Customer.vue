@@ -271,7 +271,6 @@ export default {
     },
     handleDownloadSelected() {
       const ids = Object.keys(this.$refs.table.$refs.dataTable.selection);
-      const qStr = ids.map(id => `ids=${id}`).join("&");
       this.downloadCsv(
         "customers_filtered.csv",
         `${this.$rest.defaults.baseURL}/customers/download_csv`,

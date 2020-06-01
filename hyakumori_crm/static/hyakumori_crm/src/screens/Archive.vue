@@ -66,10 +66,7 @@ import PageHeader from "../components/PageHeader";
 import OutlineRoundBtn from "../components/OutlineRoundBtn";
 import TableAction from "../components/TableAction";
 import UpdateActionsDialog from "../components/dialogs/UpdateActionsDialog";
-import {
-  commonDatetimeFormat,
-  dateTimeKeywordSearchFormat,
-} from "../helpers/datetime";
+import { commonDatetimeFormat } from "../helpers/datetime";
 import { get as _get } from "lodash";
 
 export default {
@@ -174,7 +171,8 @@ export default {
         let criteria = data.criteria;
         let keyword = data.keyword;
         if (criteria && criteria === "archive_date" && keyword) {
-          keyword = dateTimeKeywordSearchFormat(keyword);
+          const keywords = keyword.split(",");
+          keyword = keywords.join(",");
         }
         return {
           criteria,

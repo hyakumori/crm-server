@@ -55,7 +55,9 @@
         >
           <v-icon>mdi-plus</v-icon>
 
-          <span class="f14 ml-1">{{ $t("search.add_search_condition") }}</span>
+          <span class="f14 ml-1 cursor-pointer">
+            {{ $t("search.add_search_condition") }}
+          </span>
         </div>
 
         <v-btn

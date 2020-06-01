@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="isShowDialog" max-width="700" transition persistent>
+  <v-dialog v-model="isShowDialog" max-width="540" transition persistent>
     <ValidationObserver ref="form" v-slot="{ invalid }">
       <v-card>
         <v-card-title class="display-0">
@@ -31,9 +31,9 @@
           </v-row>
         </v-card-text>
         <v-card-actions class="px-4">
-          <v-btn text color="primary" :disabled="updating" @click="onCancel">{{
-            $t("buttons.cancel")
-          }}</v-btn>
+          <v-btn text color="primary" :disabled="updating" @click="onCancel">
+            {{ $t("buttons.cancel") }}
+          </v-btn>
           <v-spacer></v-spacer>
           <v-btn
             text
@@ -41,8 +41,9 @@
             @click="onUpdateData"
             :disabled="invalid || isDisableUpdate"
             :loading="updating"
-            >OK</v-btn
           >
+            {{ $t("buttons.ok") }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </ValidationObserver>
