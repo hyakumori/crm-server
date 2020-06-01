@@ -84,7 +84,11 @@ export default {
           this.isUpdate = false;
         })
         .catch(() => {
-          // TODO: Handle error later
+          this.$dialog.notify.error(
+            this.$t("messages.api_update_general_error"),
+          );
+          this.isSave = false;
+          this.isLoading = false;
         });
     },
   },

@@ -198,6 +198,7 @@ export default {
       newTagValue: null,
       selectedFileName: "",
       uploadCsvLoading: false,
+      contractTypes: [],
     };
   },
 
@@ -444,10 +445,10 @@ export default {
       if (this.forestsInfo) {
         return this.forestsInfo.forests.map(element => {
           const fCadastral = element.cadastral;
-          const contract = element.contracts;
+          const contracts = element.contracts;
           const tags = element.tags;
 
-          return {
+          let item = {
             id: element.id,
             internal_id: element.internal_id,
             cadastral__prefecture: fCadastral.prefecture,
@@ -456,17 +457,12 @@ export default {
             cadastral__subsector: fCadastral.subsector,
             owner__name_kanji: this.renderCustomers(element, "kanji"),
             owner__name_kana: this.renderCustomers(element, "kana"),
-            contracts__0__status: contract[0].status,
-            contracts__0__start_date: contract[0].start_date,
-            contracts__0__end_date: contract[0].end_date,
-            contracts__1__status: contract[1] && contract[1].status,
-            contracts__1__start_date: contract[1] && contract[1].start_date,
-            contracts__1__end_date: contract[1] && contract[1].end_date,
-            contracts__2__status: contract[2] && contract[2].status,
-            contracts__2__start_date: contract[2] && contract[2].start_date,
-            contracts__2__end_date: contract[2] && contract[2].end_date,
             tags: tags,
           };
+          if (contracts) {
+            item = { ...item, ...contracts };
+          }
+          return item;
         });
       } else {
         return this.forestsInfo;

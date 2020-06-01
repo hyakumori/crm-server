@@ -128,3 +128,5 @@ export function getTime(datetime) {
 export function getDate(datetime) {
   return format(new Date(datetime), "yyyy-MM-dd");
 }
+
+export const dateSeparator = "～";

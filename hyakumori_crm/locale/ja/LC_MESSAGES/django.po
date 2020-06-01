@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-28 13:57+0700\n"
+"POT-Creation-Date: 2020-06-01 10:35+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,7 +64,7 @@ msgid "Could not get download url"
 msgstr "ダウンロードURLを取得できませんでした"
 
 #: archive/schemas.py:92 archive/schemas.py:96 archive/schemas.py:100
-#: archive/schemas.py:114 customer/schemas.py:217 customer/schemas.py:261
+#: archive/schemas.py:114 customer/schemas.py:218 customer/schemas.py:262
 msgid "Contact {} not found"
 msgstr "連絡先{}が見つかりません"
 
@@ -72,7 +72,7 @@ msgstr "連絡先{}が見つかりません"
 msgid "Contact {} already exists"
 msgstr "連絡先{}は既に存在します"
 
-#: archive/service.py:57 archive/service.py:70
+#: archive/service.py:58 archive/service.py:71
 msgid "Attachment not found"
 msgstr "添付ファイルが見つかりません"
 
@@ -83,6 +83,27 @@ msgstr "期限切れのURL"
 #: archive/views.py:26
 msgid "file not found"
 msgstr "ファイルが見つかりません"
+
+#: contracts/models.py:8
+msgid "contract type name"
+msgstr ""
+
+#: contracts/models.py:10
+msgid "contract code name, reversed enum value"
+msgstr ""
+
+#: contracts/models.py:11
+msgid "contract type description"
+msgstr ""
+
+#: contracts/models.py:15 contracts/models.py:16
+msgid "contract type"
+msgstr "契約種類"
+
+#: contracts/models.py:19
+#, python-brace-format
+msgid "ContractType, id: {id}"
+msgstr ""
 
 #: core/http.py:12
 msgid "Not found"
@@ -112,6 +133,23 @@ msgstr "不正な日付形式（YYYY-MM-DD）"
 #: core/models.py:98
 msgid "Invalid UUID"
 msgstr "不正なUUID"
+
+#: core/models.py:99
+#, python-brace-format
+msgid "Invalid value, choices are: {permitted}"
+msgstr "無効な値です。選択肢は次のとおりです：{permitted}"
+
+#: crm/schemas/forest.py:70 forest/schemas.py:101
+msgid "地番本番 is required"
+msgstr "地番本番が必要です"
+
+#: crm/schemas/forest.py:74 forest/schemas.py:105
+msgid "地番本番 must be a number"
+msgstr "地番本番は数字でなければなりません"
+
+#: crm/schemas/forest.py:76 forest/schemas.py:107
+msgid "地番本番 must be greater than 0"
+msgstr "地番本番は0より大きくなければなりません"
 
 #: customer/resolvers.py:20
 msgid "Internal Id"
@@ -153,47 +191,47 @@ msgstr "携帯番号"
 msgid "Email"
 msgstr "メールアドレス"
 
-#: customer/resolvers.py:30 customer/restful.py:277 customer/tasks.py:33
-#: forest/resolvers.py:111 forest/service.py:223
+#: customer/resolvers.py:30 customer/restful.py:281 customer/tasks.py:33
+#: forest/resolvers.py:98 forest/service.py:303
 msgid "Tag"
 msgstr "タグ"
 
-#: customer/restful.py:318 customer/restful.py:331 forest/restful.py:190
+#: customer/restful.py:322 customer/restful.py:335 forest/restful.py:190
 #: forest/restful.py:203
 msgid "Please upload a csv file!!"
 msgstr "csvファイルをアップロードしてください!!"
 
-#: customer/schemas.py:131
+#: customer/schemas.py:132
 msgid "Duplicate contacts"
 msgstr "重複する連絡先"
 
-#: customer/schemas.py:141
+#: customer/schemas.py:142
 #, python-brace-format
 msgid "Contact {c} not belong to forest and customer"
 msgstr "連絡先{c}はフォレストと顧客に属していません"
 
-#: customer/schemas.py:153
+#: customer/schemas.py:154
 #, python-brace-format
 msgid "Contact {pk} not found"
 msgstr "連絡先{pk}が見つかりません"
 
-#: customer/schemas.py:172 customer/schemas.py:180
+#: customer/schemas.py:173 customer/schemas.py:181
 msgid "Forest Id {} not found"
 msgstr "フォレストID {}が見つかりません"
 
-#: customer/schemas.py:249
+#: customer/schemas.py:250
 msgid "forest_id not provied for contact_type FOREST"
 msgstr "連絡先タイプFORESTにフォレストIDが指定されていません"
 
-#: customer/schemas.py:255
+#: customer/schemas.py:256
 msgid "Forest {} not found"
 msgstr "森{}が見つかりません"
 
-#: customer/schemas.py:300 customer/schemas.py:349
+#: customer/schemas.py:301 customer/schemas.py:350
 msgid "Enter at least telephone or mobilephone or email."
 msgstr "少なくとも電話、携帯電話、または電子メールを入力してください。"
 
-#: customer/service.py:41 forest/service.py:66
+#: customer/service.py:41 forest/service.py:73
 msgid "Customer not found"
 msgstr "顧客が見つかりません"
 
@@ -201,7 +239,7 @@ msgstr "顧客が見つかりません"
 msgid "Customer ID is empty or not available"
 msgstr "お客様IDが空か、使用できません"
 
-#: customer/tasks.py:41 forest/service.py:443 forest/service.py:477
+#: customer/tasks.py:41 forest/service.py:517 forest/service.py:551
 msgid "Invalid csv file!"
 msgstr "無効なcsvファイル！"
 
@@ -230,68 +268,59 @@ msgid "Owner name Kana"
 msgstr "土地所有者名_カナ"
 
 #: forest/resolvers.py:57
-msgid "Long term contract"
-msgstr "長期契約"
+msgid "Contract type"
+msgstr "契約種類"
 
 #: forest/resolvers.py:63
-msgid "Long term start"
-msgstr "開始日"
+msgid "Contract status"
+msgstr "契約ステータス"
 
 #: forest/resolvers.py:69
-msgid "Long term end"
-msgstr "終了日"
+msgid "Contract start date"
+msgstr "契約開始日"
 
 #: forest/resolvers.py:75
-msgid "Work load contract"
-msgstr "作業道契約"
+msgid "Contract end date"
+msgstr "契約終了日"
 
 #: forest/resolvers.py:81
-msgid "Work load start"
-msgstr "開始日"
-
-#: forest/resolvers.py:87
-msgid "Work load end"
-msgstr "終了日"
-
-#: forest/resolvers.py:93
 msgid "FSC certification participation"
 msgstr "FSC認証加入"
 
-#: forest/resolvers.py:99
+#: forest/resolvers.py:87
 msgid "FSC start"
-msgstr "開始日"
+msgstr "FSC開始日"
 
-#: forest/resolvers.py:105
+#: forest/resolvers.py:93
 msgid "FSC end"
-msgstr "終了日"
+msgstr "FSC終了日"
 
-#: forest/schemas.py:67 forest/schemas.py:77
+#: forest/schemas.py:128 forest/schemas.py:138
 #, fuzzy
 #| msgid "Customer Id {v} not found"
 msgid "Customer Id {} not found"
 msgstr "カスタマーID {v}が見つかりません"
 
-#: forest/schemas.py:99 forest/schemas.py:124
+#: forest/schemas.py:160 forest/schemas.py:185
 #, fuzzy, python-brace-format
 #| msgid "Customer Id {v} not found"
 msgid "Customer {v} not found"
-msgstr "カスタマーID {v}が見つかりません"
+msgstr "カスタマーID{v}が見つかりません"
 
-#: forest/schemas.py:133
-#, fuzzy, python-brace-format
-#| msgid "Contact not found"
+#: forest/schemas.py:194
+#, python-brace-format
 msgid "Contact {v} not found"
-msgstr "連絡先が見つかりません"
+msgstr "連絡先が{v}見つかりません"
 
-#: forest/schemas.py:177
+#: forest/schemas.py:243
 msgid "Invalid format (tag1:value1; tag2:value2)"
 msgstr "無効な形式（タグ1：値1; タグ2：値2）"
 
-#: forest/service.py:41 forest/service.py:466
+#: forest/service.py:48 forest/service.py:540
 msgid "Forest not found"
 msgstr "森が見つかりません"
 
-#: settings.py:166
+#: settings.py:168
 msgid "Japan"
 msgstr "Japan"
 
@@ -546,9 +575,27 @@ msgstr ""
 msgid "Please go to the following page and define reset email:"
 msgstr ""
 
-#: users/templates/email/password_reset.html:435
+#: users/templates/email/password_reset.html:445
 msgid "パスワードリセット"
 msgstr ""
+
+#~ msgid "Long term contract"
+#~ msgstr "長期契約"
+
+#~ msgid "Long term start"
+#~ msgstr "開始日"
+
+#~ msgid "Long term end"
+#~ msgstr "終了日"
+
+#~ msgid "Work load contract"
+#~ msgstr "作業道契約"
+
+#~ msgid "Work load start"
+#~ msgstr "開始日"
+
+#~ msgid "Work load end"
+#~ msgstr "終了日"
 
 #~ msgid "{column} error at line {row_num}"
 #~ msgstr "{column}カラムの{row_num}行目の値が不正です。"

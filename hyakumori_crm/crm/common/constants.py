@@ -63,7 +63,7 @@ FOREST_OWNER_NAME = ["土地所有者名_漢字", "土地所有者名_カナ"]
 
 FOREST_OWNER_ADDRESS = ["土地所有者住所_都道府県", "土地所有者住所_市町村", "土地所有者住所_大字"]
 
-FOREST_CONTRACT = ["長期契約", "開始日", "終了日", "作業道契約", "開始日", "終了日", "FSC認証", "開始日", "終了日"]
+FOREST_CONTRACT = ["契約タイプ", "契約状況", "開始日", "終了日", "FSC認証", "開始日", "終了日"]
 
 CUSTOMER_ID_PREFIX = "DFFC"
 CUSTOMER_ID_SEQUENCE = "customer_ids"
