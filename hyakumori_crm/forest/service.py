@@ -164,10 +164,12 @@ def get_forests_by_condition(
 
 def update_basic_info(forest: Forest, forest_in: ForestInput):
     forest.cadastral = forest_in.cadastral.dict()
-    forest.land_attributes['地番本番'] = forest_in.land_attributes.get("地番本番")
-    forest.land_attributes['地番支番'] = forest_in.land_attributes.get("地番支番")
+    forest.land_attributes["地番本番"] = forest_in.land_attributes.get("地番本番")
+    forest.land_attributes["地番支番"] = forest_in.land_attributes.get("地番支番")
     forest.contracts = map_input_to_contracts(forest, forest_in.contracts)
-    forest.save(update_fields=["cadastral", "contracts", "land_attributes", "updated_at"])
+    forest.save(
+        update_fields=["cadastral", "contracts", "land_attributes", "updated_at"]
+    )
     return forest
 
 
@@ -253,9 +255,8 @@ def get_customer_contacts_of_forest(pk):
             )
         )
         .annotate(cc_attrs=F("customercontact__attributes"))
-        .annotate(is_basic=Subquery(cc.values("is_basic")[:1]))
-        .annotate(customer_id=Subquery(cc.values("customer_id")[:1]))
-        .annotate(owner_customer_id=F("customercontact__customer_id"))
+        # .annotate(is_basic=Subquery(cc.values("is_basic")[:1]))
+        .annotate(owner_customer_id=Subquery(cc.values("customer_id")[:1]))
         .annotate(business_id=Subquery(cc_business_id.values("business_id")[:1]))
     )
 
@@ -495,7 +496,6 @@ def parse_csv_data_to_dict(row_data):
 
 
 def update_forest_csv(forest, data: ForestCsvInput):
-    forest.internal_id = data.internal_id
     forest.cadastral = data.cadastral.dict()
     forest.land_attributes = list_to_dict(data.land_attributes)
     forest.contracts = [c.dict() for c in data.contracts]

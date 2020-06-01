@@ -18,6 +18,7 @@
     "add_user": "アカウントを追加",
     "back": "前のページに戻る",
     "cancel": "キャンセル",
+    "ok": "確認",
     "continue": "継続する",
     "csv_download": "csvダウンロード",
     "csv_upload": "csvアップロード",
@@ -217,7 +218,7 @@
     "migrate_title": "確認",
     "no_tags": "タグがありません。クリックして追加・編集。",
     "no_tags_view_only": "タグがありません。",
-    "required_fields": "`すべてのフィールドに値を入力してください`"
+    "required_fields": "すべてのフィールドに値を入力してください"
   },
   "user_management": {
     "tables": {
