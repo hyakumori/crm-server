@@ -41,6 +41,15 @@
       ref="selectListModal"
     >
       <template #list>
+        <p v-if="showNotFoundMsg" class="text-center">
+          {{ $t("messages.not_found") }}
+        </p>
+        <p
+          class="text-center"
+          v-if="allForests.length === 0 && !showNotFoundMsg"
+        >
+          {{ $t("messages.out_of_data") }}
+        </p>
         <forest-info-card
           v-for="(item, index) in allForests"
           mode="search"
@@ -101,6 +110,7 @@ export default {
       selectingForestIndex: null,
       addRelatedForestLoading: false,
       searchNext: null,
+      showNotFoundMsg: false,
     };
   },
 
@@ -287,6 +297,8 @@ export default {
         },
       });
       if (response) {
+        this.showNotFoundMsg =
+          !response.next && !response.previous && response.results.length === 0;
         this.allForests = [];
         this.immutableAllForest = [];
         const tempSearchData = this.removeDuplicateForests(

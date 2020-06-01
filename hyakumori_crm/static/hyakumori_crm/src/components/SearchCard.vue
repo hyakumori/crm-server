@@ -46,7 +46,13 @@
       <div
         class="d-flex flex-xl-row flex-lg-row flex-md-column search-card__btn"
       >
-        <div class="d-flex align-center" @click="addSearchField">
+        <div
+          class="d-flex align-center"
+          :class="{
+            'show-add-criteria': conditions.length === searchCriteria.length,
+          }"
+          @click="addSearchField"
+        >
           <v-icon>mdi-plus</v-icon>
 
           <span class="f14 ml-1">{{ $t("search.add_search_condition") }}</span>
@@ -232,6 +238,10 @@ $text-font-size: 14px;
     align-items: center;
     justify-content: space-between;
     margin-top: 5px !important;
+
+    & .show-add-criteria {
+      opacity: 0;
+    }
 
     & i {
       color: $action-color;

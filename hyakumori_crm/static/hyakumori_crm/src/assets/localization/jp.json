@@ -155,7 +155,8 @@
     "maintenance_2": "更新操作は許可されていません。",
     "confirm_upload_csv": "アップロードはウェブサイトを維持モードにします。 継続する？",
     "upload_successfully": "正常にアップロード",
-    "confirm_leave": "帰りたい？"
+    "confirm_leave": "帰りたい？",
+    "out_of_data": "選択可能な情報はありません。"
   },
   "not_available_field": "一時不明",
   "page_header": {
