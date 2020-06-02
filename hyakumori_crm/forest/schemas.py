@@ -198,7 +198,7 @@ class CustomerContactDefaultInput(HyakumoriDanticModel):
 
 class ForestMemoInput(HyakumoriDanticModel):
     forest: Forest
-    memo: str
+    memo: Optional[str]
 
     class Config:
         arbitrary_types_allowed = True

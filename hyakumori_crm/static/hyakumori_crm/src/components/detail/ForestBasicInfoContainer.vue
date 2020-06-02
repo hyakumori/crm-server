@@ -10,7 +10,7 @@
 
     <div class="mt-4">
       <forest-basic-info
-        :info="mutableInfo"
+        :info="info"
         :isUpdate="isUpdate"
         :isSave="isSave"
         @updateInfo="updateData"
@@ -55,8 +55,6 @@ export default {
     return {
       isUpdate: false,
       isSave: false,
-      immutableInfo: {},
-      mutableInfo: null,
       saveDisabled: false,
     };
   },
@@ -67,13 +65,11 @@ export default {
     },
 
     cancel() {
-      this.mutableInfo = this.immutableInfo;
       this.isUpdate = false;
     },
 
     setUpdate(val) {
       this.isUpdate = val;
-      this.immutableInfo = cloneDeep(this.mutableInfo);
     },
 
     updateData(updateInfo) {
@@ -90,12 +86,6 @@ export default {
           this.isSave = false;
           this.isLoading = false;
         });
-    },
-  },
-
-  watch: {
-    info(val) {
-      this.mutableInfo = val;
     },
   },
 };
