@@ -97,15 +97,15 @@ def map_forests_contracts(forest, contract_types):
     fsc = get_contract_by_type(forest.contracts, contract_types["fsc"])
     contract = long_term if long_term.get("type") is not None else work_road
 
-    forest.contracts = dict(
-        contract_type=contract.get("type"),
-        contract_status=contract.get("status"),
-        contract_start_date=contract.get("start_date"),
-        contract_end_date=contract.get("end_date"),
-        fsc_status=fsc.get("status"),
-        fsc_start_date=fsc.get("start_date"),
-        fsc_end_date=fsc.get("end_date"),
-    )
+    forest.contracts = {
+        "contract_type": contract.get("type"),
+        "contract_status": contract.get("status"),
+        "contract_start_date": contract.get("start_date"),
+        "contract_end_date": contract.get("end_date"),
+        "fsc_status": fsc.get("status"),
+        "fsc_start_date": fsc.get("start_date"),
+        "fsc_end_date": fsc.get("end_date"),
+    }
 
     return forest
 
