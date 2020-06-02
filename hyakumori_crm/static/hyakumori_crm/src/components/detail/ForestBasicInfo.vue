@@ -41,7 +41,7 @@
                   small
                   class="contract-status"
                   outlined
-                  color="primary"
+                  :color="colorsMap[contractStatus]"
                   >{{ contractStatus }}</v-chip
                 >
               </template>
@@ -68,9 +68,9 @@
               label="都道府県"
               name="都道府県"
               rules="required|max:255"
-              :value="address.prefecture"
+              :value="innerInfo.cadastral.prefecture"
               :isUpdate="isUpdate"
-              @input="val => (address.prefecture = val)"
+              @input="val => (innerInfo.cadastral.prefecture = val)"
             />
           </v-col>
           <v-col cols="4">
@@ -78,9 +78,9 @@
               label="市町村"
               name="市町村"
               rules="required|max:255"
-              :value="address.municipality"
+              :value="innerInfo.cadastral.municipality"
               :isUpdate="isUpdate"
-              @input="val => (address.municipality = val)"
+              @input="val => (innerInfo.cadastral.municipality = val)"
             />
           </v-col>
           <v-col cols="4">
@@ -88,13 +88,23 @@
               label="大字"
               name="大字"
               rules="max:255"
-              :value="address.sector"
+              :value="innerInfo.cadastral.sector"
               :isUpdate="isUpdate"
-              @input="val => (address.sector = val)"
+              @input="val => (innerInfo.cadastral.sector = val)"
             />
           </v-col>
         </v-row>
         <v-row>
+          <v-col cols="4">
+            <text-info
+              label="字"
+              name="字"
+              rules="max:255"
+              :value="innerInfo.cadastral.subsector"
+              :isUpdate="isUpdate"
+              @input="val => (innerInfo.cadastral.subsector = val)"
+            />
+          </v-col>
           <v-col cols="4">
             <text-info
               label="地番本番"
@@ -195,8 +205,11 @@ export default {
     return {
       contractTypes: [],
       contractStatuses: {},
-      innerInfo: {
-        contracts: { contract_type: "" },
+      innerInfo: null,
+      colorsMap: {
+        未契約: "grey--lighten",
+        期限切: "orange lighten-2",
+        契約済: "primary",
       },
     };
   },
@@ -257,7 +270,6 @@ export default {
   async mounted() {
     await this.getContractTypes();
     await this.getContractStatuses();
-    this.innerInfo = _cloneDeep(this.info);
   },
 
   computed: {
@@ -336,11 +348,17 @@ export default {
         this.$emit("updateInfo", this.innerInfo);
       }
     },
-
-    info: {
-      deep: true,
-      async handler() {
+    info(val) {
+      this.innerInfo = _cloneDeep(val);
+    },
+    isUpdate(val) {
+      if (!val && this.$refs.observer.flags.dirty) {
         this.innerInfo = _cloneDeep(this.info);
+      }
+    },
+    innerInfo: {
+      deep: true,
+      async handler(val, old) {
         const isValid = await this.$refs.observer.validate();
         this.$emit("forest:save-disable", !isValid);
       },

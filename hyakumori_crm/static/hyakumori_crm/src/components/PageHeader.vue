@@ -87,7 +87,7 @@
           <div class="d-flex align-center">
             <div v-if="isDetail" class="d-flex flex-column">
               <v-btn
-                class="btn-back mb-2 ml-n4"
+                class="btn-back ml-n4"
                 text
                 color="white"
                 small
@@ -98,7 +98,7 @@
                 {{ $store.state.backBtnContent }}
               </v-btn>
 
-              <div class="d-flex align-center" :class="{ 'mt-3': !hasBackBtn }">
+              <div class="d-flex align-center">
                 <v-icon class="icon-mode">{{ $store.state.pageIcon }}</v-icon>
                 <div
                   class="white--text page-header__detail__data"
@@ -107,7 +107,11 @@
                   }"
                 >
                   <p
-                    class="mb-0 text-truncate page-header__detail__data__title"
+                    class="text-truncate page-header__detail__data__title font-weight-bold"
+                    :class="{
+                      'mb-2': !headerInfo.desc,
+                      'mb-0': !!headerInfo.desc,
+                    }"
                   >
                     {{ headerInfo.title }}
                     <span
@@ -119,6 +123,12 @@
                     >
                       {{ tag }}
                     </span>
+                  </p>
+                  <p
+                    class="caption mb-0 text-truncate page-header__detail__data__title"
+                    v-if="headerInfo.desc"
+                  >
+                    {{ headerInfo.desc }}
                   </p>
                   <p class="mb-0 page-header__detail__data__sub-title">
                     {{ headerInfo.subTitle }}
@@ -314,11 +324,10 @@ export default {
       .tag {
         position: relative;
         top: -3px;
-        height: 20px;
         width: fit-content;
         font-size: 10px;
         border-radius: 2px;
-        margin-left: 9px;
+        margin-left: 4px;
         padding: 4px 8px;
         font-weight: bold;
       }
@@ -331,13 +340,12 @@ export default {
 
     &__title {
       position: relative;
-      font-size: 20px;
-      line-height: 20px;
+      font-size: 16px;
     }
 
     &__sub-title {
-      font-size: 14px;
-      line-height: 14px;
+      font-size: 11px;
+      line-height: 11px;
     }
   }
   .default-height {

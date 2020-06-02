@@ -17,8 +17,9 @@ const getters = {
   headerInfo(state) {
     if (!state.forest) return {};
     return {
-      title: state.forest.internal_id,
+      title: `${state.forest.cadastral.sector}_${state.forest.cadastral.subsector}_${state.forest.land_attributes["地番本番"]}_${state.forest.land_attributes["地番支番"]}`,
       subTitle: state.forest.owner.name_kanji,
+      desc: state.forest.internal_id,
       tags: tags_to_array(state.forest.tags),
       backUrl: { name: "forests" },
     };

@@ -153,10 +153,7 @@ export default {
     },
   },
   created() {
-    this.throttleRowMouseMoveHandler = throttle(this.rowMouseMoveHandler, 80, {
-      trailing: true,
-      leading: false,
-    });
+    this.throttleRowMouseMoveHandler = throttle(this.rowMouseMoveHandler, 50);
   },
 
   methods: {
