@@ -17,6 +17,7 @@ from .schemas import (
     ForestInput,
     ForestCsvInput,
     Contract,
+    ForestContractStatusBulkUpdate,
 )
 from ..cache.forest import refresh_customer_forest_cache
 from ..core.decorators import errors_wrapper
@@ -571,3 +572,11 @@ csv_errors_map = {
     "land_attributes.0.__root__": "土地属性",
     "tags": "タグ",
 }
+
+
+def bulk_update_forest_contact_status(data: ForestContractStatusBulkUpdate):
+    return Forest.objects.filter(pk__in=data.pks).update(
+        contracts=RawSQL(
+            "jsonb_set(contracts, '{0,status}', %s)", params=[f'"{data.status.value}"']
+        )
+    )

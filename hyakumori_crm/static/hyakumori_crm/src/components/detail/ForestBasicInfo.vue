@@ -358,7 +358,7 @@ export default {
     },
     innerInfo: {
       deep: true,
-      async handler(val, old) {
+      async handler() {
         const isValid = await this.$refs.observer.validate();
         this.$emit("forest:save-disable", !isValid);
       },
