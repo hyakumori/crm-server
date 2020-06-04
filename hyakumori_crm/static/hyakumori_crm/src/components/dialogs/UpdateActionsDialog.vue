@@ -9,7 +9,7 @@
           <v-row>
             <v-col cols="6">
               <h4>タグを選択</h4>
-              <v-select
+              <v-combobox
                 ref="tagList"
                 outlined
                 dense
@@ -18,6 +18,7 @@
                 :items="items"
                 :loading="loadingItems"
                 @change="onItemChange"
+                hide-details
               />
             </v-col>
             <v-col cols="6">
