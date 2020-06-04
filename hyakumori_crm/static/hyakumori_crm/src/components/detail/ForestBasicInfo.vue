@@ -120,7 +120,7 @@
             <text-info
               label="地番支番"
               name="地番支番"
-              rules="max:255"
+              rules="min_value:1"
               :value="landAttributes['地番支番']"
               :isUpdate="isUpdate"
               @input="val => (landAttributes['地番支番'] = val)"
