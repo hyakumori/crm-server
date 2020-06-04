@@ -34,7 +34,6 @@ import ContentHeader from "./ContentHeader";
 import UpdateButton from "./UpdateButton";
 import ContainerMixin from "./ContainerMixin";
 import { updateBasicInfo } from "../../api/forest";
-import { cloneDeep } from "lodash";
 
 export default {
   name: "forest-basic-info-container",

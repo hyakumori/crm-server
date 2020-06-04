@@ -246,3 +246,8 @@ class ForestCsvInput(HyakumoriDanticModel):
     @property
     def tags_json(self):
         return tags_csv_to_dict(self.tags)
+
+
+class ForestContractStatusBulkUpdate(HyakumoriDanticModel):
+    pks: List[UUID]
+    status: ContractTypeStatus
