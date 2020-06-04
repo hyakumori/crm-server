@@ -178,7 +178,7 @@ def update_forest_tags(data: dict):
     ids = data.get("ids")
     tag_key = data.get("key")
     new_value = data.get("value")
-    Forest.objects.filter(id__in=ids, tags__has_key=tag_key).update(
+    Forest.objects.filter(id__in=ids).update(
         tags=RawSQL("tags || jsonb_build_object(%s, %s)", params=[tag_key, new_value])
     )
 
