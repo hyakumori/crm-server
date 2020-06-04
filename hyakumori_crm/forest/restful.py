@@ -26,6 +26,7 @@ from .schemas import (
     CustomerDefaultInput,
     CustomerContactDefaultInput,
     ForestMemoInput,
+    ForestContractStatusBulkUpdate,
 )
 from .service import (
     get_forest_by_pk,
@@ -42,6 +43,7 @@ from .service import (
     csv_headers,
     csv_upload,
     get_forests_tag_by_ids,
+    bulk_update_forest_contact_status,
 )
 from ..activity.services import ActivityService, ForestActions
 from ..api.decorators import (
@@ -209,6 +211,13 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
                 return Response(r, status=400)
         finally:
             clear_maintain_task_id_cache()
+
+    @action(detail=False, methods=["PUT"], url_path="contracts/status")
+    @action_login_required(with_permissions=["change_forest"])
+    @api_validate_model(ForestContractStatusBulkUpdate)
+    def contract_status(self, request, data):
+        ok = bulk_update_forest_contact_status(data)
+        return Response({"msg": ok})
 
 
 @api_view(["PUT", "PATCH"])

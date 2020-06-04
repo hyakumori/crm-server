@@ -95,7 +95,7 @@
           :autoHeaders="false"
           :data="getData"
           :headers="getHeaders"
-          :isLoading="$apollo.queries.forestsInfo.loading"
+          :isLoading="$apollo.queries.forestsInfo.loading || bulkUpdateLoading"
           :options.sync="options"
           :serverItemsLength="getTotalForests"
           :showSelect="true"
@@ -104,6 +104,7 @@
           @selectedRow="selectedRows"
           itemKey="id"
           mode="forest"
+          ref="table"
         ></data-list>
       </div>
 
@@ -166,19 +167,18 @@ export default {
   data() {
     return {
       actions: [
-        // Remove temporary
-        // {
-        //   text: this.$t("action.contract_status_to_contracted"),
-        //   value: 0,
-        // },
-        // {
-        //   text: this.$t("action.contract_status_to_unsigned"),
-        //   value: 1,
-        // },
-        // {
-        //   text: this.$t("action.contract_status_to_expired"),
-        //   value: 2,
-        // },
+        {
+          text: this.$t("action.contract_status_to_contracted"),
+          value: 0,
+        },
+        {
+          text: this.$t("action.contract_status_to_unsigned"),
+          value: 1,
+        },
+        {
+          text: this.$t("action.contract_status_to_expired"),
+          value: 2,
+        },
         {
           text: this.$t("action.change_tag_value"),
           value: 3,
@@ -199,6 +199,7 @@ export default {
       selectedFileName: "",
       uploadCsvLoading: false,
       contractTypes: [],
+      bulkUpdateLoading: false,
     };
   },
 
@@ -395,19 +396,30 @@ export default {
         await this.$apollo.queries.forestsInfo.refetch();
       }
     },
-
+    async updateContractStatus(status) {
+      this.bulkUpdateLoading = true;
+      const ids = Object.keys(this.$refs.table.$refs.dataTable.selection);
+      try {
+        await this.$rest.put("/forests/contracts/status", {
+          pks: ids,
+          status: status,
+        });
+      } catch {}
+      this.bulkUpdateLoading = false;
+      await this.$apollo.queries.forestsInfo.refetch();
+    },
     selectedAction(index) {
       this.resetActionChoices();
       switch (index) {
-        // case 0:
-        //   // update forest contract
-        //   break;
-        // case 1:
-        //   // update forest contract
-        //   break;
-        // case 2:
-        //   // update forest contract
-        //   break;
+        case 0:
+          this.updateContractStatus("契約済");
+          break;
+        case 1:
+          this.updateContractStatus("未契約");
+          break;
+        case 2:
+          this.updateContractStatus("期限切");
+          break;
         case 3:
           this.showChangeTagDialog = true;
           this.fetchTagsLoading = true;
