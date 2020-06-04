@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="justify-start pb-0 px-6 pt-6">
-      {{ line ? `行番号のエラー: ${line}` : "エラー" }}
+      {{ line ? `${line}行目にエラーが発生しました。` : "エラー" }}
     </v-card-title>
     <v-card-text class="pa-6">
       <v-container fluid class="pa-0">

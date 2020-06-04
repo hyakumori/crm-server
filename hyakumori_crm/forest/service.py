@@ -1,5 +1,6 @@
 import csv
 import itertools
+from collections import defaultdict
 from typing import Iterator, Union
 
 import pydantic
@@ -464,7 +465,7 @@ def parse_csv_data_to_dict(row_data):
     forest_attributes = []
     for i in range(len(row_data)):
         if i == 0:
-            if row_data[i][0] == "\ufeff":
+            if row_data[i] and row_data[i][0] == "\ufeff":
                 new_forest["id"] = row_data[i][1:]  # exluce BOM char
             else:
                 new_forest["id"] = row_data[i]
@@ -486,8 +487,8 @@ def parse_csv_data_to_dict(row_data):
     new_forest["land_attributes"] = dict_to_list(
         csv_column_to_dict(FOREST_LAND_ATTRIBUTES, land_attributes)
     )
-    fsc_contract.insert(0, ContractTypeEnum.fsc)
     contracts.append(csv_column_to_dict(contract_keys, contract))
+    fsc_contract.insert(0, ContractTypeEnum.fsc)
     contracts.append(csv_column_to_dict(contract_keys, fsc_contract))
     new_forest["contracts"] = contracts
     new_forest["forest_attributes"] = dict_to_list(
@@ -521,15 +522,13 @@ def csv_upload(fp):
             try:
                 clean_forest = ForestCsvInput(**row_data)
             except pydantic.ValidationError as e:
-                errors = {}
+                errors = defaultdict(list)
                 for key, msgs in errors_wrapper(e.errors()).items():
                     if key == "__root__":
                         errors[key] = msgs
                     else:
-                        try:
-                            errors[csv_errors_map[key]] = msgs
-                        except KeyError:
-                            errors[key] = msgs
+                        errors[csv_errors_map[key]].extend(msgs)
+
                 return {"line": line_count + 1, "errors": errors}
             try:
                 forest = Forest.objects.select_for_update(nowait=True).get(
@@ -548,6 +547,7 @@ def csv_upload(fp):
                 }
             else:
                 update_forest_csv(forest, clean_forest)
+                line_count += 1
         if line_count == 0:
             return {"errors": {"__root__": [_("Invalid csv file!")]}}
         return line_count
@@ -560,16 +560,18 @@ csv_errors_map = {
     "cadastral.municipality": "地籍_市町村",
     "cadastral.sector": "地籍_大字",
     "cadastral.subsector": "地籍_字",
-    "contracts.0.status": "長期契約",
+    "contracts.0.type": "契約タイプ",
+    "contracts.0.status": "契約状況",
     "contracts.0.start_date": "開始日",
     "contracts.0.end_date": "終了日",
-    "contracts.1.status": "作業道契約",
+    "contracts.1.status": "FSC認証",
     "contracts.1.start_date": "開始日",
     "contracts.1.end_date": "終了日",
     "contracts.2.status": "FSC認証",
     "contracts.2.start_date": "開始日",
     "contracts.2.end_date": "終了日",
     "land_attributes.0.__root__": "土地属性",
+    "land_attributes.1.__root__": "土地属性",
     "tags": "タグ",
 }
 
