@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-01 10:35+0700\n"
+"POT-Creation-Date: 2020-06-04 16:51+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,20 +59,20 @@ msgstr ""
 msgid "Logged action, id: {id}"
 msgstr "ログに記録されたアクション、ID：{id}"
 
-#: archive/restful.py:155
+#: archive/restful.py:157
 msgid "Could not get download url"
 msgstr "ダウンロードURLを取得できませんでした"
 
-#: archive/schemas.py:92 archive/schemas.py:96 archive/schemas.py:100
-#: archive/schemas.py:114 customer/schemas.py:218 customer/schemas.py:262
+#: archive/schemas.py:93 archive/schemas.py:97 archive/schemas.py:101
+#: archive/schemas.py:115 customer/schemas.py:218 customer/schemas.py:262
 msgid "Contact {} not found"
 msgstr "連絡先{}が見つかりません"
 
-#: archive/schemas.py:122
+#: archive/schemas.py:123
 msgid "Contact {} already exists"
 msgstr "連絡先{}は既に存在します"
 
-#: archive/service.py:58 archive/service.py:71
+#: archive/service.py:59 archive/service.py:72
 msgid "Attachment not found"
 msgstr "添付ファイルが見つかりません"
 
@@ -140,16 +140,19 @@ msgid "Invalid value, choices are: {permitted}"
 msgstr "無効な値です。選択肢は次のとおりです：{permitted}"
 
 #: crm/schemas/forest.py:70 forest/schemas.py:101
-msgid "地番本番 is required"
-msgstr "地番本番が必要です"
+#, python-brace-format
+msgid "{field} is required"
+msgstr "{field}は必須です"
 
-#: crm/schemas/forest.py:74 forest/schemas.py:105
-msgid "地番本番 must be a number"
-msgstr "地番本番は数字でなければなりません"
+#: crm/schemas/forest.py:74 crm/schemas/forest.py:86 forest/schemas.py:105
+#: forest/schemas.py:116
+msgid "{field} must be a number"
+msgstr "{field}は数字でなければなりません"
 
-#: crm/schemas/forest.py:76 forest/schemas.py:107
-msgid "地番本番 must be greater than 0"
-msgstr "地番本番は0より大きくなければなりません"
+#: crm/schemas/forest.py:77 crm/schemas/forest.py:89 forest/schemas.py:107
+#: forest/schemas.py:118
+msgid "{field} must be greater than 0"
+msgstr "{field}は0より大きくなければなりません"
 
 #: customer/resolvers.py:20
 msgid "Internal Id"
@@ -192,12 +195,12 @@ msgid "Email"
 msgstr "メールアドレス"
 
 #: customer/resolvers.py:30 customer/restful.py:281 customer/tasks.py:33
-#: forest/resolvers.py:98 forest/service.py:303
+#: forest/resolvers.py:98 forest/service.py:305
 msgid "Tag"
 msgstr "タグ"
 
-#: customer/restful.py:322 customer/restful.py:335 forest/restful.py:190
-#: forest/restful.py:203
+#: customer/restful.py:322 customer/restful.py:335 forest/restful.py:194
+#: forest/restful.py:207
 msgid "Please upload a csv file!!"
 msgstr "csvファイルをアップロードしてください!!"
 
@@ -231,7 +234,7 @@ msgstr "森{}が見つかりません"
 msgid "Enter at least telephone or mobilephone or email."
 msgstr "少なくとも電話、携帯電話、または電子メールを入力してください。"
 
-#: customer/service.py:41 forest/service.py:73
+#: customer/service.py:41 forest/service.py:74
 msgid "Customer not found"
 msgstr "顧客が見つかりません"
 
@@ -239,7 +242,7 @@ msgstr "顧客が見つかりません"
 msgid "Customer ID is empty or not available"
 msgstr "お客様IDが空か、使用できません"
 
-#: customer/tasks.py:41 forest/service.py:517 forest/service.py:551
+#: customer/tasks.py:41 forest/service.py:518 forest/service.py:553
 msgid "Invalid csv file!"
 msgstr "無効なcsvファイル！"
 
@@ -295,32 +298,32 @@ msgstr "FSC開始日"
 msgid "FSC end"
 msgstr "FSC終了日"
 
-#: forest/schemas.py:128 forest/schemas.py:138
+#: forest/schemas.py:139 forest/schemas.py:149
 #, fuzzy
 #| msgid "Customer Id {v} not found"
 msgid "Customer Id {} not found"
 msgstr "カスタマーID {v}が見つかりません"
 
-#: forest/schemas.py:160 forest/schemas.py:185
+#: forest/schemas.py:171 forest/schemas.py:196
 #, fuzzy, python-brace-format
 #| msgid "Customer Id {v} not found"
 msgid "Customer {v} not found"
 msgstr "カスタマーID{v}が見つかりません"
 
-#: forest/schemas.py:194
+#: forest/schemas.py:205
 #, python-brace-format
 msgid "Contact {v} not found"
 msgstr "連絡先が{v}見つかりません"
 
-#: forest/schemas.py:243
+#: forest/schemas.py:254
 msgid "Invalid format (tag1:value1; tag2:value2)"
 msgstr "無効な形式（タグ1：値1; タグ2：値2）"
 
-#: forest/service.py:48 forest/service.py:540
+#: forest/service.py:49 forest/service.py:541
 msgid "Forest not found"
 msgstr "森が見つかりません"
 
-#: settings.py:168
+#: settings.py:172
 msgid "Japan"
 msgstr "Japan"
 
