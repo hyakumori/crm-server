@@ -33,7 +33,7 @@ class Cadastral(HyakumoriDanticModel):
 
 
 class Contract(HyakumoriDanticModel):
-    type: ContractType = ContractType.long_term
+    type: Optional[ContractType] = ContractType.long_term
     status: Optional[ContractTypeStatus] = ContractTypeStatus.unnegotiated
     start_date: Optional[date]
     end_date: Optional[date]
@@ -98,14 +98,25 @@ class ForestInput(HyakumoriDanticModel):
             return v
         lot_number = v.get("地番本番")
         if not lot_number:
-            raise ValueError(_("地番本番 is required"))
+            raise ValueError(_("{field} is required").format("地番本番"))
         try:
-            int_val = int(lot_number)
+            int_lot_number = int(lot_number)
         except ValueError:
-            raise ValueError(_("地番本番 must be a number"))
-        if int_val < 0:
-            raise ValueError(_("地番本番 must be greater than 0"))
-        v["地番本番"] = int_val
+            raise ValueError(_("{field} must be a number").format("地番本番"))
+        if int_lot_number < 0:
+            raise ValueError(_("{field} must be greater than 0").format("地番本番"))
+        v["地番本番"] = int_lot_number
+
+        sub_lot_number = v.get("地番支番")
+        if not sub_lot_number:
+            return v
+        try:
+            int_sub_lot_number = int(sub_lot_number)
+        except ValueError:
+            raise ValueError(_("{field} must be a number").format(field="地番支番"))
+        if int_sub_lot_number < 0:
+            raise ValueError(_("{field} must be greater than 0").format(field="地番支番"))
+        v["地番支番"] = int_sub_lot_number
         return v
 
 

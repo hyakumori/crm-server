@@ -60,20 +60,34 @@ class LandAttribute(BaseModel):
     value: Any
 
     @root_validator
-    def validate_land_attributes(cls, values):
+    def validate_land_attribute(cls, values):
         key = values.get("key")
         value = values.get("value")
         if not key:
             return values
         if key == "地番本番":
             if not value:
-                raise ValueError(_("地番本番 is required"))
+                raise ValueError(_("{field} is required").format(field="地番本番"))
             try:
                 int_val = int(value)
             except ValueError:
-                raise ValueError(_("地番本番 must be a number"))
+                raise ValueError(_("{field} must be a number").format(field="地番本番"))
             if int_val < 0:
-                raise ValueError(_("地番本番 must be greater than 0"))
+                raise ValueError(
+                    _("{field} must be greater than 0").format(field="地番本番")
+                )
+            values["value"] = int_val
+        if key == "地番支番":
+            if not value:
+                return values
+            try:
+                int_val = int(value)
+            except ValueError:
+                raise ValueError(_("{field} must be a number").format(field="地番支番"))
+            if int_val < 0:
+                raise ValueError(
+                    _("{field} must be greater than 0").format(field="地番支番")
+                )
             values["value"] = int_val
         return values
 
