@@ -20,6 +20,7 @@ from hyakumori_crm.crm.restful.serializers import (
     ContactSerializer,
     ArchiveSerializer,
 )
+from hyakumori_crm.crm.schemas.tag import TagBulkUpdate
 from .schemas import (
     ForestInput,
     OwnerPksInput,
@@ -179,8 +180,9 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
 
     @action(detail=False, methods=["PUT"], url_path="tags")
     @action_login_required(with_permissions=["change_forest"])
-    def tags(self, request):
-        update_forest_tags(request.data)
+    @api_validate_model(TagBulkUpdate)
+    def tags(self, request, data: TagBulkUpdate):
+        update_forest_tags(data.dict())
         return Response({"msg": "OK"})
 
     @action(detail=False, methods=["POST"], url_path="upload-csv")

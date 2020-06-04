@@ -347,7 +347,8 @@ def get_filtered_archive_queryset(archive_filter: ArchiveFilter):
         if len(active_filters.keys()) > 0:
             qs = Archive.objects.annotate(
                 archive_date_text=RawSQL(
-                    "to_char((archive_date at time zone %s), 'YYYY-MM-DD HH24:MI')", [settings.TIME_ZONE_PRIMARY]
+                    "to_char((archive_date at time zone %s), 'YYYY-MM-DD HH24:MI')",
+                    [settings.TIME_ZONE_PRIMARY],
                 )
             ).select_related("author")
             qs = TagsFilterSet.get_tags_repr_queryset(qs)
@@ -434,6 +435,6 @@ def update_archive_tag(data: dict):
     ids = data.get("ids")
     tag_key = data.get("key")
     new_value = data.get("value")
-    Archive.objects.filter(id__in=ids, tags__has_key=tag_key).update(
+    Archive.objects.filter(id__in=ids).update(
         tags=RawSQL("tags || jsonb_build_object(%s, %s)", params=[tag_key, new_value])
     )

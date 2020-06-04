@@ -23,6 +23,7 @@ from hyakumori_crm.crm.restful.serializers import (
     CustomerSerializer,
     ArchiveSerializer,
 )
+from hyakumori_crm.crm.schemas.tag import TagBulkUpdate
 from .schemas import (
     BankingInput,
     ContactsInput,
@@ -145,9 +146,7 @@ class CustomerViewSets(ViewSet):
                 action_type = CustomerActions.family_contacts_updated
             elif data.contact_type == ContactType.others:
                 action_type = CustomerActions.other_contacts_updated
-            ActivityService.log(
-                action_type, customer, request=request
-            )
+            ActivityService.log(action_type, customer, request=request)
             return Response({"id": data.customer.id})
 
     @action(detail=True, methods=["GET", "PUT", "PATCH"])
@@ -247,8 +246,9 @@ class CustomerViewSets(ViewSet):
 
     @action(detail=False, methods=["PUT"], url_path="tags")
     @action_login_required(with_permissions=["change_customer"])
-    def tags(self, request):
-        update_customer_tags(request.data)
+    @api_validate_model(TagBulkUpdate)
+    def tags(self, request, data: TagBulkUpdate):
+        update_customer_tags(data.dict())
         return Response({"msg": "OK"})
 
     @action(detail=False, methods=["GET", "POST"])

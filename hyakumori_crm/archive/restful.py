@@ -9,6 +9,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from hyakumori_crm.crm.common.utils import EncryptError, encrypt_string
+from hyakumori_crm.crm.schemas.tag import TagBulkUpdate
 from .schemas import ArchiveFilter, ArchiveInput, ArchiveCustomerInput
 from .service import (
     add_related_forest,
@@ -26,7 +27,8 @@ from .service import (
     get_filtered_archive_queryset,
     get_participants,
     get_related_forests,
-    update_archive_tag, get_archives_tag_by_ids,
+    update_archive_tag,
+    get_archives_tag_by_ids,
 )
 from ..activity.services import ActivityService, ArchiveActions
 from ..api.decorators import action_login_required, api_validate_model, get_or_404
@@ -260,6 +262,7 @@ def archive_ids(request):
 
 @api_view(["PUT"])
 @action_login_required(with_permissions=["change_archive"])
-def archive_tags(request):
-    update_archive_tag(request.data)
+@api_validate_model(TagBulkUpdate)
+def archive_tags(request, data: TagBulkUpdate):
+    update_archive_tag(data.dict())
     return Response({"msg": "OK"})
