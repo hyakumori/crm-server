@@ -8,6 +8,7 @@
           @input="archive = $event"
           toggleEditBtnContent="追加・編集"
           headerContent="協議情報"
+          :allowEdit="allowEdit"
         />
 
         <archive-document-container
@@ -16,6 +17,7 @@
           toggleEditBtnContent="追加・編集"
           headerContent="配布資料等"
           v-if="isDetail"
+          :allowEdit="allowEdit"
         />
 
         <archive-participant-container
@@ -27,6 +29,7 @@
           @saved="fetchParticipants"
           :id="id"
           :participants="participants"
+          :allowEdit="allowEdit"
         />
 
         <archive-related-user-container
@@ -35,6 +38,7 @@
           toggleEditBtnContent="追加・編集"
           headerContent="当方参加者"
           v-if="isDetail"
+          :allowEdit="allowEdit"
         />
 
         <archive-related-forest-container
@@ -43,6 +47,7 @@
           toggleEditBtnContent="追加・編集"
           headerContent="関連する森林"
           v-if="isDetail"
+          :allowEdit="allowEdit"
         />
       </div>
     </template>
@@ -100,7 +105,7 @@ export default {
       pageIcon: this.$t("icon.archive_icon"),
       backBtnContent: this.$t("page_header.archive_mgmt"),
       archiveTags: {},
-      archive: {},
+      archive: null,
       headerInfo: {
         title: this.$t("page_header.archive_new"),
         subTitle: "",
@@ -183,6 +188,18 @@ export default {
 
     isDetail() {
       return !!this.id;
+    },
+    user() {
+      return JSON.parse(localStorage.getItem("user"));
+    },
+    allowEdit() {
+      if (!this.archive) return false;
+      if (
+        this.user.groups.includes("限定ユーザ") &&
+        this.user.id !== this.archive.author.id
+      )
+        return false;
+      return true;
     },
   },
   watch: {

@@ -206,7 +206,7 @@ CACHES = {
 # ---------------------------------------------------------------------------- #
 
 AUTHENTICATION_BACKENDS = (
-    "django.contrib.auth.backends.ModelBackend",
+    "hyakumori_crm.users.backends.HyakumoriBackend",
     "guardian.backends.ObjectPermissionBackend",
 )
 

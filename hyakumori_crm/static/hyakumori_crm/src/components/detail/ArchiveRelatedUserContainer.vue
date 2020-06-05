@@ -6,6 +6,7 @@
       :update="isEditing"
       @toggleEdit="handleToggleEdit"
       class="mb-4"
+      :displayAdditionBtn="allowEdit"
     />
     <archive-participant-list
       :participants="tempUserParticipants"
@@ -74,6 +75,7 @@
 import ContentHeader from "./ContentHeader";
 import ContainerMixin from "./ContainerMixin";
 import SelectListModalMixin from "./SelectListModalMixin";
+import ArchiveDetailMixin from "./ArchiveDetailMixin";
 import ArchiveParticipantList from "./ArchiveParticipantList";
 import AdditionButton from "../AdditionButton";
 import UpdateButton from "./UpdateButton";
@@ -84,7 +86,7 @@ import { reject } from "lodash";
 export default {
   name: "ArchiveRelatedUserContainer",
 
-  mixins: [ContainerMixin, SelectListModalMixin],
+  mixins: [ContainerMixin, SelectListModalMixin, ArchiveDetailMixin],
 
   components: {
     ContentHeader,

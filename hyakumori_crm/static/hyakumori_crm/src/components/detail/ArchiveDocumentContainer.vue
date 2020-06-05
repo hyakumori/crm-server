@@ -6,6 +6,7 @@
       :toggleEditBtnContent="toggleEditBtnContent"
       :loading="loading"
       @toggleEdit="handleToggleEdit"
+      :displayAdditionBtn="allowEdit"
     />
     <document-card
       class="my-2"
@@ -95,6 +96,7 @@
 <script>
 import ContentHeader from "./ContentHeader";
 import ContainerMixin from "./ContainerMixin";
+import ArchiveDetailMixin from "./ArchiveDetailMixin";
 import DocumentCard from "./DocumentCard";
 import UpdateButton from "./UpdateButton";
 import AdditionButton from "../AdditionButton";
@@ -104,7 +106,7 @@ import { saveAs } from "file-saver";
 export default {
   name: "archive-document-container",
 
-  mixins: [ContainerMixin],
+  mixins: [ContainerMixin, ArchiveDetailMixin],
 
   components: {
     ContentHeader,

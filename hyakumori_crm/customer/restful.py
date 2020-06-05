@@ -7,9 +7,10 @@ from django.http.response import StreamingHttpResponse, JsonResponse
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from django.core.exceptions import ValidationError
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
+from rest_framework.permissions import DjangoModelPermissions
 
 from hyakumori_crm.core.utils import (
     default_paginator,
@@ -17,6 +18,7 @@ from hyakumori_crm.core.utils import (
     make_success_json,
     make_error_json,
 )
+from hyakumori_crm.crm.models import Customer, Archive, Forest
 from hyakumori_crm.crm.restful.serializers import (
     ContactSerializer,
     CustomerContactSerializer,
@@ -24,6 +26,11 @@ from hyakumori_crm.crm.restful.serializers import (
     ArchiveSerializer,
 )
 from hyakumori_crm.crm.schemas.tag import TagBulkUpdate
+from ..activity.services import ActivityService, CustomerActions
+from ..api.decorators import api_validate_model, get_or_404
+from ..core.utils import clear_maintain_task_id_cache
+from ..forest.service import parse_tags_for_csv
+
 from .schemas import (
     BankingInput,
     ContactsInput,
@@ -59,14 +66,12 @@ from .service import (
     get_customers_tag_by_ids,
 )
 from .tasks import csv_upload
-from ..activity.services import ActivityService, CustomerActions
-from ..api.decorators import action_login_required, api_validate_model, get_or_404
-from ..core.utils import clear_maintain_task_id_cache
-from ..forest.service import parse_tags_for_csv
+from .permissions import DownloadCsvPersmission, CustomerContactListPermission
 
 
 class CustomerViewSets(ViewSet):
-    @action_login_required(with_permissions=["view_customer"])
+    permission_classes = [Customer.model_perm_cls()]
+
     def list(self, request):
         search = request.GET.get("search")
         paginator = default_paginator()
@@ -78,12 +83,10 @@ class CustomerViewSets(ViewSet):
         )
 
     @get_or_404(get_customer_by_pk, to_name="customer", pass_to="kwargs", remove=True)
-    @action_login_required(with_permissions=["view_customer"])
     def retrieve(self, request, customer=None):
         return Response(CustomerSerializer(customer).data)
 
     @api_validate_model(CustomerInputSchema)
-    @action_login_required(with_permissions=["add_customer"])
     def create(self, request, data: dict = None):
         customer = create(data)
         ActivityService.log(CustomerActions.created, customer, request=request)
@@ -93,7 +96,6 @@ class CustomerViewSets(ViewSet):
 
     @get_or_404(get_customer_by_pk, to_name="customer", remove=True)
     @api_validate_model(CustomerUpdateSchema)
-    @action_login_required(with_permissions=["change_customer"])
     def update(self, request, customer=None, data: dict = None):
         customer = update_basic_info(data)
         ActivityService.log(
@@ -104,7 +106,6 @@ class CustomerViewSets(ViewSet):
     @action(["PUT", "PATCH"], detail=True, url_path="bank")
     @get_or_404(get_customer_by_pk, to_name="customer", pass_to="kwargs", remove=True)
     @api_validate_model(BankingInput)
-    @action_login_required(with_permissions=["change_customer"])
     def update_customer_bank(self, request, customer=None, data: dict = None):
         customer, has_changed = update_banking_info(customer, data)
         if has_changed:
@@ -122,7 +123,6 @@ class CustomerViewSets(ViewSet):
     )
     @api_validate_model(ContactsInput, methods=["PUT", "PATCH"])
     @api_validate_model(required_contact_input_wrapper, methods=["POST"])
-    @action_login_required(with_permissions=["change_customer", "view_customer"])
     def contacts(self, request, *, customer=None, data=None):
         if request.method == "GET":
             obj = customer
@@ -155,7 +155,6 @@ class CustomerViewSets(ViewSet):
         pass_to=["request", "kwargs"],
     )
     @api_validate_model(ForestPksInput)
-    @action_login_required(with_permissions=["change_forest"])
     def forests(self, request, *, customer=None, data: ForestPksInput = None):
         if request.method == "GET":
             obj = customer
@@ -178,7 +177,6 @@ class CustomerViewSets(ViewSet):
         get_func=get_customer_by_pk, to_name="customer", remove=True,
     )
     @api_validate_model(CustomerContactsDeleteInput)
-    @action_login_required(with_permissions=["change_customer"])
     def delete_contacts(self, request, *, data: CustomerContactsDeleteInput = None):
         delete_customer_contacts(data)
         ActivityService.log(
@@ -191,7 +189,6 @@ class CustomerViewSets(ViewSet):
         get_func=get_customer_by_pk, to_name="customer", remove=True,
     )
     @api_validate_model(CustomerMemoInput)
-    @action_login_required(with_permissions=["change_customer"])
     def update_memo(self, request, *, data: CustomerMemoInput = None):
         customer, updated = update_customer_memo(data.customer, data.memo)
 
@@ -205,7 +202,6 @@ class CustomerViewSets(ViewSet):
     @get_or_404(
         get_func=get_customer_by_pk, to_name="customer", pass_to="kwargs", remove=True,
     )
-    @action_login_required(with_permissions=["change_customer", "view_customer"])
     def archives(self, request, *, customer=None):
         archives = get_customer_archives(customer.pk)
         return Response(ArchiveSerializer(archives, many=True).data)
@@ -219,7 +215,6 @@ class CustomerViewSets(ViewSet):
         return Response(ForestSerializer(forests, many=True).data)
 
     @action(detail=False, methods=["GET"], url_path="by-business-id")
-    @action_login_required(with_permissions=["view_customer"])
     def get_customer_business_id(self, request):
         try:
             business_id = request.query_params.get("business_id", None)
@@ -231,9 +226,6 @@ class CustomerViewSets(ViewSet):
             return make_error_json(message=str(e))
 
     @action(detail=False, methods=["PUT"], url_path="ids")
-    # currently this api is using change status/tag actions,
-    # the permission maybe change later
-    @action_login_required(with_permissions=["change_customer"])
     def get_customers_by_ids(self, request):
         ids = request.data
         if ids is None or len(ids) == 0:
@@ -243,13 +235,16 @@ class CustomerViewSets(ViewSet):
             return JsonResponse(data={"data": customer_tags})
 
     @action(detail=False, methods=["PUT"], url_path="tags")
-    @action_login_required(with_permissions=["change_customer"])
     @api_validate_model(TagBulkUpdate)
     def tags(self, request, data: TagBulkUpdate):
         update_customer_tags(data.dict())
         return Response({"msg": "OK"})
 
-    @action(detail=False, methods=["GET", "POST"])
+    @action(
+        detail=False,
+        methods=["GET", "POST"],
+        permission_classes=[DownloadCsvPersmission],
+    )
     def download_csv(self, request):
         pks = request.data.get("ids", [])
         if len(pks) == 0:
@@ -342,7 +337,7 @@ class CustomerViewSets(ViewSet):
 
 
 @api_view(["GET"])
-@action_login_required(with_permissions=["view_customer"])
+@permission_classes([Customer.model_perm_cls()])
 def contacts_list(request):
     paginator = default_paginator()
     paged_list = paginator.paginate_queryset(
@@ -354,7 +349,7 @@ def contacts_list(request):
 
 
 @api_view(["GET"])
-@action_login_required(with_permissions=["view_customer"])
+@permission_classes([CustomerContactListPermission])
 def customercontacts_list(request):
     paginator = default_paginator()
     paged_list = paginator.paginate_queryset(

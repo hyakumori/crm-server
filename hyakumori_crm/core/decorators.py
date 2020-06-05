@@ -1,7 +1,5 @@
-from datetime import datetime
 from functools import wraps
 
-import pytz
 from pydantic import ValidationError
 import logging
 
@@ -22,7 +20,7 @@ def errors_wrapper(errors):
 def validate_model(input_model, get_func=None):
     def decorator(resolver):
         @wraps(resolver)
-        def decorated_function(_, info,  *args, **kwargs) -> dict:
+        def decorated_function(_, info, *args, **kwargs) -> dict:
             try:
                 data = kwargs["data"]
                 pk = kwargs.get("pk")
