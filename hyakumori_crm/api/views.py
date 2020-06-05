@@ -5,8 +5,6 @@ from rest_framework.response import Response
 from rest_framework.views import exception_handler as rest_exception_handler
 from ..core.utils import clear_maintain_task_id_cache
 
-from .decorators import action_login_required
-
 
 @api_view()
 def notfound_view(request):

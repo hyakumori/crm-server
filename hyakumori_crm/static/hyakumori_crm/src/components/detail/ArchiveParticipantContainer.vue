@@ -6,6 +6,7 @@
       :toggleEditBtnContent="toggleEditBtnContent"
       :loading="isLoading"
       @toggleEdit="val => (isEditing = val)"
+      :displayAdditionBtn="allowEdit"
     />
     <customer-contact-list
       :contacts="tempParticipants"
@@ -83,6 +84,7 @@
 import ContentHeader from "./ContentHeader";
 import ContainerMixin from "./ContainerMixin";
 import SelectListModalMixin from "./SelectListModalMixin";
+import ArchiveDetailMixin from "./ArchiveDetailMixin";
 import UpdateButton from "./UpdateButton";
 import CustomerContactList from "./CustomerContactList";
 import CustomerContactCard from "./CustomerContactCard";
@@ -93,7 +95,7 @@ import { reject } from "lodash";
 export default {
   name: "archive-participant-container",
 
-  mixins: [ContainerMixin, SelectListModalMixin],
+  mixins: [ContainerMixin, SelectListModalMixin, ArchiveDetailMixin],
 
   components: {
     ContentHeader,

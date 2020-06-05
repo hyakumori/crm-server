@@ -1,4 +1,3 @@
-from typing import List
 from uuid import UUID
 
 from django.contrib.auth.models import Group
@@ -8,22 +7,19 @@ from djoser.views import UserViewSet
 from rest_framework import serializers, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
-from ..permissions import IsAdminUser, is_admin_request
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenViewBase
-from rest_typed_views import Body, typed_action
+
+from ..api.decorators import api_validate_model
+from ..activity.services import ActivityService, UserActions
+from ..core.utils import default_paginator, make_error_json, make_success_json
+from ..core.permissions import AdminGroupPermission
+from ..permissions import IsAdminUser, is_admin_request
+from ..permissions.services import PermissionService
+from ..archive.permissions import ChangeArchivePersmission
 
 from .serializers import CustomTokenObtainPairSerializer, UserMinimalSerializer
-from ..activity.services import ActivityService, UserActions
-from ..api.decorators import action_login_required
-from ..core.permissions import IsAdminOrSelf
-from ..core.utils import default_paginator, make_error_json, make_success_json
-from ..crm.restful.serializers import (
-    ContactSerializer,
-    CustomerSerializer,
-    ForestSerializer,
-)
-from ..permissions.services import PermissionService
+from .types import GroupAssginmentInput, PermissionAssignmentInput
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -41,8 +37,12 @@ class CustomUserViewSet(UserViewSet):
             .order_by("date_joined")
         )
 
-    @action(detail=False, url_path="minimal", methods=["get"])
-    @action_login_required(with_policies=["can_view_customers"])
+    @action(
+        detail=False,
+        url_path="minimal",
+        methods=["get"],
+        permission_classes=[ChangeArchivePersmission],
+    )
     def list_minimal(self, request):
         queryset = self.get_queryset().prefetch_related("groups")
         keyword = request.GET.get("search")
@@ -87,7 +87,12 @@ class CustomUserViewSet(UserViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, url_path="permissions", methods=["get"])
+    @action(
+        detail=True,
+        url_path="permissions",
+        methods=["get"],
+        permission_classes=[AdminGroupPermission],
+    )
     def list_permissions(self, request, pk: UUID):
         try:
             if is_admin_request(request) or str(request.user.pk) == pk:
@@ -98,86 +103,16 @@ class CustomUserViewSet(UserViewSet):
         except Exception as e:
             return make_error_json(str(e))
 
-    @typed_action(
-        detail=True,
-        url_path="forests",
-        methods=["get"],
-        permission_classes=[IsAdminOrSelf],
-    )
-    def forests(self, request, pk: UUID):
-        if not is_admin_request(request) and str(request.user.id) != str(pk):
-            raise PermissionDenied()
-        try:
-            queryset = PermissionService.get_user_manage_resource(pk, "crm", "forest")
-            paginator = default_paginator()
-            paged_list = paginator.paginate_queryset(
-                request=request, queryset=queryset, view=self
-            )
-            forests = []
-            for forest_customer in paged_list:
-                _forest = ForestSerializer(forest_customer).data
-                forests.append(_forest)
-
-            return paginator.get_paginated_response(forests)
-
-        except Exception as e:
-            return make_error_json(str(e))
-
-    @typed_action(
-        detail=True,
-        url_path="customers",
-        methods=["get"],
-        permission_classes=[IsAdminOrSelf],
-    )
-    def customers(self, request, pk: UUID):
-        if not is_admin_request(request) and str(request.user.id) != str(pk):
-            raise PermissionDenied()
-
-        try:
-            queryset = PermissionService.get_user_manage_resource(pk, "crm", "customer")
-            paginator = default_paginator()
-            paged_list = paginator.paginate_queryset(
-                request=request, queryset=queryset, view=self
-            )
-            customers = []
-
-            for customer in paged_list:
-                _customer = CustomerSerializer(customer).data
-                _contact = ContactSerializer(
-                    customer.customercontact_set.filter(is_basic=True).first().contact
-                ).data
-                _customer["contact"] = _contact
-
-                customers.append(_customer)
-
-            return paginator.get_paginated_response(customers)
-
-        except Exception as e:
-            return make_error_json(str(e))
-
-    @typed_action(
-        detail=True,
-        url_path="archives",
-        methods=["get"],
-        permission_classes=[IsAdminOrSelf],
-    )
-    def archives(self, request, pk: UUID):
-        return make_error_json("NotImplemented")
-
-    @typed_action(
+    @action(
         detail=False,
         url_path="assign_groups",
         methods=["post"],
         permission_classes=[IsAdminUser],
     )
-    def assign_group(
-        self,
-        request,
-        user_id: UUID = Body(source="user_id"),
-        group_ids: List[int] = Body(source="group_ids"),
-    ):
+    @api_validate_model(GroupAssginmentInput)
+    def assign_group(self, request, data: GroupAssginmentInput):
         try:
-            results = PermissionService.assign_user_to_group(user_id, group_ids)
+            results = PermissionService.assign_user_to_group(**data.dict())
 
             ActivityService.log(
                 UserActions.group_updated,
@@ -189,20 +124,16 @@ class CustomUserViewSet(UserViewSet):
         except Exception as e:
             return make_error_json(str(e))
 
-    @typed_action(
+    @action(
         detail=False,
         url_path="unassign_groups",
         methods=["post"],
         permission_classes=[IsAdminUser],
     )
-    def unassign_group(
-        self,
-        request,
-        user_id: UUID = Body(source="user_id"),
-        group_ids: List[int] = Body(source="group_ids"),
-    ):
+    @api_validate_model(GroupAssginmentInput)
+    def unassign_group(self, request, data: GroupAssginmentInput):
         try:
-            results = PermissionService.unassign_user_from_group(user_id, group_ids)
+            results = PermissionService.unassign_user_from_group(**data.dict())
 
             ActivityService.log(
                 UserActions.group_updated,
@@ -214,48 +145,32 @@ class CustomUserViewSet(UserViewSet):
         except Exception as e:
             return make_error_json(str(e))
 
-    @typed_action(
+    @action(
         detail=False,
         url_path="assign_permissions",
         methods=["post"],
         permission_classes=[IsAdminUser],
     )
-    def assign_object_permission(
-        self,
-        request,
-        user_id: UUID = Body(source="user_id"),
-        object_id: UUID = Body(source="object_id"),
-        object_type_id: int = Body(source="object_type_id"),
-        permission_ids: List[int] = Body(source="permission_ids"),
-    ):
+    @api_validate_model(PermissionAssignmentInput)
+    def assign_object_permission(self, request, data: PermissionAssignmentInput):
         try:
-            permissions = PermissionService.assign_object_permissions(
-                user_id, object_id, object_type_id, permission_ids
-            )
+            permissions = PermissionService.assign_object_permissions(**data.dict())
             return make_success_json(
                 dict(permissions=[p for p in permissions.all().iterator()])
             )
         except Exception as e:
             return make_error_json(str(e))
 
-    @typed_action(
+    @action(
         detail=False,
         url_path="unassign_permissions",
         methods=["post"],
         permission_classes=[IsAdminUser],
     )
-    def unassign_object_permission(
-        self,
-        request,
-        user_id: UUID = Body(source="user_id"),
-        object_id: UUID = Body(source="object_id"),
-        object_type_id: int = Body(source="object_type_id"),
-        permission_ids: List[int] = Body(source="permission_ids"),
-    ):
+    @api_validate_model(PermissionAssignmentInput)
+    def unassign_object_permission(self, request, data: PermissionAssignmentInput):
         try:
-            permissions = PermissionService.unassign_object_permissions(
-                user_id, object_id, object_type_id, permission_ids
-            )
+            permissions = PermissionService.unassign_object_permissions(**data.dict())
             return make_success_json(
                 dict(permissions=[p for p in permissions.all().iterator()])
             )

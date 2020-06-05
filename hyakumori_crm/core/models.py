@@ -13,6 +13,8 @@ from django_filters import FilterSet
 from pydantic import BaseModel, Field, root_validator, validator
 from querybuilder.fields import SimpleField
 
+from .permissions import ModelPermissions
+
 
 class StoreDeletedMixin(StoreDeleted):
     def force_delete(self, *args, **kwargs):
@@ -77,6 +79,12 @@ class BaseResourceModel(
 
     def __str__(self):
         return f"{self.__class__.__name__} - Resource ID: {self.id}, InternalID: {self.internal_id}"
+
+    @classmethod
+    def model_perm_cls(cls):
+        return type(
+            f"{cls.__name__}ModelPermission", (ModelPermissions,), {"model_cls": cls}
+        )
 
 
 class HyakumoriDanticModel(BaseModel):
