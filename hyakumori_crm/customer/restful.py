@@ -142,11 +142,9 @@ class CustomerViewSets(ViewSet):
             return Response({"id": contact.id}, status=201)
         else:
             update_contacts(data)
-            if data.contact_type == ContactType.family:
-                action_type = CustomerActions.family_contacts_updated
-            elif data.contact_type == ContactType.others:
-                action_type = CustomerActions.other_contacts_updated
-            ActivityService.log(action_type, customer, request=request)
+            ActivityService.log(
+                CustomerActions.direct_contacts_updated, customer, request=request
+            )
             return Response({"id": data.customer.id})
 
     @action(detail=True, methods=["GET", "PUT", "PATCH"])

@@ -201,6 +201,11 @@ class ContactType(str, Enum):
     others = "OTHERS"
 
 
+class NonDirectContactType(str, Enum):
+    family = "FAMILY"
+    others = "OTHERS"
+
+
 class SingleSelectContactInput(HyakumoriDanticModel):
     contact: Contact
     relationship_type: Optional[RelationshipType]
@@ -290,7 +295,7 @@ class RequiredContactInput(HyakumoriDanticModel):
         constr(regex=regexes.MOBILEPHONE_NUMBER, strip_whitespace=True)
     ]
     email: Optional[EmailStr]
-    contact_type: ContactType
+    contact_type: NonDirectContactType
 
     @root_validator
     def validate_atleast_one_way_to_contact(cls, values):
