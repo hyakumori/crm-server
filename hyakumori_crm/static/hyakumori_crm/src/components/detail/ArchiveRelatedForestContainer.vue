@@ -6,6 +6,7 @@
       :toggleEditBtnContent="toggleEditBtnContent"
       :loading="loading"
       @toggleEdit="handleEdit"
+      :displayAdditionBtn="allowEdit"
     />
 
     <forest-info-list
@@ -73,6 +74,7 @@
 <script>
 import ContentHeader from "./ContentHeader";
 import ContainerMixin from "./ContainerMixin";
+import ArchiveDetailMixin from "./ArchiveDetailMixin";
 import ForestInfoList from "./ForestInfoList";
 import UpdateButton from "./UpdateButton";
 import AdditionButton from "../AdditionButton";
@@ -83,7 +85,7 @@ import { cloneDeep, pullAllWith, debounce } from "lodash";
 export default {
   name: "archive-related-forest-container",
 
-  mixins: [ContainerMixin],
+  mixins: [ContainerMixin, ArchiveDetailMixin],
 
   components: {
     ForestInfoList,

@@ -5,46 +5,15 @@ from typing import Callable
 
 from django.http import QueryDict
 from pydantic import ValidationError
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import (
     NotFound,
-    PermissionDenied,
-    NotAuthenticated,
     UnsupportedMediaType,
 )
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_typed_views.decorators import prevalidate, transform_view_params
-from rest_typed_views.utils import find_request
 
 from hyakumori_crm.core.decorators import errors_wrapper
-from hyakumori_crm.permissions.services import PermissionService
 
 logger = logging.getLogger(__name__)
-
-
-def typed_api_view(methods, permissions_classes=None):
-    if permissions_classes is None:
-        permissions_classes = [IsAuthenticated]
-
-    def wrap_validate_and_render(view):
-        prevalidate(view)
-
-        @api_view(methods)
-        @permission_classes(permissions_classes)
-        @wraps(view)
-        def wrapper(*original_args, **original_kwargs):
-            original_args = list(original_args)
-            request = find_request(original_args)
-            transformed = transform_view_params(
-                inspect.signature(view).parameters.values(), request, original_kwargs
-            )
-            return view(*transformed)
-
-        return wrapper
-
-    return wrap_validate_and_render
 
 
 def get_or_404(
@@ -166,49 +135,6 @@ def api_validate_model(input_model, arg_name="data", methods=["POST", "PUT", "PA
                 logger.exception(e)
                 # sentry logs etc.
                 return Response({"errors": dict(message=str(e))}, status=500)
-
-        return wrapper
-
-    return decorator
-
-
-def action_login_required(with_policies=None, with_permissions=None, is_detail=False):
-    if with_policies is None:
-        with_policies = []
-
-    if with_permissions is None:
-        with_permissions = []
-
-    def _raise_exception(is_detail=False):
-        if is_detail:
-            raise PermissionDenied()
-        else:
-            return Response(dict(count=0, next=None, previous=None, results=[]))
-
-    def decorator(f):
-        @wraps(f)
-        def wrapper(*args, **kwargs):
-            request = next((arg for arg in args if isinstance(arg, Request)), None)
-            user = request.user
-
-            if not user.is_authenticated:
-                raise NotAuthenticated()
-
-            if with_policies is not None and len(with_policies) > 0:
-                is_allowed_request = PermissionService.check_policies(
-                    request, user, with_policies
-                )
-                if not is_allowed_request:
-                    return _raise_exception(is_detail)
-
-            if with_permissions is not None and len(with_permissions) > 0:
-                is_allowed_request = PermissionService.check_permissions(
-                    request, user, with_permissions
-                )
-                if not is_allowed_request:
-                    return _raise_exception(is_detail)
-
-            return f(*args, **kwargs)
 
         return wrapper
 

@@ -33,6 +33,7 @@ from ..crm.models import (
 )
 from ..forest.service import get_forest_by_pk
 from ..tags.filters import TagsFilterSet
+from ..permissions.enums import SystemGroups
 
 
 def get_archive_by_pk(pk):
@@ -322,54 +323,47 @@ def delete_related_user(archive: Archive, data: dict):
     return True
 
 
-def get_filtered_archive_queryset(archive_filter: ArchiveFilter):
-    try:
-        archive_filter = archive_filter.dict()
-        active_filters = dict()
-        mapping = {
-            "id": "id__icontains",
-            "content": "content__icontains",
-            "archive_date": "archive_date_text__icontains",
-            "location": "location__icontains",
-            "title": "title__icontains",
-            "future_action": "future_action__icontains",
-            "author": "attributes__user_cache__repr__icontains",
-            "associated_forest": "attributes__forest_cache__repr__icontains",
-            "our_participants": "attributes__user_cache__repr__icontains",
-            "their_participants": "attributes__customer_cache__repr__icontains",
-            "tags": "tags_repr__icontains",
-        }
+def get_filtered_archive_queryset(archive_filter: ArchiveFilter, user):
+    archive_filter = archive_filter.dict()
+    active_filters = dict()
+    mapping = {
+        "id": "id__icontains",
+        "content": "content__icontains",
+        "archive_date": "archive_date_text__icontains",
+        "location": "location__icontains",
+        "title": "title__icontains",
+        "future_action": "future_action__icontains",
+        "author": "attributes__user_cache__repr__icontains",
+        "associated_forest": "attributes__forest_cache__repr__icontains",
+        "our_participants": "attributes__user_cache__repr__icontains",
+        "their_participants": "attributes__customer_cache__repr__icontains",
+        "tags": "tags_repr__icontains",
+    }
 
-        for k, v in archive_filter.items():
-            if v is not None:
-                active_filters[mapping[k]] = v
-
-        if len(active_filters.keys()) > 0:
-            qs = Archive.objects.annotate(
-                archive_date_text=RawSQL(
-                    "to_char((archive_date at time zone %s), 'YYYY-MM-DD HH24:MI')",
-                    [settings.TIME_ZONE_PRIMARY],
-                )
-            ).select_related("author")
-            qs = TagsFilterSet.get_tags_repr_queryset(qs)
-            for k, v in active_filters.items():
-                values = v.split(",")
-                if len(values) > 0:
-                    qs = qs.filter(
-                        reduce(
-                            operator.or_,
-                            (
-                                Q(**{k: value.strip()})
-                                for value in values
-                                if len(value) > 0
-                            ),
-                        )
+    for k, v in archive_filter.items():
+        if v is not None:
+            active_filters[mapping[k]] = v
+    qs = Archive.objects.select_related("author").all()
+    if user.member_of(SystemGroups.GROUP_LIMITED_USER):
+        qs = qs.filter(Q(author_id=user.id) | Q(archiveuser__user_id=user.id))
+    if len(active_filters.keys()) > 0:
+        qs = Archive.objects.annotate(
+            archive_date_text=RawSQL(
+                "to_char((archive_date at time zone %s), 'YYYY-MM-DD HH24:MI')",
+                [settings.TIME_ZONE_PRIMARY],
+            )
+        ).select_related("author")
+        qs = TagsFilterSet.get_tags_repr_queryset(qs)
+        for k, v in active_filters.items():
+            values = v.split(",")
+            if len(values) > 0:
+                qs = qs.filter(
+                    reduce(
+                        operator.or_,
+                        (Q(**{k: value.strip()}) for value in values if len(value) > 0),
                     )
-            return qs
-
-        return Archive.objects.select_related("author").all()
-    except Exception as e:
-        return Archive.objects.none()
+                )
+    return qs
 
 
 def _archives_list_raw_sql(page_size, page, filters, order_by):

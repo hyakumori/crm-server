@@ -7,8 +7,7 @@ from django.db.models import Q, F, Count
 from django.http import HttpResponse, JsonResponse
 from django.utils.translation import gettext_lazy as _
 from rest_framework import mixins
-from rest_framework.decorators import action, api_view
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -21,6 +20,13 @@ from hyakumori_crm.crm.restful.serializers import (
     ArchiveSerializer,
 )
 from hyakumori_crm.crm.schemas.tag import TagBulkUpdate
+from ..activity.services import ActivityService, ForestActions
+from ..api.decorators import (
+    api_validate_model,
+    get_or_404,
+)
+from ..core.utils import clear_maintain_task_id_cache
+
 from .schemas import (
     ForestInput,
     OwnerPksInput,
@@ -46,29 +52,15 @@ from .service import (
     get_forests_tag_by_ids,
     bulk_update_forest_contact_status,
 )
-from ..activity.services import ActivityService, ForestActions
-from ..api.decorators import (
-    api_validate_model,
-    get_or_404,
-    action_login_required,
-)
-from ..core.utils import clear_maintain_task_id_cache
-from ..permissions.services import PermissionService
+from .permissions import DownloadCsvPersmission
 
 
 class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericViewSet):
     serializer_class = ForestSerializer
-
-    def get_queryset(self):
-        if PermissionService.check_permissions(
-            self.request, self.request.user, ["view_forest"]
-        ):
-            return Forest.objects.all()
-        else:
-            return Forest.objects.none()
+    permission_classes = [Forest.model_perm_cls()]
+    queryset = Forest.objects.all()
 
     @action(["GET"], detail=False, url_path="minimal")
-    @action_login_required(with_permissions=["view_forest"])
     def list_minimal(self, request):
         query = (
             self.get_queryset()
@@ -92,8 +84,7 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
         )
         return paginator.get_paginated_response(paged_list)
 
-    @action(detail=True, methods=["GET"], permission_classes=[IsAuthenticated])
-    @action_login_required(with_permissions=["view_customer"], is_detail=False)
+    @action(detail=True, methods=["GET"])
     def customers(self, request, **kwargs):
         obj = self.get_object()
 
@@ -117,7 +108,6 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     @action(detail=True, methods=["PUT", "PATCH"], url_path="basic-info")
     @get_or_404(get_func=get_forest_by_pk, to_name="forest", remove=True)
     @api_validate_model(ForestInput, "forest_in")
-    @action_login_required(with_permissions=["change_forest"])
     def basic_info(self, request, *, forest_in: ForestInput):
         update_basic_info(forest_in.forest, forest_in)
         ActivityService.log(
@@ -142,7 +132,6 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
         get_func=get_forest_by_pk, to_name="forest", remove=True,
     )
     @api_validate_model(ForestMemoInput)
-    @action_login_required(with_permissions=["change_forest"])
     def update_memo(self, request, *, data: ForestMemoInput = None):
         forest, updated = update_forest_memo(data.forest, data.memo)
         if updated:
@@ -151,8 +140,12 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
             )
         return Response({"memo": forest.attributes["memo"]})
 
-    @action(detail=False, methods=["GET", "POST"], url_path="download-csv")
-    @action_login_required(with_permissions=["change_forest"])
+    @action(
+        detail=False,
+        methods=["GET", "POST"],
+        url_path="download-csv",
+        permission_classes=[DownloadCsvPersmission],
+    )
     def download_all_csv(self, request):
         if request.data is None or len(request.data) == 0:
             csv_data = get_forests_for_csv()
@@ -169,7 +162,6 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
         return response
 
     @action(detail=False, methods=["PUT"], url_path="ids")
-    @action_login_required(with_permissions=["change_forest"])
     def get_forests_by_ids(self, request):
         ids = request.data
         if ids is None or len(ids) == 0:
@@ -179,14 +171,12 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
             return JsonResponse(data={"data": forest_tags})
 
     @action(detail=False, methods=["PUT"], url_path="tags")
-    @action_login_required(with_permissions=["change_forest"])
     @api_validate_model(TagBulkUpdate)
     def tags(self, request, data: TagBulkUpdate):
         update_forest_tags(data.dict())
         return Response({"msg": "OK"})
 
     @action(detail=False, methods=["POST"], url_path="upload-csv")
-    @action_login_required(with_permissions=["change_forest"])
     def upload_csv(self, request):
         csv_file = request.data["file"]
         if pathlib.Path(csv_file.name).suffix != ".csv":
@@ -215,7 +205,6 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
             clear_maintain_task_id_cache()
 
     @action(detail=False, methods=["PUT"], url_path="contracts/status")
-    @action_login_required(with_permissions=["change_forest"])
     @api_validate_model(ForestContractStatusBulkUpdate)
     def contract_status(self, request, data):
         ok = bulk_update_forest_contact_status(data)
@@ -223,9 +212,9 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
 
 
 @api_view(["PUT", "PATCH"])
+@permission_classes([Forest.model_perm_cls()])
 @get_or_404(get_func=get_forest_by_pk, to_name="forest", remove=True)
 @api_validate_model(OwnerPksInput, "owner_pks_in")
-@action_login_required(with_permissions=["change_forest"])
 def update_owners_view(request, *, owner_pks_in: OwnerPksInput):
     update_owners(owner_pks_in)
     ActivityService.log(
@@ -235,9 +224,9 @@ def update_owners_view(request, *, owner_pks_in: OwnerPksInput):
 
 
 @api_view(["PUT", "PATCH"])
+@permission_classes([Forest.model_perm_cls()])
 @get_or_404(get_forest_by_pk, to_name="forest", remove=True)
 @api_validate_model(CustomerDefaultInput)
-@action_login_required(with_permissions=["change_forest"])
 def set_default_customer_view(request, *, data: CustomerDefaultInput = None):
     set_default_customer(data)
     ActivityService.log(ForestActions.customers_updated, data.forest, request=request)
@@ -245,9 +234,9 @@ def set_default_customer_view(request, *, data: CustomerDefaultInput = None):
 
 
 @api_view(["PUT", "PATCH"])
+@permission_classes([Forest.model_perm_cls()])
 @get_or_404(get_forest_by_pk, to_name="forest", remove=True)
 @api_validate_model(CustomerContactDefaultInput)
-@action_login_required(with_permissions=["change_forest"])
 def set_default_customer_contact_view(
     request, *, data: CustomerContactDefaultInput = None
 ):

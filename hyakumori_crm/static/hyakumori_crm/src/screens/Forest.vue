@@ -9,7 +9,7 @@
                 'admin',
                 'group_admin',
                 'group_normal_user',
-                'manage_customer',
+                'manage_forest',
               ]"
               icon="mdi-upload"
               :content="
@@ -26,7 +26,7 @@
                 'admin',
                 'group_admin',
                 'group_normal_user',
-                'manage_customer',
+                'manage_forest',
               ]"
               ref="csvUploadInput"
               type="file"
@@ -83,6 +83,12 @@
 
       <div class="ml-7 forest__data-section">
         <table-action
+          v-acl-only="[
+            'admin',
+            'group_admin',
+            'group_normal_user',
+            'manage_forest',
+          ]"
           ref="actionRef"
           :actions="actions"
           :selectedCount="tableSelectedRows.length"

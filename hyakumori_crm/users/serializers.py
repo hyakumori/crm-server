@@ -21,12 +21,12 @@ from rest_framework_simplejwt.serializers import (
 from django.core import exceptions as django_exceptions
 from django.utils.translation import gettext as _
 from hyakumori_crm.permissions.services import PermissionService
-from .models import User
-from hyakumori_crm.permissions.enums import SystemGroups
-from .types import UserUpdateInput
 from ..activity.constants import UserActions
 from ..activity.services import ActivityService
 from ..permissions import is_admin_request
+
+from .models import User
+from .types import UserUpdateInput
 
 
 def _is_user_self(request, instance):
@@ -69,7 +69,6 @@ class ActivationSerializer(DjActivationSerializer, PasswordRetypeSerializer):
 
 
 class UserMinimalSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = (

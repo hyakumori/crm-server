@@ -170,7 +170,7 @@ class PermissionService:
                 name=SystemGroups.GROUP_LIMITED_USER
             )
             normal_user_group_permissions = Permission.objects.filter(
-                codename__in=["view_forest"]
+                codename__in=["view_forest", "change_archive"]
             ).all()
             normal_user_group.permissions.add(*normal_user_group_permissions)
             normal_user_group.save()
