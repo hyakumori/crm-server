@@ -6,6 +6,7 @@
       :loading="loading"
       @toggleEdit="setUpdate"
       :display-addition-btn="isDetail"
+      :displayAdditionBtn="allowEdit"
     />
     <archive-basic-info
       class="mt-6"
@@ -42,6 +43,7 @@
 <script>
 import ContentHeader from "./ContentHeader";
 import ContainerMixin from "./ContainerMixin";
+import ArchiveDetailMixin from "./ArchiveDetailMixin";
 import ArchiveBasicInfo from "./ArchiveBasicInfo";
 import UpdateButton from "./UpdateButton";
 import { cloneDeep } from "lodash";
@@ -50,7 +52,7 @@ import { toUtcDatetime, getDate } from "../../helpers/datetime";
 export default {
   name: "archive-basic-info-container",
 
-  mixins: [ContainerMixin],
+  mixins: [ContainerMixin, ArchiveDetailMixin],
 
   components: {
     ContentHeader,
