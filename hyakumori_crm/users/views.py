@@ -13,7 +13,6 @@ from rest_framework_simplejwt.views import TokenViewBase
 from ..api.decorators import api_validate_model
 from ..activity.services import ActivityService, UserActions
 from ..core.utils import default_paginator, make_error_json, make_success_json
-from ..core.permissions import AdminGroupPermission
 from ..permissions import IsAdminUser, is_admin_request
 from ..permissions.services import PermissionService
 from ..archive.permissions import ChangeArchivePersmission
@@ -88,10 +87,7 @@ class CustomUserViewSet(UserViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        detail=True,
-        url_path="permissions",
-        methods=["get"],
-        permission_classes=[AdminGroupPermission],
+        detail=True, url_path="permissions", methods=["get"],
     )
     def list_permissions(self, request, pk: UUID):
         try:
