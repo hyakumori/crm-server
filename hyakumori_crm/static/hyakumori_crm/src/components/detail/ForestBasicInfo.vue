@@ -309,7 +309,7 @@ export default {
       const address = this.address;
       if (address) {
         fullAddress =
-          address.prefecture + address.municipality + address.sector;
+          address.prefecture + address.municipality + (address.sector || "");
       }
       return fullAddress;
     },

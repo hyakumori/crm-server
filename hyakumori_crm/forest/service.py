@@ -37,7 +37,6 @@ from ..crm.models import (
     ForestCustomerContact,
     Contact,
 )
-from ..contracts.models import ContractType
 from ..contracts.services import get_all_contracttypes_map
 
 from .filters import ForestFilter

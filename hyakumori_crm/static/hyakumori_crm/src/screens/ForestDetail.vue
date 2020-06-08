@@ -5,7 +5,7 @@
         <forest-basic-info-container
           headerContent="基本情報 (登記情報)"
           toggleEditBtnContent="追加・編集"
-          @forest:basic-info-updated="$store.dispatch('forest/getForest', id)"
+          @forest:basic-info-updated="handleForestBasicInfoUpdated"
           :isLoading="$store.state.forest.forestLoading"
           :info="$store.state.forest.forest"
         />
@@ -135,6 +135,13 @@ export default {
   methods: {
     fallbackText(text) {
       return text || "";
+    },
+    async handleForestBasicInfoUpdated() {
+      await this.$store.dispatch("forest/getForest", this.id);
+      this.$store.dispatch(
+        "setHeaderInfo",
+        this.$store.getters["forest/headerInfo"],
+      );
     },
   },
   computed: {
