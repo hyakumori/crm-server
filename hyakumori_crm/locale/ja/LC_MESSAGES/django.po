@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-04 16:51+0700\n"
+"POT-Creation-Date: 2020-06-08 11:46+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,12 +59,12 @@ msgstr ""
 msgid "Logged action, id: {id}"
 msgstr "ログに記録されたアクション、ID：{id}"
 
-#: archive/restful.py:157
+#: archive/restful.py:178
 msgid "Could not get download url"
 msgstr "ダウンロードURLを取得できませんでした"
 
 #: archive/schemas.py:93 archive/schemas.py:97 archive/schemas.py:101
-#: archive/schemas.py:115 customer/schemas.py:218 customer/schemas.py:262
+#: archive/schemas.py:115 customer/schemas.py:221 customer/schemas.py:265
 msgid "Contact {} not found"
 msgstr "連絡先{}が見つかりません"
 
@@ -72,7 +72,7 @@ msgstr "連絡先{}が見つかりません"
 msgid "Contact {} already exists"
 msgstr "連絡先{}は既に存在します"
 
-#: archive/service.py:59 archive/service.py:72
+#: archive/service.py:60 archive/service.py:73
 msgid "Attachment not found"
 msgstr "添付ファイルが見つかりません"
 
@@ -109,32 +109,32 @@ msgstr ""
 msgid "Not found"
 msgstr "見つかりません"
 
-#: core/models.py:90 core/models.py:92
+#: core/models.py:98 core/models.py:100
 msgid "Required"
 msgstr "必須"
 
-#: core/models.py:91
+#: core/models.py:99
 msgid "Bad format"
 msgstr "形式が正しくありません"
 
-#: core/models.py:93
+#: core/models.py:101
 msgid "Invalid Email"
 msgstr "無効なメール"
 
-#: core/models.py:95
+#: core/models.py:103
 #, python-brace-format
 msgid "Required at least {limit_value} character"
 msgstr "{limit_value}文字以上入力する必要があります。"
 
-#: core/models.py:97
+#: core/models.py:105
 msgid "Invalid date format"
 msgstr "不正な日付形式（YYYY-MM-DD）"
 
-#: core/models.py:98
+#: core/models.py:106
 msgid "Invalid UUID"
 msgstr "不正なUUID"
 
-#: core/models.py:99
+#: core/models.py:107
 #, python-brace-format
 msgid "Invalid value, choices are: {permitted}"
 msgstr "無効な値です。選択肢は次のとおりです：{permitted}"
@@ -146,11 +146,13 @@ msgstr "{field}は必須です"
 
 #: crm/schemas/forest.py:74 crm/schemas/forest.py:86 forest/schemas.py:105
 #: forest/schemas.py:116
+#, python-brace-format
 msgid "{field} must be a number"
 msgstr "{field}は数字でなければなりません"
 
 #: crm/schemas/forest.py:77 crm/schemas/forest.py:89 forest/schemas.py:107
 #: forest/schemas.py:118
+#, python-brace-format
 msgid "{field} must be greater than 0"
 msgstr "{field}は0より大きくなければなりません"
 
@@ -194,47 +196,47 @@ msgstr "携帯番号"
 msgid "Email"
 msgstr "メールアドレス"
 
-#: customer/resolvers.py:30 customer/restful.py:281 customer/tasks.py:33
+#: customer/resolvers.py:30 customer/restful.py:274 customer/tasks.py:33
 #: forest/resolvers.py:98 forest/service.py:305
 msgid "Tag"
 msgstr "タグ"
 
-#: customer/restful.py:322 customer/restful.py:335 forest/restful.py:194
-#: forest/restful.py:207
+#: customer/restful.py:315 customer/restful.py:329 forest/restful.py:185
+#: forest/restful.py:199
 msgid "Please upload a csv file!!"
 msgstr "csvファイルをアップロードしてください!!"
 
-#: customer/schemas.py:132
+#: customer/schemas.py:130
 msgid "Duplicate contacts"
 msgstr "重複する連絡先"
 
-#: customer/schemas.py:142
+#: customer/schemas.py:140
 #, python-brace-format
 msgid "Contact {c} not belong to forest and customer"
 msgstr "連絡先{c}はフォレストと顧客に属していません"
 
-#: customer/schemas.py:154
+#: customer/schemas.py:152
 #, python-brace-format
 msgid "Contact {pk} not found"
 msgstr "連絡先{pk}が見つかりません"
 
-#: customer/schemas.py:173 customer/schemas.py:181
+#: customer/schemas.py:171 customer/schemas.py:179
 msgid "Forest Id {} not found"
 msgstr "フォレストID {}が見つかりません"
 
-#: customer/schemas.py:250
+#: customer/schemas.py:253
 msgid "forest_id not provied for contact_type FOREST"
 msgstr "連絡先タイプFORESTにフォレストIDが指定されていません"
 
-#: customer/schemas.py:256
+#: customer/schemas.py:259
 msgid "Forest {} not found"
 msgstr "森{}が見つかりません"
 
-#: customer/schemas.py:301 customer/schemas.py:350
+#: customer/schemas.py:304
 msgid "Enter at least telephone or mobilephone or email."
 msgstr "少なくとも電話、携帯電話、または電子メールを入力してください。"
 
-#: customer/service.py:41 forest/service.py:74
+#: customer/service.py:41 customer/tasks.py:56 forest/service.py:74
 msgid "Customer not found"
 msgstr "顧客が見つかりません"
 
@@ -242,7 +244,7 @@ msgstr "顧客が見つかりません"
 msgid "Customer ID is empty or not available"
 msgstr "お客様IDが空か、使用できません"
 
-#: customer/tasks.py:41 forest/service.py:518 forest/service.py:553
+#: customer/tasks.py:41 forest/service.py:518 forest/service.py:551
 msgid "Invalid csv file!"
 msgstr "無効なcsvファイル！"
 
@@ -319,7 +321,7 @@ msgstr "連絡先が{v}見つかりません"
 msgid "Invalid format (tag1:value1; tag2:value2)"
 msgstr "無効な形式（タグ1：値1; タグ2：値2）"
 
-#: forest/service.py:49 forest/service.py:541
+#: forest/service.py:49 forest/service.py:539
 msgid "Forest not found"
 msgstr "森が見つかりません"
 
@@ -393,11 +395,11 @@ msgstr "Superuser must have is_superuser=True."
 msgid "email address"
 msgstr "メールアドレス"
 
-#: users/serializers.py:108
+#: users/serializers.py:107
 msgid "Email existed"
 msgstr "メールが存在します"
 
-#: users/serializers.py:122
+#: users/serializers.py:121
 msgid "Username existed"
 msgstr "ユーザー名が存在します"
 
