@@ -327,17 +327,17 @@ def get_filtered_archive_queryset(archive_filter: ArchiveFilter, user):
     archive_filter = archive_filter.dict()
     active_filters = dict()
     mapping = {
-        "id": "id__icontains",
-        "content": "content__icontains",
-        "archive_date": "archive_date_text__icontains",
-        "location": "location__icontains",
-        "title": "title__icontains",
-        "future_action": "future_action__icontains",
-        "author": "attributes__user_cache__repr__icontains",
-        "associated_forest": "attributes__forest_cache__repr__icontains",
-        "our_participants": "attributes__user_cache__repr__icontains",
-        "their_participants": "attributes__customer_cache__repr__icontains",
-        "tags": "tags_repr__icontains",
+        "id": "id",
+        "content": "content",
+        "archive_date": "archive_date_text",
+        "location": "location",
+        "title": "title",
+        "future_action": "future_action",
+        "author": "attributes__user_cache__repr",
+        "associated_forest": "attributes__forest_cache__repr",
+        "our_participants": "attributes__user_cache__repr",
+        "their_participants": "attributes__customer_cache__repr",
+        "tags": "tags_repr",
     }
 
     for k, v in archive_filter.items():
@@ -354,15 +354,21 @@ def get_filtered_archive_queryset(archive_filter: ArchiveFilter, user):
             )
         ).select_related("author")
         qs = TagsFilterSet.get_tags_repr_queryset(qs)
-        for k, v in active_filters.items():
-            values = v.split(",")
-            if len(values) > 0:
-                qs = qs.filter(
-                    reduce(
-                        operator.or_,
-                        (Q(**{k: value.strip()}) for value in values if len(value) > 0),
-                    )
+        for k, value in active_filters.items():
+            values = list(set(map(lambda v: v.strip(), value.split(","))))
+            if len(values) == 1 and values[0] == "":
+                conditions = Q(**{f"{k}__isnull": True}) | Q(**{f"{k}__exact": None})
+            else:
+                search_field_filter = k + "__icontains"
+                conditions = reduce(
+                    operator.or_,
+                    (
+                        Q(**{search_field_filter: value})
+                        for value in values
+                        if len(value) > 0
+                    ),
                 )
+            qs = qs.filter(conditions)
     return qs
 
 

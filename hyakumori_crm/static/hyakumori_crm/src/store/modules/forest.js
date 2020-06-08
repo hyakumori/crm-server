@@ -14,15 +14,37 @@ const state = {
 };
 
 const getters = {
-  headerInfo(state) {
+  headerInfo(state, getters) {
     if (!state.forest) return {};
     return {
-      title: `${state.forest.cadastral.sector}_${state.forest.cadastral.subsector}_${state.forest.land_attributes["地番本番"]}_${state.forest.land_attributes["地番支番"]}`,
+      title: `${getters.sector}${getters.subsector}${getters.lotnumber}${getters.sub_lotnumber}`,
       subTitle: state.forest.owner.name_kanji,
       desc: state.forest.internal_id,
       tags: tags_to_array(state.forest.tags),
       backUrl: { name: "forests" },
     };
+  },
+  sector(state) {
+    if (!state.forest) return "";
+    return state.forest.cadastral.sector
+      ? state.forest.cadastral.sector + "_"
+      : "";
+  },
+  subsector(state) {
+    if (!state.forest) return "";
+    return state.forest.cadastral.subsector
+      ? state.forest.cadastral.subsector + "_"
+      : "";
+  },
+  lotnumber(state) {
+    if (!state.forest) return "";
+    return state.forest.land_attributes["地番本番"] || "";
+  },
+  sub_lotnumber(state) {
+    if (!state.forest) return "";
+    return state.forest.land_attributes["地番支番"]
+      ? "_" + state.forest.land_attributes["地番支番"]
+      : "";
   },
   customerIdNameMap(state) {
     if (state.customers.length === 0) return {};
