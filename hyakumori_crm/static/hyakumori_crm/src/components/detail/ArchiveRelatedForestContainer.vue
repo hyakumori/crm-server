@@ -218,7 +218,9 @@ export default {
       if (!data.cadastral) {
         return "";
       } else {
-        return `${data.cadastral.prefecture} ${data.cadastral.municipality} ${data.cadastral.sector} ${data.cadastral.subsector}`;
+        return `${data.cadastral.prefecture} ${
+          data.cadastral.municipality
+        } ${data.cadastral.sector || ""} ${data.cadastral.subsector || ""}`;
       }
     },
 

@@ -10,7 +10,13 @@
           <v-container fluid class="pa-0">
             <v-row no-gutters v-if="formError">
               <v-col cols="12">
-                <v-alert dense outlined type="error" dismissible>
+                <v-alert
+                  dense
+                  outlined
+                  type="error"
+                  dismissible
+                  @input="formError = null"
+                >
                   {{ formError }}
                 </v-alert>
               </v-col>
@@ -21,7 +27,8 @@
                   dense
                   outlined
                   type="success"
-                  :value="successfulEmail"
+                  :value="!!successfulEmail"
+                  @input="successfulEmail = null"
                   dismissible
                 >
                   {{

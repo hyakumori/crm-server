@@ -8,7 +8,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError as DjValidationError
 from django.db import connection
 from django.db.models import F, Subquery, OuterRef, Count, Q
-from django.db.models.expressions import Func, RawSQL, Value
+from django.db.models.expressions import RawSQL
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from pydantic import ValidationError
@@ -438,3 +438,9 @@ def update_archive_tag(data: dict):
     Archive.objects.filter(id__in=ids).update(
         tags=RawSQL("tags || jsonb_build_object(%s, %s)", params=[tag_key, new_value])
     )
+
+
+def update_archive_other_participants(archive, participants):
+    archive.attributes.update({"other_participants": participants})
+    archive.save(update_fields=["attributes", "updated_at"])
+    return archive
