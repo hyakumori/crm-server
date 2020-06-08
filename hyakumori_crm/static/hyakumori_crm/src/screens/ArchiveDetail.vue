@@ -41,6 +41,16 @@
           :allowEdit="allowEdit"
         />
 
+        <archive-other-related-users-container
+          addBtnContent="追加"
+          class="mt-9"
+          toggleEditBtnContent="追加・編集"
+          headerContent="私たちの他の参加者"
+          v-if="isDetail"
+          :allowEdit="allowEdit"
+          :archive="archive"
+        />
+
         <archive-related-forest-container
           addBtnContent="追加"
           class="mt-9"
@@ -78,6 +88,7 @@ import ArchiveBasicInfoContainer from "../components/detail/ArchiveBasicInfoCont
 import ArchiveDocumentContainer from "../components/detail/ArchiveDocumentContainer";
 import ArchiveParticipantContainer from "../components/detail/ArchiveParticipantContainer";
 import ArchiveRelatedForestContainer from "../components/detail/ArchiveRelatedForestContainer";
+import ArchiveOtherRelatedUsersContainer from "../components/detail/ArchiveOtherRelatedUsersContainer";
 import ActionLog from "../components/detail/ActionLog";
 import TagDetailCard from "../components/tags/TagDetailCard";
 import ArchiveRelatedUserContainer from "../components/detail/ArchiveRelatedUserContainer";
@@ -95,6 +106,7 @@ export default {
     ArchiveDocumentContainer,
     ArchiveParticipantContainer,
     ArchiveRelatedForestContainer,
+    ArchiveOtherRelatedUsersContainer,
     ActionLog,
     TagDetailCard,
     ArchiveRelatedUserContainer,

@@ -30,6 +30,7 @@ from .service import (
     get_related_forests,
     update_archive_tag,
     get_archives_tag_by_ids,
+    update_archive_other_participants,
 )
 from ..activity.services import ActivityService, ArchiveActions
 from ..api.decorators import api_validate_model, get_or_404
@@ -290,4 +291,16 @@ def archive_ids(request):
 @api_validate_model(TagBulkUpdate)
 def archive_tags(request, data: TagBulkUpdate):
     update_archive_tag(data.dict())
+    return Response({"msg": "OK"})
+
+
+@api_view(["PUT"])
+@permission_classes([Archive.model_perm_cls()])
+@get_or_404(get_archive_by_pk, to_name="archive", pass_to=["kwargs"], remove=True)
+def other_participants(request, archive: Archive = None):
+    other_participants = request.data.get("other_participants", [])
+    update_archive_other_participants(archive, other_participants)
+    ActivityService.log(
+        ArchiveActions.staff_participants_updated, archive, request=request
+    )
     return Response({"msg": "OK"})
