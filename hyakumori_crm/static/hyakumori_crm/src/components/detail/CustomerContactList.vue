@@ -26,6 +26,7 @@
         "
         :mode="mode"
         :showDefaultBadge="showDefaultBadge"
+        :allowDelete="allowDelete"
       />
     </v-col>
   </v-row>
@@ -53,6 +54,7 @@ export default {
     customerIdNameMap: Object,
     mode: String,
     showDefaultBadge: { type: Boolean, default: false },
+    allowDelete: { type: Boolean, default: true },
   },
   methods: {
     getCustomerName(customer_id) {
@@ -64,8 +66,8 @@ export default {
     handleToggleCustomerDefault(val, customer_id) {
       this.$emit("toggleDefault", val, customer_id);
     },
-    handleToggleContactDefault(val, owner_customer_id, contact_id) {
-      this.$emit("toggleContactDefault", val, owner_customer_id, contact_id);
+    handleToggleContactDefault(val, customer_id, contact_id) {
+      this.$emit("toggleContactDefault", val, customer_id, contact_id);
     },
     handleRelationshipChange(contact_id, val) {
       this.$emit("relationshipChange", contact_id, val);

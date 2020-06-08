@@ -10,7 +10,6 @@ from django.core.exceptions import ValidationError
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-from rest_framework.permissions import DjangoModelPermissions
 
 from hyakumori_crm.core.utils import (
     default_paginator,
@@ -18,7 +17,7 @@ from hyakumori_crm.core.utils import (
     make_success_json,
     make_error_json,
 )
-from hyakumori_crm.crm.models import Customer, Archive, Forest
+from hyakumori_crm.crm.models import Customer
 from hyakumori_crm.crm.restful.serializers import (
     ContactSerializer,
     CustomerContactSerializer,

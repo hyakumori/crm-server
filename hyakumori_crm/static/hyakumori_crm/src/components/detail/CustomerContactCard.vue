@@ -93,10 +93,7 @@
       v-slot="{ href }"
     >
       <v-btn
-        v-if="
-          (isUpdate && !contact.owner_customer_id) ||
-            (contact.business_id && !isUpdate)
-        "
+        v-if="(isUpdate && allowDelete) || (contact.business_id && !isUpdate)"
         class="align-self-center"
         icon
         @click.stop="isUpdate ? $emit('deleteContact') : undefined"
@@ -145,6 +142,7 @@ export default {
     customerName: String,
     showDefaultBadge: { type: Boolean, default: false },
     clickable: { type: Boolean, default: false },
+    allowDelete: { type: Boolean, default: true },
   },
 
   data() {
@@ -173,7 +171,7 @@ export default {
         this.$emit(
           "toggleContactDefault",
           !this.contact.default,
-          this.contact.owner_customer_id,
+          this.contact.customer_id,
           this.contact.id,
         );
     },

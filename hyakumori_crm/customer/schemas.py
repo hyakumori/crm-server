@@ -7,7 +7,6 @@ from uuid import UUID
 from django.core.exceptions import ValidationError as DjValidationError
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-from django_filters import CharFilter, FilterSet
 from pydantic import EmailStr, constr, root_validator, validator
 from pydantic.error_wrappers import ValidationError
 from rest_framework.serializers import ModelSerializer, UUIDField
@@ -17,7 +16,6 @@ from ..crm.common import regexes
 from ..crm.common.constants import DEFAULT_EMAIL, EMPTY, UNKNOWN
 from ..crm.common.utils import tags_csv_to_dict
 from ..crm.models import Contact, Customer, Forest, ForestCustomer
-from .filters import CustomerFilter
 
 
 class Name(HyakumoriDanticModel):
@@ -326,7 +324,7 @@ class CustomerUploadCsv(HyakumoriDanticModel):
     fullname_kanji: str
     prefecture: Optional[str] = EMPTY
     municipality: Optional[str] = EMPTY
-    sector: str  # sector
+    sector: Optional[str]
     postal_code: Optional[
         constr(regex=regexes.POSTAL_CODE, strip_whitespace=True)
     ] = EMPTY
@@ -345,15 +343,6 @@ class CustomerUploadCsv(HyakumoriDanticModel):
     bank_account_number: Optional[constr(regex=regexes.BANKING_ACCOUNT_NUMBER)]
     bank_account_name: Optional[str] = EMPTY
     tags: Optional[str]
-
-    @root_validator
-    def validate_atleast_one_way_to_contact(cls, values):
-        telephone = values.get("telephone")
-        mobilephone = values.get("mobilephone")
-        email = values.get("email")
-        if not telephone and not mobilephone and not email:
-            raise ValueError(_("Enter at least telephone or mobilephone or email."))
-        return values
 
     @validator("tags")
     def tags_validator(cls, value):

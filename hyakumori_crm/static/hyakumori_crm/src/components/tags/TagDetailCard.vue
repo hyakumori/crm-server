@@ -18,7 +18,7 @@
       <v-container class="pa-0">
         <v-row class="pa-0 tag-list" no-gutters>
           <v-col class="pa-2 d-flex align-center flex-wrap">
-            <template v-if="editingTags.length">
+            <template v-if="availableEditingTags.length">
               <div v-for="(item, index) in editingTags" :key="index">
                 <v-chip
                   color="primary"
@@ -27,7 +27,6 @@
                   class="ma-1"
                   draggable
                   pill
-                  v-if="item.value && !!!item.deleted"
                   :close="isUpdate"
                 >
                   {{ item.key }}: {{ item.value }}
@@ -274,6 +273,9 @@ export default {
     },
   },
   computed: {
+    availableEditingTags() {
+      return this.editingTags.filter(i => i.value && !i.deleted);
+    },
     hasPermission() {
       const managePermission = `manage_${this.objectType}`;
       return hasScope(managePermission);

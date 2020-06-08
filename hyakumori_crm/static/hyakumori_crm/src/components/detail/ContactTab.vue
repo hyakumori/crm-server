@@ -61,6 +61,7 @@
             $emit('toggleContactDefault', val, customer_id, contact_id)
         "
         :showDefaultBadge="true"
+        :allowDelete="false"
       />
     </v-tab-item>
   </v-tabs>
