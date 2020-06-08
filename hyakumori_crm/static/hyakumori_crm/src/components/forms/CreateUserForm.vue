@@ -10,15 +10,23 @@
           <v-container fluid class="pa-0">
             <v-row no-gutters v-if="formError">
               <v-col cols="12">
-                <v-alert dense outlined type="error">
+                <v-alert dense outlined type="error" dismissible>
                   {{ formError }}
                 </v-alert>
               </v-col>
             </v-row>
-            <v-row no-gutters v-if="success">
+            <v-row no-gutters v-if="successfulEmail">
               <v-col cols="12">
-                <v-alert dense outlined type="success">
-                  {{ $t("messages.invitation_sent", { email: form.email }) }}
+                <v-alert
+                  dense
+                  outlined
+                  type="success"
+                  :value="successfulEmail"
+                  dismissible
+                >
+                  {{
+                    $t("messages.invitation_sent", { email: successfulEmail })
+                  }}
                 </v-alert>
               </v-col>
             </v-row>
@@ -80,7 +88,7 @@ export default {
       },
       formError: "",
       loading: false,
-      success: false,
+      successfulEmail: null,
     };
   },
   methods: {
@@ -122,13 +130,14 @@ export default {
 
         if (response) {
           this.loading = false;
-          this.success = true;
           this.formError = "";
           this.$emit("success", response);
+          this.successfulEmail = this.form.email;
+          this.form = { email: "" };
+          this.$refs.form.reset();
         }
       } catch (e) {
         this.formError = this.$t("messages.fail_create_user");
-        this.success = false;
       } finally {
         this.loading = false;
       }
@@ -137,8 +146,8 @@ export default {
   watch: {
     show(val) {
       if (val) {
-        this.success = false;
         this.loading = false;
+        this.successfulEmail = null;
         this.formError = "";
         this.form = {
           email: "",

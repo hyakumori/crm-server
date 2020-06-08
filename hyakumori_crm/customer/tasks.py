@@ -20,7 +20,7 @@ header_map = {
     "fullname_kanji": "土地所有者名（カナ）",
     "prefecture": "土地所有者住所_都道府県",
     "municipality": "土地所有者住所_市町村",
-    "sector": "土地所有者住所_大字",
+    "sector": "土地所有者住所_丁目番地",
     "postal_code": "連絡先情報_郵便番号",
     "telephone": "連絡先情報_電話番号",
     "mobilephone": "連絡先情報_携帯電話",

@@ -164,6 +164,7 @@ export default {
             this.dataMapping(res.data);
             this.isUpdate = false;
             this.isSave = false;
+            this.$emit("input", this.info);
           })
           .catch(() => {
             this.updateLoading = false;
