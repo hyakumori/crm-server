@@ -5,6 +5,7 @@ import time
 from django.core.cache import cache
 from django.http.response import StreamingHttpResponse, JsonResponse
 from django.utils.translation import gettext_lazy as _
+from django.db import transaction
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from rest_framework.decorators import action, api_view, permission_classes
@@ -323,6 +324,7 @@ class CustomerViewSets(ViewSet):
         try:
             r = csv_upload(fp)
         except UnicodeDecodeError:
+            transaction.set_rollback(True)
             return Response(
                 {"errors": {"__root__": [_("Please upload a csv file!!")]}}, 400
             )
@@ -330,6 +332,7 @@ class CustomerViewSets(ViewSet):
             if type(r) is int:
                 return Response({"msg": "OK"}, status=200)
             else:
+                transaction.set_rollback(True)
                 return Response(r, status=400)
         finally:
             clear_maintain_task_id_cache()
