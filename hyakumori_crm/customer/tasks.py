@@ -53,7 +53,7 @@ def csv_upload(fp):
             except Customer.DoesNotExist:
                 return {
                     "line": line_count + 1,
-                    "errors": {"__root__": ["Customer not found"]},
+                    "errors": {"__root__": [_("Customer not found")]},
                 }
             except OperationalError:
                 return {
