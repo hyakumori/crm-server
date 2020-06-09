@@ -63,7 +63,8 @@
           :forestId="item.internal_id"
           :customerCount="item.customers_count"
           :address="
-            `${item.cadastral.subsector} ${item.cadastral.sector} ${item.cadastral.municipality} ${item.cadastral.prefecture}`
+            `${item.cadastral.prefecture} ${item.cadastral.municipality} ${item
+              .cadastral.sector || ''} ${item.cadastral.subsector || ''}`
           "
           :showAction="false"
           :index="indx"

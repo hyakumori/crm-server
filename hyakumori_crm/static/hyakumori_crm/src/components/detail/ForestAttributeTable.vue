@@ -4,7 +4,7 @@
     hide-default-footer
     disable-sort
     :loading="isLoading"
-    :items-per-page="12"
+    :items-per-page="14"
     :headers="getHeaders"
     :items="attributes"
   >
