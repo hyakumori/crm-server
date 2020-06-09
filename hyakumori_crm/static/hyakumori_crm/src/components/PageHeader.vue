@@ -10,7 +10,7 @@
             <img
               style="vertical-align:middle;"
               src="../assets/img/crm-logo.png"
-              height="20"
+              height="25"
             />
             <v-chip
               v-if="inMaintain"
