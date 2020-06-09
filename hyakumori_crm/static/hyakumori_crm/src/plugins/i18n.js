@@ -10,7 +10,10 @@ Vue.use(VueI18n);
 const messages = {
   jp: {
     ...jpMessages,
-    validations: jpValidationMessages.messages,
+    validations: {
+      ...jpValidationMessages.messages,
+      min_value: "{_field_}は{min}以上の数値でなければなりません。",
+    },
   },
   en: {
     ...enMessages,
