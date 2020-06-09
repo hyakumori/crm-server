@@ -7,7 +7,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError as DjValidationError
 from django.db import connection
-from django.db.models import F, Subquery, OuterRef, Count, Q
+from django.db.models import F, Subquery, OuterRef, Count, Q, CharField, Value as V
+from django.db.models.functions import Concat
 from django.db.models.expressions import RawSQL
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
@@ -333,13 +334,12 @@ def get_filtered_archive_queryset(archive_filter: ArchiveFilter, user):
         "location": "location",
         "title": "title",
         "future_action": "future_action",
-        "author": "attributes__user_cache__repr",
+        "author": "author_fullname",
         "associated_forest": "attributes__forest_cache__repr",
         "our_participants": "attributes__user_cache__repr",
         "their_participants": "attributes__customer_cache__repr",
         "tags": "tags_repr",
     }
-
     for k, v in archive_filter.items():
         if v is not None:
             active_filters[mapping[k]] = v
@@ -351,7 +351,13 @@ def get_filtered_archive_queryset(archive_filter: ArchiveFilter, user):
             archive_date_text=RawSQL(
                 "to_char((archive_date at time zone %s), 'YYYY-MM-DD HH24:MI')",
                 [settings.TIME_ZONE_PRIMARY],
-            )
+            ),
+            author_fullname=Concat(
+                F("author__last_name"),
+                V(" "),
+                F("author__first_name"),
+                output_field=CharField(),
+            ),
         ).select_related("author")
         qs = TagsFilterSet.get_tags_repr_queryset(qs)
         for k, value in active_filters.items():
