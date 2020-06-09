@@ -93,7 +93,7 @@ export default {
       }
     },
     archive(val) {
-      this.participants = this.archive
+      this.participants = val
         ? this.archive.attributes.other_participants || []
         : [];
       this.tempParticipants = [...this.participants];

@@ -18,11 +18,27 @@ class ForestActions:
         "mdi-tag-outline",
     )
 
+    tags_bulk_updated = (
+        "forest.tags_bulk_updated",
+        "一括フォレストタグが更新されました。",
+        "mdi-tag-outline",
+    )
+
+    bulk_contract_statuses_updated = (
+        "forest.bulk_contract_statuses_updated",
+        "一括契約ステータスが更新されました。",
+        "mdi-file-document-edit-outline",
+    )
+
 
 class CustomerActions:
     created = ("customer.created", "顧客データが作成されました。", "mdi-face")
     basic_info_updated = ("customer.basic_info_updated", "顧客情報が更新されました。", "mdi-launch")
-    banking_info_updated = ("customer.banking_info_updated", "顧客口座情報が更新されました。", "mdi-bank")
+    banking_info_updated = (
+        "customer.banking_info_updated",
+        "顧客口座情報が更新されました。",
+        "mdi-bank",
+    )
     customers_updated = (
         "customer.customers_updated",
         "所有林情報が更新されました。",
@@ -58,6 +74,11 @@ class CustomerActions:
         "タグ情報が更新されました。",
         "mdi-tag-outline",
     )
+    tags_bulk_updated = (
+        "customer.tags_bulk_updated",
+        "一括顧客タグが更新されました。",
+        "mdi-tag-outline",
+    )
 
 
 class ArchiveActions:
@@ -78,6 +99,11 @@ class ArchiveActions:
         "当方参加者が更新されました。",
         "mdi-account-check-outline",
     )
+    other_staff_participants_updated = (
+        "archive.other_staff_participants_updated",
+        "他のスタッフの参加者が更新されました。",
+        "mdi-account-check-outline",
+    )
     forest_list_updated = (
         "archive.forest_list_updated",
         "関連する森林が更新されました。",
@@ -86,6 +112,11 @@ class ArchiveActions:
     tags_updated = (
         "archive.tags_updated",
         "タグ情報が更新されました。",
+        "mdi-tag-outline",
+    )
+    tags_bulk_updated = (
+        "archive.tags_bulk_updated",
+        "一括アーカイブタグが更新されました。",
         "mdi-tag-outline",
     )
 
