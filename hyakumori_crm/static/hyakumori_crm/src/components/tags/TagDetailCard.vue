@@ -19,7 +19,7 @@
         <v-row class="pa-0 tag-list" no-gutters>
           <v-col class="pa-2 d-flex align-center flex-wrap">
             <template v-if="availableEditingTags.length">
-              <div v-for="(item, index) in editingTags" :key="index">
+              <div v-for="(item, index) in availableEditingTags" :key="index">
                 <v-chip
                   color="primary"
                   @click:close="() => deleteTag(item)"

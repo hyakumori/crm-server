@@ -18,21 +18,21 @@ def refresh_user_participants_cache(archive: Archive, save=False):
             count=archive.archiveuser_set.count(),
             list=list(
                 archive.archiveuser_set.all()
-                    .annotate(
+                .annotate(
                     full_name=Concat("user__last_name", Value(" "), "user__first_name")
                 )
-                    .values("user_id", "full_name")
+                .values("user_id", "full_name")
             ),
         )
         archive.attributes["user_cache"]["repr"] = ",".join(
-            list(map(lambda c: c["full_name"], archive.attributes["user_cache"]["list"]))
+            list(
+                map(lambda c: c["full_name"], archive.attributes["user_cache"]["list"])
+            )
         )
         if save:
             archive.save()
     except:
-        logging.warning(
-            f"could not refresh user cache for archive: {archive.pk}"
-        )
+        logging.warning(f"could not refresh user cache for archive: {archive.pk}")
     finally:
         return archive
 
