@@ -1,9 +1,9 @@
-import { getScopes, hasScope } from "../helpers/security";
+import { hasScope } from "../helpers/security";
 
 const AclSetup = {
-  install: (Vue, options) => {
+  install: Vue => {
     Vue.directive("acl-only", {
-      inserted(el, binding, vnode, old) {
+      inserted(el, binding, vnode) {
         if (
           binding.value &&
           binding.value.length > 0 &&

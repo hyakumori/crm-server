@@ -241,7 +241,6 @@ export default {
     buildBasicInfo() {
       let basicInfo = [];
       const userInfo = this.userInfo;
-      const groups = this.groups;
 
       if (userInfo) {
         basicInfo = [
