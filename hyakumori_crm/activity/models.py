@@ -31,9 +31,13 @@ class ActionLog(UUIDPrimary):
         related_name="actionlogs",
     )
     template_name = models.CharField(max_length=255, blank=False, null=False)
-    template_data = JSONField(verbose_name=_("template rendering data"), blank=True, null=True)
+    template_data = JSONField(
+        verbose_name=_("template rendering data"), blank=True, null=True
+    )
     changes = JSONField(blank=True, verbose_name=_("change diff"))
-    remote_ip = models.GenericIPAddressField(verbose_name=_("remote IP"), blank=True, null=True)
+    remote_ip = models.GenericIPAddressField(
+        verbose_name=_("remote IP"), blank=True, null=True
+    )
     created_at = models.DateTimeField(verbose_name=_("created at"), auto_now_add=True)
 
     class Meta:

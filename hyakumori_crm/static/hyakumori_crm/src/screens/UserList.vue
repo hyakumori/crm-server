@@ -110,7 +110,7 @@ export default {
       }
     },
 
-    async onUserCreated(user) {
+    async onUserCreated() {
       await this.getData(this.filter.preItemsPerPage, this.filter.page);
     },
   },
