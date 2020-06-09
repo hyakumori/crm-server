@@ -24,10 +24,16 @@ def refresh_user_participants_cache(archive: Archive, save=False):
                 .values("user_id", "full_name")
             ),
         )
-        archive.attributes["user_cache"]["repr"] = ",".join(
-            list(
-                map(lambda c: c["full_name"], archive.attributes["user_cache"]["list"])
+        archive.attributes["user_cache"]["repr"] = (
+            ",".join(
+                list(
+                    map(
+                        lambda c: c["full_name"],
+                        archive.attributes["user_cache"]["list"],
+                    )
+                )
             )
+            or None
         )
         if save:
             archive.save()
@@ -43,13 +49,16 @@ def refresh_forest_cache(archive: Archive, save=False):
             count=archive.archiveforest_set.count(),
             list=list(archive.archiveforest_set.all().values("forest__internal_id")),
         )
-        archive.attributes["forest_cache"]["repr"] = ",".join(
-            list(
-                map(
-                    lambda c: c["forest__internal_id"],
-                    archive.attributes["forest_cache"]["list"],
+        archive.attributes["forest_cache"]["repr"] = (
+            ",".join(
+                list(
+                    map(
+                        lambda c: c["forest__internal_id"],
+                        archive.attributes["forest_cache"]["list"],
+                    )
                 )
             )
+            or None
         )
         if save:
             archive.save()
@@ -75,7 +84,7 @@ def refresh_customers_cache(archive: Archive, save=False):
             customer_name = get_customer_name(kanji_name)
             customer_repr.append(customer_name)
 
-        archive.attributes["customer_cache"]["repr"] = ",".join(customer_repr)
+        archive.attributes["customer_cache"]["repr"] = ",".join(customer_repr) or None
         if save:
             archive.save()
     except:

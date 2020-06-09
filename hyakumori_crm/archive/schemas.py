@@ -11,7 +11,6 @@ from pydantic import Field
 from ..core.models import HyakumoriDanticModel
 from ..crm.models import (
     Archive,
-    Contact,
     CustomerContact,
     ArchiveCustomer,
     ArchiveCustomerContact,
