@@ -238,6 +238,10 @@ class CustomerViewSets(ViewSet):
     @api_validate_model(TagBulkUpdate)
     def tags(self, request, data: TagBulkUpdate):
         update_customer_tags(data.dict())
+        for pk in data.ids:
+            ActivityService.log(
+                CustomerActions.tags_bulk_updated, Customer, obj_pk=pk, request=request
+            )
         return Response({"msg": "OK"})
 
     @action(

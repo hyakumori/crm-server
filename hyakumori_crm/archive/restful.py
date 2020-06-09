@@ -291,6 +291,10 @@ def archive_ids(request):
 @api_validate_model(TagBulkUpdate)
 def archive_tags(request, data: TagBulkUpdate):
     update_archive_tag(data.dict())
+    for pk in data.ids:
+        ActivityService.log(
+            ArchiveActions.tags_bulk_updated, Archive, obj_pk=pk, request=request
+        )
     return Response({"msg": "OK"})
 
 
@@ -301,6 +305,6 @@ def other_participants(request, archive: Archive = None):
     other_participants = request.data.get("other_participants", [])
     update_archive_other_participants(archive, other_participants)
     ActivityService.log(
-        ArchiveActions.staff_participants_updated, archive, request=request
+        ArchiveActions.other_staff_participants_updated, archive, request=request
     )
     return Response({"msg": "OK"})

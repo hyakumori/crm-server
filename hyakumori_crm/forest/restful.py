@@ -175,6 +175,10 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     @api_validate_model(TagBulkUpdate)
     def tags(self, request, data: TagBulkUpdate):
         update_forest_tags(data.dict())
+        for pk in data.ids:
+            ActivityService.log(
+                ForestActions.tags_bulk_updated, Forest, obj_pk=pk, request=request
+            )
         return Response({"msg": "OK"})
 
     @action(detail=False, methods=["POST"], url_path="upload-csv")
@@ -211,6 +215,13 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     @api_validate_model(ForestContractStatusBulkUpdate)
     def contract_status(self, request, data):
         ok = bulk_update_forest_contact_status(data)
+        for pk in data.pks:
+            ActivityService.log(
+                ForestActions.bulk_contract_statuses_updated,
+                Forest,
+                obj_pk=pk,
+                request=request,
+            )
         return Response({"msg": ok})
 
 

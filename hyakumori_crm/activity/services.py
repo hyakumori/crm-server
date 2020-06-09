@@ -99,6 +99,7 @@ class ActivityService:
         cls,
         action,
         model_instance,
+        obj_pk=None,
         user=None,
         remote_ip=None,
         template_data=None,
@@ -128,7 +129,7 @@ class ActivityService:
             content_type = ContentType.objects.get_for_model(model_instance)
             log = ActionLog.objects.create(
                 content_type=content_type,
-                object_pk=model_instance.pk,
+                object_pk=obj_pk if obj_pk is not None else model_instance.pk,
                 template_name=template.name,
                 template_data=template_data,
                 changes=changes,
