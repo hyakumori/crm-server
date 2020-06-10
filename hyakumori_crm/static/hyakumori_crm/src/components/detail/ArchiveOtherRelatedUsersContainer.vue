@@ -12,7 +12,12 @@
     <ul v-if="!isEditing">
       <li v-for="name in tempParticipants" :key="name">{{ name }}</li>
     </ul>
-    <text-input ref="input" v-else v-model="participantsText"></text-input>
+    <text-input
+      ref="input"
+      v-else
+      v-model="participantsText"
+      placeholder="カンマで複数の参加者入力可能（例：山田太郎,山田次郎）"
+    ></text-input>
     <template v-if="isEditing">
       <update-button
         class="my-2"
@@ -66,6 +71,7 @@ export default {
           other_participants: this.tempParticipants,
         });
         this.participants = this.tempParticipants;
+        this.isEditing = false;
       } catch (error) {}
       this.loading = false;
     },
@@ -77,8 +83,9 @@ export default {
         return this.tempParticipants.join(",");
       },
       set(val) {
-        if (val === "") this.tempParticipants = [];
-        else this.tempParticipants = val.split(",");
+        const val_ = val.endsWith(",") ? val.splice(0, val.length - 1) : val;
+        if (val_ === "") this.tempParticipants = [];
+        else this.tempParticipants = val_.split(",");
       },
     },
     saveDisabled() {

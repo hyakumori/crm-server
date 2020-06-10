@@ -9,7 +9,7 @@
         <div class="d-flex justify-center">
           <img
             :src="require('@/assets/img/crm-logo.png')"
-            height="20"
+            height="25"
             class="logo"
           />
         </div>
@@ -31,7 +31,7 @@ export default {};
   background-size: cover;
 }
 .logo {
-  margin: 70px 0;
+  margin: 65px 0;
   text-align: center;
 }
 .gradient-background {
