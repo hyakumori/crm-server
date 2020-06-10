@@ -345,7 +345,9 @@ def get_filtered_archive_queryset(archive_filter: ArchiveFilter, user):
             active_filters[mapping[k]] = v
     qs = Archive.objects.select_related("author").all()
     if user.member_of(SystemGroups.GROUP_LIMITED_USER):
-        qs = qs.filter(Q(author_id=user.id) | Q(archiveuser__user_id=user.id))
+        qs = qs.distinct().filter(
+            Q(author_id=user.id) | Q(archiveuser__user_id=user.id)
+        )
     if len(active_filters.keys()) > 0:
         qs = qs.annotate(
             archive_date_text=RawSQL(

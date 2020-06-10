@@ -200,7 +200,7 @@ export default {
     isValidFileExtension(acceptExtension, filename) {
       const fileSplitByDots = filename.split(".");
       const fileExtension = `.${fileSplitByDots[fileSplitByDots.length - 1]}`;
-      return acceptExtension.includes(fileExtension);
+      return acceptExtension.includes(fileExtension.toLowerCase());
     },
 
     onFileChange(e) {
