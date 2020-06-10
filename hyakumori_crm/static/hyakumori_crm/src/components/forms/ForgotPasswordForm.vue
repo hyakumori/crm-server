@@ -1,7 +1,7 @@
 <template>
   <v-card class="pa-0 elevation-24">
     <ValidationObserver v-slot="{ invalid }">
-      <form>
+      <form @submit.prevent="onSubmit">
         <v-card-title class="justify-start pb-0 px-6 pt-6 text-color-444444">
           {{ $t("page_header.forgot_password") }}
         </v-card-title>
