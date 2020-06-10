@@ -1,6 +1,6 @@
 import logging
 
-from django.db.models import Value
+from django.db.models import Value, F
 from django.db.models.functions import Concat
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -73,9 +73,16 @@ def refresh_customers_cache(archive: Archive, save=False):
         archive.attributes["customer_cache"] = dict(
             count=archive.archivecustomer_set.count(),
             list=list(
-                archive.archivecustomer_set.all().values(
-                    "customer__id", "customer__name_kanji", "customer__name_kana"
+                archive.archivecustomer_set.all()
+                .annotate(
+                    customer__name_kanji=F(
+                        "archivecustomercontact__customercontact__contact__name_kanji"
+                    ),
+                    customer__name_kana=F(
+                        "archivecustomercontact__customercontact__contact__name_kana"
+                    ),
                 )
+                .values("customer__id", "customer__name_kanji", "customer__name_kana")
             ),
         )
         customer_repr = []

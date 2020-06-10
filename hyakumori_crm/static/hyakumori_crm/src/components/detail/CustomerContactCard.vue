@@ -86,7 +86,7 @@
     <router-link
       v-if="showAction && !deleted"
       :to="
-        customerId
+        contact.business_id
           ? { name: 'customer-detail', params: { id: contact.business_id } }
           : ''
       "
@@ -188,11 +188,6 @@ export default {
       return this.contact.self_contact
         ? this.contact.self_contact
         : this.contact;
-    },
-    customerId() {
-      return this.contact.self_contact
-        ? this.contact.id
-        : this.contact.customer_id;
     },
     fullname() {
       if (
