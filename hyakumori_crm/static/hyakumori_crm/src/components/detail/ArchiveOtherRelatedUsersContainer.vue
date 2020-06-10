@@ -10,7 +10,7 @@
       :displayAdditionBtn="allowEdit"
     />
     <ul v-if="!isEditing">
-      <li v-for="name in tempParticipants" :key="name">{{ name }}</li>
+      <li v-for="(name, index) in tempParticipants" :key="index">{{ name }}</li>
     </ul>
     <text-input
       ref="input"
@@ -36,6 +36,7 @@ import ContainerMixin from "./ContainerMixin";
 import ArchiveDetailMixin from "./ArchiveDetailMixin";
 import UpdateButton from "./UpdateButton";
 import TextInput from "../forms/TextInput";
+import { isEmpty, reject } from "lodash";
 
 export default {
   mixins: [ContainerMixin, ArchiveDetailMixin],
@@ -83,9 +84,7 @@ export default {
         return this.tempParticipants.join(",");
       },
       set(val) {
-        const val_ = val.endsWith(",") ? val.splice(0, val.length - 1) : val;
-        if (val_ === "") this.tempParticipants = [];
-        else this.tempParticipants = val_.split(",");
+        this.tempParticipants = reject(val.split(","), isEmpty);
       },
     },
     saveDisabled() {

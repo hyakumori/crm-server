@@ -347,7 +347,7 @@ def get_filtered_archive_queryset(archive_filter: ArchiveFilter, user):
     if user.member_of(SystemGroups.GROUP_LIMITED_USER):
         qs = qs.filter(Q(author_id=user.id) | Q(archiveuser__user_id=user.id))
     if len(active_filters.keys()) > 0:
-        qs = Archive.objects.annotate(
+        qs = qs.annotate(
             archive_date_text=RawSQL(
                 "to_char((archive_date at time zone %s), 'YYYY-MM-DD HH24:MI')",
                 [settings.TIME_ZONE_PRIMARY],
