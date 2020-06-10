@@ -141,7 +141,6 @@ export default {
       try {
         const newData = await this.$rest.post("/archives", data);
         if (newData) {
-          this.dataMapping(newData);
           this.setHeaderWithoutParticipant();
           await this.$router.push(`/archives/${newData.id}`);
         }
@@ -172,6 +171,9 @@ export default {
           });
       }
     },
+  },
+  watch: {
+    $route: "fetchBasicInfo",
   },
 };
 </script>
