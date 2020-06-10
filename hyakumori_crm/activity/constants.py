@@ -17,16 +17,14 @@ class ForestActions:
         "タグ情報が更新されました。",
         "mdi-tag-outline",
     )
-
     tags_bulk_updated = (
         "forest.tags_bulk_updated",
-        "一括フォレストタグが更新されました。",
+        "タグが一括更新されました。",
         "mdi-tag-outline",
     )
-
     bulk_contract_statuses_updated = (
         "forest.bulk_contract_statuses_updated",
-        "一括契約ステータスが更新されました。",
+        "契約ステータスが一括更新されました。",
         "mdi-file-document-edit-outline",
     )
 
@@ -76,7 +74,7 @@ class CustomerActions:
     )
     tags_bulk_updated = (
         "customer.tags_bulk_updated",
-        "一括顧客タグが更新されました。",
+        "タグが一括更新されました。",
         "mdi-tag-outline",
     )
 
@@ -101,7 +99,7 @@ class ArchiveActions:
     )
     other_staff_participants_updated = (
         "archive.other_staff_participants_updated",
-        "他のスタッフの参加者が更新されました。",
+        "その他当方参加者が更新されました。",
         "mdi-account-check-outline",
     )
     forest_list_updated = (
@@ -116,7 +114,7 @@ class ArchiveActions:
     )
     tags_bulk_updated = (
         "archive.tags_bulk_updated",
-        "一括アーカイブタグが更新されました。",
+        "タグが一括更新されました。",
         "mdi-tag-outline",
     )
 
