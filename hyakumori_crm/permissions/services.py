@@ -151,6 +151,7 @@ class PermissionService:
                 codename__in=["view_user", "add_user", "change_user", "delete_user"]
                 + crm_resources_permissions
             ).all()
+            admin_group.permissions.clear()
             admin_group.permissions.add(*admin_group_permissions)
             admin_group.user_set.add(user)
             admin_group.save()
@@ -162,6 +163,7 @@ class PermissionService:
             member_group_permissions = Permission.objects.filter(
                 codename__in=crm_resources_permissions
             ).all()
+            member_group.permissions.clear()
             member_group.permissions.add(*member_group_permissions)
             member_group.save()
 
@@ -170,8 +172,9 @@ class PermissionService:
                 name=SystemGroups.GROUP_LIMITED_USER
             )
             normal_user_group_permissions = Permission.objects.filter(
-                codename__in=["view_forest", "change_archive"]
+                codename__in=["view_forest", "view_archive", "manage_archive"]
             ).all()
+            normal_user_group.permissions.clear()
             normal_user_group.permissions.add(*normal_user_group_permissions)
             normal_user_group.save()
 

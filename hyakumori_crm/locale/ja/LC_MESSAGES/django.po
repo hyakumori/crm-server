@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-08 11:46+0700\n"
+"POT-Creation-Date: 2020-06-10 11:25+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,49 +30,49 @@ msgstr ""
 msgid "user"
 msgstr ""
 
-#: activity/models.py:34
+#: activity/models.py:35
 msgid "template rendering data"
 msgstr ""
 
-#: activity/models.py:35
+#: activity/models.py:37
 msgid "change diff"
 msgstr ""
 
-#: activity/models.py:36
+#: activity/models.py:39
 msgid "remote IP"
 msgstr ""
 
-#: activity/models.py:37
+#: activity/models.py:41
 msgid "created at"
 msgstr ""
 
-#: activity/models.py:41
+#: activity/models.py:45
 msgid "log action"
 msgstr ""
 
-#: activity/models.py:42
+#: activity/models.py:46
 msgid "log actions"
 msgstr ""
 
-#: activity/models.py:45
+#: activity/models.py:49
 #, python-brace-format
 msgid "Logged action, id: {id}"
 msgstr "ログに記録されたアクション、ID：{id}"
 
-#: archive/restful.py:178
+#: archive/restful.py:179
 msgid "Could not get download url"
 msgstr "ダウンロードURLを取得できませんでした"
 
-#: archive/schemas.py:93 archive/schemas.py:97 archive/schemas.py:101
-#: archive/schemas.py:115 customer/schemas.py:221 customer/schemas.py:265
+#: archive/schemas.py:92 archive/schemas.py:96 archive/schemas.py:100
+#: archive/schemas.py:114 customer/schemas.py:221 customer/schemas.py:265
 msgid "Contact {} not found"
 msgstr "連絡先{}が見つかりません"
 
-#: archive/schemas.py:123
+#: archive/schemas.py:122
 msgid "Contact {} already exists"
 msgstr "連絡先{}は既に存在します"
 
-#: archive/service.py:60 archive/service.py:73
+#: archive/service.py:61 archive/service.py:74
 msgid "Attachment not found"
 msgstr "添付ファイルが見つかりません"
 
@@ -196,13 +196,13 @@ msgstr "携帯番号"
 msgid "Email"
 msgstr "メールアドレス"
 
-#: customer/resolvers.py:30 customer/restful.py:274 customer/tasks.py:33
+#: customer/resolvers.py:30 customer/restful.py:278 customer/tasks.py:33
 #: forest/resolvers.py:98 forest/service.py:305
 msgid "Tag"
 msgstr "タグ"
 
-#: customer/restful.py:315 customer/restful.py:329 forest/restful.py:185
-#: forest/restful.py:199
+#: customer/restful.py:319 customer/restful.py:333 forest/restful.py:189
+#: forest/restful.py:203
 msgid "Please upload a csv file!!"
 msgstr "csvファイルをアップロードしてください!!"
 
