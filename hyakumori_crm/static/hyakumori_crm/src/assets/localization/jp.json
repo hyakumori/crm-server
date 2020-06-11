@@ -1,4 +1,10 @@
 {
+  "action": {
+    "change_tag_value": "タグを変更",
+    "contract_status_to_contracted": "契約ステータスを「契約済」に変更",
+    "contract_status_to_expired": "契約ステータスを「期限切」に変更",
+    "contract_status_to_unsigned": "契約ステータスを「未契約」に変更"
+  },
   "activate_form": {
     "first_name": "名",
     "last_name": "姓",
@@ -18,13 +24,13 @@
     "add_user": "アカウントを追加",
     "back": "前のページに戻る",
     "cancel": "キャンセル",
-    "ok": "確認",
     "continue": "継続する",
     "csv_download": "csvダウンロード",
     "csv_upload": "csvアップロード",
     "download_all": "すべてダウンロード",
     "download_selected": "選択した物をダウンロード",
     "login": "ログイン",
+    "ok": "確認",
     "reset": "リセット",
     "save": "保存",
     "send": "送信",
@@ -135,6 +141,8 @@
   "messages": {
     "activate_account_success": "アカウントの有効化に成功しました。{seconds}秒後にログイン画面にリダイレクトします。",
     "api_update_general_error": "更新中にエラーが発生しました。入力を再確認した上で、再度更新してみてください。",
+    "confirm_leave": "帰りたい？",
+    "confirm_upload_csv": "アップロードはウェブサイトを維持モードにします。 継続する？",
     "duplicate_content_was_removed": "重複したファイルが削除されました。",
     "email_not_found": "入力したメールアドレスに該当するユーザが存在しません。",
     "error_set_new_password": "パスワード設定中にエラーが発生しました。入力した内容を確認した上で、再度試してみてください。",
@@ -143,21 +151,20 @@
     "forgot_password_help_text": "パスワードを再発行するには、メールアドレスを入力し、届いたメールのURLをクリックしてください",
     "invitation_sent": "招待メールを送信しました{email}",
     "logging_out": "ログアウト中 .  .  .",
+    "maintenance_1": "ウェブサイトはメンテナンスモードです。",
+    "maintenance_2": "更新操作は許可されていません。",
     "no_permission": "許可がありません",
     "not_found": "見つかりません",
+    "out_of_data": "選択可能な情報はありません。",
     "page_not_found_text": "要求したページは見つかりませんでした。",
     "permission_denied": "アクセス拒否",
+    "record_updated_before_please_reload_first": "リソースは以前に更新されています。 最初にリロードしてください！",
     "reset_password_confirm_help_text": "パスワードを再発行するには、新しいパスワードを2ド入力してください。",
     "reset_password_success": "パスワードが変更できました。{seconds}秒後にログイン画面にリダイレクトします。",
     "reset_password_url_sent": "再発行用のURLをご登録のメールアドレス宛てに送信しました。",
     "token_stale": "無効または期限切リンク",
     "uid_not_found": "無効なユーザーまたはユーザーが存在しません。",
-    "maintenance_1": "ウェブサイトはメンテナンスモードです。",
-    "maintenance_2": "更新操作は許可されていません。",
-    "confirm_upload_csv": "アップロードはウェブサイトを維持モードにします。 継続する？",
-    "upload_successfully": "正常にアップロード",
-    "confirm_leave": "帰りたい？",
-    "out_of_data": "選択可能な情報はありません。"
+    "upload_successfully": "正常にアップロード"
   },
   "not_available_field": "一時不明",
   "page_header": {
@@ -233,11 +240,5 @@
         "username": "ユーザー名"
       }
     }
-  },
-  "action": {
-    "contract_status_to_contracted": "契約ステータスを「契約済」に変更",
-    "contract_status_to_unsigned": "契約ステータスを「未契約」に変更",
-    "contract_status_to_expired": "契約ステータスを「期限切」に変更",
-    "change_tag_value": "タグを変更"
   }
 }

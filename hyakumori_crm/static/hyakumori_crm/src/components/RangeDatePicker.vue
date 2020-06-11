@@ -12,17 +12,19 @@
       :return-value.sync="innerDates"
     >
       <template v-slot:activator="{ on }">
-        <v-text-field
-          v-model="innerDateRange"
-          height="45"
-          dense
-          placeholder="例：2020-12-24 ～ 2025-12-24"
-          single-line
-          v-mask="'####-##-##～####-##-##'"
-          outlined
-          v-on="on"
-          :error="!isDefaultDateEmpty && hasInvalidDate"
-        ></v-text-field>
+        <ValidationProvider rules="daterange" v-slot="{ errors }">
+          <v-text-field
+            v-model="innerDateRange"
+            height="45"
+            dense
+            placeholder="例：2020-12-24 ～ 2025-12-24"
+            single-line
+            v-mask="'####-##-##～####-##-##'"
+            outlined
+            v-on="on"
+            :error-messages="errors[0]"
+          ></v-text-field>
+        </ValidationProvider>
       </template>
       <v-date-picker
         v-model="innerDates"
@@ -41,11 +43,37 @@
 </template>
 
 <script>
+import i18n from "../plugins/i18n";
 import { format, isValid, parse } from "date-fns";
 import { dateSeparator } from "../helpers/datetime";
+import { ValidationProvider, extend } from "vee-validate";
+import { split } from "lodash";
+
+extend("daterange", {
+  validate: value => {
+    let result = [];
+    let parts = split(value, dateSeparator).map(part => part.trim());
+    if (isValid(parse(parts[0], "yyyy-MM-dd", new Date()))) {
+      result.push(parts[0]);
+    } else return false;
+    if (parts[1] && parts[1] !== "") {
+      if (isValid(parse(parts[1], "yyyy-MM-dd", new Date()))) {
+        result.push(parts[1]);
+      } else return false;
+    }
+    return (
+      (result.length === 2 && result[0] < result[1]) || result.length === 1
+    );
+  },
+  message: i18n.t("validations.daterange"),
+});
 
 export default {
   name: "range-date-picker",
+
+  components: {
+    ValidationProvider,
+  },
 
   props: {
     label: String,

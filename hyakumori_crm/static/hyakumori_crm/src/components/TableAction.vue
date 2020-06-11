@@ -9,6 +9,7 @@
       :actions="actions"
       :placeHolder="$t('search.select_action')"
       @selectedAction="onSelected"
+      hide-details
     />
   </div>
 </template>
@@ -54,6 +55,7 @@ $action-list-color: #825929;
     margin-top: 0;
     height: 100%;
     top: 25%;
+    flex: none;
 
     .v-select__slot,
     .v-select__selections,

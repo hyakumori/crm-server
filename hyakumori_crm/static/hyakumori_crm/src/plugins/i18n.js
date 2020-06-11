@@ -13,6 +13,7 @@ const messages = {
     validations: {
       ...jpValidationMessages.messages,
       min_value: "{_field_}は{min}以上の数値でなければなりません。",
+      daterange: "不正な期間です。",
     },
   },
   en: {
