@@ -18,6 +18,7 @@
       :hide-details="hideDetails"
       :placeholder="placeholder"
       :error-messages="errors[0]"
+      :clearable="clearable"
     ></v-select>
   </ValidationProvider>
 </template>
@@ -62,6 +63,7 @@ export default {
       type: null,
       default: "",
     },
+    clearable: { type: Boolean, default: false },
   },
   data: () => ({
     innerValue: "",

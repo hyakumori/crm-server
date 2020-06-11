@@ -11,18 +11,9 @@
     <div class="mt-4">
       <forest-basic-info
         :info="info"
-        :isUpdate="isUpdate"
+        :isUpdate.sync="isUpdate"
         :isSave="isSave"
         @updateInfo="updateData"
-        @forest:save-disable="val => (saveDisabled = val)"
-      />
-      <update-button
-        class="mb-12"
-        v-if="isUpdate"
-        :saving="isSave"
-        :saveDisabled="saveDisabled"
-        :save="save.bind(this)"
-        :cancel="cancel.bind(this)"
       />
     </div>
   </div>
@@ -31,7 +22,6 @@
 <script>
 import ForestBasicInfo from "./ForestBasicInfo";
 import ContentHeader from "./ContentHeader";
-import UpdateButton from "./UpdateButton";
 import ContainerMixin from "./ContainerMixin";
 import { updateBasicInfo } from "../../api/forest";
 
@@ -43,7 +33,6 @@ export default {
   components: {
     ContentHeader,
     ForestBasicInfo,
-    UpdateButton,
   },
 
   props: {
@@ -59,14 +48,6 @@ export default {
   },
 
   methods: {
-    save() {
-      this.isSave = true;
-    },
-
-    cancel() {
-      this.isUpdate = false;
-    },
-
     setUpdate(val) {
       this.isUpdate = val;
     },
