@@ -77,7 +77,7 @@ export default {
     return {
       isLoading: false,
       isUpdate: false,
-      memo: _get(this.value, "attributes.memo", ""),
+      memo: _get(this.value, "attributes.memo") || "",
       originalMemo: "",
     };
   },
@@ -102,7 +102,7 @@ export default {
       }
     },
     onCancel() {
-      this.memo = this.value.attributes["memo"];
+      this.memo = this.value.attributes["memo"] || "";
       this.isLoading = false;
       this.isUpdate = false;
     },
@@ -123,8 +123,8 @@ export default {
   },
   watch: {
     "value.attributes.memo"() {
-      this.memo = this.value.attributes["memo"];
-      this.originalMemo = this.value.attributes["memo"];
+      this.memo = this.value.attributes["memo"] || "";
+      this.originalMemo = this.memo;
     },
   },
 };
