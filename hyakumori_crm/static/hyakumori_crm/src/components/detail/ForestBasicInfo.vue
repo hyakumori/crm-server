@@ -1,5 +1,5 @@
 <template>
-  <ValidationObserver ref="observer">
+  <ValidationObserver ref="observer" v-slot="{ invalid }">
     <v-container class="forest-basic-info pa-0">
       <template v-if="!isUpdate">
         <v-row v-if="innerInfo" dense>
@@ -175,6 +175,14 @@
         </v-row>
       </template>
     </v-container>
+    <update-button
+      class="mb-12"
+      v-if="isUpdate"
+      :saving="isSave"
+      :saveDisabled="invalid"
+      :save="() => $emit('updateInfo', innerInfo)"
+      :cancel="() => $emit('update:isUpdate', false)"
+    />
   </ValidationObserver>
 </template>
 
@@ -182,6 +190,7 @@
 import TextInfo from "./TextInfo";
 import SelectInfo from "./SelectInfo";
 import RangeDatePicker from "../RangeDatePicker";
+import UpdateButton from "./UpdateButton";
 import { ValidationObserver } from "vee-validate";
 import { get as _get, cloneDeep as _cloneDeep } from "lodash";
 
@@ -193,6 +202,7 @@ export default {
     SelectInfo,
     RangeDatePicker,
     ValidationObserver,
+    UpdateButton,
   },
 
   props: {
@@ -343,11 +353,6 @@ export default {
   },
 
   watch: {
-    isSave(val) {
-      if (val) {
-        this.$emit("updateInfo", this.innerInfo);
-      }
-    },
     info(val) {
       this.innerInfo = _cloneDeep(val);
     },
@@ -355,13 +360,6 @@ export default {
       if (!val && this.$refs.observer.flags.dirty) {
         this.innerInfo = _cloneDeep(this.info);
       }
-    },
-    innerInfo: {
-      deep: true,
-      async handler() {
-        const isValid = await this.$refs.observer.validate();
-        this.$emit("forest:save-disable", !isValid);
-      },
     },
   },
 };

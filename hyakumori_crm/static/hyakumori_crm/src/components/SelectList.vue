@@ -8,6 +8,7 @@
     :full-width="false"
     :items="actions"
     :placeholder="(!hasSelectedValue && placeHolder) || ''"
+    :hideDetails="hideDetails"
   ></v-select>
 </template>
 
@@ -20,6 +21,7 @@ export default {
     placeHolder: String,
     index: Number,
     value: String,
+    hideDetails: { type: Boolean, default: false },
   },
 
   data() {

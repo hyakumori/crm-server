@@ -189,7 +189,11 @@ export default {
         this.itemsForAdding = { results: [] };
       } catch (error) {
         this.saving = false;
-        if (error.response && error.response.status < 500)
+        if (error.response && error.response.status === 400) {
+          this.$dialog.notify.error(
+            this.$t("messages.record_updated_before_please_reload_first"),
+          );
+        } else if (error.response && error.response.status < 500)
           this.$dialog.notify.error(
             error.response.data.detail || error.response.statusText,
           );

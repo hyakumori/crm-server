@@ -237,6 +237,11 @@ export default {
         this.defaultCustomersContactsEdit = {};
         this.itemsForAdding = { results: [] };
       } catch (error) {
+        if (error.response && error.response.status === 400) {
+          this.$dialog.notify.error(
+            this.$t("messages.record_updated_before_please_reload_first"),
+          );
+        }
         this.saving = false;
       }
     },
