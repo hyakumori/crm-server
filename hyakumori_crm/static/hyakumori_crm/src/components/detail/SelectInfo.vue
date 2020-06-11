@@ -6,6 +6,7 @@
       :value="value"
       :items="items"
       @input="$emit('input', $event)"
+      :clearable="clearable"
     />
     <p v-else>{{ value.text }}</p>
   </div>
@@ -26,6 +27,7 @@ export default {
     label: String,
     value: [String, Number, Object],
     isUpdate: Boolean,
+    clearable: { type: Boolean, default: false },
   },
 };
 </script>

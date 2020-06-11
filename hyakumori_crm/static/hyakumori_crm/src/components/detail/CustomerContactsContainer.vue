@@ -152,6 +152,11 @@ export default {
         this.relationshipChanges = [];
       } catch (error) {
         this.saving = false;
+        if (error.response && error.response.status === 400) {
+          this.$dialog.notify.error(
+            this.$t("messages.record_updated_before_please_reload_first"),
+          );
+        }
       }
     },
     initForm() {
