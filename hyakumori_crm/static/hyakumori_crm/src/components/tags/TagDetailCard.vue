@@ -28,8 +28,14 @@
                   draggable
                   pill
                   :close="isUpdate"
+                  :title="`${item.key}: ${item.value}`"
                 >
-                  {{ item.key }}: {{ item.value }}
+                  {{ item.key }}:
+                  {{
+                    item.value.length > 15
+                      ? item.value.slice(0, 15) + "..."
+                      : item.value
+                  }}
                 </v-chip>
               </div>
             </template>
