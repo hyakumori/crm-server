@@ -295,7 +295,7 @@ class CustomerViewSets(ViewSet):
                     row["bank_name"],
                     row["bank_branch_name"],
                     row["bank_account_type"],
-                    row["bank_account_number"],
+                    f'"{row["bank_account_number"] or ""}"',
                     row["bank_account_name"],
                     parse_tags_for_csv(row["tags"]),
                 ]
@@ -306,9 +306,7 @@ class CustomerViewSets(ViewSet):
             (writer.writerow(row) for row in generator(headers, customers)),
             content_type="text/csv",
         )
-        response[
-            "Content-Disposition"
-        ] = 'application/octet-stream; filename="customers.csv"'
+        response["Content-Disposition"] = "application/octet-stream;"
         return response
 
     @action(detail=False, methods=["POST"])

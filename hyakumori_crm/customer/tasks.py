@@ -1,8 +1,6 @@
 import csv
-import json
-import time
 
-from django.db import OperationalError, transaction
+from django.db import OperationalError
 from django.utils.translation import gettext_lazy as _
 import pydantic
 
@@ -16,8 +14,8 @@ from ..cache.forest import refresh_customer_forest_cache
 
 header_map = {
     "business_id": "所有者ID",
-    "fullname_kana": "土地所有者名（漢字）",
-    "fullname_kanji": "土地所有者名（カナ）",
+    "fullname_kanji": "土地所有者名（漢字）",
+    "fullname_kana": "土地所有者名（カナ）",
     "prefecture": "土地所有者住所_都道府県",
     "municipality": "土地所有者住所_市町村",
     "sector": "土地所有者住所_丁目番地",

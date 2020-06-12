@@ -344,6 +344,10 @@ class CustomerUploadCsv(HyakumoriDanticModel):
     bank_account_name: Optional[str] = EMPTY
     tags: Optional[str]
 
+    @validator("bank_account_number", pre=True)
+    def prepare_account_number(cls, v):
+        return v[1:-1]
+
     @validator("tags")
     def tags_validator(cls, value):
         try:
