@@ -133,8 +133,9 @@
               :items="contractTypes"
               label="契約種類"
               :value="contractType"
-              @input="updateContractType"
+              @change="updateContractType"
               :isUpdate="isUpdate"
+              clearable
             />
           </v-col>
           <v-col cols="4">
@@ -142,8 +143,9 @@
               :items="contractStatusesSelectItems"
               label="契約ステータス"
               :value="contractStatus"
-              @input="updateContractStatus"
+              @change="updateContractStatus"
               :isUpdate="isUpdate"
+              clearable
             />
           </v-col>
           <v-col cols="4">
@@ -160,8 +162,9 @@
               :items="contractStatusesSelectItems"
               label="FSC認証加入"
               :value="fscStatus"
-              @input="updateFscStatus"
+              @change="updateFscStatus"
               :isUpdate="isUpdate"
+              clearable
             />
           </v-col>
           <v-col cols="4">
@@ -258,18 +261,18 @@ export default {
       }
     },
 
-    updateContractType(selected) {
-      this.innerInfo.contracts.contract_type = selected.value;
+    updateContractType(item) {
+      this.innerInfo.contracts.contract_type = _get(item, "value");
     },
     updateContractDate(val) {
       this.innerInfo.contracts.contract_start_date = val[0];
       this.innerInfo.contracts.contract_end_date = val[1];
     },
-    updateContractStatus(selected) {
-      this.innerInfo.contracts.contract_status = selected.value;
+    updateContractStatus(item) {
+      this.innerInfo.contracts.contract_status = _get(item, "value");
     },
-    updateFscStatus(selected) {
-      this.innerInfo.contracts.fsc_status = selected.value;
+    updateFscStatus(item) {
+      this.innerInfo.contracts.fsc_status = _get(item, "value");
     },
     updateFscDate(val) {
       this.innerInfo.contracts.fsc_start_date = val[0];
@@ -341,11 +344,10 @@ export default {
       ];
     },
     contractStatusesSelectItems() {
-      const items = Object.keys(this.contractStatuses).map(key => ({
+      return Object.keys(this.contractStatuses).map(key => ({
         text: this.contractStatuses[key],
         value: this.contractStatuses[key],
       }));
-      return items;
     },
     landAttributes() {
       return this.innerInfo && this.innerInfo["land_attributes"];
