@@ -117,9 +117,10 @@
                     <span
                       v-for="(tag, index) in headerInfo.tags"
                       :key="index"
-                      class="tag"
+                      class="text-truncate tag"
                       :class="{ 'px-2': headerInfo.title }"
                       :style="{ backgroundColor: headerTagColor }"
+                      :title="tag"
                     >
                       {{ tag }}
                     </span>
@@ -322,14 +323,16 @@ export default {
       }
 
       .tag {
-        position: relative;
+        // position: relative;
         top: -3px;
-        width: fit-content;
+        max-width: 100px;
+        display: inline-block;
         font-size: 10px;
         border-radius: 2px;
         margin-left: 4px;
-        padding: 4px 8px;
+        padding: 3px 8px;
         font-weight: bold;
+        vertical-align: text-bottom;
       }
     }
   }

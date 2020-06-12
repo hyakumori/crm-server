@@ -19,6 +19,8 @@
       :placeholder="placeholder"
       :error-messages="errors[0]"
       :clearable="clearable"
+      @input="$emit('input', $event)"
+      @change="$emit('change', $event)"
     ></v-select>
   </ValidationProvider>
 </template>
@@ -27,7 +29,6 @@
 import { ValidationProvider } from "vee-validate";
 
 export default {
-  name: "text-input",
   components: {
     ValidationProvider,
   },
@@ -74,9 +75,6 @@ export default {
     },
   },
   watch: {
-    innerValue(value) {
-      this.$emit("input", value);
-    },
     value(val) {
       if (val !== this.innerValue) {
         this.innerValue = val;

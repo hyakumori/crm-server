@@ -81,8 +81,6 @@ def get_contract_by_type(contracts, contract_type):
                 contract
                 for contract in contracts
                 if contract.get("type") == contract_type
-                and contract.get("status") is not None
-                and len(contract.get("status")) > 0
             ]
         ),
         None,

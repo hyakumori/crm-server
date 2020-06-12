@@ -33,8 +33,8 @@ class Cadastral(HyakumoriDanticModel):
 
 
 class Contract(HyakumoriDanticModel):
-    type: Optional[ContractType] = ContractType.long_term
-    status: Optional[ContractTypeStatus] = ContractTypeStatus.unnegotiated
+    type: Optional[ContractType]
+    status: Optional[ContractTypeStatus]
     start_date: Optional[date]
     end_date: Optional[date]
 
@@ -56,30 +56,17 @@ class ContractUpdateInput(HyakumoriDanticModel):
     }
     """
 
-    contract_type: Optional[str]
-    contract_status: Optional[str]
+    contract_type: Optional[ContractType]
+    contract_status: Optional[ContractTypeStatus]
     contract_start_date: Optional[date]
     contract_end_date: Optional[date]
-    fsc_status: Optional[str]
+    fsc_status: Optional[ContractTypeStatus]
     fsc_start_date: Optional[date]
     fsc_end_date: Optional[date]
 
     class Config:
         orm_mode = False
         arbitrary_types_allowed = True
-
-    @root_validator
-    def validate_contracts_info(cls, v):
-        if v["contract_type"] is None:
-            v["contract_type"] = ContractType.long_term.value
-
-        if v["contract_status"] is None:
-            v["contract_status"] = ContractTypeStatus.unnegotiated
-
-        if v["fsc_status"] is None:
-            v["fsc_status"] = ContractTypeStatus.unnegotiated
-
-        return v
 
 
 class ForestInput(HyakumoriDanticModel):

@@ -6,6 +6,7 @@
       :value="value"
       :items="items"
       @input="$emit('input', $event)"
+      @change="$emit('change', $event)"
       :clearable="clearable"
     />
     <p v-else>{{ value.text }}</p>

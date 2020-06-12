@@ -142,7 +142,7 @@
     "activate_account_success": "アカウントの有効化に成功しました。{seconds}秒後にログイン画面にリダイレクトします。",
     "api_update_general_error": "更新中にエラーが発生しました。入力を再確認した上で、再度更新してみてください。",
     "confirm_leave": "帰りたい？",
-    "confirm_upload_csv": "アップロードはウェブサイトを維持モードにします。 継続する？",
+    "confirm_upload_csv": "アップロードされたファイルを反映します。継続しますか？",
     "duplicate_content_was_removed": "重複したファイルが削除されました。",
     "email_not_found": "入力したメールアドレスに該当するユーザが存在しません。",
     "error_set_new_password": "パスワード設定中にエラーが発生しました。入力した内容を確認した上で、再度試してみてください。",
