@@ -5,8 +5,7 @@ from uuid import UUID
 
 from django.db import DataError, IntegrityError, connection
 from django.db.models import Count, F, OuterRef, Q, Subquery
-from django.db.models.expressions import RawSQL, Value
-from django.db.models.functions import Concat
+from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
 from django_q.tasks import async_task
 from querybuilder.query import Query
@@ -21,7 +20,6 @@ from hyakumori_crm.crm.models import (
     ForestCustomer,
     ForestCustomerContact,
 )
-from .filters import CustomerFilter
 from .schemas import ContactType, CustomerInputSchema, ContactsInput
 from ..cache.forest import refresh_customer_forest_cache
 
@@ -487,9 +485,13 @@ def create_contact(customer, contact_in):
 
 
 def get_customer_archives(pk):
-    return Archive.objects.filter(archivecustomer__customer_id=pk).order_by(
-        "-created_at"
-    )
+    contact_id = CustomerContact.objects.get(customer_id=pk, is_basic=True).contact_id
+    return Archive.objects.distinct().filter(
+        Q(archivecustomer__customer_id=pk)
+        | Q(
+            archivecustomer__archivecustomercontact__customercontact__contact_id=contact_id
+        )
+    ).order_by("-created_at")
 
 
 def get_customer_contacts_forests(pk):
