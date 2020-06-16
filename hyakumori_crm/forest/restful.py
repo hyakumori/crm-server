@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from hyakumori_crm.core.utils import default_paginator
-from hyakumori_crm.crm.models import Forest, Archive
+from hyakumori_crm.crm.models import Forest, Archive, PostalHistory
 from hyakumori_crm.crm.restful.serializers import (
     CustomerSerializer,
     ForestSerializer,
@@ -105,6 +105,16 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
     def archives(self, request, forest: Forest = None):
         archives = Archive.objects.filter(archiveforest__forest_id=forest.id)
         return Response(ArchiveSerializer(archives, many=True).data)
+
+    @action(["GET"], detail=True, url_path="postal-histories")
+    @get_or_404(
+        get_func=get_forest_by_pk, to_name="forest", remove=True, pass_to="kwargs"
+    )
+    def postalhistories(self, request, forest: Forest = None):
+        postalhistories = PostalHistory.objects.filter(
+            postalhistoryforest__forest_id=forest.id
+        )
+        return Response(ArchiveSerializer(postalhistories, many=True).data)
 
     @action(detail=True, methods=["PUT", "PATCH"], url_path="basic-info")
     @get_or_404(get_func=get_forest_by_pk, to_name="forest", remove=True)

@@ -32,7 +32,7 @@
         </v-col>
         <v-col cols="1">
           <router-link
-            :to="{ name: 'archive-detail', params: { id: attach.id } }"
+            :to="{ name: routeName, params: { id: attach.id } }"
             v-slot="{ href }"
           >
             <v-btn icon :href="href">
@@ -59,6 +59,10 @@ export default {
     ripple: {
       type: Boolean,
       default: true,
+    },
+    routeName: {
+      type: String,
+      default: "archive-detail",
     },
   },
 

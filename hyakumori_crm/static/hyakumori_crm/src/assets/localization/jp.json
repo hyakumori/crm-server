@@ -34,7 +34,8 @@
     "reset": "リセット",
     "save": "保存",
     "send": "送信",
-    "set_as_default": "デフォルトとして設定"
+    "set_as_default": "デフォルトとして設定",
+    "add_postalhistory": "書類郵送履歴追加"
   },
   "detail": {
     "tabs": {
@@ -70,6 +71,13 @@
         "content": "協議内容",
         "future_action": "今後の対応",
         "location": "場所",
+        "title": "タイトル"
+      },
+      "postalhistory": {
+        "consultant_date": "書類送日",
+        "consultant_date_and_time": "書類送付日|カレンダー",
+        "consultant_time": "書類送時間",
+        "content": "書類送付内容",
         "title": "タイトル"
       },
       "bank": {
@@ -186,7 +194,10 @@
     "user_detail": "ユーザ詳細",
     "user_invite": "ユーザーを招待",
     "user_mgmt": "ユーザ管理",
-    "user_profile": "アカウント情報"
+    "user_profile": "アカウント情報",
+    "postalhistory_list": "書類郵送履歴",
+    "postalhistory_mgmt": "書類郵送履歴一覧",
+    "postalhistory_new": "書類郵送履歴追加"
   },
   "raw_text": {
     "agree": "わかりました。",

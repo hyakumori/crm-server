@@ -64,3 +64,9 @@ export function fetchForestArchives(id) {
     return axios.get(`forests/${id}/archives`);
   } catch (error) {}
 }
+
+export function fetchForestPostalHistories(id) {
+  try {
+    return axios.get(`forests/${id}/postal-histories`);
+  } catch (error) {}
+}

@@ -138,3 +138,47 @@ class UserActions:
         "mdi-account-cog-outline",
     )
     group_updated = ("user.group_updated", "グループ情報が更新されました。", "mdi-account-group")
+
+
+class PostalHistoryActions:
+    created = ("postal_history.created", "書類郵送データが作成されました。", "mdi-calendar-text")
+    basic_info_updated = (
+        "postal_history.basic_info_updated",
+        "書類郵送情報が更新されました。",
+        "mdi-launch",
+    )
+    materials_updated = (
+        "postal_history.materials_updated",
+        "送付資料が更新されました。",
+        "mdi-clipboard-multiple-outline",
+    )
+    customer_participants_updated = (
+        "postal_history.customer_participants_updated",
+        "送付先が更新されました。",
+        "mdi-face",
+    )
+    staff_participants_updated = (
+        "postal_history.staff_participants_updated",
+        "送付者が更新されました。",
+        "mdi-account-check-outline",
+    )
+    other_staff_participants_updated = (
+        "postal_history.other_staff_participants_updated",
+        "その送付者が更新されました。",
+        "mdi-account-check-outline",
+    )
+    forest_list_updated = (
+        "postal_history.forest_list_updated",
+        "関連する森林が更新されました。",
+        "mdi-image-filter-hdr",
+    )
+    tags_updated = (
+        "postal_history.tags_updated",
+        "タグ情報が更新されました。",
+        "mdi-tag-outline",
+    )
+    tags_bulk_updated = (
+        "postal_history.tags_bulk_updated",
+        "タグが一括更新されました。",
+        "mdi-tag-outline",
+    )

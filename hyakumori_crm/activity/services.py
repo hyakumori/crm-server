@@ -28,6 +28,9 @@ class ActivityService:
                 for_type="archive", action_class=ArchiveActions
             )
             ActivityService.import_message_templates(
+                for_type="postalhistory", action_class=PostalHistoryActions
+            )
+            ActivityService.import_message_templates(
                 for_type="user", action_class=UserActions
             )
 
@@ -38,6 +41,7 @@ class ActivityService:
                         "customer.created",
                         "archive.created",
                         "user.created",
+                        "postalhistory.created",
                     ]
                 ).all().delete()
 
