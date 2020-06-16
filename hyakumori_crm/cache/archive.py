@@ -88,6 +88,12 @@ def refresh_customers_cache(archive: Archive, save=False):
         customer_repr = []
         for c in archive.attributes["customer_cache"]["list"]:
             kanji_name = c["customer__name_kanji"]
+            # compat
+            if kanji_name is None:
+                archive.archivecustomer_set.filter(
+                    customer_id=c["customer__id"]
+                ).delete()
+                continue
             customer_name = get_customer_name(kanji_name)
             customer_repr.append(customer_name)
 
