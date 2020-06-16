@@ -6,7 +6,7 @@ from typing import Iterator, Union
 import pydantic
 from django.core.exceptions import ValidationError
 from django.db import OperationalError, connection
-from django.db.models import F, OuterRef, Subquery
+from django.db.models import F, OuterRef, Subquery, Count
 from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
 
@@ -242,6 +242,11 @@ def get_customer_contacts_of_forest(pk):
     cc_business_id = CustomerContact.objects.filter(
         is_basic=True, contact=OuterRef("pk")
     ).annotate(business_id=F("customer__business_id"))
+    cc_forests_count = (
+        CustomerContact.objects.filter(is_basic=True, contact=OuterRef("pk"))
+        .values("id", "customer_id")
+        .annotate(forests_count=Count("customer__forestcustomer"))
+    )
     return (
         Contact.objects.filter(
             customercontact__forestcustomercontact__forestcustomer__forest_id=pk,
@@ -254,9 +259,9 @@ def get_customer_contacts_of_forest(pk):
             )
         )
         .annotate(cc_attrs=F("customercontact__attributes"))
-        # .annotate(is_basic=Subquery(cc.values("is_basic")[:1]))
         .annotate(owner_customer_id=Subquery(cc.values("customer_id")[:1]))
         .annotate(business_id=Subquery(cc_business_id.values("business_id")[:1]))
+        .annotate(forests_count=Subquery(cc_forests_count.values("forests_count")[:1]))
     )
 
 
