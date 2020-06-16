@@ -4,12 +4,16 @@ from hyakumori_crm.forest.urls import api_urls as forest_api_urls
 from hyakumori_crm.customer.urls import api_urls as customer_api_urls
 from hyakumori_crm.users.urls import api_urls as user_api_urls
 from hyakumori_crm.permissions.urls import api_urls as permission_api_urls
-from hyakumori_crm.archive.urls import api_urls as archive_api_urls
-from hyakumori_crm.archive.urls import view_urls as archive_view_urls
+from hyakumori_crm.archive.urls import (
+    api_urls as archive_api_urls,
+    view_urls as archive_view_urls,
+)
 from hyakumori_crm.activity.urls import api_urls as activity_api_urls
 from hyakumori_crm.tags.urls import api_urls as tags_api_urls
 from hyakumori_crm.cache.urls import api_urls as cache_api_urls
 from hyakumori_crm.contracts.urls import api_urls as contracttype_api_urls
+from hyakumori_crm.postal_history.urls import api_urls as postalhistory_api_urls
+
 from .views import notfound_view, maintenance_status
 
 urlpatterns = (
@@ -22,6 +26,7 @@ urlpatterns = (
     + tags_api_urls
     + cache_api_urls
     + contracttype_api_urls
+    + postalhistory_api_urls
     + [path("maintenance/status", maintenance_status), re_path(".*", notfound_view)]
 )
 

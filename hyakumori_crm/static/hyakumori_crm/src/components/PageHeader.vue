@@ -54,6 +54,15 @@
               </router-link>
             </div>
 
+            <div
+              class="menu--item"
+              v-acl-only="['manage_postalhistory', 'view_postalhistory']"
+            >
+              <router-link class="f14" to="/postal-histories">
+                {{ $t("page_header.postalhistory_mgmt") }}
+              </router-link>
+            </div>
+
             <div class="menu--item" v-acl-only="['admin', 'group_admin']">
               <router-link class="f14" to="/users">
                 {{ $t("page_header.user_mgmt") }}

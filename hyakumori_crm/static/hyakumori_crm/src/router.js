@@ -6,6 +6,9 @@ import DefaultLayout from "./layouts/DefaultLayout";
 import Forest from "./screens/Forest.vue";
 import ForestDetail from "./screens/ForestDetail";
 import MainLayout from "./layouts/MainLayout";
+import PostalHistory from "./screens/PostalHistory/PostalHistory.vue";
+import PostalHistoryDetail from "./screens/PostalHistory/PostalHistoryDetail.vue";
+
 import Vue from "vue";
 import VueRouter from "vue-router";
 
@@ -226,6 +229,38 @@ const router = new VueRouter({
             title: "page_header.archive_detail",
             isPublic: false,
             scopes: ["manage_archive", "view_archive"],
+          },
+        },
+        {
+          path: "/postal-histories",
+          name: "postalHistories",
+          component: PostalHistory,
+          meta: {
+            title: "page_header.postalhistory_mgmt",
+            isPublic: false,
+            scopes: ["manage_postalhistory", "view_postalhistory"],
+          },
+        },
+        {
+          path: "/postal-histories/new",
+          name: "postalHistoryNew",
+          component: PostalHistoryDetail,
+          meta: {
+            detail: true,
+            title: "page_header.postalhistory_new",
+            isPublic: false,
+            scopes: ["manage_postalhistory"],
+          },
+        },
+        {
+          path: "/postal-histories/:id",
+          name: "postalHistoryDetail",
+          component: PostalHistoryDetail,
+          meta: {
+            detail: true,
+            title: "page_header.postalhistory_detail",
+            isPublic: false,
+            scopes: ["manage_postalhistory", "view_postalhistory"],
           },
         },
       ],

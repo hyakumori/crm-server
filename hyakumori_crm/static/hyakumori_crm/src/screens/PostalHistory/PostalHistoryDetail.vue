@@ -2,29 +2,29 @@
   <main-section>
     <template #section class="archives-detail">
       <div class="archives-detail__section">
-        <archive-basic-info-container
+        <postal-history-info-container
           :isDetail="isDetail"
           :id="id"
           @input="archive = $event"
           toggleEditBtnContent="追加・編集"
-          headerContent="協議情報"
+          headerContent="書類送付情報"
           :allowEdit="allowEdit"
         />
 
-        <archive-document-container
+        <postal-history-document-container
           addBtnContent="追加"
           class="mt-8"
           toggleEditBtnContent="追加・編集"
-          headerContent="配布資料等"
+          headerContent="送付資料など"
           v-if="isDetail"
           :allowEdit="allowEdit"
         />
 
-        <archive-participant-container
+        <postal-history-participant-container
           addBtnContent="追加"
           class="mt-9"
           toggleEditBtnContent="追加・編集"
-          headerContent="先方参加者"
+          headerContent="送付先"
           v-if="isDetail"
           @saved="fetchParticipants"
           :id="id"
@@ -32,26 +32,16 @@
           :allowEdit="allowEdit"
         />
 
-        <archive-related-user-container
+        <postal-history-related-user-container
           addBtnContent="追加"
           class="mt-9"
           toggleEditBtnContent="追加・編集"
-          headerContent="当方参加者"
+          headerContent="送付者"
           v-if="isDetail"
           :allowEdit="allowEdit"
         />
 
-        <archive-other-related-users-container
-          addBtnContent="追加"
-          class="mt-9"
-          toggleEditBtnContent="追加・編集"
-          headerContent="その他当方参加者"
-          v-if="isDetail"
-          :allowEdit="allowEdit"
-          :archive="archive"
-        />
-
-        <archive-related-forest-container
+        <postal-history-related-forest-container
           addBtnContent="追加"
           class="mt-9"
           toggleEditBtnContent="追加・編集"
@@ -65,14 +55,14 @@
       <div class="right-column" v-if="isDetail">
         <tag-detail-card
           app-name="crm"
-          object-type="archive"
+          object-type="postalhistory"
           :object-id="$route.params.id"
           :tags="archiveTags"
           @input="archive.tags = $event"
         ></tag-detail-card>
         <action-log
           app-name="crm"
-          object-type="archive"
+          object-type="postalhistory"
           :object-id="$route.params.id"
         ></action-log>
       </div>
@@ -81,46 +71,42 @@
 </template>
 
 <script>
-import MainSection from "../components/MainSection";
-import ScreenMixin from "./ScreenMixin";
-import ArchiveBasicInfoContainer from "../components/detail/ArchiveBasicInfoContainer";
-import ArchiveDocumentContainer from "../components/detail/ArchiveDocumentContainer";
-import ArchiveParticipantContainer from "../components/detail/ArchiveParticipantContainer";
-import ArchiveRelatedForestContainer from "../components/detail/ArchiveRelatedForestContainer";
-import ArchiveOtherRelatedUsersContainer from "../components/detail/ArchiveOtherRelatedUsersContainer";
-import ActionLog from "../components/detail/ActionLog";
-import TagDetailCard from "../components/tags/TagDetailCard";
-import ArchiveRelatedUserContainer from "../components/detail/ArchiveRelatedUserContainer";
-import { getDate } from "../helpers/datetime";
 import { get as _get } from "lodash";
+import MainSection from "@/components/MainSection";
+import ActionLog from "@/components/detail/ActionLog";
+import TagDetailCard from "@/components/tags/TagDetailCard";
+import { getDate } from "@/helpers/datetime";
+import ScreenMixin from "@/screens/ScreenMixin";
+import PostalHistoryInfoContainer from "./PostalHistoryInfoContainer";
+import PostalHistoryDocumentContainer from "./PostalHistoryDocumentContainer";
+import PostalHistoryParticipantContainer from "./PostalHistoryParticipantContainer";
+import PostalHistoryRelatedForestContainer from "./PostalHistoryRelatedForestContainer";
+import PostalHistoryRelatedUserContainer from "./PostalHistoryRelatedUserContainer";
 
 export default {
-  name: "archive-detail",
-
   mixins: [ScreenMixin],
 
   components: {
     MainSection,
-    ArchiveBasicInfoContainer,
-    ArchiveDocumentContainer,
-    ArchiveParticipantContainer,
-    ArchiveRelatedForestContainer,
-    ArchiveOtherRelatedUsersContainer,
-    ActionLog,
+    PostalHistoryInfoContainer,
+    PostalHistoryDocumentContainer,
+    PostalHistoryParticipantContainer,
+    PostalHistoryRelatedForestContainer,
+    PostalHistoryRelatedUserContainer,
     TagDetailCard,
-    ArchiveRelatedUserContainer,
+    ActionLog,
   },
 
   data() {
     return {
       pageIcon: this.$t("icon.archive_icon"),
-      backBtnContent: this.$t("page_header.archive_mgmt"),
+      backBtnContent: this.$t("page_header.postalhistory_mgmt"),
       archiveTags: {},
       archive: null,
       headerInfo: {
-        title: this.$t("page_header.archive_new"),
+        title: this.$t("page_header.postalhistory_new"),
         subTitle: "",
-        backUrl: "/archives",
+        backUrl: "/postal-histories",
       },
       participants: [],
       participantsLoading: false,
@@ -141,9 +127,10 @@ export default {
 
   methods: {
     forceRefreshCache() {
+      return;
       try {
         this.$rest.post(
-          `/cache/archives/${this.id}`,
+          `/cache/postal-histories/${this.id}`,
           {},
           { no_activity: true },
         );
@@ -155,7 +142,7 @@ export default {
       this.participantsLoading = true;
       try {
         this.participants = await this.$rest.get(
-          `/archives/${this.id}/customers`,
+          `/postal-histories/${this.id}/customers`,
         );
       } catch (error) {}
       this.participantsLoading = false;
@@ -183,7 +170,7 @@ export default {
           getDate(this.archive.archive_date) +
           " " +
           this.renderParticipants(this.archive),
-        backUrl: "/archives",
+        backUrl: "/postal-histories",
         tags: this.archive.tags,
       });
     },
