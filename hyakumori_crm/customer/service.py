@@ -282,14 +282,19 @@ def contacts_list_with_search(search_str: str = None):
     queryset = Contact.objects.annotate(
         forests_count=Subquery(cc.values("forests_count")[:1]),
         business_id=Subquery(cc_business_id.values("business_id")[:1]),
+        customer_name_kanji_text=RawSQL(
+            "concat(name_kanji->>'last_name', ' ', name_kanji->>'first_name')",
+            params=[],
+        ),
+        customer_name_kana_text=RawSQL(
+            "concat(name_kana->>'last_name', ' ', name_kana->>'first_name')", params=[],
+        ),
     ).all()
 
     if search_str:
         queryset = queryset.filter(
-            Q(name_kanji__first_name__icontains=search_str)
-            | Q(name_kanji__last_name__icontains=search_str)
-            | Q(name_kana__first_name__icontains=search_str)
-            | Q(name_kana__last_name__icontains=search_str)
+            Q(customer_name_kanji_text__icontains=search_str)
+            | Q(customer_name_kana_text__icontains=search_str)
             | Q(postal_code__icontains=search_str)
             | Q(telephone__icontains=search_str)
             | Q(mobilephone__icontains=search_str)
@@ -314,11 +319,27 @@ def customercontacts_list_with_search(search_str: str = None):
             forests_count=Subquery(cc_forests_count.values("forests_count")[:1]),
             cc_attrs=F("customercontact__attributes"),
             customer_name_kanji=RawSQL(
-                """(select C0.name_kanji
+                """select C0.name_kanji
                     from crm_contact C0
                     join crm_customercontact CC0
                         on C0.id = CC0.contact_id and CC0.is_basic = true
-                where CC0.customer_id = crm_customercontact.customer_id)""",
+                where CC0.customer_id = crm_customercontact.customer_id""",
+                params=[],
+            ),
+            customer_name_kanji_text=RawSQL(
+                """select concat(C0.name_kanji->>'last_name', ' ', C0.name_kanji->>'first_name')
+                    from crm_contact C0
+                    join crm_customercontact CC0
+                        on C0.id = CC0.contact_id and CC0.is_basic = true
+                where CC0.customer_id = crm_customercontact.customer_id""",
+                params=[],
+            ),
+            customer_name_kana_text=RawSQL(
+                """select concat(C0.name_kana->>'last_name', ' ', C0.name_kana->>'first_name')
+                    from crm_contact C0
+                    join crm_customercontact CC0
+                        on C0.id = CC0.contact_id and CC0.is_basic = true
+                where CC0.customer_id = crm_customercontact.customer_id""",
                 params=[],
             ),
         )
@@ -327,10 +348,8 @@ def customercontacts_list_with_search(search_str: str = None):
     )
     if search_str:
         queryset = queryset.filter(
-            Q(name_kanji__first_name__icontains=search_str)
-            | Q(name_kanji__last_name__icontains=search_str)
-            | Q(name_kana__first_name__icontains=search_str)
-            | Q(name_kana__last_name__icontains=search_str)
+            Q(customer_name_kanji_text__icontains=search_str)
+            | Q(customer_name_kana_text__icontains=search_str)
             | Q(postal_code__icontains=search_str)
             | Q(telephone__icontains=search_str)
             | Q(mobilephone__icontains=search_str)
@@ -424,7 +443,9 @@ def update_contacts(contacts_in: ContactsInput):
             if cc.attributes.get("contact_type") == ContactType.forest:
                 cc.force_delete()
         else:
-            cc.force_delete()
+            # make sure other or family contact of a customer
+            # was add to forest contact of another customer get delete first
+            contact.customercontact_set.all().delete()
             contact.force_delete()
 
     customer.save(update_fields=["updated_at"])
