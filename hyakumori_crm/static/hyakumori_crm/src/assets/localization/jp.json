@@ -159,7 +159,7 @@
     "page_not_found_text": "要求したページは見つかりませんでした。",
     "permission_denied": "アクセス拒否",
     "record_updated_before_please_reload_first": "リソースは以前に更新されています。 最初にリロードしてください！",
-    "reset_password_confirm_help_text": "パスワードを再発行するには、新しいパスワードを2ド入力してください。",
+    "reset_password_confirm_help_text": "パスワードを再発行するには、新しいパスワードを2度入力してください。",
     "reset_password_success": "パスワードが変更できました。{seconds}秒後にログイン画面にリダイレクトします。",
     "reset_password_url_sent": "再発行用のURLをご登録のメールアドレス宛てに送信しました。",
     "token_stale": "無効または期限切リンク",
