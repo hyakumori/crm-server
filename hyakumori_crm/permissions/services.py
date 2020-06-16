@@ -129,6 +129,7 @@ class PermissionService:
                 "manage_forest",
                 "manage_customer",
                 "manage_archive",
+                "manage_postalhistory",
                 "manage_tagsetting",
                 "add_forest",
                 "change_forest",
@@ -142,6 +143,10 @@ class PermissionService:
                 "change_archive",
                 "delete_archive",
                 "view_archive",
+                "add_postalhistory",
+                "change_postalhistory",
+                "delete_postalhistory",
+                "view_postalhistory",
                 "add_tagsetting",
                 "change_tagsetting",
                 "delete_tagsetting",
@@ -172,7 +177,13 @@ class PermissionService:
                 name=SystemGroups.GROUP_LIMITED_USER
             )
             normal_user_group_permissions = Permission.objects.filter(
-                codename__in=["view_forest", "view_archive", "manage_archive"]
+                codename__in=[
+                    "view_forest",
+                    "view_archive",
+                    "manage_archive",
+                    "view_postalhistory",
+                    "manage_postalhistory",
+                ]
             ).all()
             normal_user_group.permissions.clear()
             normal_user_group.permissions.add(*normal_user_group_permissions)

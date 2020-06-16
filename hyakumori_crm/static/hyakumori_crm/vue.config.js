@@ -1,3 +1,5 @@
+const path = require("path");
+
 module.exports = {
   devServer: {
     proxy: {
@@ -16,6 +18,14 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: true,
+    },
+  },
+  configureWebpack: {
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "src"),
+      },
+      extensions: [".vue", ".js"],
     },
   },
   transpileDependencies: ["vuetify"],

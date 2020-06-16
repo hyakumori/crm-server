@@ -20,6 +20,7 @@
         :isUpdate="isUpdate"
         :attaches="archiveCollapse"
         :ripple="false"
+        :routeName="routeName"
       />
     </template>
     <p
@@ -50,6 +51,7 @@ export default {
   props: {
     id: String,
     archives: { type: Array, default: () => [] },
+    routeName: { type: String, default: "archive-detail" },
   },
 
   data() {

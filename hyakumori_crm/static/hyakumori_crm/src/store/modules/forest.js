@@ -10,7 +10,9 @@ const state = {
   customersContacts: [],
   customersContactsLoading: false,
   archives: [],
+  postalHistories: [],
   archivesLoading: false,
+  postalHistoriesLoading: false,
 };
 
 const getters = {
@@ -79,6 +81,12 @@ const actions = {
     commit("setArchives", archives);
     commit("archivesLoadingOff");
   },
+  async getPostalHistories({ commit }, id) {
+    commit("postalHistoriesLoadingOn");
+    const postalHistories = await forestApi.fetchForestPostalHistories(id);
+    commit("setPostalHistories", postalHistories);
+    commit("postalHistoriesLoadingOff");
+  },
   toggleDefaultCustomerLocal({ commit }, { customer_id, val }) {
     commit("toggleDefaultCustomerLocal", { customer_id, val });
   },
@@ -141,6 +149,15 @@ const mutations = {
   },
   archivesLoadingOff() {
     state.archivesLoading = false;
+  },
+  setPostalHistories(state, postalHistories) {
+    state.postalHistories = postalHistories;
+  },
+  postalHistoriesLoadingOn() {
+    state.postalHistoriesLoading = true;
+  },
+  postalHistoriesLoadingOff() {
+    state.postalHistoriesLoading = false;
   },
   toggleDefaultCustomerLocal(state, { customer_id, val }) {
     const newCustomers = [...state.customers];

@@ -35,6 +35,16 @@
           :archives="$store.state.forest.archives"
         />
 
+        <attachment-container
+          v-acl-only="['manage_postalhistory', 'view_postalhistory']"
+          class="postal-histories"
+          headerContent="協議履歴"
+          toggleEditBtnContent="追加・編集"
+          addBtnContent="追加"
+          :archives="$store.state.forest.postalHistories"
+          routeName="postalHistoryDetail"
+        />
+
         <div id="forest-attributes">
           <content-header
             class="mt-9"
@@ -131,6 +141,7 @@ export default {
     this.$store.dispatch("forest/getCustomers", this.id);
     this.$store.dispatch("forest/getCustomersContacts", this.id);
     this.$store.dispatch("forest/getArchives", this.id);
+    this.$store.dispatch("forest/getPostalHistories", this.id);
   },
   methods: {
     fallbackText(text) {

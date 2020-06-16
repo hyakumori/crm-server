@@ -1,0 +1,250 @@
+<template>
+  <div>
+    <content-header
+      :content="headerContent"
+      :toggleEditBtnContent="toggleEditBtnContent"
+      :update="isEditing"
+      @toggleEdit="handleToggleEdit"
+      class="mb-4"
+      :displayAdditionBtn="allowEdit"
+    />
+    <archive-participant-list
+      :participants="tempUserParticipants"
+      :isUpdate="isEditing"
+      @deleteParticipant="handleDelete"
+      @undoDeletedParticipant="handleUndoDelete"
+    />
+    <select-list-modal
+      submitBtnIcon="mdi-plus"
+      :loading="itemsForAddingLoading"
+      :submitBtnText="$t('buttons.add')"
+      :shown.sync="showSelect"
+      :handleSubmitClick="submitRelatedParticipant"
+      :disableAdditionBtn="itemsForAddingLoading || !modalSelectingId"
+      :handleCancelClick="onCancel"
+      @search="debounceLoadInitItemsForAdding"
+      @needToLoad="handleLoadMore"
+      ref="selectListModal"
+    >
+      <template #list>
+        <p v-if="showNotFoundMsg" class="text-center">
+          {{ $t("messages.not_found") }}
+        </p>
+        <p
+          class="text-center"
+          v-if="itemsForAdding.results.length === 0 && !showNotFoundMsg"
+        >
+          {{ $t("messages.out_of_data") }}
+        </p>
+        <archive-participant-card
+          v-for="(participant, index) in itemsForAdding.results"
+          showPointer
+          :key="index"
+          :index="index"
+          :name="participant.full_name"
+          :showAction="false"
+          :card_id="participant.id"
+          :selectedId="modalSelectingId"
+          @selected="
+            (pId, pIndex) => {
+              modalSelectingId = pId;
+              modalSelectingIndex = pIndex;
+            }
+          "
+          flat
+        />
+      </template>
+    </select-list-modal>
+    <template v-if="isEditing">
+      <addition-button
+        class="my-2"
+        :content="addBtnContent"
+        :click="() => (showSelect = true)"
+      />
+      <update-button
+        :cancel="cancel"
+        :saving="saving"
+        :save="updateParticipant"
+        :saveDisabled="saveDisabled"
+      />
+    </template>
+  </div>
+</template>
+
+<script>
+import ContentHeader from "@/components/detail/ContentHeader";
+import ContainerMixin from "@/components/detail/ContainerMixin";
+import SelectListModalMixin from "@/components/detail/SelectListModalMixin";
+import ArchiveDetailMixin from "@/components/detail/ArchiveDetailMixin";
+import ArchiveParticipantList from "@/components/detail/ArchiveParticipantList";
+import AdditionButton from "@/components/AdditionButton";
+import UpdateButton from "@/components/detail/UpdateButton";
+import SelectListModal from "@/components/SelectListModal";
+import ArchiveParticipantCard from "@/components/detail/ArchiveParticipantCard";
+import { reject } from "lodash";
+
+export default {
+  mixins: [ContainerMixin, SelectListModalMixin, ArchiveDetailMixin],
+
+  components: {
+    ContentHeader,
+    ArchiveParticipantList,
+    UpdateButton,
+    AdditionButton,
+    SelectListModal,
+    ArchiveParticipantCard,
+  },
+
+  data() {
+    return {
+      archive_id: this.$route.params.id,
+      userParticipants: [],
+      addedParticipants: [],
+      deletedParticipants: [],
+      itemsForAddingUrl: "/users/minimal",
+      isLoading_: false,
+    };
+  },
+
+  mounted() {
+    this.fetchRelatedParticipants();
+  },
+
+  methods: {
+    itemsForAddingResultFilter(p) {
+      return this.userIdsMap[p.id];
+    },
+    handleToggleEdit(val) {
+      this.isEditing = val;
+    },
+
+    async updateParticipant() {
+      this.saving = true;
+      try {
+        await this.deleteParticipants();
+        await this.addParticipants();
+        this.fetchRelatedParticipants();
+        this.isEditing = false;
+      } catch (err) {}
+      this.saving = false;
+    },
+
+    async deleteParticipants() {
+      if (this.deletedParticipants.length > 0) {
+        const deletedIds = this.deletedParticipants.map(p => p.id);
+        const isDeleted = await this.$rest.delete(
+          `/postal-histories/${this.archive_id}/users`,
+          {
+            data: {
+              ids: deletedIds,
+            },
+          },
+        );
+        if (isDeleted) {
+          this.modalSelectingId = null;
+        }
+      }
+    },
+
+    async addParticipants() {
+      if (this.addedParticipants.length > 0) {
+        const addedIds = this.addedParticipants.map(p => p.id);
+        const newParticipants = await this.$rest.post(
+          `/postal-histories/${this.archive_id}/users`,
+          { ids: addedIds },
+        );
+        if (newParticipants) {
+        }
+      }
+    },
+
+    fetchRelatedParticipants() {
+      this.isLoading_ = true;
+      this.$rest
+        .get(`/postal-histories/${this.archive_id}/users`)
+        .then(async response => {
+          let tempRelatedData = response.results;
+          let next = response.next;
+          while (!!next) {
+            const paginationResponse = await this.$rest.get(next);
+            if (paginationResponse) {
+              tempRelatedData.push(...paginationResponse.results);
+              next = paginationResponse.next;
+            }
+          }
+          this.userParticipants = tempRelatedData;
+          this.isLoading_ = false;
+        });
+    },
+
+    submitRelatedParticipant() {
+      const participant = this.itemsForAdding.results.splice(
+        this.modalSelectingIndex,
+        1,
+      )[0];
+      participant.added = true;
+      this.addedParticipants.push(participant);
+      this.modalSelectingIndex = null;
+      this.modalSelectingId = null;
+      if (this.itemsForAdding.results.length <= 3) {
+        this.handleLoadMore();
+      }
+    },
+    handleDelete(participant) {
+      if (participant.added) {
+        delete participant.added;
+        this.addedParticipants = reject(this.addedParticipants, {
+          id: participant.id,
+        });
+        this.itemsForAdding = { results: [] };
+      } else {
+        this.$set(participant, "deleted", true);
+        this.deletedParticipants.push(participant);
+      }
+    },
+    handleUndoDelete(participant) {
+      this.$set(participant, "deleted", undefined);
+      this.deletedParticipants = reject(this.deletedParticipants, {
+        id: participant.id,
+      });
+    },
+  },
+
+  computed: {
+    tempUserParticipants() {
+      return [...this.userParticipants, ...this.addedParticipants];
+    },
+    userIdsMap() {
+      return Object.fromEntries(
+        this.tempUserParticipants.map(u => [u.id, true]),
+      );
+    },
+    saveDisabled() {
+      return (
+        this.addedParticipants.length === 0 &&
+        this.deletedParticipants.length === 0
+      );
+    },
+  },
+
+  watch: {
+    isEditing(val) {
+      if (!val) {
+        if (this.addedParticipants.length > 0) {
+          this.addedParticipants = [];
+          this.itemsForAdding = { results: [] };
+        }
+        for (let p of this.deletedParticipants) {
+          this.$set(p, "deleted", undefined);
+        }
+        if (this.deletedParticipants.length > 0) {
+          this.deletedParticipants = [];
+          this.itemsForAdding = { results: [] };
+        }
+      }
+    },
+  },
+};
+</script>
+
+<style scoped></style>

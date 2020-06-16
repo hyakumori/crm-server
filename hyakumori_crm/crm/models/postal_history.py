@@ -3,16 +3,14 @@ from django.contrib.postgres.fields import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 
-from ...activity.constants import ArchiveActions
 from ...core.models import BaseResourceModel, BaseRelationModel
+from ...activity.constants import PostalHistoryActions
 
 
-class Archive(BaseResourceModel):
+class PostalHistory(BaseResourceModel):
     title = models.CharField(max_length=255, blank=True)
     content = models.TextField(null=True)
     archive_date = models.DateTimeField(null=True)
-    location = models.CharField(max_length=255, null=True)
-    future_action = models.CharField(max_length=255, null=True)
     author = models.ForeignKey(
         get_user_model(), on_delete=models.DO_NOTHING, default=None, null=True
     )
@@ -20,34 +18,31 @@ class Archive(BaseResourceModel):
 
     class Meta:
         permissions = [
-            ("manage_archive", "All permissions for archive"),
+            ("manage_postalhistory", "All permissions for postal history"),
         ]
 
     @property
     def actions(self):
-        return ArchiveActions
+        return PostalHistoryActions
 
 
-class ArchiveForest(BaseRelationModel):
-    archive = models.ForeignKey("Archive", on_delete=models.PROTECT)
+class PostalHistoryForest(BaseRelationModel):
+    postalhistory = models.ForeignKey("PostalHistory", on_delete=models.PROTECT)
     forest = models.ForeignKey("Forest", on_delete=models.CASCADE)
 
-    class Meta:
-        permissions = [
-            ("manage_archivecustomer", "All permissions for archive forest"),
-        ]
 
-
-class ArchiveCustomer(BaseRelationModel):
-    archive = models.ForeignKey("Archive", on_delete=models.PROTECT)
+class PostalHistoryCustomer(BaseRelationModel):
+    postalhistory = models.ForeignKey("PostalHistory", on_delete=models.PROTECT)
     customer = models.ForeignKey("Customer", on_delete=models.CASCADE)
 
 
-class ArchiveCustomerContact(BaseRelationModel):
-    archivecustomer = models.ForeignKey("ArchiveCustomer", on_delete=models.CASCADE)
+class PostalHistoryCustomerContact(BaseRelationModel):
+    postalhistorycustomer = models.ForeignKey(
+        "PostalHistoryCustomer", on_delete=models.CASCADE
+    )
     customercontact = models.ForeignKey("CustomerContact", on_delete=models.CASCADE)
 
 
-class ArchiveUser(BaseRelationModel):
-    archive = models.ForeignKey("Archive", on_delete=models.PROTECT)
+class PostalHistoryUser(BaseRelationModel):
+    postalhistory = models.ForeignKey("PostalHistory", on_delete=models.PROTECT)
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
