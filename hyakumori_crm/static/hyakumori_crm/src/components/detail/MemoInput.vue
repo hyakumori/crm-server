@@ -34,7 +34,13 @@
         </div>
 
         <div class="memo-input__value" v-else>
-          <ValidationProvider v-slot="{ errors }" slim>
+          <ValidationProvider
+            name="備考"
+            v-slot="{ errors, invalid }"
+            slim
+            rules="max:255"
+            mode="aggressive"
+          >
             <v-textarea
               outlined
               name="input-7-4"
@@ -45,7 +51,7 @@
 
             <update-button
               class="mb-2"
-              :saveDisabled="!hasChanged"
+              :saveDisabled="!hasChanged || invalid"
               :cancel="onCancel"
               :save="onSave"
               :saving="isLoading"
@@ -92,13 +98,14 @@ export default {
           this.memo = response.memo;
           this.value.attributes["memo"] = response.memo;
           this.$emit("input", this.value);
+          this.isUpdate = false;
         }
       } catch (e) {
+        if (e.response && e.response.status === 400) {
+          this.$dialog.notify.error(e.response.data.errors.memo[0]);
+        }
       } finally {
-        setTimeout(() => {
-          this.isLoading = false;
-          this.isUpdate = false;
-        }, 300);
+        this.isLoading = false;
       }
     },
     onCancel() {

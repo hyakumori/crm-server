@@ -41,7 +41,26 @@
           </p>
         </div>
       </template>
-
+      <template
+        v-if="showSelect"
+        v-slot:header.data-table-select="{ on, props }"
+      >
+        <v-simple-checkbox
+          :ripple="false"
+          v-bind="props"
+          v-on="on"
+        ></v-simple-checkbox>
+      </template>
+      <template
+        v-if="showSelect"
+        v-slot:item.data-table-select="{ isSelected, select }"
+      >
+        <v-simple-checkbox
+          :ripple="false"
+          :value="isSelected"
+          @input="select($event)"
+        ></v-simple-checkbox>
+      </template>
       <template v-slot:item.tags="{ item }" class="text-truncate">
         <template v-for="(tag, name, index) in item['tags']">
           <p class="tag" v-if="tag && name" :key="index">
@@ -149,7 +168,13 @@ export default {
         headers.push(headerSelection);
         return headers;
       }
-      return [...this.headers, headerSelection];
+      return this.showSelect
+        ? [
+            { value: "data-table-select", width: 100, align: "center" },
+            ...this.headers,
+            headerSelection,
+          ]
+        : [...this.headers, headerSelection];
     },
   },
   created() {
@@ -315,6 +340,9 @@ export default {
     th:nth-child(2) {
       text-align: center !important;
     }
+  }
+  .v-input--selection-controls__ripple {
+    border-radius: 0 !important;
   }
 }
 </style>
