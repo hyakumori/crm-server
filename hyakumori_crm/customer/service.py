@@ -342,22 +342,6 @@ def customercontacts_list_with_search(search_str: str = None):
     return queryset
 
 
-def delete_customer_contacts(contacts_delete_in: dict):
-    customer = contacts_delete_in.customer
-    contacts = contacts_delete_in.contacts
-    customer_contact = CustomerContact.filter(
-        customer_id=customer.pk, contact_id__in=map(lambda c: c.pk, contacts)
-    ).delete()
-    # should we really delete contact or just relation to customer?
-    for contact in contacts:
-        try:
-            contact.delete()
-        except IntegrityError:
-            pass
-    customer.save(update_fields=["updated_at"])
-    return customer
-
-
 def update_forests(data):
     """
     Assign forests to user, support delete, add forest
@@ -486,12 +470,16 @@ def create_contact(customer, contact_in):
 
 def get_customer_archives(pk):
     contact_id = CustomerContact.objects.get(customer_id=pk, is_basic=True).contact_id
-    return Archive.objects.distinct().filter(
-        Q(archivecustomer__customer_id=pk)
-        | Q(
-            archivecustomer__archivecustomercontact__customercontact__contact_id=contact_id
+    return (
+        Archive.objects.distinct()
+        .filter(
+            Q(archivecustomer__customer_id=pk)
+            | Q(
+                archivecustomer__archivecustomercontact__customercontact__contact_id=contact_id
+            )
         )
-    ).order_by("-created_at")
+        .order_by("-created_at")
+    )
 
 
 def get_customer_contacts_forests(pk):

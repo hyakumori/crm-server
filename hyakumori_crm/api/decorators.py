@@ -129,12 +129,7 @@ def api_validate_model(input_model, arg_name="data", methods=["POST", "PUT", "PA
                 except ValidationError as e:
                     return Response({"errors": errors_wrapper(e.errors())}, status=400)
 
-            try:
-                return f(*args, **kwargs)
-            except Exception as e:
-                logger.exception(e)
-                # sentry logs etc.
-                return Response({"errors": dict(message=str(e))}, status=500)
+            return f(*args, **kwargs)
 
         return wrapper
 
