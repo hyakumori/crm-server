@@ -46,7 +46,6 @@ from .schemas import (
 from .service import (
     contacts_list_with_search,
     create,
-    delete_customer_contacts,
     get_customer_by_pk,
     get_customer_contacts,
     get_customer_forests,
@@ -142,9 +141,14 @@ class CustomerViewSets(ViewSet):
             return Response({"id": contact.id}, status=201)
         else:
             update_contacts(data)
-            ActivityService.log(
-                CustomerActions.direct_contacts_updated, customer, request=request
-            )
+            if data.contact_type == ContactType.family:
+                action_type = CustomerActions.family_contacts_updated
+            elif data.contact_type == ContactType.others:
+                action_type = CustomerActions.other_contacts_updated
+            else:
+                action_type = CustomerActions.direct_contacts_updated
+            ActivityService.log(action_type, customer, request=request)
+
             return Response({"id": data.customer.id})
 
     @action(detail=True, methods=["GET", "PUT", "PATCH"])
@@ -171,18 +175,6 @@ class CustomerViewSets(ViewSet):
                 CustomerActions.forests_updated, customer, request=request
             )
             return Response({"id": data.customer.pk})
-
-    @action(detail=True, methods=["DELETE"], url_path="contacts")
-    @get_or_404(
-        get_func=get_customer_by_pk, to_name="customer", remove=True,
-    )
-    @api_validate_model(CustomerContactsDeleteInput)
-    def delete_contacts(self, request, *, data: CustomerContactsDeleteInput = None):
-        delete_customer_contacts(data)
-        ActivityService.log(
-            CustomerActions.direct_contacts_updated, data.customer, request=request
-        )
-        return Response({"id": data.forest.id})
 
     @action(detail=True, methods=["POST"], url_path="memo")
     @get_or_404(
