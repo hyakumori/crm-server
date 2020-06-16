@@ -327,19 +327,11 @@ def customercontacts_list_with_search(search_str: str = None):
                 params=[],
             ),
             customer_name_kanji_text=RawSQL(
-                """select concat(C0.name_kanji->>'last_name', ' ', C0.name_kanji->>'first_name')
-                    from crm_contact C0
-                    join crm_customercontact CC0
-                        on C0.id = CC0.contact_id and CC0.is_basic = true
-                where CC0.customer_id = crm_customercontact.customer_id""",
+                "concat(crm_contact.name_kanji->>'last_name', ' ', crm_contact.name_kanji->>'first_name')",
                 params=[],
             ),
             customer_name_kana_text=RawSQL(
-                """select concat(C0.name_kana->>'last_name', ' ', C0.name_kana->>'first_name')
-                    from crm_contact C0
-                    join crm_customercontact CC0
-                        on C0.id = CC0.contact_id and CC0.is_basic = true
-                where CC0.customer_id = crm_customercontact.customer_id""",
+                "select concat(crm_contact.name_kana->>'last_name', ' ', crm_contact.name_kana->>'first_name')",
                 params=[],
             ),
         )
