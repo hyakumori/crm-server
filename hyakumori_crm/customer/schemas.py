@@ -207,7 +207,6 @@ class NonDirectContactType(str, Enum):
 class SingleSelectContactInput(HyakumoriDanticModel):
     contact: Contact
     relationship_type: Optional[RelationshipType]
-    forest_id: Optional[UUID]
 
     class Config:
         arbitrary_types_allowed = True
@@ -227,6 +226,7 @@ class ContactsInput(HyakumoriDanticModel):
     adding: List[SingleSelectContactInput] = []
     deleting: List[UUID] = []
     contact_type: ContactType
+    forest_id: Optional[UUID]
 
     class Config:
         arbitrary_types_allowed = True
@@ -245,19 +245,17 @@ class ContactsInput(HyakumoriDanticModel):
     @root_validator
     def validate_contact_type_and_forest_id(cls, values):
         contact_type = values.get("contact_type")
+        forest_id = values.get("forest_id")
         if not contact_type:
             return values
-        adding = values.get("adding")
-        for c in adding:
-            if not c.forest_id and contact_type == ContactType.forest:
-                raise ValueError(_("forest_id not provied for contact_type FOREST"))
+        if contact_type == ContactType.forest and not forest_id:
+            raise ValueError(_("forest_id not provied for contact_type FOREST"))
+        elif (
+            contact_type == ContactType.forest
+            and forest_id not in cls.customer_forest_pks
+        ):
+            raise ValueError(_("customer does not have supplied forest_id"))
         return values
-
-    @validator("adding", each_item=True)
-    def validate_adding_forest_ids(cls, v):
-        if v.forest_id and v.forest_id not in cls.customer_forest_pks:
-            raise ValueError(_("Forest {} not found").format(v.forest_id))
-        return v
 
     @validator("deleting", each_item=True)
     def validate_deleting_contact_ids(cls, v):
