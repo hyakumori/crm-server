@@ -131,7 +131,6 @@ export default {
     contactsAddData() {
       return [...this.contactsToAdd, ...this.relationshipChanges].map(c => ({
         contact: c.id,
-        forest_id: c.forest_id,
         relationship_type: c.relationship_type,
       }));
     },
@@ -199,6 +198,7 @@ export default {
           adding: this.contactsAddData,
           deleting: this.contactIdsToDelete,
           contact_type: this.contactType || "FOREST",
+          forest_id: this.selectingForestId,
         });
         this.$emit("saved");
         this.saving = false;
@@ -217,6 +217,10 @@ export default {
     },
   },
   watch: {
+    selectingForestId() {
+      this.contactsToAdd = [];
+      this.contactsToDelete = [];
+    },
     contacts: {
       deep: true,
       handler(val) {
