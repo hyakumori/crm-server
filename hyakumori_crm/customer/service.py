@@ -3,7 +3,7 @@ import itertools
 from typing import Iterator, Union
 from uuid import UUID
 
-from django.db import DataError, IntegrityError, connection
+from django.db import DataError, connection
 from django.db.models import Count, F, OuterRef, Q, Subquery
 from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
@@ -399,17 +399,17 @@ def update_forests(data):
 def update_contacts(contacts_in: ContactsInput):
     customer = contacts_in.customer
     adding = contacts_in.adding
+    if contacts_in.contact_type == ContactType.forest:
+        forestcustomer = customer.forestcustomer_set.get(
+            forest_id=contacts_in.forest_id
+        )
+    else:
+        forestcustomer = None
     for contact_data in adding:
         customer_contact, created = CustomerContact.objects.get_or_create(
             customer_id=customer.id, contact_id=contact_data.contact.pk
         )
-        if contact_data.forest_id and contacts_in.contact_type == ContactType.forest:
-            forestcustomer = next(
-                filter(
-                    lambda fc: fc.forest_id == contact_data.forest_id,
-                    customer.forestcustomer_set.all(),
-                )
-            )
+        if forestcustomer:
             ForestCustomerContact.objects.get_or_create(
                 forestcustomer=forestcustomer, customercontact=customer_contact
             )
@@ -425,14 +425,18 @@ def update_contacts(contacts_in: ContactsInput):
             ] = contact_data.relationship_type.value
         customer_contact.save(update_fields=["attributes", "updated_at"])
 
-    customercontacts = CustomerContact.objects.filter(
-        contact_id__in=contacts_in.deleting, customer_id=customer.id,
-    ).prefetch_related("contact")
+    customercontacts = []
+    if contacts_in.deleting:
+        customercontacts = CustomerContact.objects.filter(
+            contact_id__in=contacts_in.deleting, customer_id=customer.id,
+        ).prefetch_related("contact")
     for cc in customercontacts:
         contact = cc.contact
         if contacts_in.contact_type == ContactType.forest:
-            cc.forestcustomercontact_set.all().delete()
-            if cc.attributes.get("contact_type") == ContactType.forest:
+            cc.forestcustomercontact_set.filter(
+                forestcustomer__forest_id=contacts_in.forest_id
+            ).delete()
+            if cc.forestcustomercontact_set.count() == 0:
                 cc.force_delete()
         else:
             # make sure other or family contact of a customer

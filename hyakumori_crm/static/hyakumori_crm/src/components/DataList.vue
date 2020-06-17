@@ -59,6 +59,7 @@
           :ripple="false"
           :value="isSelected"
           @input="select($event)"
+          class="datalist__checkbox"
         ></v-simple-checkbox>
       </template>
       <template v-slot:item.tags="{ item }" class="text-truncate">
@@ -279,7 +280,15 @@ export default {
   color: #444444;
   font-weight: normal;
 }
-
+.datalist__checkbox {
+  // only work on chrome
+  width: 100%;
+  height: 100%;
+  i {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
 .v-data-table {
   padding: 10px;
   width: 100%;
