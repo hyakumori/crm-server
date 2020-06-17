@@ -12,87 +12,211 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('crm', '0013_customer_business_id'),
+        ("crm", "0013_customer_business_id"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PostalHistory',
+            name="PostalHistory",
             fields=[
-                ('deleted', models.DateTimeField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('internal_id', models.CharField(max_length=255, null=True)),
-                ('attributes', django.contrib.postgres.fields.jsonb.JSONField(default=dict, encoder=django.core.serializers.json.DjangoJSONEncoder)),
-                ('title', models.CharField(blank=True, max_length=255)),
-                ('content', models.TextField(null=True)),
-                ('archive_date', models.DateTimeField(null=True)),
-                ('tags', django.contrib.postgres.fields.jsonb.JSONField(default=dict, encoder=django.core.serializers.json.DjangoJSONEncoder)),
-                ('author', models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to=settings.AUTH_USER_MODEL)),
+                ("deleted", models.DateTimeField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("internal_id", models.CharField(max_length=255, null=True)),
+                (
+                    "attributes",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        default=dict,
+                        encoder=django.core.serializers.json.DjangoJSONEncoder,
+                    ),
+                ),
+                ("title", models.CharField(blank=True, max_length=255)),
+                ("content", models.TextField(null=True)),
+                ("archive_date", models.DateTimeField(null=True)),
+                (
+                    "tags",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        default=dict,
+                        encoder=django.core.serializers.json.DjangoJSONEncoder,
+                    ),
+                ),
+                (
+                    "author",
+                    models.ForeignKey(
+                        default=None,
+                        null=True,
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'permissions': [('manage_postal_history', 'All permissions for postal history')],
+                "permissions": [
+                    ("manage_postalhistory", "All permissions for postal history")
+                ],
             },
         ),
         migrations.CreateModel(
-            name='PostalHistoryCustomer',
+            name="PostalHistoryCustomer",
             fields=[
-                ('deleted', models.DateTimeField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('attributes', django.contrib.postgres.fields.jsonb.JSONField(default=dict, encoder=django.core.serializers.json.DjangoJSONEncoder)),
-                ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='crm.Customer')),
-                ('postalhistory', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='crm.PostalHistory')),
+                ("deleted", models.DateTimeField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "attributes",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        default=dict,
+                        encoder=django.core.serializers.json.DjangoJSONEncoder,
+                    ),
+                ),
+                (
+                    "customer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="crm.Customer"
+                    ),
+                ),
+                (
+                    "postalhistory",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="crm.PostalHistory",
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False,},
         ),
         migrations.CreateModel(
-            name='PostalHistoryUser',
+            name="PostalHistoryUser",
             fields=[
-                ('deleted', models.DateTimeField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('attributes', django.contrib.postgres.fields.jsonb.JSONField(default=dict, encoder=django.core.serializers.json.DjangoJSONEncoder)),
-                ('postalhistory', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='crm.PostalHistory')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
+                ("deleted", models.DateTimeField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "attributes",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        default=dict,
+                        encoder=django.core.serializers.json.DjangoJSONEncoder,
+                    ),
+                ),
+                (
+                    "postalhistory",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="crm.PostalHistory",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False,},
         ),
         migrations.CreateModel(
-            name='PostalHistoryForest',
+            name="PostalHistoryForest",
             fields=[
-                ('deleted', models.DateTimeField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('attributes', django.contrib.postgres.fields.jsonb.JSONField(default=dict, encoder=django.core.serializers.json.DjangoJSONEncoder)),
-                ('forest', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='crm.Forest')),
-                ('postalhistory', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='crm.PostalHistory')),
+                ("deleted", models.DateTimeField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "attributes",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        default=dict,
+                        encoder=django.core.serializers.json.DjangoJSONEncoder,
+                    ),
+                ),
+                (
+                    "forest",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="crm.Forest"
+                    ),
+                ),
+                (
+                    "postalhistory",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="crm.PostalHistory",
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False,},
         ),
         migrations.CreateModel(
-            name='PostalHistoryCustomerContact',
+            name="PostalHistoryCustomerContact",
             fields=[
-                ('deleted', models.DateTimeField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('attributes', django.contrib.postgres.fields.jsonb.JSONField(default=dict, encoder=django.core.serializers.json.DjangoJSONEncoder)),
-                ('customercontact', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='crm.CustomerContact')),
-                ('postalhistorycustomer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='crm.PostalHistoryCustomer')),
+                ("deleted", models.DateTimeField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "attributes",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        default=dict,
+                        encoder=django.core.serializers.json.DjangoJSONEncoder,
+                    ),
+                ),
+                (
+                    "customercontact",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="crm.CustomerContact",
+                    ),
+                ),
+                (
+                    "postalhistorycustomer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="crm.PostalHistoryCustomer",
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False,},
         ),
     ]

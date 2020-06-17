@@ -184,6 +184,9 @@ export default {
         });
         this.$emit("saved");
         this.saving = false;
+        if (this.forestIdsToDelete.includes(this.selectingForestId_)) {
+          this.selectingForestId_ = null;
+        }
         this.forestsToDelete = [];
         this.forestsToAdd = [];
         this.itemsForAdding = { results: [] };
