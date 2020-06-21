@@ -60,6 +60,9 @@ class Customer(BaseResourceModel):
 
     objects = CustomerQueryset.as_manager()
 
+    REPR_FIELD = "business_id"
+    REPR_NAME = "顧客ID"
+
     class Meta:
         permissions = [
             ("manage_customer", "All permissions for customer"),
@@ -85,6 +88,9 @@ class Customer(BaseResourceModel):
     @property
     def actions(self):
         return CustomerActions
+
+    def repr_name(self):
+        return self.business_id
 
 
 class Contact(BaseResourceModel):

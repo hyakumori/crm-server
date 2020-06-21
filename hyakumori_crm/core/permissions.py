@@ -74,6 +74,11 @@ class AdminGroupPermission(permissions.BasePermission):
         return request.user.member_of(SystemGroups.GROUP_ADMIN)
 
 
+class SuperUserOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.is_superuser
+
+
 class ModelPermissions(permissions.DjangoModelPermissions):
     model_cls = None
 

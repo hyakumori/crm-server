@@ -284,6 +284,21 @@ const router = new VueRouter({
       ],
     },
     {
+      path: "/slack/oauth",
+      component: DefaultLayout,
+      children: [
+        {
+          path: "",
+          name: "slack-oauth",
+          meta: {
+            title: "Slack Oauth",
+            isPublic: true,
+          },
+          component: () => import("./screens/Slack/Oauth.vue"),
+        },
+      ],
+    },
+    {
       path: "*",
       redirect: { name: "not-found" },
     },
