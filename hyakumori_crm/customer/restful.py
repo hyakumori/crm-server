@@ -34,7 +34,6 @@ from ..forest.service import parse_tags_for_csv
 from .schemas import (
     BankingInput,
     ContactsInput,
-    CustomerContactsDeleteInput,
     CustomerInputSchema,
     CustomerUpdateSchema,
     ForestPksInput,
@@ -230,10 +229,12 @@ class CustomerViewSets(ViewSet):
     @api_validate_model(TagBulkUpdate)
     def tags(self, request, data: TagBulkUpdate):
         update_customer_tags(data.dict())
-        for pk in data.ids:
-            ActivityService.log(
-                CustomerActions.tags_bulk_updated, Customer, obj_pk=pk, request=request
-            )
+        ActivityService.log(
+            CustomerActions.tags_bulk_updated,
+            Customer,
+            obj_pks=data.ids,
+            request=request,
+        )
         return Response({"msg": "OK"})
 
     @action(

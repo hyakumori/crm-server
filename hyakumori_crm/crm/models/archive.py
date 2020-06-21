@@ -18,6 +18,9 @@ class Archive(BaseResourceModel):
     )
     tags = JSONField(default=dict, encoder=DjangoJSONEncoder)
 
+    REPR_FIELD = "title"
+    REPR_NAME = "交渉履歴タイトル"
+
     class Meta:
         permissions = [
             ("manage_archive", "All permissions for archive"),
@@ -26,6 +29,9 @@ class Archive(BaseResourceModel):
     @property
     def actions(self):
         return ArchiveActions
+
+    def repr_name(self):
+        return self.title
 
 
 class ArchiveForest(BaseRelationModel):

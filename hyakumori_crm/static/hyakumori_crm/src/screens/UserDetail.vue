@@ -1,16 +1,16 @@
 <template>
   <main-section class="user-detail">
     <template #section>
-      <ValidationObserver v-slot="{ invalid }">
-        <div class="user-detail__section px-7">
-          <div id="basic-info">
-            <content-header
-              content="基本情報 (登記情報)"
-              toggleEditBtnContent="基本情報・編集"
-              :loading="basicInfo.length === 0 || isLoading"
-              @toggleEdit="val => (isUpdate.basicInfo = val)"
-            />
-            <div class="my-4">
+      <div class="user-detail__section px-7">
+        <div id="basic-info">
+          <content-header
+            content="基本情報 (登記情報)"
+            toggleEditBtnContent="基本情報・編集"
+            :loading="basicInfo.length === 0 || isLoading"
+            @toggleEdit="val => (isUpdate.basicInfo = val)"
+          />
+          <div class="my-4">
+            <ValidationObserver v-slot="{ invalid }">
               <v-row v-if="errors">
                 <v-col cols="12">
                   <v-alert
@@ -53,10 +53,10 @@
                 v-if="isUpdate.basicInfo"
                 :cancel="cancel.bind(this, 'basicInfo')"
               />
-            </div>
+            </ValidationObserver>
           </div>
         </div>
-      </ValidationObserver>
+      </div>
     </template>
 
     <template #right>

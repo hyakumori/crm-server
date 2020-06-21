@@ -16,6 +16,9 @@ class PostalHistory(BaseResourceModel):
     )
     tags = JSONField(default=dict, encoder=DjangoJSONEncoder)
 
+    REPR_FIELD = "title"
+    REPR_NAME = "書類郵送履歴タイトル"
+
     class Meta:
         permissions = [
             ("manage_postalhistory", "All permissions for postal history"),
@@ -24,6 +27,9 @@ class PostalHistory(BaseResourceModel):
     @property
     def actions(self):
         return PostalHistoryActions
+
+    def repr_name(self):
+        return self.title
 
 
 class PostalHistoryForest(BaseRelationModel):

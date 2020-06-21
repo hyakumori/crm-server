@@ -13,6 +13,7 @@ from hyakumori_crm.tags.urls import api_urls as tags_api_urls
 from hyakumori_crm.cache.urls import api_urls as cache_api_urls
 from hyakumori_crm.contracts.urls import api_urls as contracttype_api_urls
 from hyakumori_crm.postal_history.urls import api_urls as postalhistory_api_urls
+from hyakumori_crm.slack.urls import api_urls as slack_api_urls
 
 from .views import notfound_view, maintenance_status
 
@@ -27,6 +28,7 @@ urlpatterns = (
     + cache_api_urls
     + contracttype_api_urls
     + postalhistory_api_urls
+    + slack_api_urls
     + [path("maintenance/status", maintenance_status), re_path(".*", notfound_view)]
 )
 

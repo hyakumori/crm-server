@@ -1,13 +1,19 @@
+import logging
+
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.db import connection, transaction
+from django_q.tasks import async_task
 
 from hyakumori_crm.activity.constants import *  # noqa
 from hyakumori_crm.activity.models import ActionLog
 from hyakumori_crm.core.utils import get_remote_ip
 from hyakumori_crm.crm.models import Customer, Forest
 from hyakumori_crm.crm.models.message_template import MessageTemplate
-import logging
+from hyakumori_crm.slack.tasks import (
+    notify as slack_notify,
+    notify_for_batch as slack_notify_for_batch,
+)
 
 
 class ActivityService:
@@ -142,10 +148,87 @@ class ActivityService:
             )
             if created_at is not None:
                 log.created_at = created_at
+            async_task(
+                slack_notify,
+                message=template.template,
+                user_fullname=user.full_name,
+                dt=log.created_at,
+                obj_title=model_instance.REPR_NAME,
+                obj_name=model_instance.repr_name(),
+                ack_failure=True,
+            )
             return log.save(update_fields=["created_at"])
         except Exception as e:
             cls.logger.warning(
                 f"Error while creating activity log for {action} {model_instance}",
+                exc_info=e,
+            )
+            return ActionLog.objects.none()
+
+    @classmethod
+    def log_for_batch(
+        cls,
+        action,
+        model_cls,
+        obj_pks=None,
+        user=None,
+        remote_ip=None,
+        template_data=None,
+        changes=None,
+        request=None,
+        created_at=None,
+    ):
+        """
+        Usage:
+        >>> from hyakumori_crm.crm.models import Forest
+        >>> forest = Forest.objects.first()
+        >>> ActivityService.log(ForestActions.created, forest)
+        """
+
+        if changes is None:
+            changes = {}
+
+        if request is not None:
+            if remote_ip is None:
+                remote_ip = get_remote_ip(request)
+            if user is None and request.user is not None:
+                user = request.user
+
+        try:
+            template_name = action[0] if isinstance(action, tuple) else action
+            template = MessageTemplate.objects.get(name=template_name)
+            content_type = ContentType.objects.get_for_model(model_cls)
+            logs = []
+            for pk in obj_pks:
+                log = ActionLog(
+                    content_type=content_type,
+                    object_pk=pk,
+                    template_name=template.name,
+                    template_data=template_data,
+                    changes=changes,
+                    user=user,
+                    remote_ip=remote_ip,
+                )
+                if created_at is not None:
+                    log.created_at = created_at
+                logs.append(log)
+            ActionLog.objects.bulk_create(logs)
+            async_task(
+                slack_notify_for_batch,
+                message=template.template,
+                user_fullname=user.full_name,
+                dt=log.created_at,
+                obj_title=model_cls.REPR_NAME,
+                obj_names=list(
+                    model_cls.objects.filter(pk__in=obj_pks).values_list(
+                        model_cls.REPR_FIELD, flat=True
+                    )
+                ),
+                ack_failure=True,
+            )
+        except Exception as e:
+            cls.logger.warning(
+                f"Error while creating activity log for {action} {model_cls}",
                 exc_info=e,
             )
             return ActionLog.objects.none()
