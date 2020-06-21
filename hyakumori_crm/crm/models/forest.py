@@ -43,6 +43,9 @@ class Forest(BaseResourceModel):
     forest_attributes = JSONField(default=dict)
     geodata = JSONField(default=DefaultForest.geodata)
 
+    REPR_FIELD = "internal_id"
+    REPR_NAME = "森林ID"
+
     class Meta:
         permissions = [
             ("manage_forest", "All permissions for forest"),
@@ -55,3 +58,6 @@ class Forest(BaseResourceModel):
     @property
     def actions(self):
         return ForestActions
+
+    def repr_name(self):
+        return self.internal_id

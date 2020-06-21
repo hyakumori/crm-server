@@ -3,17 +3,17 @@
     <template #section>
       <v-content>
         <v-container grid-list-xs class="main-container">
-          <ValidationObserver v-slot="{ invalid }">
-            <div class="account-profile__section px-7">
-              <div id="basic-info">
-                <content-header
-                  content="基本情報 (登記情報)"
-                  toggleEditBtnContent="基本情報・編集"
-                  :loading="basicInfo.length === 0 || isLoading"
-                  @toggleEdit="val => (isUpdate.basicInfo = val)"
-                />
-                <div class="my-4">
-                  <v-row v-if="errors">
+          <div class="account-profile__section px-7">
+            <div id="basic-info">
+              <content-header
+                content="基本情報 (登記情報)"
+                toggleEditBtnContent="基本情報・編集"
+                :loading="basicInfo.length === 0 || isLoading"
+                @toggleEdit="val => (isUpdate.basicInfo = val)"
+              />
+              <div class="my-4">
+                <ValidationObserver v-slot="{ invalid }">
+                  <v-row v-if="errors.length > 0">
                     <v-col cols="12">
                       <v-alert
                         dense
@@ -55,10 +55,70 @@
                     v-if="isUpdate.basicInfo"
                     :cancel="cancel.bind(this, 'basicInfo')"
                   />
-                </div>
+                </ValidationObserver>
               </div>
             </div>
-          </ValidationObserver>
+
+            <div v-if="userPermissions.is_admin">
+              <content-header
+                content="Slack"
+                :displayAdditionBtn="false"
+                :loading="basicInfo.length === 0 || isLoading"
+                @toggleEdit="val => (isUpdate.basicInfo = val)"
+              />
+              <v-row>
+                <v-col cols="2">
+                  <a
+                    :href="
+                      `https://slack.com/oauth/v2/authorize?scope=channels:read,chat:write,files:write&client_id=1201426909361.1188806865714&redirect_uri=${redirectUri}`
+                    "
+                    ><img
+                      alt="Add to Slack"
+                      height="40"
+                      width="139"
+                      src="https://platform.slack-edge.com/img/add_to_slack.png"
+                      srcset="
+                        https://platform.slack-edge.com/img/add_to_slack.png    1x,
+                        https://platform.slack-edge.com/img/add_to_slack@2x.png 2x
+                      "
+                  /></a>
+                </v-col>
+                <v-col>
+                  Slackアプリをワークスペースにインストールまたは再インストールします。
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-simple-table>
+                    <template v-slot:default>
+                      <thead>
+                        <tr>
+                          <th class="text-left">Team Name</th>
+                          <th class="text-left">Installed at</th>
+                          <th class="text-left">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="item in slackInstalls" :key="item.team_name">
+                          <td>{{ item.team_name }}</td>
+                          <td>{{ item.updated_at }}</td>
+                          <td>
+                            <v-btn
+                              small
+                              outlined
+                              color="red"
+                              @click="() => uninstallSlackApp(item.id)"
+                              >Uninstall</v-btn
+                            >
+                          </td>
+                        </tr>
+                      </tbody>
+                    </template>
+                  </v-simple-table>
+                </v-col>
+              </v-row>
+            </div>
+          </div>
         </v-container>
       </v-content>
     </template>
@@ -112,6 +172,11 @@ export default {
         basicInfo: false,
       },
       errors: [],
+      redirectUri:
+        process.env.VUE_APP_SLACK_REDIRECT_URI ||
+        (window._env && window._env.VUE_APP_SLACK_REDIRECT_URI) ||
+        "http://localhost:8080/slack/oauth",
+      slackInstalls: [],
     };
   },
 
@@ -120,10 +185,17 @@ export default {
     await this.getUserDetail();
     await this.getUserPermission();
     await this.setHeaderInfo();
+    if (this.userPermissions.is_admin) {
+      this.getSlackInstalls();
+    }
     this.isLoading = false;
   },
 
   methods: {
+    async uninstallSlackApp(id) {
+      await this.$rest.post("/slack/revoke", { id: id });
+      this.getSlackInstalls();
+    },
     async getUserPermission(callback) {
       const response = await this.$rest.get(
         `/users/${this.userInfo && this.userInfo.id}/permissions`,
@@ -168,6 +240,10 @@ export default {
       });
 
       return formatedErrors;
+    },
+
+    async getSlackInstalls() {
+      this.slackInstalls = await this.$rest.get("/slack/installs");
     },
 
     async onSave() {
