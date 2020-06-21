@@ -335,13 +335,12 @@ def postal_history_ids(request):
 @api_validate_model(TagBulkUpdate)
 def postal_history_tags(request, data: TagBulkUpdate):
     update_postal_history_tag(data.dict())
-    for pk in data.ids:
-        ActivityService.log(
-            PostalHistoryActions.tags_bulk_updated,
-            PostalHistory,
-            obj_pk=pk,
-            request=request,
-        )
+    ActivityService.log_for_batch(
+        PostalHistoryActions.tags_bulk_updated,
+        PostalHistory,
+        obj_pks=data.ids,
+        request=request,
+    )
     return Response({"msg": "OK"})
 
 

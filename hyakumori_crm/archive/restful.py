@@ -291,10 +291,9 @@ def archive_ids(request):
 @api_validate_model(TagBulkUpdate)
 def archive_tags(request, data: TagBulkUpdate):
     update_archive_tag(data.dict())
-    for pk in data.ids:
-        ActivityService.log(
-            ArchiveActions.tags_bulk_updated, Archive, obj_pk=pk, request=request
-        )
+    ActivityService.log_for_batch(
+        ArchiveActions.tags_bulk_updated, Archive, obj_pks=data.ids, request=request
+    )
     return Response({"msg": "OK"})
 
 
