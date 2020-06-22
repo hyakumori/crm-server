@@ -1,9 +1,8 @@
-import requests
+import httpx
 from django.conf import settings
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.exceptions import PermissionDenied
 from slack import WebClient
 
 from hyakumori_crm.core.permissions import SuperUserOnly
@@ -18,7 +17,7 @@ def oauth(request):
     )
     if not user or (user and not user.is_superuser):
         return Response({"error": "Authentication failed"}, status=400)
-    oauth_resp = requests.post(
+    oauth_resp = httpx.post(
         "https://slack.com/api/oauth.v2.access",
         data={
             "client_id": settings.SLACK_CLIENT_ID,
