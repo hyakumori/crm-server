@@ -23,6 +23,7 @@ def oauth(request):
             "client_id": settings.SLACK_CLIENT_ID,
             "client_secret": settings.SLACK_CLIENT_SECRET,
             "code": request.data.get("code"),
+            "redirect_uri": settings.SLACK_REDIRECT_URI,
         },
     )
     resp_data = oauth_resp.json()
