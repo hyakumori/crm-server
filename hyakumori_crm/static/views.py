@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.views.decorators.cache import never_cache
 from django.conf import settings
