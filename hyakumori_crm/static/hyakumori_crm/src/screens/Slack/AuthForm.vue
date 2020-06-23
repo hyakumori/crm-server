@@ -99,7 +99,7 @@ export default {
     async doSubmit() {
       this.loading = true;
       try {
-        const resp = await this.onSubmit();
+        await this.onSubmit();
         this.success = true;
         this.$router.push({ name: "my-profile" });
       } catch (e) {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-15 16:16+0700\n"
+"POT-Creation-Date: 2020-06-22 15:02+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,12 +59,12 @@ msgstr ""
 msgid "Logged action, id: {id}"
 msgstr "ログに記録されたアクション、ID：{id}"
 
-#: archive/restful.py:179 postal_history/restful.py:194
+#: archive/restful.py:179 postal_history/restful.py:199
 msgid "Could not get download url"
 msgstr "ダウンロードURLを取得できませんでした"
 
 #: archive/schemas.py:95 archive/schemas.py:99 archive/schemas.py:103
-#: archive/schemas.py:117 customer/schemas.py:221 customer/schemas.py:265
+#: archive/schemas.py:117 customer/schemas.py:220 customer/schemas.py:263
 #: postal_history/schemas.py:140 postal_history/schemas.py:146
 #: postal_history/schemas.py:150 postal_history/schemas.py:164
 msgid "Contact {} not found"
@@ -143,6 +143,7 @@ msgid "Invalid value, choices are: {permitted}"
 msgstr "無効な値です。選択肢は次のとおりです：{permitted}"
 
 #: core/models.py:109
+#, python-brace-format
 msgid "ensure this value has at most {limit_value} characters"
 msgstr "この値が{limit_value}文字以下であることを確認してください"
 
@@ -179,13 +180,13 @@ msgstr "土地所有者名（ｶﾅ）"
 msgid "Postal Code"
 msgstr "郵便番号"
 
-#: customer/resolvers.py:24 forest/resolvers.py:21
+#: customer/resolvers.py:24
 msgid "Prefecture"
-msgstr "地籍_都道府県"
+msgstr "都道府県"
 
-#: customer/resolvers.py:25 forest/resolvers.py:27
+#: customer/resolvers.py:25 forest/resolvers.py:21
 msgid "Municipality"
-msgstr "地籍_市町村"
+msgstr "市町村"
 
 #: customer/resolvers.py:26
 msgid "Address"
@@ -203,13 +204,13 @@ msgstr "携帯番号"
 msgid "Email"
 msgstr "メールアドレス"
 
-#: customer/resolvers.py:30 customer/restful.py:278 customer/tasks.py:31
-#: forest/resolvers.py:98 forest/service.py:303
+#: customer/resolvers.py:30 customer/restful.py:271 customer/tasks.py:31
+#: forest/resolvers.py:92 forest/service.py:308
 msgid "Tag"
 msgstr "タグ"
 
-#: customer/restful.py:317 customer/restful.py:331 forest/restful.py:189
-#: forest/restful.py:203
+#: customer/restful.py:310 customer/restful.py:324 forest/restful.py:198
+#: forest/restful.py:212
 msgid "Please upload a csv file!!"
 msgstr "csvファイルをアップロードしてください!!"
 
@@ -231,27 +232,27 @@ msgstr "連絡先{pk}が見つかりません"
 msgid "Forest Id {} not found"
 msgstr "フォレストID {}が見つかりません"
 
-#: customer/schemas.py:253
+#: customer/schemas.py:252
 msgid "forest_id not provied for contact_type FOREST"
 msgstr "連絡先タイプFORESTにフォレストIDが指定されていません"
 
-#: customer/schemas.py:259
-msgid "Forest {} not found"
-msgstr "森{}が見つかりません"
+#: customer/schemas.py:257
+msgid "customer does not have supplied forest_id"
+msgstr ""
 
-#: customer/schemas.py:304
+#: customer/schemas.py:302
 msgid "Enter at least telephone or mobilephone or email."
 msgstr "少なくとも電話、携帯電話、または電子メールを入力してください。"
 
-#: customer/service.py:41 customer/tasks.py:54 forest/service.py:74
+#: customer/service.py:39 customer/tasks.py:54 forest/service.py:74
 msgid "Customer not found"
 msgstr "顧客が見つかりません"
 
-#: customer/service.py:514
+#: customer/service.py:521
 msgid "Customer ID is empty or not available"
 msgstr "お客様IDが空か、使用できません"
 
-#: customer/tasks.py:39 forest/service.py:516 forest/service.py:549
+#: customer/tasks.py:39 forest/service.py:521 forest/service.py:554
 msgid "Invalid csv file!"
 msgstr "無効なcsvファイル！"
 
@@ -263,47 +264,47 @@ msgstr "現在のリソースは更新の準備ができていません!!"
 msgid "Forest ID"
 msgstr "土地管理ID"
 
-#: forest/resolvers.py:33
+#: forest/resolvers.py:27
 msgid "Sector"
-msgstr "地籍_大字"
+msgstr "大字"
+
+#: forest/resolvers.py:33
+msgid "Lot Number"
+msgstr "地番本番"
 
 #: forest/resolvers.py:39
-msgid "Subsector"
-msgstr "地籍_字"
+msgid "Owner name Kanji"
+msgstr "土地所有者名（漢字）"
 
 #: forest/resolvers.py:45
-msgid "Owner name Kanji"
-msgstr "土地所有者名_漢字"
+msgid "Owner name Kana"
+msgstr "土地所有者名（カナ）"
 
 #: forest/resolvers.py:51
-msgid "Owner name Kana"
-msgstr "土地所有者名_カナ"
-
-#: forest/resolvers.py:57
 msgid "Contract type"
 msgstr "契約種類"
 
-#: forest/resolvers.py:63
+#: forest/resolvers.py:57
 msgid "Contract status"
 msgstr "契約ステータス"
 
-#: forest/resolvers.py:69
+#: forest/resolvers.py:63
 msgid "Contract start date"
 msgstr "契約開始日"
 
-#: forest/resolvers.py:75
+#: forest/resolvers.py:69
 msgid "Contract end date"
 msgstr "契約終了日"
 
-#: forest/resolvers.py:81
+#: forest/resolvers.py:75
 msgid "FSC certification participation"
-msgstr "FSC認証加入"
+msgstr "FSC認証"
 
-#: forest/resolvers.py:87
+#: forest/resolvers.py:81
 msgid "FSC start"
 msgstr "FSC開始日"
 
-#: forest/resolvers.py:93
+#: forest/resolvers.py:87
 msgid "FSC end"
 msgstr "FSC終了日"
 
@@ -328,11 +329,11 @@ msgstr "連絡先が{v}見つかりません"
 msgid "Invalid format (tag1:value1; tag2:value2)"
 msgstr "無効な形式（タグ1：値1; タグ2：値2）"
 
-#: forest/service.py:49 forest/service.py:537
+#: forest/service.py:49 forest/service.py:542
 msgid "Forest not found"
 msgstr "森が見つかりません"
 
-#: settings.py:172
+#: settings.py:173
 msgid "Japan"
 msgstr "Japan"
 
@@ -590,6 +591,12 @@ msgstr ""
 #: users/templates/email/password_reset.html:445
 msgid "パスワードリセット"
 msgstr ""
+
+#~ msgid "Forest {} not found"
+#~ msgstr "森{}が見つかりません"
+
+#~ msgid "Subsector"
+#~ msgstr "字"
 
 #~ msgid "Long term contract"
 #~ msgstr "長期契約"

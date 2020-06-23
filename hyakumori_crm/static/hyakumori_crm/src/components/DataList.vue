@@ -27,15 +27,24 @@
     >
       <template v-if="tableRowIcon" v-slot:[`item.${iconRowValue}`]="{ item }">
         <div class="d-flex align-center justify-center">
-          <v-icon class="icon-mode mr-4 f14 mt-1 mb-1" small>
+          <v-icon class="icon-mode f14 mt-1 mb-1" small>
             {{ tableRowIcon }}
           </v-icon>
-          <p class="mb-0">
+          <p
+            class="mb-0"
+            :class="{
+              'ml-4':
+                item[iconRowValue] &&
+                (!iconRowValueSlice.shouldSlice ||
+                  (iconRowValueSlice.shouldSlice &&
+                    iconRowValueSlice.length !== 0)),
+            }"
+          >
             {{
               item[iconRowValue]
-                ? (iconRowValueSlice.shouldSlice &&
-                    item[iconRowValue].slice(0, iconRowValueSlice.length)) ||
-                  item[iconRowValue]
+                ? iconRowValueSlice.shouldSlice
+                  ? item[iconRowValue].slice(0, iconRowValueSlice.length)
+                  : item[iconRowValue]
                 : ""
             }}
           </p>
