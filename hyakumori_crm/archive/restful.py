@@ -91,7 +91,7 @@ def archives(request, data: ArchiveInput = None):
 @permission_classes([Archive.model_perm_cls()])
 def archive_headers(request):
     headers = [
-        {"value": "id", "text": "交渉履歴ID", "align": "center"},
+        {"value": "id", "text": "", "align": "center", "width": 28},
         {"value": "archive_date", "text": "日付", "sortable": False, "align": "center"},
         {"value": "title", "text": "タイトル", "sortable": False, "align": "center"},
         {"value": "content", "text": "内容", "sortable": False, "align": "center"},

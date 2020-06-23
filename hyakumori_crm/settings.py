@@ -282,6 +282,7 @@ EMAIL_PORT = os.getenv("EMAIL_PORT", 1025)
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = strtobool(os.getenv("EMAIL_USE_TLS", "no"))
+DEFAULT_FROM_EMAIL = "100morichan <noreply@mg.100morichan.net>"
 
 LOGGING = {
     "version": 1,

@@ -18,12 +18,6 @@ def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dic
     headers = [
         {"text": _("Forest ID"), "align": "right", "value": "internal_id"},
         {
-            "text": _("Prefecture"),
-            "align": "center",
-            "value": "cadastral__prefecture",
-            "sortable": False,
-        },
-        {
             "text": _("Municipality"),
             "align": "center",
             "value": "cadastral__municipality",
@@ -36,9 +30,9 @@ def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dic
             "sortable": False,
         },
         {
-            "text": _("Subsector"),
+            "text": _("Lot Number"),
             "align": "center",
-            "value": "cadastral__subsector",
+            "value": "land_attributes__地番本番",
             "sortable": False,
         },
         {
