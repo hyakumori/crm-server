@@ -342,6 +342,7 @@ def get_filtered_postal_history_queryset(
         "archive_date": "archive_date_text",
         "title": "title",
         "author": "author_fullname",
+        "content": "content",
         "associated_forest": "attributes__forest_cache__repr",
         "our_participants": "attributes__user_cache__repr",
         "their_participants": "attributes__customer_cache__repr",
