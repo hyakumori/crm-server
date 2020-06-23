@@ -94,7 +94,7 @@
                       <thead>
                         <tr>
                           <th class="text-left">ワークスペース名</th>
-                          <th class="text-left">にインストール</th>
+                          <th class="text-left">追加日時</th>
                           <th class="text-left"></th>
                         </tr>
                       </thead>

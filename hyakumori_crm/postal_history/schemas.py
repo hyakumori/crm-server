@@ -81,7 +81,7 @@ class PostalHistoryFilter(HyakumoriDanticModel):
     archive_date: str = None
     title: str = None
     author: str = None
-    location: str = None
+    content: str = None
     their_participants: str = None
     our_participants: str = None
     associated_forest: str = None

@@ -11,7 +11,6 @@
         />
 
         <forest-contact-tab-container
-          v-acl-only="['manage_customer', 'view_customer']"
           headerContent="所有者情報"
           toggleEditBtnContent="追加・編集"
           addBtnContent="追加"
@@ -152,6 +151,7 @@ export default {
         );
       });
       this.$store.dispatch("forest/getCustomers", this.id);
+      this.$store.dispatch("forest/getCustomersContacts", this.id);
     },
     fallbackText(text) {
       return text || "";
