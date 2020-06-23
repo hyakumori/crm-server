@@ -104,6 +104,7 @@ def postal_history_headers(request):
             "align": "center",
         },
         {"value": "title", "text": "表題", "sortable": False, "align": "center"},
+        {"value": "content", "text": "書類送付内容", "sortable": False, "align": "center"},
         {"value": "author", "text": "作成者", "sortable": False, "align": "center"},
         {
             "value": "their_participants",

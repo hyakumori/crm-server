@@ -4,7 +4,7 @@
     :toggleEditBtnContent="toggleEditBtnContent"
     :addBtnContent="addBtnContent"
     :isLoading="isLoading"
-    :permissions="['manage_forest']"
+    :permissions="['manage_forest', 'manage_customer']"
     :isEditing="isEditing"
     @toggleEdit="val => (isEditing = val)"
     :cancelEdit="handleCancelEdit"

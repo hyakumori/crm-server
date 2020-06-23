@@ -45,7 +45,7 @@
           addBtnContent="追加"
           class="mt-9"
           toggleEditBtnContent="追加・編集"
-          headerContent="その他当方参加者"
+          headerContent="その他参加者"
           v-if="isDetail"
           :allowEdit="allowEdit"
           :archive="archive"
