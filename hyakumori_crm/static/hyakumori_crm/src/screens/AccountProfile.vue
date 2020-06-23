@@ -73,7 +73,7 @@
                       `https://slack.com/oauth/v2/authorize?scope=channels:read,chat:write,files:write&client_id=1201426909361.1188806865714&redirect_uri=${redirectUri}`
                     "
                     ><img
-                      alt="Add to Slack"
+                      alt="Slackに通知アプリを追加"
                       height="40"
                       width="139"
                       src="https://platform.slack-edge.com/img/add_to_slack.png"
@@ -84,7 +84,7 @@
                   /></a>
                 </v-col>
                 <v-col>
-                  Slackアプリをワークスペースにインストールまたは再インストールします。
+                  ※Slack通知アプリをワークスペースに追加
                 </v-col>
               </v-row>
               <v-row>
@@ -93,9 +93,9 @@
                     <template v-slot:default>
                       <thead>
                         <tr>
-                          <th class="text-left">Team Name</th>
-                          <th class="text-left">Installed at</th>
-                          <th class="text-left">Action</th>
+                          <th class="text-left">ワークスペース名</th>
+                          <th class="text-left">にインストール</th>
+                          <th class="text-left"></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -108,7 +108,7 @@
                               outlined
                               color="red"
                               @click="() => uninstallSlackApp(item.id)"
-                              >Uninstall</v-btn
+                              >削除する</v-btn
                             >
                           </td>
                         </tr>

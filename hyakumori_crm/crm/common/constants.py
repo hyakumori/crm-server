@@ -57,9 +57,9 @@ CUSTOMER_TAG_KEYS = dict(status="未登録/登録", ranking="所有者順位", s
 
 FOREST_TAG_KEYS = dict(danchi="団地", manage_type="管理形態")
 
-FOREST_CADASTRAL = ["地籍_都道府県", "地籍_市町村", "地籍_大字", "地籍_字"]
+FOREST_CADASTRAL = ["都道府県", "市町村", "大字", "字"]
 
-FOREST_OWNER_NAME = ["土地所有者名_漢字", "土地所有者名_カナ"]
+FOREST_OWNER_NAME = ["土地所有者名（漢字）", "土地所有者名（カナ）"]
 
 FOREST_OWNER_ADDRESS = ["土地所有者住所_都道府県", "土地所有者住所_市町村", "土地所有者住所_大字"]
 

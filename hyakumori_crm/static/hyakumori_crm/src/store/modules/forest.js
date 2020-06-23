@@ -20,11 +20,20 @@ const getters = {
     if (!state.forest) return {};
     return {
       title: `${getters.sector}${getters.subsector}${getters.lotnumber}${getters.sub_lotnumber}`,
-      subTitle: state.forest.owner.name_kanji,
+      subTitle: getters.owner_repr,
       desc: state.forest.internal_id,
       tags: tags_to_array(state.forest.tags),
       backUrl: { name: "forests" },
     };
+  },
+  owner_repr(state) {
+    const names = state.forest.attributes.customer_cache.repr_name_kanji.split(
+      ",",
+    );
+    if (names.length === 0) return "";
+    return `${names[names.length - 1]}${
+      names.length > 1 ? ` 他${names.length - 1}名` : ""
+    }`;
   },
   sector(state) {
     if (!state.forest) return "";
