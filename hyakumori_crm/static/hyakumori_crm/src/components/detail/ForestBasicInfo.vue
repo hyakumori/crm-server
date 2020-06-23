@@ -54,7 +54,7 @@
 
         <v-row dense>
           <v-col cols="6">
-            <text-info label="FSC認証加入" :value="fscStatus" />
+            <text-info label="FSC認証" :value="fscStatus" />
           </v-col>
           <v-col cols="6">
             <text-info label="FSC認証期間" :value="formattedFscPeriod" />
