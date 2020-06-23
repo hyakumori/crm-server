@@ -469,10 +469,9 @@ export default {
           let item = {
             id: element.id,
             internal_id: element.internal_id,
-            cadastral__prefecture: fCadastral.prefecture,
             cadastral__municipality: fCadastral.municipality,
             cadastral__sector: fCadastral.sector,
-            cadastral__subsector: fCadastral.subsector,
+            land_attributes__地番本番: element.land_attributes["地番本番"],
             owner__name_kanji: this.renderCustomers(element, "kanji"),
             owner__name_kana: this.renderCustomers(element, "kana"),
             tags: tags,

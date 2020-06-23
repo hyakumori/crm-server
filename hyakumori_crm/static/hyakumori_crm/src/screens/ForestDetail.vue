@@ -19,7 +19,7 @@
           :customersContacts="$store.state.forest.customersContacts"
           :customerIdNameMap="$store.getters['forest/customerIdNameMap']"
           :isLoading="$store.state.forest.customersLoading"
-          @saved="$store.dispatch('forest/getCustomers', id)"
+          @saved="handleCustomerSaved"
           @savedCustomersContacts="
             $store.dispatch('forest/getCustomersContacts', id)
           "
@@ -38,7 +38,7 @@
         <attachment-container
           v-acl-only="['manage_postalhistory', 'view_postalhistory']"
           class="postal-histories"
-          headerContent="協議履歴"
+          headerContent="書類郵送記録"
           toggleEditBtnContent="追加・編集"
           addBtnContent="追加"
           :archives="$store.state.forest.postalHistories"
@@ -144,6 +144,15 @@ export default {
     this.$store.dispatch("forest/getPostalHistories", this.id);
   },
   methods: {
+    handleCustomerSaved() {
+      this.$store.dispatch("forest/getForest", this.id).then(() => {
+        this.$store.dispatch(
+          "setHeaderInfo",
+          this.$store.getters["forest/headerInfo"],
+        );
+      });
+      this.$store.dispatch("forest/getCustomers", this.id);
+    },
     fallbackText(text) {
       return text || "";
     },

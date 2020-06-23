@@ -96,7 +96,7 @@ def postal_histories(request, data: PostalHistoryInput = None):
 @permission_classes([PostalHistory.model_perm_cls()])
 def postal_history_headers(request):
     headers = [
-        {"value": "id", "text": "ID"},
+        {"value": "id", "text": "", "width": 28},
         {
             "value": "archive_date",
             "text": "書類送付日",

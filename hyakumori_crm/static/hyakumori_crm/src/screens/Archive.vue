@@ -14,7 +14,7 @@
     <template #section class="archives">
       <search-card
         :onSearch="onSearchArchives"
-        :search-criteria="headers"
+        :search-criteria="searchCriteria"
         ref="searchRef"
       />
       <div class="archives__data-section">
@@ -39,7 +39,7 @@
           @update:options="paginationHandler"
           @selectedRow="val => (tableSelectedRows = val)"
           iconRowValue="id"
-          :iconRowValueSlice="{ shouldSlice: false }"
+          :iconRowValueSlice="{ shouldSlice: true, length: 0 }"
         />
       </div>
       <update-actions-dialog
@@ -116,6 +116,12 @@ export default {
         this.headers = [...response.data];
       }
     } catch {}
+  },
+
+  computed: {
+    searchCriteria() {
+      return this.headers.filter(h => h.text);
+    },
   },
 
   methods: {
