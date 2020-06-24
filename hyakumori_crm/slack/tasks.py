@@ -24,7 +24,8 @@ def notify(message, user_fullname, dt, obj_title, obj_name):
 ----------------------------------------
 """
                 channels_resp = await slack_client.users_conversations(
-                    token=webhook["access_token"]
+                    token=webhook["access_token"],
+                    types="public_channel,private_channel",
                 )
                 if channels_resp["ok"] is False:
                     return
@@ -53,7 +54,8 @@ def notify_for_batch(message, user_fullname, dt, obj_title, obj_names):
 ----------------------------------------
 """
                 channels_resp = await slack_client.users_conversations(
-                    token=webhook["access_token"]
+                    token=webhook["access_token"],
+                    types="public_channel,private_channel",
                 )
                 if channels_resp["ok"] is False:
                     return

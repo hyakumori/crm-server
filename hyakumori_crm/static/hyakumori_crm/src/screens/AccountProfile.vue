@@ -70,7 +70,7 @@
                 <v-col cols="2">
                   <a
                     :href="
-                      `https://slack.com/oauth/v2/authorize?scope=channels:read,chat:write,files:write&client_id=1201426909361.1188806865714&redirect_uri=${redirectUri}`
+                      `https://slack.com/oauth/v2/authorize?scope=channels:read,chat:write,files:write,groups:read&client_id=1201426909361.1188806865714&redirect_uri=${redirectUri}`
                     "
                     ><img
                       alt="Slackに通知アプリを追加"
