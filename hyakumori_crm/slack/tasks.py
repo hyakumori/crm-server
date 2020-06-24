@@ -1,11 +1,15 @@
 import asyncio
+import logging
 
 import httpx
 import pytz
 from django.conf import settings
 from slack import WebClient
+from slack.errors import SlackApiError
 
 from .models import Oauth
+
+logger = logging.getLogger(__name__)
 
 
 def notify(message, user_fullname, dt, obj_title, obj_name):
@@ -31,9 +35,12 @@ def notify(message, user_fullname, dt, obj_title, obj_name):
                     return
                 channels = list(map(lambda c: c["id"], channels_resp["channels"]))
                 for channel in channels:
-                    await slack_client.chat_postMessage(
-                        token=webhook["access_token"], channel=channel, text=text
-                    )
+                    try:
+                        await slack_client.chat_postMessage(
+                            token=webhook["access_token"], channel=channel, text=text
+                        )
+                    except SlackApiError as e:
+                        logger.exception(e)
 
     asyncio.run(send_messages())
 
@@ -61,13 +68,16 @@ def notify_for_batch(message, user_fullname, dt, obj_title, obj_names):
                     return
                 channels = list(map(lambda c: c["id"], channels_resp["channels"]))
                 if channels:
-                    await slack_client.files_upload(
-                        channels=",".join(channels),
-                        token=webhook["access_token"],
-                        content="\n".join(obj_names),
-                        filename=f"{obj_title}.txt",
-                        name=f"{obj_title}.txt",
-                        initial_comment=text,
-                    )
+                    try:
+                        await slack_client.files_upload(
+                            channels=",".join(channels),
+                            token=webhook["access_token"],
+                            content="\n".join(obj_names),
+                            filename=f"{obj_title}.txt",
+                            name=f"{obj_title}.txt",
+                            initial_comment=text,
+                        )
+                    except SlackApiError as e:
+                        logger.exception(e)
 
     asyncio.run(send_messages())
