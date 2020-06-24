@@ -27,7 +27,7 @@
 
         <attachment-container
           v-acl-only="['manage_archive', 'view_archive']"
-          class="consultation-history"
+          class="consultation-history mt-12"
           headerContent="協議履歴"
           toggleEditBtnContent="追加・編集"
           addBtnContent="追加"
@@ -36,7 +36,7 @@
 
         <attachment-container
           v-acl-only="['manage_postalhistory', 'view_postalhistory']"
-          class="postal-histories"
+          class="postal-histories mt-12"
           headerContent="書類郵送記録"
           toggleEditBtnContent="追加・編集"
           addBtnContent="追加"

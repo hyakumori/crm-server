@@ -1,7 +1,7 @@
 <template>
   <div class="page-header">
-    <v-img src="../assets/img/app-bar.png" height="169" v-if="!isDetail" />
-    <v-img src="../assets/img/app-bar-detail.jpg" height="169" v-else />
+    <v-img src="../assets/img/app-bar.png" height="170" v-if="!isDetail" />
+    <v-img src="../assets/img/app-bar-detail.jpg" height="170" v-else />
 
     <div class="page-header__content">
       <div class="page-header__content--center">
