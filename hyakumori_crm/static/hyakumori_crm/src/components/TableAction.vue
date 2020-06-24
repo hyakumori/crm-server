@@ -10,6 +10,7 @@
       :placeHolder="$t('search.select_action')"
       @selectedAction="onSelected"
       hide-details
+      v-if="selectedCount > 0"
     />
   </div>
 </template>
