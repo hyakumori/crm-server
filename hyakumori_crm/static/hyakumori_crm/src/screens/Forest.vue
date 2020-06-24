@@ -94,7 +94,6 @@
           :selectedCount="tableSelectedRows.length"
           @selected-action="selectedAction"
           class="mb-4"
-          v-if="tableSelectedRows.length > 0"
         />
 
         <data-list
@@ -403,6 +402,10 @@ export default {
       }
     },
     async updateContractStatus(status) {
+      const ok = confirm(
+        `選択した森林の契約ステータスを${status}に変更しますか？`,
+      );
+      if (!ok) return;
       this.bulkUpdateLoading = true;
       const ids = Object.keys(this.$refs.table.$refs.dataTable.selection);
       try {

@@ -92,7 +92,6 @@
           :selectedCount="tableSelectedRows.length"
           @selected-action="selectedAction"
           class="mb-4"
-          v-if="tableSelectedRows.length > 0"
         />
 
         <data-list

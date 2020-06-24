@@ -62,6 +62,7 @@ from .service import (
     get_customer_by_business_id,
     update_customer_tags,
     get_customers_tag_by_ids,
+    get_customer_postal_histories,
 )
 from .tasks import csv_upload
 from .permissions import DownloadCsvPersmission, CustomerContactListPermission
@@ -195,6 +196,14 @@ class CustomerViewSets(ViewSet):
     )
     def archives(self, request, *, customer=None):
         archives = get_customer_archives(customer.pk)
+        return Response(ArchiveSerializer(archives, many=True).data)
+
+    @action(detail=True, methods=["GET"], url_path="postal-histories")
+    @get_or_404(
+        get_func=get_customer_by_pk, to_name="customer", pass_to="kwargs", remove=True,
+    )
+    def postal_histories(self, request, *, customer=None):
+        archives = get_customer_postal_histories(customer.pk)
         return Response(ArchiveSerializer(archives, many=True).data)
 
     @action(detail=True, methods=["GET"], url_path="contacts-forests")

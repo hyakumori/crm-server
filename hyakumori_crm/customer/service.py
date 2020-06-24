@@ -19,6 +19,7 @@ from hyakumori_crm.crm.models import (
     Forest,
     ForestCustomer,
     ForestCustomerContact,
+    PostalHistory,
 )
 from .schemas import ContactType, CustomerInputSchema, ContactsInput
 from ..cache.forest import refresh_customer_forest_cache
@@ -493,6 +494,20 @@ def get_customer_archives(pk):
             Q(archivecustomer__customer_id=pk)
             | Q(
                 archivecustomer__archivecustomercontact__customercontact__contact_id=contact_id
+            )
+        )
+        .order_by("-created_at")
+    )
+
+
+def get_customer_postal_histories(pk):
+    contact_id = CustomerContact.objects.get(customer_id=pk, is_basic=True).contact_id
+    return (
+        PostalHistory.objects.distinct()
+        .filter(
+            Q(postalhistorycustomer__customer_id=pk)
+            | Q(
+                postalhistorycustomer__postalhistorycustomercontact__customercontact__contact_id=contact_id
             )
         )
         .order_by("-created_at")

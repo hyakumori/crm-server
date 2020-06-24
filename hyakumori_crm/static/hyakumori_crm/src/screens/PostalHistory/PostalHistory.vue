@@ -21,7 +21,6 @@
         <table-action
           ref="actionRef"
           class="mb-4"
-          v-if="tableSelectedRows.length > 0"
           :actions="actions"
           :selected-count="tableSelectedRows.length"
           @selected-action="selectedAction"
