@@ -273,18 +273,12 @@ class CustomerMemoInput(HyakumoriDanticModel):
         min_anystr_length = 0
 
 
-class RequiredAddress(HyakumoriDanticModel):
-    prefecture: Optional[str]
-    municipality: Optional[str]
-    sector: str
-
-
 class RequiredContactInput(HyakumoriDanticModel):
     name_kanji: Name
     name_kana: Name
     postal_code: Optional[constr(regex=regexes.POSTAL_CODE, strip_whitespace=True)]
 
-    address: RequiredAddress
+    address: Optional[Address] = {}
     telephone: Optional[constr(regex=regexes.TELEPHONE_NUMBER, strip_whitespace=True)]
 
     mobilephone: Optional[
@@ -293,14 +287,14 @@ class RequiredContactInput(HyakumoriDanticModel):
     email: Optional[EmailStr]
     contact_type: NonDirectContactType
 
-    @root_validator
-    def validate_atleast_one_way_to_contact(cls, values):
-        telephone = values.get("telephone")
-        mobilephone = values.get("mobilephone")
-        email = values.get("email")
-        if not telephone and not mobilephone and not email:
-            raise ValueError(_("Enter at least telephone or mobilephone or email."))
-        return values
+    # @root_validator
+    # def validate_atleast_one_way_to_contact(cls, values):
+    #     telephone = values.get("telephone")
+    #     mobilephone = values.get("mobilephone")
+    #     email = values.get("email")
+    #     if not telephone and not mobilephone and not email:
+    #         raise ValueError(_("Enter at least telephone or mobilephone or email."))
+    #     return values
 
 
 def required_contact_input_wrapper(**kwargs):

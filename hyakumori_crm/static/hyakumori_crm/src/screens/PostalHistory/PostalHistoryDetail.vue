@@ -41,6 +41,16 @@
           :allowEdit="allowEdit"
         />
 
+        <postal-history-other-related-users-container
+          addBtnContent="追加"
+          class="mt-9"
+          toggleEditBtnContent="追加・編集"
+          headerContent="その他関係者"
+          v-if="isDetail"
+          :allowEdit="allowEdit"
+          :archive="archive"
+        />
+
         <postal-history-related-forest-container
           addBtnContent="追加"
           class="mt-9"
@@ -82,6 +92,7 @@ import PostalHistoryDocumentContainer from "./PostalHistoryDocumentContainer";
 import PostalHistoryParticipantContainer from "./PostalHistoryParticipantContainer";
 import PostalHistoryRelatedForestContainer from "./PostalHistoryRelatedForestContainer";
 import PostalHistoryRelatedUserContainer from "./PostalHistoryRelatedUserContainer";
+import PostalHistoryOtherRelatedUsersContainer from "./PostalHistoryOtherRelatedUsersContainer";
 
 export default {
   mixins: [ScreenMixin],
@@ -93,6 +104,7 @@ export default {
     PostalHistoryParticipantContainer,
     PostalHistoryRelatedForestContainer,
     PostalHistoryRelatedUserContainer,
+    PostalHistoryOtherRelatedUsersContainer,
     TagDetailCard,
     ActionLog,
   },

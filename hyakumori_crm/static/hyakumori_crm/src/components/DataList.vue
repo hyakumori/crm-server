@@ -236,7 +236,14 @@ export default {
     },
 
     onResize() {
-      this.tableHeight = window.innerHeight - 280;
+      // dirty work
+      // search bar min-height 625
+      // container padding top 28, bottom 12
+      // page banner height 170
+      // action bar height 56, margin bottom 16
+      const innerHeight = window.innerHeight < 835 ? 835 : window.innerHeight;
+      this.tableHeight =
+        innerHeight - 270 <= 625 ? innerHeight : innerHeight - 270 - (56 + 16);
     },
   },
   beforeUpdate() {

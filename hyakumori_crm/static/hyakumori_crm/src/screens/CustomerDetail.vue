@@ -62,6 +62,16 @@
           :isLoading="archivesLoading"
         />
 
+        <attachment-container
+          v-acl-only="['manage_postalhistory', 'view_postalhistory']"
+          class="postal-histories mt-12"
+          headerContent="書類郵送記録"
+          toggleEditBtnContent="追加・編集"
+          addBtnContent="追加"
+          :archives="postalHistories"
+          routeName="postalHistoryDetail"
+        />
+
         <customer-contacts-container
           v-if="id"
           class="mt-12"
@@ -204,6 +214,8 @@ export default {
       contactsLoading: this.checkAndShowLoading(),
       archives: [],
       archivesLoading: this.checkAndShowLoading(),
+      postalHistories: [],
+      postalHistoriesLoading: this.checkAndShowLoading(),
       contactsForests: [],
       contactsForestsLoading: this.checkAndShowLoading(),
     };
@@ -273,6 +285,7 @@ export default {
         this.fetchForests();
         this.fetchContacts();
         this.fetchArchives();
+        this.fetchPostalHistories();
         this.fetchContactsForests();
       }
     },
@@ -314,6 +327,13 @@ export default {
       this.archivesLoading = true;
       this.archives = await this.$rest.get(`/customers/${this.pk}/archives`);
       this.archivesLoading = false;
+    },
+    async fetchPostalHistories() {
+      this.postalHistoriesLoading = true;
+      this.postalHistories = await this.$rest.get(
+        `/customers/${this.pk}/postal-histories`,
+      );
+      this.postalHistoriesLoading = false;
     },
     async fetchContactsForests() {
       this.contactsForestsLoading = true;
