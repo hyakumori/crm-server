@@ -229,7 +229,7 @@ class CustomerViewSets(ViewSet):
     @api_validate_model(TagBulkUpdate)
     def tags(self, request, data: TagBulkUpdate):
         update_customer_tags(data.dict())
-        ActivityService.log(
+        ActivityService.log_for_batch(
             CustomerActions.tags_bulk_updated,
             Customer,
             obj_pks=data.ids,
