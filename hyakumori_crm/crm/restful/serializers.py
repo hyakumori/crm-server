@@ -66,6 +66,20 @@ class CustomerSerializer(ModelSerializer):
         ]
 
 
+class LimittedCustomerSerializer(CustomerSerializer):
+    class Meta:
+        model = Customer
+        fields = [
+            "id",
+            "business_id",
+            "internal_id",
+            "attributes",
+            "self_contact",
+            "forests_count",
+            "default",
+        ]
+
+
 class ForestSerializer(ModelSerializer):
     contracts = SerializerMethodField()
 
