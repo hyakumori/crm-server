@@ -16,6 +16,7 @@ from hyakumori_crm.core.utils import default_paginator
 from hyakumori_crm.crm.models import Forest, Archive, PostalHistory
 from hyakumori_crm.crm.restful.serializers import (
     CustomerSerializer,
+    LimittedCustomerSerializer,
     ForestSerializer,
     ContactSerializer,
     ArchiveSerializer,
@@ -27,6 +28,7 @@ from ..api.decorators import (
     get_or_404,
 )
 from ..core.utils import clear_maintain_task_id_cache
+from ..permissions.enums import SystemGroups
 
 from .schemas import (
     ForestInput,
@@ -93,10 +95,14 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
         paged_list = paginator.paginate_queryset(
             request=request, queryset=get_forest_customers(obj.pk), view=self,
         )
-
-        return paginator.get_paginated_response(
-            CustomerSerializer(paged_list, many=True).data
-        )
+        if request.user.member_of(SystemGroups.GROUP_LIMITED_USER):
+            return paginator.get_paginated_response(
+                LimittedCustomerSerializer(paged_list, many=True).data
+            )
+        else:
+            return paginator.get_paginated_response(
+                CustomerSerializer(paged_list, many=True).data
+            )
 
     @action(["GET"], detail=True, url_path="archives")
     @get_or_404(
