@@ -16,4 +16,4 @@ RUN HYAKUMORI_LIGHT_BUILD=1 pip install .
 
 EXPOSE 8000
 
-CMD hyakumori inject_envs && uvicorn hyakumori_crm.asgi:application --host 0.0.0.0 --port 8000
+CMD hyakumori inject_envs && uvicorn hyakumori_crm.asgi:application --host 0.0.0.0 --port 8000 --header Server:apache
