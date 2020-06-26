@@ -38,4 +38,4 @@ RUN HYAKUMORI_LIGHT_BUILD=1 pip install .
 
 EXPOSE 8000
 
-CMD uvicorn hyakumori_crm.asgi:application
+CMD uvicorn hyakumori_crm.asgi:application --header Server:apache
