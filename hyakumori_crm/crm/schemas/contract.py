@@ -19,6 +19,11 @@ class ContractTypeStatus(str, Enum):
     unnegotiated = "未契約"
 
 
+class FSCContactStatus(str, Enum):
+    joined = "加入"
+    unjoined = "未加入"
+
+
 class Contract(BaseModel):
     """
     契約ステータス
@@ -26,6 +31,7 @@ class Contract(BaseModel):
     作業道契約	開始日	終了日
     FSC認証加入	開始日	終了日
     """
+
     type: ContractType = ContractType.long_term
     status: Union[str, None] = EMPTY
     start_date: Union[date, datetime, None] = None

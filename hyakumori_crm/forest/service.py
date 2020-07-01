@@ -103,19 +103,12 @@ def map_forests_contracts(forest, contract_types):
         "contract_end_date": contract.get("end_date"),
         "fsc_status": fsc.get("status"),
         "fsc_start_date": fsc.get("start_date"),
-        "fsc_end_date": fsc.get("end_date"),
     }
 
     return forest
 
 
 def map_input_to_contracts(forest, contracts_in: ContractUpdateInput):
-    fsc = Contract(
-        type=ContractTypeEnum.fsc,
-        status=contracts_in.fsc_status,
-        start_date=contracts_in.fsc_start_date,
-        end_date=contracts_in.fsc_end_date,
-    )
     update_contracts = []
     for contract in forest.contracts:
         if contract.get("type") == ContractTypeEnum.fsc:
@@ -136,7 +129,13 @@ def map_input_to_contracts(forest, contracts_in: ContractUpdateInput):
             ).dict()
         )
 
-    update_contracts.append(fsc.dict())
+    update_contracts.append(
+        {
+            "type": ContractTypeEnum.fsc.value,
+            "status": contracts_in.fsc_status,
+            "start_date": contracts_in.fsc_start_date,
+        }
+    )
 
     return update_contracts
 

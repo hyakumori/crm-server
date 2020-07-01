@@ -1,3 +1,4 @@
+from functools import wraps
 from datetime import timedelta
 
 from django.core.exceptions import ValidationError
@@ -50,6 +51,7 @@ from ..permissions.enums import SystemGroups
 
 
 def archive_obj_permission(f):
+    @wraps(f)
     def wrapper(*args, **kwargs):
         request = args[0]
         archive = kwargs["archive"]
@@ -300,6 +302,7 @@ def archive_tags(request, data: TagBulkUpdate):
 @api_view(["PUT"])
 @permission_classes([Archive.model_perm_cls()])
 @get_or_404(get_archive_by_pk, to_name="archive", pass_to=["kwargs"], remove=True)
+@archive_obj_permission
 def other_participants(request, archive: Archive = None):
     other_participants = request.data.get("other_participants", [])
     update_archive_other_participants(archive, other_participants)

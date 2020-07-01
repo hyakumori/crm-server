@@ -19,7 +19,7 @@ class Archive(BaseResourceModel):
     tags = JSONField(default=dict, encoder=DjangoJSONEncoder)
 
     REPR_FIELD = "title"
-    REPR_NAME = "交渉履歴タイトル"
+    REPR_NAME = "協議履歴タイトル"
 
     class Meta:
         permissions = [

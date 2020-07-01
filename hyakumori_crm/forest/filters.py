@@ -14,6 +14,7 @@ class ForestFilter(TagsFilterSet, MultipleOrFilterSet):
     cadastral__municipality = CharFilter(method="icontains_filter")
     cadastral__sector = CharFilter(method="icontains_filter")
     land_attributes__地番本番 = CharFilter(method="icontains_filter")
+    land_attributes__地番支番 = CharFilter(method="icontains_filter")
     owner__name_kana = CharFilter(method="owner_icontains_filter")
     owner__name_kanji = CharFilter(method="owner_icontains_filter")
     contract_type = CharFilter(method="contract_icontains_filter")
@@ -22,7 +23,6 @@ class ForestFilter(TagsFilterSet, MultipleOrFilterSet):
     contract_end_date = CharFilter(method="contract_icontains_filter")
     fsc_status = CharFilter(method="fsc_icontains_filter")
     fsc_start_date = CharFilter(method="fsc_icontains_filter")
-    fsc_end_date = CharFilter(method="fsc_icontains_filter")
 
     def _filter_name_with_space(self, search_field_filter, value):
         keywords = list(
