@@ -14,6 +14,7 @@
         :isUpdate.sync="isUpdate"
         :isSave="isSave"
         @updateInfo="updateData"
+        :formErrors.sync="formErrors"
       />
     </div>
   </div>
@@ -44,6 +45,7 @@ export default {
       isUpdate: false,
       isSave: false,
       saveDisabled: false,
+      formErrors: null,
     };
   },
 
@@ -59,10 +61,14 @@ export default {
           this.isSave = false;
           this.isUpdate = false;
         })
-        .catch(() => {
-          this.$dialog.notify.error(
-            this.$t("messages.api_update_general_error"),
-          );
+        .catch(e => {
+          if (e.response.status === 400 && e.response.data?.errors) {
+            this.formErrors = e.response.data.errors;
+          } else {
+            this.$dialog.notify.error(
+              this.$t("messages.api_update_general_error"),
+            );
+          }
           this.isSave = false;
           this.isLoading = false;
         });

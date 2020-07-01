@@ -99,7 +99,7 @@ class ArchiveActions:
     )
     other_staff_participants_updated = (
         "archive.other_staff_participants_updated",
-        "その他当方参加者が更新されました。",
+        "その他参加者が更新されました。",
         "mdi-account-check-outline",
     )
     forest_list_updated = (
