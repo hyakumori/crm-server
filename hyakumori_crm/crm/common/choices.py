@@ -7,7 +7,7 @@
 
 検索条件
 基本情報	契約情報	    森林情報
-土地管理ID	契約タイプ	    面積
+土地管理ID	契約種類	    面積
 地籍	    契約開始	    樹幹長
 顧客名	    契約終了	    収量比数
 顧客住所	FSC認証可否	    林相名
@@ -26,6 +26,6 @@ from django.db import models
 
 
 class ContractStatuses(models.TextChoices):
-    NEGOTIATING = 'negotiating', '交渉中'
-    UNDER_CONCLUSION = 'under_conclusion', '締結中'
-    NOT_SIGNED = 'not_signed', '未締結'
+    NEGOTIATING = "negotiating", "交渉中"
+    UNDER_CONCLUSION = "under_conclusion", "締結中"
+    NOT_SIGNED = "not_signed", "未締結"
