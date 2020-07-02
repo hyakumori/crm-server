@@ -36,6 +36,12 @@ def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dic
             "sortable": False,
         },
         {
+            "text": _("Sub Lot Number"),
+            "align": "center",
+            "value": "land_attributes__地番支番",
+            "sortable": False,
+        },
+        {
             "text": _("Owner name Kanji"),
             "align": "left",
             "value": "owner__name_kanji",
@@ -81,12 +87,6 @@ def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dic
             "text": _("FSC start"),
             "align": "center",
             "value": "fsc_start_date",
-            "sortable": False,
-        },
-        {
-            "text": _("FSC end"),
-            "align": "center",
-            "value": "fsc_end_date",
             "sortable": False,
         },
         {"text": _("Tag"), "align": "left", "value": "tags", "sortable": False},

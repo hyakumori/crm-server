@@ -5,15 +5,17 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.test import force_authenticate
 
 from hyakumori_crm.crm.models import (
-    Forest,
     Customer,
     CustomerContact,
     Contact,
     ForestCustomer,
 )
-from hyakumori_crm.crm.schemas.contract import ContractType, ContractTypeStatus
+from hyakumori_crm.crm.schemas.contract import (
+    ContractType,
+    ContractTypeStatus,
+    FSCContactStatus,
+)
 from hyakumori_crm.forest.restful import (
-    update_basic_info,
     update_owners_view,
     ForestViewSets,
 )
@@ -49,8 +51,7 @@ def test_update_forest_basic_info(api_rf, admin_user, forest):
                 "contact_start_date": "2020-05-20",
                 "contact_end_date": "2022-05-20",
                 "fsc_start_date": "2020-05-20",
-                "fsc_end_date": "2022-05-20",
-                "fsc_status": ContractTypeStatus.negotiated,
+                "fsc_status": FSCContactStatus.joined,
             },
             "land_attributes": {"地番本番": "10", "地番支番": None},
         },

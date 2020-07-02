@@ -11,16 +11,19 @@
       v-model="menu"
     >
       <template v-slot:activator="{ on }">
-        <v-text-field
-          dense
-          height="45"
-          outlined
-          readonly
-          single-line
-          v-model="innerDate"
-          v-on="on"
-          :rules="rules"
-        ></v-text-field>
+        <ValidationProvider :rules="rules" :name="name" v-slot="{ errors }">
+          <v-text-field
+            dense
+            height="45"
+            outlined
+            :readonly="readonly"
+            single-line
+            v-model="innerDate"
+            v-on="on"
+            :rules="rules"
+            :error-messages="errors[0]"
+          ></v-text-field>
+        </ValidationProvider>
       </template>
       <v-date-picker no-title scrollable v-model="innerDate">
         <v-spacer></v-spacer>
@@ -32,19 +35,25 @@
 </template>
 
 <script>
+import { ValidationProvider } from "vee-validate";
 export default {
   name: "single-date-picker",
+  components: {
+    ValidationProvider,
+  },
 
   props: {
+    name: String,
     label: String,
     date: String,
+    readonly: { type: Boolean, default: true },
+    rules: String,
   },
 
   data() {
     return {
       menu: false,
       innerDate: this.date,
-      rules: [val => !!val || `${this.label}は必須項目です`],
     };
   },
 

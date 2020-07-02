@@ -57,7 +57,7 @@
             <text-info label="FSC認証" :value="fscStatus" />
           </v-col>
           <v-col cols="6">
-            <text-info label="FSC認証期間" :value="formattedFscPeriod" />
+            <text-info label="FSC認証期間" :value="fscPeriod[0]" />
           </v-col>
         </v-row>
       </template>
@@ -159,7 +159,10 @@
         <v-row>
           <v-col cols="4">
             <select-info
-              :items="contractStatusesSelectItems"
+              :items="[
+                { text: '加入', value: '加入' },
+                { text: '未加入', value: '未加入' },
+              ]"
               label="FSC認証加入"
               :value="fscStatus"
               @change="updateFscStatus"
@@ -168,10 +171,12 @@
             />
           </v-col>
           <v-col cols="4">
-            <range-date-picker
+            <single-date-picker
+              name="contracts.fsc_start_date"
               label="FSC契約期間"
-              :dates="fscPeriod"
-              @newDates="updateFscDate"
+              :readonly="false"
+              :date="innerInfo.contracts.fsc_start_date"
+              @newDate="val => (innerInfo.contracts.fsc_start_date = val)"
             />
           </v-col>
           <v-col cols="4"> </v-col>
@@ -193,6 +198,7 @@
 import TextInfo from "./TextInfo";
 import SelectInfo from "./SelectInfo";
 import RangeDatePicker from "../RangeDatePicker";
+import SingleDatePicker from "../SingleDatePicker";
 import UpdateButton from "./UpdateButton";
 import { ValidationObserver } from "vee-validate";
 import { get as _get, cloneDeep as _cloneDeep } from "lodash";
@@ -204,6 +210,7 @@ export default {
     TextInfo,
     SelectInfo,
     RangeDatePicker,
+    SingleDatePicker,
     ValidationObserver,
     UpdateButton,
   },
@@ -212,6 +219,7 @@ export default {
     info: Object,
     isUpdate: Boolean,
     isSave: Boolean,
+    formErrors: Object,
   },
 
   data() {
@@ -294,17 +302,6 @@ export default {
       let end_date = _get(this.innerInfo, "contracts.fsc_end_date");
       return [start_date || "", end_date || ""];
     },
-    formattedFscPeriod() {
-      let fullDate = "";
-      const contract = this.contract;
-      if (contract) {
-        fullDate = `${this.formatDate(contract.fsc_start_date) || ""} ${
-          contract.fsc_start_date ? " ～ " : ""
-        }
-        ${this.formatDate(contract.fsc_end_date) || "未入力"}`;
-      }
-      return fullDate;
-    },
     contractType() {
       return _get(this.info, "contracts.contract_type");
     },
@@ -355,6 +352,11 @@ export default {
   },
 
   watch: {
+    formErrors(val) {
+      if (val) {
+        this.$refs.observer.setErrors(val);
+      }
+    },
     info(val) {
       this.innerInfo = _cloneDeep(val);
     },

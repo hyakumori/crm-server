@@ -475,6 +475,7 @@ export default {
             cadastral__municipality: fCadastral.municipality,
             cadastral__sector: fCadastral.sector,
             land_attributes__地番本番: element.land_attributes["地番本番"],
+            land_attributes__地番支番: element.land_attributes["地番支番"],
             owner__name_kanji: this.renderCustomers(element, "kanji"),
             owner__name_kana: this.renderCustomers(element, "kana"),
             tags: tags,

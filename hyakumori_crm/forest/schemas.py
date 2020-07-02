@@ -3,7 +3,7 @@ from typing import Optional, List
 from uuid import UUID
 
 from django.utils.translation import gettext_lazy as _
-from pydantic import validator, root_validator
+from pydantic import validator, root_validator, ValidationError
 
 from hyakumori_crm.core.models import HyakumoriDanticModel, Paginator
 from hyakumori_crm.crm.models import (
@@ -13,7 +13,11 @@ from hyakumori_crm.crm.models import (
     CustomerContact,
     ForestCustomerContact,
 )
-from hyakumori_crm.crm.schemas.contract import ContractType, ContractTypeStatus
+from hyakumori_crm.crm.schemas.contract import (
+    ContractType,
+    ContractTypeStatus,
+    FSCContactStatus,
+)
 from hyakumori_crm.crm.schemas.forest import LandAttribute, ForestAttribute
 from hyakumori_crm.crm.common.utils import tags_csv_to_dict
 from hyakumori_crm.forest.filters import ForestFilter
@@ -52,7 +56,6 @@ class ContractUpdateInput(HyakumoriDanticModel):
         'contract_end_date': None,
         'fsc_status': '契約済',
         'fsc_start_date': '2020-05-10',
-        'fsc_end_date': '2020-05-21',
     }
     """
 
@@ -60,13 +63,23 @@ class ContractUpdateInput(HyakumoriDanticModel):
     contract_status: Optional[ContractTypeStatus]
     contract_start_date: Optional[date]
     contract_end_date: Optional[date]
-    fsc_status: Optional[ContractTypeStatus]
+    fsc_status: Optional[FSCContactStatus]
     fsc_start_date: Optional[date]
-    fsc_end_date: Optional[date]
 
     class Config:
         orm_mode = False
         arbitrary_types_allowed = True
+
+    @root_validator
+    def check_fsc(cls, values):
+        fsc_status = values.get("fsc_status")
+        fsc_start_date = values.get("fsc_start_date")
+        if not fsc_status:
+            values["fsc_start_date"] = None
+            return values
+        if fsc_status == FSCContactStatus.joined and not fsc_start_date:
+            raise ValueError(_("Required"))
+        return values
 
 
 class ForestInput(HyakumoriDanticModel):
@@ -105,6 +118,26 @@ class ForestInput(HyakumoriDanticModel):
             raise ValueError(_("{field} must be greater than 0").format(field="地番支番"))
         v["地番支番"] = int_sub_lot_number
         return v
+
+
+def forest_input_wrapper(**kwargs):
+    try:
+        return ForestInput(**kwargs)
+    except ValidationError as e:
+        try:
+            contracts_err = next(filter(lambda e: e._loc == "contracts", e.raw_errors))
+            try:
+                contracts_err_root = next(
+                    filter(lambda e: e._loc == "__root__", contracts_err.exc.raw_errors)
+                )
+                e._error_cache = None
+                contracts_err.exc._error_cache = None
+                contracts_err_root._loc = "fsc_start_date"
+            except StopIteration:
+                pass
+        except StopIteration:
+            pass
+        raise e
 
 
 class OwnerPksInput(HyakumoriDanticModel):
