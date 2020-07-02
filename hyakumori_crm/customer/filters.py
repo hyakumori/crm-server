@@ -6,8 +6,6 @@ from hyakumori_crm.core.filters import MultipleOrFilterSet
 
 
 class CustomerFilter(MultipleOrFilterSet):
-    internal_id = CharFilter(method="icontains_filter")
-    business_id = CharFilter(method="icontains_filter")
     fullname_kanji = CharFilter(method="icontains_filter")
     fullname_kana = CharFilter(method="icontains_filter")
     postal_code = CharFilter(method="icontains_filter")
