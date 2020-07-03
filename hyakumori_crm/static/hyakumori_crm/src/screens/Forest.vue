@@ -350,25 +350,15 @@ export default {
     },
 
     renderCustomers(data, nameType) {
-      const list = _get(data, "attributes.customer_cache.list", {});
-      const itemCount = Object.keys(list).length;
+      const names = _get(
+        data,
+        `attributes.customer_cache.repr_name_${nameType}`,
+        "",
+      );
+      const nameList = names.split(",");
+      const itemCount = nameList.length;
       if (itemCount > 0) {
-        const firstKeyAsId = Object.keys(list)[0];
-        let results = _get(
-          list[firstKeyAsId],
-          `name_${nameType}.last_name`,
-          "",
-        );
-
-        const firstName = _get(
-          list[firstKeyAsId],
-          `name_${nameType}.first_name`,
-          "",
-        );
-
-        if (firstName && firstName.length > 0) {
-          results += " " + firstName;
-        }
+        let results = nameList[0];
 
         if (itemCount > 1) {
           results +=

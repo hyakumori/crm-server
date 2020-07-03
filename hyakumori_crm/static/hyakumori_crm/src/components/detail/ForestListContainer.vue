@@ -50,7 +50,7 @@
         >
           {{ $t("messages.out_of_data") }}
         </p>
-        <ForestInfoCard
+        <forest-info-card
           @selected="
             (fId, inx) => {
               modalSelectingId = fId;
@@ -62,10 +62,7 @@
           :card_id="item.id"
           :forestId="item.internal_id"
           :customerCount="item.customers_count"
-          :address="
-            `${item.cadastral.prefecture} ${item.cadastral.municipality} ${item
-              .cadastral.sector || ''} ${item.cadastral.subsector || ''}`
-          "
+          :address="getForestDisplayName(item)"
           :showAction="false"
           :index="indx"
           mode="search"
@@ -95,6 +92,7 @@ import AdditionButton from "../AdditionButton";
 import SelectListModal from "../SelectListModal";
 import ForestInfoCard from "../detail/ForestInfoCard";
 import { reject } from "lodash";
+import { getForestDisplayName } from "@/helpers/forest";
 
 export default {
   name: "forest-list-container",
@@ -145,6 +143,7 @@ export default {
     },
   },
   methods: {
+    getForestDisplayName,
     itemsForAddingResultFilter(f) {
       return !!this.forestIdsMap[f.id];
     },

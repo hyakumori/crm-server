@@ -103,7 +103,7 @@
           :options.sync="options"
           :serverItemsLength="totalCustomers"
           :tableRowIcon="tableRowIcon"
-          :icon-row-value-slice="{ shouldSlice: false }"
+          :icon-row-value-slice="{ shouldSlice: true, length: 0 }"
           iconRowValue="business_id"
           :autoHeaders="false"
           @rowDataItem="rowData"

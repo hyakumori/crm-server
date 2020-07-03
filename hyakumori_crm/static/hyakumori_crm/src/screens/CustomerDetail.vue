@@ -63,6 +63,7 @@
         />
 
         <attachment-container
+          v-if="pk"
           v-acl-only="['manage_postalhistory', 'view_postalhistory']"
           class="postal-histories mt-12"
           headerContent="書類郵送記録"
@@ -197,6 +198,7 @@ export default {
     return {
       headerInfo: {
         title: "",
+        desc: "",
         subtitle: "",
         tag: "",
         backUrl: { name: "customers" },
@@ -481,6 +483,7 @@ export default {
         this.headerInfo = {
           ...this.headerInfo,
           title: this.getPersonFullname(this.customer?.self_contact.name_kanji),
+          desc: this.customer.business_id,
           tags: tags_to_array(this.customer?.tags),
         };
       },

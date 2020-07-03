@@ -11,16 +11,11 @@
     <v-icon class="forest-info-card__icon">{{ $t("icon.forest_icon") }}</v-icon>
 
     <div class="forest-info-card__name d-flex ml-4 flex-column">
-      <div v-if="forestId" class="d-flex justify-space-between">
-        <h4 class="body-2">
-          {{ forestId }}
-          <span class="caption">{{ customerCount }} 人の所有者</span>
-        </h4>
-      </div>
+      <div>{{ address }}</div>
 
-      <div v-if="address" class="text-truncate">
-        <v-icon small>mdi-map-marker</v-icon>
-        <span class="ml-1 caption">{{ address }}</span>
+      <div v-if="forestId" class="caption">
+        {{ forestId }}
+        <span>{{ customerCount }} 人の所有者</span>
       </div>
     </div>
     <v-btn

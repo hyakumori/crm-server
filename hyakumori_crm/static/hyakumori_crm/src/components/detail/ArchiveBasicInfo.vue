@@ -25,12 +25,9 @@
           v-else
         />
         <text-info
-          :isUpdate="isUpdate || !isDetail"
+          v-if="!isUpdate"
           :label="$t('forms.labels.archive.future_action')"
-          :name="$t('forms.labels.archive.future_action')"
           :value="info.future_action"
-          rules="max:255"
-          @input="val => (info.future_action = val)"
         />
       </v-col>
 
@@ -57,21 +54,33 @@
           v-if="isUpdate || isDetail"
         />
       </v-col>
-
-      <div class="pl-3 container content">
-        <h5>{{ $t("forms.labels.archive.content") }}</h5>
-        <v-textarea
-          :outlined="isUpdate || !isDetail"
-          :value="info.content"
-          dense
-          v-if="isUpdate || !isDetail"
-          v-model="info.content"
-        />
-        <p v-else>
-          {{ info.content }}
-        </p>
-      </div>
     </v-row>
+
+    <div class="pt-3 content fullwidth" v-if="isUpdate || !isDetail">
+      <h5>{{ $t("forms.labels.archive.future_action") }}</h5>
+      <v-textarea
+        :name="$t('forms.labels.archive.future_action')"
+        :outlined="isUpdate || !isDetail"
+        :value="info.future_action"
+        dense
+        v-model="info.future_action"
+        hide-details
+      />
+    </div>
+    <div class="pt-6 content">
+      <h5>{{ $t("forms.labels.archive.content") }}</h5>
+      <v-textarea
+        :outlined="isUpdate || !isDetail"
+        :value="info.content"
+        dense
+        v-if="isUpdate || !isDetail"
+        v-model="info.content"
+        hide-details
+      />
+      <p class="ma-0" style="white-space:pre-line;" v-else>
+        {{ info.content }}
+      </p>
+    </div>
     <slot
       :info="info"
       :invalid="invalid || datetimePickerInvalid"

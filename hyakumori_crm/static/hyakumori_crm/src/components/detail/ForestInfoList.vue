@@ -7,12 +7,7 @@
           :card_id="forest.id"
           :forestId="forest.internal_id"
           :customerCount="forest.customers_count"
-          :address="
-            `${forest.cadastral.prefecture} ${
-              forest.cadastral.municipality
-            } ${forest.cadastral.sector || ''} ${forest.cadastral.subsector ||
-              ''}`
-          "
+          :address="getForestDisplayName(forest)"
           :isUpdate="isUpdate"
           :index="index"
           @deleteForest="$emit('deleteForest', forest, index)"
@@ -30,6 +25,7 @@
 
 <script>
 import ForestInfoCard from "./ForestInfoCard";
+import { getForestDisplayName } from "@/helpers/forest";
 
 export default {
   name: "forest-info-list",
@@ -43,6 +39,9 @@ export default {
     isUpdate: Boolean,
     selectedId: String,
     itemClickable: { type: Boolean, default: false },
+  },
+  methods: {
+    getForestDisplayName,
   },
 };
 </script>

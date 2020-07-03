@@ -59,7 +59,7 @@
           :forest-id="item.internal_id"
           :card_id="item.id"
           :customerCount="item.customers_count"
-          :address="getFullAddress(item)"
+          :address="getForestDisplayName(item)"
           :showAction="false"
           :selectedId="selectingForestId"
           @selected="handleForestSelected"
@@ -81,6 +81,7 @@ import AdditionButton from "../AdditionButton";
 import SelectListModal from "../SelectListModal";
 import ForestInfoCard from "./ForestInfoCard";
 import { cloneDeep, pullAllWith, debounce } from "lodash";
+import { getForestDisplayName } from "@/helpers/forest";
 
 export default {
   name: "archive-related-forest-container",
@@ -125,6 +126,7 @@ export default {
   },
 
   methods: {
+    getForestDisplayName,
     onCancel() {
       this.selectingForestId = null;
       this.selectingForestIndex = null;
@@ -211,16 +213,6 @@ export default {
       this.shown = true;
       if (this.allForests.length === 0 || this.next === "") {
         this.fetchAllForests(this.next);
-      }
-    },
-
-    getFullAddress(data) {
-      if (!data.cadastral) {
-        return "";
-      } else {
-        return `${data.cadastral.prefecture} ${
-          data.cadastral.municipality
-        } ${data.cadastral.sector || ""} ${data.cadastral.subsector || ""}`;
       }
     },
 
