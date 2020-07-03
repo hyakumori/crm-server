@@ -245,11 +245,14 @@ def csv_contract_date_normalize(quoted_date_str):
     return date_str
 
 
-class CsvContract(Contract):
-    _normalize_start_date = validator("start_date", allow_reuse=True, pre=True)(
+class CsvContract(ContractUpdateInput):
+    _normalize_start_date = validator(
+        "contract_start_date", allow_reuse=True, pre=True
+    )(csv_contract_date_normalize)
+    _normalize_end_date = validator("contract_end_date", allow_reuse=True, pre=True)(
         csv_contract_date_normalize
     )
-    _normalize_end_date = validator("end_date", allow_reuse=True, pre=True)(
+    _normalize_fsc_date = validator("fsc_start_date", allow_reuse=True, pre=True)(
         csv_contract_date_normalize
     )
 
@@ -258,7 +261,7 @@ class ForestCsvInput(HyakumoriDanticModel):
     id: Optional[UUID]
     internal_id: str
     cadastral: Cadastral
-    contracts: List[CsvContract]
+    contracts: CsvContract
     land_attributes: List[LandAttribute]
     forest_attributes: List[ForestAttribute]
     tags: Optional[str]

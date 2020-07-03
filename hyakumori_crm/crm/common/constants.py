@@ -61,9 +61,16 @@ FOREST_CADASTRAL = ["都道府県", "市町村", "大字", "字"]
 
 FOREST_OWNER_NAME = ["土地所有者名（漢字）", "土地所有者名（カナ）"]
 
-FOREST_OWNER_ADDRESS = ["土地所有者住所_都道府県", "土地所有者住所_市町村", "土地所有者住所_大字"]
+FOREST_OWNER_INFO = [
+    "土地所有者名（漢字）",
+    "土地所有者名（カナ）",
+    "所有者住所",
+    "連絡者氏名（漢字）",
+    "連絡者氏名（カナ）",
+    "連絡者住所",
+]
 
-FOREST_CONTRACT = ["契約種類", "契約状況", "開始日", "終了日", "FSC認証", "開始日", "終了日"]
+FOREST_CONTRACT = ["契約種類", "契約状況", "開始日", "終了日", "FSC認証", "FSC開始日"]
 
 CUSTOMER_ID_PREFIX = "DFFC"
 CUSTOMER_ID_SEQUENCE = "customer_ids"

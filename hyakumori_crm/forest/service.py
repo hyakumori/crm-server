@@ -8,7 +8,10 @@ from django.core.exceptions import ValidationError
 from django.db import OperationalError, connection
 from django.db.models import F, OuterRef, Subquery, Count
 from django.db.models.expressions import RawSQL
+from django.db import ProgrammingError
 from django.utils.translation import gettext_lazy as _
+from querybuilder.query import Query, QueryWindow
+from querybuilder.fields import RowNumberField
 
 from .schemas import (
     CustomerDefaultInput,
@@ -25,7 +28,7 @@ from ..core.decorators import errors_wrapper
 from ..crm.common.constants import (
     FOREST_CADASTRAL,
     FOREST_LAND_ATTRIBUTES,
-    FOREST_OWNER_NAME,
+    FOREST_OWNER_INFO,
     FOREST_CONTRACT,
     FOREST_ATTRIBUTES,
 )
@@ -305,7 +308,7 @@ def csv_headers():
             header,
             FOREST_CADASTRAL,
             FOREST_LAND_ATTRIBUTES,
-            FOREST_OWNER_NAME,
+            FOREST_OWNER_INFO,
             FOREST_CONTRACT,
             [_("Tag")],
             FOREST_ATTRIBUTES,
@@ -314,44 +317,113 @@ def csv_headers():
 
 
 def get_forests_for_csv(forest_ids: list = None):
-    if forest_ids is not None and len(forest_ids) > 0:
-        try:
-            queryset = Forest.objects.filter(id__in=forest_ids)
-        except ValidationError:
-            return []
-    else:
-        queryset = Forest.objects.all()
-    return (
-        queryset.distinct("id")
-        .annotate(forest_id=F("id"))
-        .annotate(
-            customer_name_kana=RawSQL(
-                """
-            select array_to_string(array_agg(concat_ws(' ', cc2.name_kana->>'last_name', cc2.name_kana->>'first_name')), '; ')
-            from crm_customer c
-            inner join crm_forestcustomer cf on c.id = cf.customer_id
-            inner join crm_customercontact cc on c.id = cc.customer_id
-            inner join crm_contact cc2 on cc.contact_id = cc2.id
-            where crm_forest.id = cf.forest_id and cc.is_basic = true
-            """,
-                params=[],
-            )
-        )
-        .annotate(
-            customer_name_kanji=RawSQL(
-                """
-            select array_to_string(array_agg(concat_ws(' ', cc4.name_kanji->>'last_name', cc4.name_kanji->>'first_name')), '; ')
-            from crm_customer c
-            inner join crm_forestcustomer cf on c.id = cf.customer_id
-            inner join crm_customercontact cc3 on c.id = cc3.customer_id
-            inner join crm_contact cc4 on cc3.contact_id = cc4.id
-            where crm_forest.id = cf.forest_id and cc3.is_basic = true
-            """,
-                params=[],
-            )
-        )
-        .annotate(customer_internal_id=F("forestcustomer__customer__internal_id"))
+    forestcustomercontact_rank_query = Query().from_table(
+        ForestCustomerContact,
+        [
+            "forestcustomer_id",
+            "customercontact_id",
+            RowNumberField(
+                alias="rank",
+                over=QueryWindow()
+                .order_by("created_at")
+                .partition_by("forestcustomer_id"),
+            ),
+        ],
     )
+
+    forestcustomer_rank_query = Query().from_table(
+        ForestCustomer,
+        [
+            "id",
+            "forest_id",
+            "customer_id",
+            RowNumberField(
+                alias="rank",
+                over=QueryWindow()
+                .order_by("attributes->>'default'", desc=True, nulls_last=True)
+                .order_by("created_at")
+                .partition_by("forest_id"),
+            ),
+        ],
+    )
+    forestcustomer_query = (
+        Query()
+        .from_table("fc_rank", fields=["forest_id"])
+        .join(Customer, condition="crm_customer.id = fc_rank.customer_id")
+        .join(
+            CustomerContact,
+            condition="crm_customercontact.customer_id = crm_customer.id "
+            "and crm_customercontact.is_basic = true",
+        )
+        .join(
+            Contact,
+            condition="crm_customercontact.contact_id = crm_contact.id",
+            fields=[
+                {"customer_name_kanji": "name_kanji"},
+                {"customer_name_kana": "name_kana"},
+                {"customer_address": "address"},
+            ],
+        )
+        .join(
+            "fcc",
+            condition="fc_rank.id = fcc.forestcustomer_id and fcc.rank = 1",
+            join_type="LEFT JOIN",
+        )
+        .join(
+            {"contact_cc": CustomerContact},
+            condition="contact_cc.id = fcc.customercontact_id "
+            "and contact_cc.id != crm_customercontact.id",
+            join_type="LEFT JOIN",
+        )
+        .join(
+            {"contact_c": Contact},
+            join_type="LEFT JOIN",
+            condition="contact_cc.contact_id = contact_c.id",
+            fields=[
+                {"contact_name_kanji": "name_kanji"},
+                {"contact_name_kana": "name_kana"},
+                {"contact_address": "address"},
+            ],
+        )
+        .where(**{"fc_rank.rank": 1})
+    )
+    queryset = (
+        Query()
+        .with_query(forestcustomer_query, alias="fc")
+        .with_query(forestcustomercontact_rank_query, alias="fcc")
+        .with_query(forestcustomer_rank_query, alias="fc_rank")
+        .from_table(
+            {"f": Forest},
+            fields=[
+                "land_attributes",
+                "cadastral",
+                "id",
+                "internal_id",
+                "tags",
+                "forest_attributes",
+                "contracts",
+            ],
+        )
+        .join(
+            "fc",
+            condition="fc.forest_id = f.id",
+            join_type="LEFT JOIN",
+            fields=[
+                "customer_name_kanji",
+                "customer_name_kana",
+                "customer_address",
+                "contact_name_kanji",
+                "contact_name_kana",
+                "contact_address",
+            ],
+        )
+    )
+    if forest_ids is not None and len(forest_ids) > 0:
+        queryset = queryset.where(id__in=forest_ids)
+    try:
+        return queryset.select()
+    except ProgrammingError:
+        return []
 
 
 def parse_tags_for_csv(tags: dict):
@@ -366,78 +438,129 @@ def parse_tags_for_csv(tags: dict):
         return result[0 : len(result) - 2]
 
 
-def forest_csv_data_mapping(f):
-    contract_types = get_all_contracttypes_map()
-    forest = map_forests_contracts(f, contract_types)
+def forest_csv_data_mapping(forest):
     return [
-        forest.forest_id,
-        forest.internal_id,
-        forest.cadastral.get("prefecture"),
-        forest.cadastral.get("municipality"),
-        forest.cadastral.get("sector"),
-        forest.cadastral.get("subsector"),
-        forest.land_attributes.get("地番本番"),
-        forest.land_attributes.get("地番支番"),
-        forest.land_attributes.get("地目"),
-        forest.land_attributes.get("林班"),
-        forest.land_attributes.get("小班"),
-        forest.land_attributes.get("区画"),
-        forest.customer_name_kanji,
-        forest.customer_name_kana,
-        forest.contracts.get("contract_type"),
-        forest.contracts.get("contract_status"),
-        f'"{forest.contracts.get("contract_start_date") or ""}"',
-        f'"{forest.contracts.get("contract_end_date") or ""}"',
-        forest.contracts.get("fsc_status"),
-        f'"{forest.contracts.get("fsc_start_date") or ""}"',
-        f'"{forest.contracts.get("fsc_end_date") or ""}"',
-        parse_tags_for_csv(forest.tags),
-        forest.forest_attributes.get("地番面積_ha"),
-        forest.forest_attributes.get("面積_ha"),
-        forest.forest_attributes.get("面積_m2"),
-        forest.forest_attributes.get("平均傾斜度"),
-        forest.forest_attributes.get("第1林相ID"),
-        forest.forest_attributes.get("第1林相名"),
-        forest.forest_attributes.get("第1Area"),
-        forest.forest_attributes.get("第1面積_ha"),
-        forest.forest_attributes.get("第1立木本"),
-        forest.forest_attributes.get("第1立木密"),
-        forest.forest_attributes.get("第1平均樹"),
-        forest.forest_attributes.get("第1樹冠長"),
-        forest.forest_attributes.get("第1平均DBH"),
-        forest.forest_attributes.get("第1合計材"),
-        forest.forest_attributes.get("第1ha材積"),
-        forest.forest_attributes.get("第1収量比"),
-        forest.forest_attributes.get("第1相対幹"),
-        forest.forest_attributes.get("第1形状比"),
-        forest.forest_attributes.get("第2林相ID"),
-        forest.forest_attributes.get("第2林相名"),
-        forest.forest_attributes.get("第2Area"),
-        forest.forest_attributes.get("第2面積_ha"),
-        forest.forest_attributes.get("第2立木本"),
-        forest.forest_attributes.get("第2立木密"),
-        forest.forest_attributes.get("第2平均樹"),
-        forest.forest_attributes.get("第2樹冠長"),
-        forest.forest_attributes.get("第2平均DBH"),
-        forest.forest_attributes.get("第2合計材"),
-        forest.forest_attributes.get("第2ha材積"),
-        forest.forest_attributes.get("第2収量比"),
-        forest.forest_attributes.get("第2相対幹"),
-        forest.forest_attributes.get("第2形状比"),
-        forest.forest_attributes.get("第3林相ID"),
-        forest.forest_attributes.get("第3林相名"),
-        forest.forest_attributes.get("第3Area"),
-        forest.forest_attributes.get("第3面積_ha"),
-        forest.forest_attributes.get("第3立木本"),
-        forest.forest_attributes.get("第3立木密"),
-        forest.forest_attributes.get("第3平均樹"),
-        forest.forest_attributes.get("第3樹冠長"),
-        forest.forest_attributes.get("第3平均DBH"),
-        forest.forest_attributes.get("第3合計材"),
-        forest.forest_attributes.get("第3ha材積"),
-        forest.forest_attributes.get("第3収量比"),
-        forest.forest_attributes.get("第3相対幹"),
-        forest.forest_attributes.get("第3形状比"),
+        forest["id"],
+        forest["internal_id"],
+        forest["cadastral"].get("prefecture"),
+        forest["cadastral"].get("municipality"),
+        forest["cadastral"].get("sector"),
+        forest["cadastral"].get("subsector"),
+        forest["land_attributes"].get("地番本番"),
+        forest["land_attributes"].get("地番支番"),
+        forest["land_attributes"].get("地目"),
+        forest["land_attributes"].get("林班"),
+        forest["land_attributes"].get("小班"),
+        forest["land_attributes"].get("区画"),
+        "\u3000".join(
+            filter(
+                lambda x: x,
+                [
+                    (forest.get("customer_name_kanji") or {}).get("last_name"),
+                    (forest.get("customer_name_kanji") or {}).get("first_name"),
+                ],
+            )
+        ),
+        "\u3000".join(
+            filter(
+                lambda x: x,
+                [
+                    (forest.get("customer_name_kana") or {}).get("last_name"),
+                    (forest.get("customer_name_kana") or {}).get("first_name"),
+                ],
+            )
+        ),
+        " ".join(
+            filter(
+                lambda x: x,
+                [
+                    (forest.get("customer_address") or {}).get("prefecture"),
+                    (forest.get("customer_address") or {}).get("municipality"),
+                    (forest.get("customer_address") or {}).get("sector"),
+                ],
+            )
+        ),
+        "\u3000".join(
+            filter(
+                lambda x: x,
+                [
+                    (forest.get("contact_name_kanji") or {}).get("last_name"),
+                    (forest.get("contact_name_kanji") or {}).get("first_name"),
+                ],
+            )
+        ),
+        "\u3000".join(
+            filter(
+                lambda x: x,
+                [
+                    (forest.get("contact_name_kana") or {}).get("last_name"),
+                    (forest.get("contact_name_kana") or {}).get("first_name"),
+                ],
+            )
+        ),
+        " ".join(
+            filter(
+                lambda x: x,
+                [
+                    (forest.get("contact_address") or {}).get("prefecture"),
+                    (forest.get("contact_address") or {}).get("municipality"),
+                    (forest.get("contact_address") or {}).get("sector"),
+                ],
+            )
+        ),
+        forest["contracts"][0].get("type"),
+        forest["contracts"][0].get("status"),
+        f'"{forest["contracts"][0].get("start_date") or ""}"',
+        f'"{forest["contracts"][0].get("end_date") or ""}"',
+        forest["contracts"][-1].get("status"),
+        f'"{forest["contracts"][-1].get("start_date") or ""}"',
+        parse_tags_for_csv(forest["tags"]),
+        forest["forest_attributes"].get("地番面積_ha"),
+        forest["forest_attributes"].get("面積_ha"),
+        forest["forest_attributes"].get("面積_m2"),
+        forest["forest_attributes"].get("平均傾斜度"),
+        forest["forest_attributes"].get("第1林相ID"),
+        forest["forest_attributes"].get("第1林相名"),
+        forest["forest_attributes"].get("第1Area"),
+        forest["forest_attributes"].get("第1面積_ha"),
+        forest["forest_attributes"].get("第1立木本"),
+        forest["forest_attributes"].get("第1立木密"),
+        forest["forest_attributes"].get("第1平均樹"),
+        forest["forest_attributes"].get("第1樹冠長"),
+        forest["forest_attributes"].get("第1平均DBH"),
+        forest["forest_attributes"].get("第1合計材"),
+        forest["forest_attributes"].get("第1ha材積"),
+        forest["forest_attributes"].get("第1収量比"),
+        forest["forest_attributes"].get("第1相対幹"),
+        forest["forest_attributes"].get("第1形状比"),
+        forest["forest_attributes"].get("第2林相ID"),
+        forest["forest_attributes"].get("第2林相名"),
+        forest["forest_attributes"].get("第2Area"),
+        forest["forest_attributes"].get("第2面積_ha"),
+        forest["forest_attributes"].get("第2立木本"),
+        forest["forest_attributes"].get("第2立木密"),
+        forest["forest_attributes"].get("第2平均樹"),
+        forest["forest_attributes"].get("第2樹冠長"),
+        forest["forest_attributes"].get("第2平均DBH"),
+        forest["forest_attributes"].get("第2合計材"),
+        forest["forest_attributes"].get("第2ha材積"),
+        forest["forest_attributes"].get("第2収量比"),
+        forest["forest_attributes"].get("第2相対幹"),
+        forest["forest_attributes"].get("第2形状比"),
+        forest["forest_attributes"].get("第3林相ID"),
+        forest["forest_attributes"].get("第3林相名"),
+        forest["forest_attributes"].get("第3Area"),
+        forest["forest_attributes"].get("第3面積_ha"),
+        forest["forest_attributes"].get("第3立木本"),
+        forest["forest_attributes"].get("第3立木密"),
+        forest["forest_attributes"].get("第3平均樹"),
+        forest["forest_attributes"].get("第3樹冠長"),
+        forest["forest_attributes"].get("第3平均DBH"),
+        forest["forest_attributes"].get("第3合計材"),
+        forest["forest_attributes"].get("第3ha材積"),
+        forest["forest_attributes"].get("第3収量比"),
+        forest["forest_attributes"].get("第3相対幹"),
+        forest["forest_attributes"].get("第3形状比"),
     ]
 
 
@@ -461,10 +584,16 @@ def parse_csv_data_to_dict(row_data):
     cadastral_keys = ["prefecture", "municipality", "sector", "subsector"]
     cadastral = []
     land_attributes = []
-    contract_keys = ["type", "status", "start_date", "end_date"]
+    contract_keys = [
+        "contract_type",
+        "contract_status",
+        "contract_start_date",
+        "contract_end_date",
+        "fsc_status",
+        "fsc_start_date",
+    ]
     contract = []
     work_load_contract = []
-    fsc_contract = []
     contracts = []
     forest_attributes = []
     for i in range(len(row_data)):
@@ -479,22 +608,17 @@ def parse_csv_data_to_dict(row_data):
             cadastral.append(row_data[i])
         elif 5 < i <= 11:
             land_attributes.append(row_data[i])
-        elif 13 < i <= 17:
+        elif 17 < i <= 23:
             contract.append(row_data[i])
-        elif 17 < i <= 20:
-            fsc_contract.append(row_data[i])
-        elif i == 21:
+        elif i == 24:
             new_forest["tags"] = row_data[i]
-        elif 21 < i <= len(row_data) - 1:
+        elif 24 < i <= len(row_data) - 1:
             forest_attributes.append(row_data[i])
     new_forest["cadastral"] = csv_column_to_dict(cadastral_keys, cadastral)
     new_forest["land_attributes"] = dict_to_list(
         csv_column_to_dict(FOREST_LAND_ATTRIBUTES, land_attributes)
     )
-    contracts.append(csv_column_to_dict(contract_keys, contract))
-    fsc_contract.insert(0, ContractTypeEnum.fsc)
-    contracts.append(csv_column_to_dict(contract_keys, fsc_contract))
-    new_forest["contracts"] = contracts
+    new_forest["contracts"] = dict(zip(contract_keys, contract))
     new_forest["forest_attributes"] = dict_to_list(
         csv_column_to_dict(FOREST_ATTRIBUTES, forest_attributes)
     )
@@ -564,16 +688,12 @@ csv_errors_map = {
     "cadastral.municipality": "市町村",
     "cadastral.sector": "大字",
     "cadastral.subsector": "字",
-    "contracts.0.type": "契約種類",
-    "contracts.0.status": "契約状況",
-    "contracts.0.start_date": "開始日",
-    "contracts.0.end_date": "終了日",
-    "contracts.1.status": "FSC認証",
-    "contracts.1.start_date": "開始日",
-    "contracts.1.end_date": "終了日",
-    "contracts.2.status": "FSC認証",
-    "contracts.2.start_date": "開始日",
-    "contracts.2.end_date": "終了日",
+    "contracts.contract_type": "契約種類",
+    "contracts.contract_status": "契約状況",
+    "contracts.contract_start_date": "開始日",
+    "contracts.contract_end_date": "終了日",
+    "contracts.fsc_status": "FSC認証",
+    "contracts.fsc_start_date": "開始日",
     "land_attributes.0.__root__": "土地属性",
     "land_attributes.1.__root__": "土地属性",
     "tags": "タグ",
