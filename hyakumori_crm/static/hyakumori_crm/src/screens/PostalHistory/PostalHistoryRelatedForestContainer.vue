@@ -59,7 +59,7 @@
           :forest-id="item.internal_id"
           :card_id="item.id"
           :customerCount="item.customers_count"
-          :address="getFullAddress(item)"
+          :address="getForestDisplayName(item)"
           :showAction="false"
           :selectedId="selectingForestId"
           @selected="handleForestSelected"
@@ -81,6 +81,7 @@ import AdditionButton from "@/components/AdditionButton";
 import SelectListModal from "@/components/SelectListModal";
 import ForestInfoCard from "@/components/detail/ForestInfoCard";
 import { cloneDeep, pullAllWith, debounce } from "lodash";
+import { getForestDisplayName } from "@/helpers/forest";
 
 export default {
   mixins: [ContainerMixin, ArchiveDetailMixin],
@@ -123,6 +124,7 @@ export default {
   },
 
   methods: {
+    getForestDisplayName,
     onCancel() {
       this.selectingForestId = null;
       this.selectingForestIndex = null;

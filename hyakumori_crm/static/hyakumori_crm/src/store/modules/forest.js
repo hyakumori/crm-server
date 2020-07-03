@@ -31,9 +31,7 @@ const getters = {
       ",",
     );
     if (names.length === 0) return "";
-    return `${names[names.length - 1]}${
-      names.length > 1 ? ` 他${names.length - 1}名` : ""
-    }`;
+    return `${names[0]}${names.length > 1 ? ` 他${names.length - 1}名` : ""}`;
   },
   sector(state) {
     if (!state.forest) return "";

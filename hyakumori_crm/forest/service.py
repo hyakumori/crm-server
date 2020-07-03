@@ -228,7 +228,9 @@ def get_forest_customers(pk):
         left outer join crm_forestcustomer A0 on crm_customer.id = A0.customer_id
         where crm_forestcustomer.forest_id = %(pk)s::uuid
         group by crm_customer.id,
-                 crm_forestcustomer.attributes->>'default'
+                 crm_forestcustomer.attributes->>'default',
+                 crm_forestcustomer.created_at
+        order by crm_forestcustomer.created_at
         """,
         {"pk": pk},
     ).prefetch_related("customercontact_set__contact")
@@ -269,6 +271,7 @@ def set_default_customer(data: CustomerDefaultInput):
         forest_id=data.forest.id, customer_id=data.customer_id
     ).update(attributes={"default": data.default})
     data.forest.save(update_fields=["updated_at"])
+    refresh_customer_forest_cache(forest_ids=[str(data.forest.id)])
     return data.forest
 
 
@@ -561,7 +564,7 @@ csv_errors_map = {
     "cadastral.municipality": "市町村",
     "cadastral.sector": "大字",
     "cadastral.subsector": "字",
-    "contracts.0.type": "契約タイプ",
+    "contracts.0.type": "契約種類",
     "contracts.0.status": "契約状況",
     "contracts.0.start_date": "開始日",
     "contracts.0.end_date": "終了日",

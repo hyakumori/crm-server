@@ -22,7 +22,7 @@ class ArchiveInput(HyakumoriDanticModel):
     content: Optional[str]
     location: str = Field(..., max_length=255)
     # future_action allow None value
-    future_action: Optional[str] = Field(None, max_length=255)
+    future_action: Optional[str]
     archive_date: Optional[datetime]
 
     class Config:

@@ -69,7 +69,9 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
         query = (
             self.get_queryset()
             .annotate(customers_count=Count(F("forestcustomer__customer_id")))
-            .values("id", "internal_id", "cadastral", "customers_count")
+            .values(
+                "id", "internal_id", "cadastral", "customers_count", "land_attributes"
+            )
         )
         search_str = request.GET.get("search")
         if search_str:

@@ -8,7 +8,7 @@
       :name="name"
       @input="$emit('input', $event)"
     />
-    <p class="text-break" v-else>
+    <p class="text-break" style="white-space:pre-line;" v-else>
       {{ value }} <slot name="readonly-extend"></slot>
     </p>
   </div>
