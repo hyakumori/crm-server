@@ -30,9 +30,14 @@ class Query(querybuilder.query.Query):
         return self
 
 
+class QueryWindow(querybuilder.query.QueryWindow, Query):
+    pass
+
+
 # TODO: provide documents for these patches
 querybuilder.query.Sorter = CompleteSorter
 querybuilder.query.Query = Query
+querybuilder.query.QueryWindow = QueryWindow
 
 
 def enum_validator(v: Any, field: "ModelField", config: "BaseConfig") -> Enum:
