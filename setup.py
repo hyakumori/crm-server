@@ -186,7 +186,7 @@ class BaseBuildCommand(Command):
                     files.append(filename[len(base) :].lstrip(os.path.sep))
 
         for file in self.get_manifest_additions():
-            files.append(file)
+            files.append(file[len(base) :].lstrip(os.path.sep))
 
     def run(self):
         if self.force or self._needs_built():
