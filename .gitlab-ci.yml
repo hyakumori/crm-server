@@ -64,9 +64,8 @@ packing:
       - .cache/pip
       - $CI_PROJECT_DIR/hyakumori_crm/static/hyakumori_crm/node_modules/
   script:
-    - export HYAKUMORI_LIGHT_BUILD=1
-    - pip install -U pip setuptools
-    - python setup.py build_assets --inplace && python setup.py sdist
+    - pip install -U pip setuptools wheel
+    - python setup.py sdist
   artifacts:
     paths:
       - $CI_PROJECT_DIR/dist/hyakumori_crm-$HYAKUMORI_VERSION.tar.gz
