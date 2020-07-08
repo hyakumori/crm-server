@@ -1,5 +1,6 @@
 import os
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from pathlib import Path
 import json
@@ -22,7 +23,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         vue_envs = dict()
-        target = Path(os.getenv("STATIC_DIR")).joinpath("index.html")
+        target = os.path.join(settings.STATIC_ROOT, "index.html")
 
         for key, value in os.environ.items():
             if key.find("VUE_APP") >= 0:
