@@ -1,7 +1,7 @@
 <template>
   <ValidationObserver ref="observer" v-slot="{ invalid }">
     <v-row>
-      <v-col cols="6">
+      <v-col cols="6" class="pb-0">
         <text-info
           :isUpdate="!isDetail || isUpdate"
           :label="$t('forms.labels.archive.title')"
@@ -25,13 +25,13 @@
           v-else
         />
         <text-info
-          v-if="!isUpdate"
+          v-if="!isUpdate && isDetail"
           :label="$t('forms.labels.archive.future_action')"
           :value="info.future_action"
         />
       </v-col>
 
-      <v-col cols="6">
+      <v-col cols="6" class="pb-0">
         <text-info
           :isUpdate="isUpdate || !isDetail"
           :label="$t('forms.labels.archive.location')"
@@ -56,7 +56,7 @@
       </v-col>
     </v-row>
 
-    <div class="pt-3 content fullwidth" v-if="isUpdate || !isDetail">
+    <div class="content" v-if="isUpdate || !isDetail">
       <h5>{{ $t("forms.labels.archive.future_action") }}</h5>
       <v-textarea
         :name="$t('forms.labels.archive.future_action')"
@@ -67,7 +67,7 @@
         hide-details
       />
     </div>
-    <div class="pt-6 content">
+    <div class="pt-6 content" :class="{ 'pb-6': !isUpdate || !isDetail }">
       <h5>{{ $t("forms.labels.archive.content") }}</h5>
       <v-textarea
         :outlined="isUpdate || !isDetail"
