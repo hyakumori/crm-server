@@ -57,7 +57,7 @@
             <text-info label="FSC認証" :value="fscStatus" />
           </v-col>
           <v-col cols="6">
-            <text-info label="FSC認証期間" :value="fscPeriod[0]" />
+            <text-info label="FSC開始日" :value="fscPeriod[0]" />
           </v-col>
         </v-row>
       </template>
@@ -173,7 +173,7 @@
           <v-col cols="4">
             <single-date-picker
               name="contracts.fsc_start_date"
-              label="FSC契約期間"
+              label="FSC開始日"
               :readonly="false"
               :date="innerInfo.contracts.fsc_start_date"
               @newDate="val => (innerInfo.contracts.fsc_start_date = val)"
