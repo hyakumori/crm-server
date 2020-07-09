@@ -325,6 +325,7 @@ def get_forests_for_csv(forest_ids: list = None):
             RowNumberField(
                 alias="rank",
                 over=QueryWindow()
+                .order_by("attributes->>'default'", desc=True, nulls_last=True)
                 .order_by("created_at")
                 .partition_by("forestcustomer_id"),
             ),
