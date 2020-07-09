@@ -72,6 +72,9 @@ class BaseRelationModel(
 class BaseResourceModel(
     UUIDPrimary, AttributesMixin, InternalMixin, TimestampMixin, StoreDeletedMixin,
 ):
+    REPR_FIELD = "id"
+    REPR_NAME = "ID"
+
     objects = StoreDeletedManager.from_queryset(BaseQuerySet)()
 
     class Meta:
@@ -85,6 +88,9 @@ class BaseResourceModel(
         return type(
             f"{cls.__name__}ModelPermission", (ModelPermissions,), {"model_cls": cls}
         )
+
+    def repr_name(self):
+        return self.id
 
 
 class HyakumoriDanticModel(BaseModel):

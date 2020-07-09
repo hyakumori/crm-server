@@ -628,7 +628,7 @@ def parse_csv_data_to_dict(row_data):
 def update_forest_csv(forest, data: ForestCsvInput):
     forest.cadastral = data.cadastral.dict()
     forest.land_attributes = list_to_dict(data.land_attributes)
-    forest.contracts = [c.dict() for c in data.contracts]
+    forest.contracts = map_input_to_contracts(forest, data.contracts)
     forest.tags = data.tags_json
     forest.forest_attributes = list_to_dict(data.forest_attributes)
     forest.save()
