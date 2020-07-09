@@ -12,4 +12,4 @@ RUN pip install /tmp/hyakumori_crm-${HYAKUMORI_VERSION}.tar.gz
 
 EXPOSE 8000
 
-CMD hyakumori inject_envs && uvicorn hyakumori_crm.asgi:application --host 0.0.0.0 --port 8000 --header Server:apache
+CMD uvicorn hyakumori_crm.asgi:application --host 0.0.0.0 --port 8000 --header Server:apache
