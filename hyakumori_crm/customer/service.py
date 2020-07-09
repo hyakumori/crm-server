@@ -437,7 +437,10 @@ def update_contacts(contacts_in: ContactsInput):
             cc.forestcustomercontact_set.filter(
                 forestcustomer__forest_id=contacts_in.forest_id
             ).delete()
-            if cc.forestcustomercontact_set.count() == 0:
+            if (
+                cc.forestcustomercontact_set.count() == 0
+                and cc.attributes.get("contact_type") == "FOREST"
+            ):
                 cc.force_delete()
         else:
             # make sure other or family contact of a customer
