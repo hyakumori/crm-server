@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from slack import WebClient
+from slack.errors import SlackApiError
 
 from hyakumori_crm.core.permissions import SuperUserOnly
 
@@ -57,9 +58,18 @@ def revoke(request):
     except (Oauth.DoesNotExist, ValueError):
         return Response({"errors": {"id": ["Not found"]}}, status=400)
     slack_client = WebClient()
-    resp = slack_client.auth_revoke(token=oauth_token.access_token)
-    if resp.data["ok"]:
-        oauth_token.delete()
-        return Response({"msg": "OK"})
-    else:
-        return Response({"errors": resp.data}, status=424)
+    try:
+        resp = slack_client.api_call(
+            api_method="apps.uninstall",
+            http_verb="GET",
+            params=dict(
+                token=oauth_token.access_token,
+                client_id=settings.SLACK_CLIENT_ID,
+                client_secret=settings.SLACK_CLIENT_SECRET,
+            ),
+        )
+        json_data = {"msg": "OK"}
+    except SlackApiError as e:
+        json_data = e.response.data
+    oauth_token.delete()
+    return Response(json_data)
