@@ -11,7 +11,7 @@
           />
           <div class="my-4">
             <ValidationObserver v-slot="{ invalid }">
-              <v-row v-if="errors">
+              <v-row v-if="errors.length > 0">
                 <v-col cols="12">
                   <v-alert
                     dense
