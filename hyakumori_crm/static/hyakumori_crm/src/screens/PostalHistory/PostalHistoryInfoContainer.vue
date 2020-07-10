@@ -5,8 +5,7 @@
       :toggleEditBtnContent="toggleEditBtnContent"
       :loading="loading"
       @toggleEdit="setUpdate"
-      :display-addition-btn="isDetail"
-      :displayAdditionBtn="allowEdit"
+      :display-addition-btn="allowEdit && isDetail && !!id"
     />
     <postal-history-info
       class="mt-6"
@@ -114,6 +113,7 @@ export default {
     },
 
     async fetchBasicInfo() {
+      if (!this.id) return;
       this.loading = true;
       const basicInfo = await this.$rest.get(`postal-histories/${this.id}`);
 
@@ -139,7 +139,6 @@ export default {
       try {
         const newData = await this.$rest.post("/postal-histories", data);
         if (newData) {
-          this.setHeaderWithoutParticipant();
           await this.$router.push(`/postal-histories/${newData.id}`);
         }
       } catch (err) {}

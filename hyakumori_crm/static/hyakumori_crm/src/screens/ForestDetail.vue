@@ -75,12 +75,36 @@
           v-model="forestInfo"
         ></memo-input>
         <tag-detail-card
+          class="ml-6 mb-6"
           app-name="crm"
           object-type="forest"
           :object-id="$route.params.id"
           :tags="forestInfo && forestInfo.tags"
           @input="$store.dispatch('setHeaderTagInfo', $event)"
+          title="森林タグ情報"
         ></tag-detail-card>
+        <div
+          class="mb-6"
+          v-if="$store.getters['forest/taggedCustomers'].length > 0"
+        >
+          <h4 class="ml-6">顧客タグ情報</h4>
+          <div style="max-height:300px;overflow-y:auto;">
+            <tag-detail-card
+              class="ml-6"
+              v-for="c in $store.getters['forest/taggedCustomers']"
+              :key="c.id"
+              app-name="crm"
+              object-type="customer"
+              :tags="c.tags"
+              :editable="false"
+            >
+              <h5 class="my-2">
+                {{ c.self_contact.name_kanji.last_name }}
+                {{ c.self_contact.name_kanji.first_name }}
+              </h5>
+            </tag-detail-card>
+          </div>
+        </div>
         <action-log
           app-name="crm"
           object-type="forest"
