@@ -14,6 +14,7 @@
       <template v-slot:activator="{ on }">
         <ValidationProvider rules="daterange" v-slot="{ errors }">
           <v-text-field
+            class="date-input"
             v-model="innerDateRange"
             height="45"
             dense
@@ -157,5 +158,8 @@ export default {
 
 .range-date-picker ::v-deep {
   @extend %picker-shared;
+  .date-input .v-text-field__details {
+    margin-bottom: 0;
+  }
 }
 </style>

@@ -177,6 +177,11 @@
               :readonly="false"
               :date="innerInfo.contracts.fsc_start_date"
               @newDate="val => (innerInfo.contracts.fsc_start_date = val)"
+              @change="
+                val => {
+                  innerInfo.contracts.fsc_start_date = val;
+                }
+              "
             />
           </v-col>
           <v-col cols="4"> </v-col>
@@ -281,6 +286,13 @@ export default {
     },
     updateFscStatus(item) {
       this.innerInfo.contracts.fsc_status = _get(item, "value");
+      if (this.innerInfo.contracts.fsc_status !== "加入") {
+        const errors = {
+          ...this.$refs.observer.errors,
+          "contracts.fsc_start_date": [],
+        };
+        this.$refs.observer.setErrors(errors);
+      }
     },
     updateFscDate(val) {
       this.innerInfo.contracts.fsc_start_date = val[0];
@@ -327,10 +339,10 @@ export default {
       let fullDate = "";
       const contract = this.contract;
       if (contract) {
-        fullDate = `${this.formatDate(contract.contract_start_date) || ""} ${
-          contract.contract_start_date ? " ～ " : ""
-        }
-        ${this.formatDate(contract.contract_end_date) || "未入力"}`;
+        fullDate =
+          `${this.formatDate(contract.contract_start_date) || ""}` +
+          `${contract.contract_start_date ? " ～ " : ""}` +
+          `${this.formatDate(contract.contract_end_date) || "未入力"}`;
       }
       return fullDate;
     },

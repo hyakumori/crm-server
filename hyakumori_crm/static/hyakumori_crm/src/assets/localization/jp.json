@@ -197,7 +197,8 @@
     "user_profile": "アカウント情報",
     "postalhistory_list": "書類郵送履歴",
     "postalhistory_mgmt": "書類郵送履歴一覧",
-    "postalhistory_new": "書類郵送履歴追加"
+    "postalhistory_new": "書類郵送履歴追加",
+    "postalhistory_detail": "書類郵送履歴"
   },
   "raw_text": {
     "agree": "わかりました。",

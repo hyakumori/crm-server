@@ -13,6 +13,8 @@
       <template v-slot:activator="{ on }">
         <ValidationProvider :rules="rules" :name="name" v-slot="{ errors }">
           <v-text-field
+            class="date-input"
+            @change="emit('change', event)"
             dense
             height="45"
             outlined
@@ -71,5 +73,8 @@ export default {
 
 .single-date-picker ::v-deep {
   @extend %picker-shared;
+  .date-input .v-text-field__details {
+    margin-bottom: 0;
+  }
 }
 </style>
