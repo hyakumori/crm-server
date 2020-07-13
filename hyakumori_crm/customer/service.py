@@ -337,11 +337,7 @@ def _get_forest_repr(f):
     return result
 
 
-def get_customer_csv(filters):
-    try:
-        customers = get_list(per_page=None, filters=filters, for_csv=True)[0]
-    except ValidationError:
-        customers = []
+def get_customer_csv(customers):
     for c in customers:
         if c["forests_json"] is None:
             forests_repr = ""
