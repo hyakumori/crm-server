@@ -3,6 +3,7 @@ import pathlib
 import time
 
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.http.response import StreamingHttpResponse, JsonResponse
 from django.utils.translation import gettext_lazy as _
 from django.db import transaction
@@ -61,6 +62,7 @@ from .service import (
     get_customers_tag_by_ids,
     get_customer_postal_histories,
     get_customer_csv,
+    get_list,
 )
 from .tasks import csv_upload
 from .permissions import DownloadCsvPersmission, CustomerContactListPermission
@@ -281,6 +283,10 @@ class CustomerViewSets(ViewSet):
             "口座情報_口座名義",
             _("Tag"),
         ]
+        try:
+            customers = get_list(per_page=None, filters=filters, for_csv=True)[0]
+        except ValidationError:
+            customers = []
 
         def generator(headers, rows):
             yield headers
@@ -292,7 +298,7 @@ class CustomerViewSets(ViewSet):
         response = StreamingHttpResponse(
             (
                 writer.writerow(row)
-                for row in generator(headers, get_customer_csv(filters))
+                for row in generator(headers, get_customer_csv(customers))
             ),
             content_type="text/csv",
         )
