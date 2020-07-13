@@ -7,7 +7,6 @@ from django.http.response import StreamingHttpResponse, JsonResponse
 from django.utils.translation import gettext_lazy as _
 from django.db import transaction
 from django.db.models import Q
-from django.core.exceptions import ValidationError
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -29,7 +28,6 @@ from hyakumori_crm.crm.schemas.tag import TagBulkUpdate
 from ..activity.services import ActivityService, CustomerActions
 from ..api.decorators import api_validate_model, get_or_404
 from ..core.utils import clear_maintain_task_id_cache
-from ..forest.service import parse_tags_for_csv
 
 from .schemas import (
     BankingInput,
@@ -58,11 +56,11 @@ from .service import (
     get_customer_archives,
     get_customer_contacts_forests,
     customercontacts_list_with_search,
-    get_list,
     get_customer_by_business_id,
     update_customer_tags,
     get_customers_tag_by_ids,
     get_customer_postal_histories,
+    get_customer_csv,
 )
 from .tasks import csv_upload
 from .permissions import DownloadCsvPersmission, CustomerContactListPermission
@@ -257,10 +255,6 @@ class CustomerViewSets(ViewSet):
             filters = None
         else:
             filters = Q(id__in=pks)
-        try:
-            customers = get_list(per_page=None, filters=filters)[0]
-        except ValidationError:
-            customers = []
         headers = [
             "\ufeff所有者ID",  # contains BOM char for opening on windows excel
             "土地所有者名（漢字）",
@@ -272,6 +266,14 @@ class CustomerViewSets(ViewSet):
             "連絡先情報_電話番号",
             "連絡先情報_携帯電話",
             "連絡先情報_メールアドレス",
+            "所有林情報",
+            "連絡者情報（名前）",
+            "連絡者情報（電話番号）",
+            "連絡者情報（携帯番号）",
+            "連絡者情報（メールアドレス）",
+            "家族情報",
+            "その他関係者情報",
+            "顧客連絡者登録森林",
             "口座情報_銀行名",
             "口座情報_支店名",
             "口座情報_種別",
@@ -283,29 +285,15 @@ class CustomerViewSets(ViewSet):
         def generator(headers, rows):
             yield headers
             for row in rows:
-                yield [
-                    row["business_id"],
-                    row["fullname_kanji"],
-                    row["fullname_kana"],
-                    row["prefecture"],
-                    row["municipality"],
-                    row["sector"],
-                    row["postal_code"],
-                    row["telephone"],
-                    row["mobilephone"],
-                    row["email"],
-                    row["bank_name"],
-                    row["bank_branch_name"],
-                    row["bank_account_type"],
-                    f'"{row["bank_account_number"] or ""}"',
-                    row["bank_account_name"],
-                    parse_tags_for_csv(row["tags"]),
-                ]
+                yield row
 
         pseudo_buffer = Echo()
         writer = csv.writer(pseudo_buffer)
         response = StreamingHttpResponse(
-            (writer.writerow(row) for row in generator(headers, customers)),
+            (
+                writer.writerow(row)
+                for row in generator(headers, get_customer_csv(filters))
+            ),
             content_type="text/csv",
         )
         response["Content-Disposition"] = "application/octet-stream;"

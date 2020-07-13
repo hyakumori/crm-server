@@ -3,12 +3,14 @@ import itertools
 from typing import Iterator, Union
 from uuid import UUID
 
+from django.core.exceptions import ValidationError
 from django.db import DataError, connection
 from django.db.models import Count, F, OuterRef, Q, Subquery
 from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
 from django_q.tasks import async_task
 from querybuilder.query import Query
+from querybuilder.fields import CountField
 
 from hyakumori_crm.core.models import RawSQLField
 from hyakumori_crm.crm.models import (
@@ -21,8 +23,9 @@ from hyakumori_crm.crm.models import (
     ForestCustomerContact,
     PostalHistory,
 )
-from .schemas import ContactType, CustomerInputSchema, ContactsInput
 from ..cache.forest import refresh_customer_forest_cache
+from ..forest.service import parse_tags_for_csv
+from .schemas import ContactType, CustomerInputSchema, ContactsInput
 
 
 def get_customer_by_pk(pk):
@@ -134,6 +137,7 @@ def get_list(
     pre_per_page: Union[int, None] = None,
     order_by: Union[Iterator, None] = None,
     filters: Union[Iterator, None] = None,
+    for_csv: bool = False,
 ):
     if per_page is None:
         offset = None
@@ -165,38 +169,156 @@ def get_list(
         },
     ]
 
-    query = (
-        Query()
-        .from_table({"c": Customer}, fields=fields,)
-        .join(
-            {"self_contact_rel": CustomerContact},
-            condition="c.id=self_contact_rel.customer_id and self_contact_rel.is_basic is true",
+    query = Query().from_table({"c": Customer}, fields=fields)
+
+    if for_csv:
+
+        def contact_count(contact_type):
+            return (
+                Query()
+                .from_table(
+                    {"cc_family": CustomerContact},
+                    fields=["customer_id", {"contact_count": CountField("id")}],
+                )
+                .where(
+                    **{"is_basic": False, "attributes->>'contact_type'": contact_type}
+                )
+                .group_by("customer_id")
+            )
+
+        family_contact_count = contact_count("FAMILY")
+
+        other_contact_count = contact_count("OTHER")
+
+        contact_fc = (
+            Query()
+            .from_table(
+                {"contact_fc": ForestCustomer},
+                fields=["customer_id", {"forest_count": CountField("id")}],
+            )
+            .group_by("customer_id")
         )
-        .join(
-            {"self_contact": Contact},
-            condition="self_contact_rel.contact_id=self_contact.id",
-            fields=[
-                {
-                    "fullname_kana": RawSQLField(
-                        "concat(self_contact.name_kana->>'last_name', '\u3000', self_contact.name_kana->>'first_name')"
-                    )
-                },
-                {
-                    "fullname_kanji": RawSQLField(
-                        "concat(self_contact.name_kanji->>'last_name', '\u3000', self_contact.name_kanji->>'first_name')"
-                    )
-                },
-                "mobilephone",
-                "telephone",
-                "email",
-                "postal_code",
-                {"sector": "address->>'sector'"},
-                {"prefecture": "address->>'prefecture'"},
-                {"municipality": "address->>'municipality'"},
-            ],
+
+        customers_forests = (
+            Query()
+            .from_table({"fc": ForestCustomer}, fields=["customer_id"])
+            .join(
+                {"forest": Forest},
+                condition="fc.forest_id = forest.id",
+                fields=[
+                    {
+                        "forests_json": RawSQLField(
+                            "json_agg(json_build_object("
+                            "'id', forest.id, "
+                            "'cadastral', forest.cadastral, "
+                            "'land_attributes', forest.land_attributes))"
+                        )
+                    }
+                ],
+            )
+            .join(
+                {"fcc": ForestCustomerContact},
+                condition="fc.id = fcc.forestcustomer_id",
+                join_type="LEFT JOIN",
+            )
+            .join(
+                {"cc": CustomerContact},
+                condition="cc.id = fcc.customercontact_id and cc.is_basic = false",
+                join_type="LEFT JOIN",
+            )
+            .join(
+                {"contact_customer": CustomerContact},
+                condition="cc.contact_id = contact_customer.contact_id "
+                "and contact_customer.is_basic = true",
+                join_type="LEFT JOIN",
+            )
+            .join(
+                "contact_fc",
+                condition="contact_customer.customer_id = contact_fc.customer_id",
+                join_type="LEFT JOIN",
+            )
+            .join(
+                {"contact": Contact},
+                condition="cc.contact_id = contact.id",
+                join_type="LEFT JOIN",
+                fields=[
+                    {
+                        "contacts_json": RawSQLField(
+                            "json_agg(json_build_object("
+                            "'id', contact.id, "
+                            "'name_kanji', contact.name_kanji, "
+                            "'mobilephone', contact.mobilephone, "
+                            "'telephone', contact.telephone, "
+                            "'email', contact.email, "
+                            "'forest_count', contact_fc.forest_count))"
+                        ),
+                    }
+                ],
+            )
+            .group_by("fc.customer_id")
         )
+        query = (
+            query.join(
+                "customers_forests",
+                condition="customers_forests.customer_id = c.id",
+                join_type="LEFT JOIN",
+                fields=["forests_json", "contacts_json"],
+            )
+            .join(
+                "family_contact_count",
+                condition="family_contact_count.customer_id = c.id",
+                join_type="LEFT JOIN",
+                fields=[{"family_contact_count": "contact_count"}],
+            )
+            .join(
+                "other_contact_count",
+                condition="other_contact_count.customer_id = c.id",
+                join_type="LEFT JOIN",
+                fields=[{"other_contact_count": "contact_count"}],
+            )
+        )
+
+    query = query.join(
+        {"self_contact_rel": CustomerContact},
+        condition="c.id=self_contact_rel.customer_id "
+        "and self_contact_rel.is_basic is true",
+    ).join(
+        {"self_contact": Contact},
+        condition="self_contact_rel.contact_id=self_contact.id",
+        fields=[
+            {
+                "fullname_kana": RawSQLField(
+                    "concat(self_contact.name_kana->>'last_name', '\u3000', "
+                    "self_contact.name_kana->>'first_name')"
+                )
+            },
+            {
+                "fullname_kanji": RawSQLField(
+                    "concat(self_contact.name_kanji->>'last_name', '\u3000', "
+                    "self_contact.name_kanji->>'first_name')"
+                )
+            },
+            "mobilephone",
+            "telephone",
+            "email",
+            "postal_code",
+            {"sector": "address->>'sector'"},
+            {"prefecture": "address->>'prefecture'"},
+            {"municipality": "address->>'municipality'"},
+        ],
     )
-    query = query.wrap()
+    if for_csv:
+        query = (
+            Query()
+            .with_query(query, alias="T0")
+            .with_query(customers_forests, alias="customers_forests")
+            .with_query(contact_fc, alias="contact_fc")
+            .with_query(family_contact_count, alias="family_contact_count")
+            .with_query(other_contact_count, alias="other_contact_count")
+            .from_table("T0")
+        )
+    else:
+        query = query.wrap()
     if filters:
         query.where(filters)
     total = query.copy().count()
@@ -206,6 +328,76 @@ def get_list(
 
     query.limit(per_page, offset)
     return query.select(), total
+
+
+def _get_forest_repr(f):
+    result = f"{f['cadastral']['sector']} {f['land_attributes']['地番本番']}"
+    if f["land_attributes"]["地番支番"]:
+        result += "-" + str(f["land_attributes"]["地番支番"])
+    return result
+
+
+def get_customer_csv(filters):
+    try:
+        customers = get_list(per_page=None, filters=filters, for_csv=True)[0]
+    except ValidationError:
+        customers = []
+    for c in customers:
+        if c["forests_json"] is None:
+            forests_repr = ""
+        else:
+            forests_repr = ";".join(
+                [
+                    _get_forest_repr(f)
+                    for f in ({f["id"]: f for f in c["forests_json"]}.values())
+                ]
+            )
+        if c["contacts_json"] is not None:
+            contacts = list(
+                {c["id"]: c for c in c["contacts_json"] if c["id"]}.values()
+            )
+        else:
+            contacts = []
+        contacts_name_repr = ";".join(
+            [
+                f"{c['name_kanji']['last_name']} {c['name_kanji']['first_name']}"
+                for c in contacts
+            ]
+        )
+        contacts_mobilephones = ";".join(
+            [c["mobilephone"] for c in contacts if c["mobilephone"]]
+        )
+        contacts_telephones = ";".join(
+            [c["telephone"] for c in contacts if c["telephone"]]
+        )
+        contacts_emails = ";".join([c["email"] for c in contacts if c["email"]])
+        any_contact_own_forests = any(c["forest_count"] for c in contacts)
+        yield [
+            c["business_id"],
+            c["fullname_kanji"],
+            c["fullname_kana"],
+            c["prefecture"],
+            c["municipality"],
+            c["sector"],
+            c["postal_code"],
+            c["telephone"],
+            c["mobilephone"],
+            c["email"],
+            forests_repr,
+            contacts_name_repr,
+            contacts_mobilephones,
+            contacts_telephones,
+            contacts_emails,
+            "有" if c["family_contact_count"] else "無",
+            "有" if c["other_contact_count"] else "無",
+            "有" if any_contact_own_forests else "無",
+            c["bank_name"],
+            c["bank_branch_name"],
+            c["bank_account_type"],
+            f'"{c["bank_account_number"] or ""}"',
+            c["bank_account_name"],
+            parse_tags_for_csv(c["tags"]),
+        ]
 
 
 def create(customer_in: CustomerInputSchema):
@@ -328,11 +520,13 @@ def customercontacts_list_with_search(search_str: str = None):
                 params=[],
             ),
             customer_name_kanji_text=RawSQL(
-                "concat(crm_contact.name_kanji->>'last_name', ' ', crm_contact.name_kanji->>'first_name')",
+                "concat(crm_contact.name_kanji->>'last_name', ' ', "
+                "crm_contact.name_kanji->>'first_name')",
                 params=[],
             ),
             customer_name_kana_text=RawSQL(
-                "select concat(crm_contact.name_kana->>'last_name', ' ', crm_contact.name_kana->>'first_name')",
+                "select concat(crm_contact.name_kana->>'last_name', ' ', "
+                "crm_contact.name_kana->>'first_name')",
                 params=[],
             ),
         )
@@ -543,7 +737,8 @@ def get_customer_by_business_id(busines_id):
 def get_customers_tag_by_ids(ids: list):
     with connection.cursor() as cursor:
         cursor.execute(
-            "select distinct jsonb_object_keys(tags) from crm_customer where id in %(ids)s",
+            "select distinct jsonb_object_keys(tags) "
+            "from crm_customer where id in %(ids)s",
             {"ids": tuple(ids)},
         )
         tags = cursor.fetchall()
