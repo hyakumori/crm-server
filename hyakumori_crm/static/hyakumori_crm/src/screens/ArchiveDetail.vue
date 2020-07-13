@@ -64,6 +64,7 @@
     <template #right>
       <div class="right-column" v-if="isDetail">
         <tag-detail-card
+          class="ml-6 mb-6"
           app-name="crm"
           object-type="archive"
           :object-id="$route.params.id"

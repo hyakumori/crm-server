@@ -144,12 +144,32 @@
           v-if="pk"
         ></memo-input>
         <tag-detail-card
+          class="ml-6 mb-6"
           app-name="crm"
           object-type="customer"
           :object-id="pk"
           :tags="customer && customer.tags"
           @input="customer.tags = $event"
+          title="顧客タグ情報"
         ></tag-detail-card>
+        <div class="mb-6" v-if="taggedForests.length > 0">
+          <h4 class="ml-6">森林タグ情報</h4>
+          <div style="max-height:300px;overflow-y:auto;">
+            <tag-detail-card
+              class="ml-6"
+              v-for="f in taggedForests"
+              :key="f.id"
+              app-name="crm"
+              object-type="forest"
+              :tags="f.tags"
+              :editable="false"
+            >
+              <h5 class="my-2">
+                {{ getForestDisplayName(f) }}
+              </h5>
+            </tag-detail-card>
+          </div>
+        </div>
         <action-log
           v-if="pk"
           app-name="crm"
@@ -174,8 +194,9 @@ import MemoInput from "../components/detail/MemoInput";
 import TagDetailCard from "../components/tags/TagDetailCard";
 import ContactForm from "../components/forms/ContactForm";
 import BankingInfoForm from "../components/forms/BankingInfoForm";
-import { filter, find } from "lodash";
+import { filter, find, some } from "lodash";
 import { tags_to_array } from "../helpers/tags";
+import { getForestDisplayName } from "../helpers/forest";
 
 export default {
   mixins: [ScreenMixin],
@@ -247,6 +268,7 @@ export default {
   },
 
   methods: {
+    getForestDisplayName,
     async resolveBusinessId() {
       if (!this.isDetail) {
         return;
@@ -472,6 +494,10 @@ export default {
     selectingForestCustomerId() {
       const forest = find(this.forests, { id: this.selectingForestId });
       return forest ? forest.forestcustomer_id : null;
+    },
+    taggedForests() {
+      if (this.forests.length === 0) return [];
+      return this.forests.filter(f => some(Object.values(f.tags), Boolean));
     },
   },
 
