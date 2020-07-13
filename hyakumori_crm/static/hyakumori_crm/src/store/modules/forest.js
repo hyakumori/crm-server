@@ -1,5 +1,5 @@
 import * as forestApi from "../../api/forest";
-import { find } from "lodash";
+import { find, some } from "lodash";
 import { tags_to_array } from "../../helpers/tags";
 
 const state = {
@@ -52,6 +52,10 @@ const getters = {
     return Object.fromEntries(
       state.customers.map(c => [c.id, c.self_contact?.name_kanji]),
     );
+  },
+  taggedCustomers(state) {
+    if (state.customers.length === 0) return [];
+    return state.customers.filter(c => some(Object.values(c.tags), Boolean));
   },
 };
 

@@ -1,6 +1,8 @@
 <template>
-  <div class="ml-6 mb-6">
-    <h4 class="mb-1">タグ情報</h4>
+  <div>
+    <slot>
+      <h4 class="mb-1">{{ title }}</h4>
+    </slot>
     <v-progress-linear
       height="2"
       indeterminate
@@ -11,7 +13,7 @@
     <v-card
       class="tag-card pa-0"
       flat
-      @click.native="hasPermission && (isUpdate = true)"
+      @click.native="hasPermission && editable && (isUpdate = true)"
       :ripple="false"
       :class="{ 'd-hover pointer': !isUpdate && hasPermission }"
     >
@@ -153,6 +155,8 @@ export default {
     appName: { type: String, required: true },
     objectType: { type: String, required: true },
     objectId: { type: String },
+    title: { type: String, default: "タグ情報" },
+    editable: { type: Boolean, default: true },
   },
   components: {
     UpdateButton,
@@ -167,7 +171,7 @@ export default {
       selectedTagKey: "",
       selectedTagValue: "",
       tagValueSearchInput: "",
-      editingTags: [],
+      editingTags: this.mapTagsToEditingValues(this.tags),
       originalTags: { ...this.tags },
       tagSettingDialog: false,
     };
@@ -268,7 +272,7 @@ export default {
     },
     mapTagsToEditingValues(tags) {
       let results = [];
-      for (let tagKey of Object.keys(tags).sort()) {
+      for (let tagKey of Object.keys(tags || {}).sort()) {
         if (tags[tagKey] !== null) {
           results.push({
             key: tagKey,
@@ -344,7 +348,6 @@ export default {
   cursor: pointer;
 }
 .tag-card {
-  margin-top: 12px;
   min-height: 60px;
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
   align-items: center;
