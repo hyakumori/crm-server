@@ -19,7 +19,7 @@ const getters = {
   headerInfo(state, getters) {
     if (!state.forest) return {};
     return {
-      title: `${getters.sector}${getters.subsector}${getters.lotnumber}${getters.sub_lotnumber}`,
+      title: `${getters.sector} ${getters.lotnumber}${getters.sub_lotnumber}`,
       subTitle: getters.owner_repr,
       desc: state.forest.internal_id,
       tags: tags_to_array(state.forest.tags),
@@ -35,15 +35,7 @@ const getters = {
   },
   sector(state) {
     if (!state.forest) return "";
-    return state.forest.cadastral.sector
-      ? state.forest.cadastral.sector + "_"
-      : "";
-  },
-  subsector(state) {
-    if (!state.forest) return "";
-    return state.forest.cadastral.subsector
-      ? state.forest.cadastral.subsector + "_"
-      : "";
+    return state.forest.cadastral.sector;
   },
   lotnumber(state) {
     if (!state.forest) return "";
@@ -52,7 +44,7 @@ const getters = {
   sub_lotnumber(state) {
     if (!state.forest) return "";
     return state.forest.land_attributes["地番支番"]
-      ? "_" + state.forest.land_attributes["地番支番"]
+      ? "-" + state.forest.land_attributes["地番支番"]
       : "";
   },
   customerIdNameMap(state) {
