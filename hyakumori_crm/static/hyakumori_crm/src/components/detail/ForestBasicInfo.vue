@@ -250,14 +250,12 @@ export default {
     },
     async getContractTypes() {
       try {
-        const response = await this.$rest.get("/contract_type");
+        const response = await this.$rest.get("/contract_type/active");
         if (response) {
-          this.contractTypes = response
-            .filter(item => item.attributes && item.attributes.assignable)
-            .map(item => ({
-              text: item.name,
-              value: item.name,
-            }));
+          this.contractTypes = response.map(item => ({
+            text: item.name,
+            value: item.name,
+          }));
         }
       } catch {
         this.contractTypes = [];

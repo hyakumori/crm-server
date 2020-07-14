@@ -59,7 +59,7 @@
               </div>
             </div>
 
-            <div v-if="userPermissions.is_admin">
+            <div v-if="hasScope('group_admin')">
               <content-header
                 content="Slack"
                 :displayAdditionBtn="false"
@@ -93,8 +93,10 @@
                     <template v-slot:default>
                       <thead>
                         <tr>
-                          <th class="text-left">ワークスペース名</th>
-                          <th class="text-left">追加日時</th>
+                          <th class="font-weight-black text-left">
+                            ワークスペース名
+                          </th>
+                          <th class="font-weight-black text-left">追加日時</th>
                           <th class="text-left"></th>
                         </tr>
                       </thead>
@@ -118,6 +120,7 @@
                 </v-col>
               </v-row>
             </div>
+            <settings-container class="mt-6" v-if="hasScope('group_admin')" />
           </div>
         </v-container>
       </v-content>
@@ -135,8 +138,9 @@ import UpdateButton from "../components/detail/UpdateButton";
 import TextInfo from "../components/detail/TextInfo";
 import SelectInfo from "../components/detail/SelectInfo";
 import busEvent from "../BusEvent";
-
+import SettingsContainer from "@/components/detail/SettingsContainer";
 import { fromNow } from "../helpers/datetime";
+import { hasScope } from "../helpers/security";
 
 export default {
   name: "account-profile",
@@ -150,6 +154,7 @@ export default {
     ContentHeader,
     ValidationObserver,
     UpdateButton,
+    SettingsContainer,
   },
 
   data() {
@@ -192,6 +197,7 @@ export default {
   },
 
   methods: {
+    hasScope,
     async uninstallSlackApp(id) {
       await this.$rest.post("/slack/revoke", { id: id });
       this.getSlackInstalls();
