@@ -6,6 +6,7 @@
       :loading="isLoading"
       @toggleEdit="$emit('toggleEdit', true)"
       :permissions="permissions"
+      :displayAdditionBtn="displayAdditionBtn"
     />
     <slot></slot>
     <template v-if="isEditing">
@@ -51,6 +52,7 @@ export default {
     isEditing: Boolean,
     cancelEdit: Function,
     showAddBtn: { type: Boolean, default: true },
+    displayAdditionBtn: { type: Boolean, default: true },
   },
 };
 </script>

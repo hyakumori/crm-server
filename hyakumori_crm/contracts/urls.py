@@ -8,4 +8,3 @@ router = SimpleRouter(trailing_slash=False)
 router.register("contract_type", ContractTypeViewSets, basename="contract_type")
 
 api_urls = router.urls + []
-
