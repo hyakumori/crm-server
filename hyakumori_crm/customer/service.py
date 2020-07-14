@@ -3,7 +3,6 @@ import itertools
 from typing import Iterator, Union
 from uuid import UUID
 
-from django.core.exceptions import ValidationError
 from django.db import DataError, connection
 from django.db.models import Count, F, OuterRef, Q, Subquery
 from django.db.models.expressions import RawSQL
@@ -186,9 +185,9 @@ def get_list(
                 .group_by("customer_id")
             )
 
-        family_contact_count = contact_count("FAMILY")
+        family_contact_count = contact_count(ContactType.family)
 
-        other_contact_count = contact_count("OTHER")
+        other_contact_count = contact_count(ContactType.others)
 
         contact_fc = (
             Query()
