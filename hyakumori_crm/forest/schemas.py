@@ -4,6 +4,7 @@ from uuid import UUID
 
 from django.utils.translation import gettext_lazy as _
 from pydantic import validator, root_validator, ValidationError
+from pydantic.errors import EnumError
 
 from hyakumori_crm.core.models import HyakumoriDanticModel, Paginator
 from hyakumori_crm.crm.models import (
@@ -14,10 +15,10 @@ from hyakumori_crm.crm.models import (
     ForestCustomerContact,
 )
 from hyakumori_crm.crm.schemas.contract import (
-    ContractType,
     ContractTypeStatus,
     FSCContactStatus,
 )
+from hyakumori_crm.contracts.models import ContractType as ContractTypeModel
 from hyakumori_crm.crm.schemas.forest import LandAttribute, ForestAttribute
 from hyakumori_crm.crm.common.utils import tags_csv_to_dict
 from hyakumori_crm.forest.filters import ForestFilter
@@ -36,11 +37,22 @@ class Cadastral(HyakumoriDanticModel):
     subsector: Optional[str]
 
 
+def validate_contract_type(value):
+    values = ContractTypeModel.objects.filter(attributes__assignable=True).values_list(
+        "name", flat=True
+    )
+    if value not in values:
+        raise EnumError(enum_values=values, permitted=", ".join(v for v in values))
+    return value
+
+
 class Contract(HyakumoriDanticModel):
-    type: Optional[ContractType]
+    type: Optional[str]
     status: Optional[ContractTypeStatus]
     start_date: Optional[date]
     end_date: Optional[date]
+
+    _check_contract_type = validator("type", allow_reuse=True)(validate_contract_type)
 
     class Config:
         orm_mode = False
@@ -59,7 +71,7 @@ class ContractUpdateInput(HyakumoriDanticModel):
     }
     """
 
-    contract_type: Optional[ContractType]
+    contract_type: Optional[str]
     contract_status: Optional[ContractTypeStatus]
     contract_start_date: Optional[date]
     contract_end_date: Optional[date]
@@ -69,6 +81,10 @@ class ContractUpdateInput(HyakumoriDanticModel):
     class Config:
         orm_mode = False
         arbitrary_types_allowed = True
+
+    _check_contract_type = validator("contract_type", allow_reuse=True)(
+        validate_contract_type
+    )
 
     @root_validator
     def check_fsc(cls, values):

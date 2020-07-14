@@ -13,16 +13,6 @@ from django.utils.translation import gettext_lazy as _
 from querybuilder.query import Query, QueryWindow
 from querybuilder.fields import RowNumberField
 
-from .schemas import (
-    CustomerDefaultInput,
-    CustomerContactDefaultInput,
-    ContractUpdateInput,
-    ContractType as ContractTypeEnum,
-    ForestInput,
-    ForestCsvInput,
-    Contract,
-    ForestContractStatusBulkUpdate,
-)
 from ..cache.forest import refresh_customer_forest_cache
 from ..core.decorators import errors_wrapper
 from ..crm.common.constants import (
@@ -40,8 +30,18 @@ from ..crm.models import (
     ForestCustomerContact,
     Contact,
 )
+from ..crm.schemas.contract import ContractType as ContractTypeEnum
 from ..contracts.services import get_all_contracttypes_map
 
+from .schemas import (
+    CustomerDefaultInput,
+    CustomerContactDefaultInput,
+    ContractUpdateInput,
+    ForestInput,
+    ForestCsvInput,
+    Contract,
+    ForestContractStatusBulkUpdate,
+)
 from .filters import ForestFilter
 
 
@@ -94,10 +94,8 @@ def get_contract_by_type(contracts, contract_type):
 
 
 def map_forests_contracts(forest, contract_types):
-    work_road = get_contract_by_type(forest.contracts, contract_types["work_road"])
-    long_term = get_contract_by_type(forest.contracts, contract_types["long_term"])
-    fsc = get_contract_by_type(forest.contracts, contract_types["fsc"])
-    contract = long_term if long_term.get("type") is not None else work_road
+    contract = forest.contracts[0]
+    fsc = forest.contracts[-1]
 
     forest.contracts = {
         "contract_type": contract.get("type"),
@@ -124,12 +122,12 @@ def map_input_to_contracts(forest, contracts_in: ContractUpdateInput):
 
     if len(update_contracts) == 0:
         update_contracts.append(
-            Contract(
+            dict(
                 type=contracts_in.contract_type,
                 status=contracts_in.contract_status,
                 start_date=contracts_in.contract_start_date,
                 end_date=contracts_in.contract_end_date,
-            ).dict()
+            )
         )
 
     update_contracts.append(

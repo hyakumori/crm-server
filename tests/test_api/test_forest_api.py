@@ -15,6 +15,7 @@ from hyakumori_crm.crm.schemas.contract import (
     ContractTypeStatus,
     FSCContactStatus,
 )
+from hyakumori_crm.contracts.services import ContractService
 from hyakumori_crm.forest.restful import (
     update_owners_view,
     ForestViewSets,
@@ -41,6 +42,7 @@ def test_get_customers_of_forest(api_rf, admin_user):
 
 @pytest.mark.django_db
 def test_update_forest_basic_info(api_rf, admin_user, forest):
+    ContractService.setup_contracts()
     req = api_rf.put(
         f"/api/v1/forests/{forest.pk}/basic-info",
         {

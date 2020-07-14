@@ -11,7 +11,6 @@ from hyakumori_crm.crm.schemas.forest import (
     ForestSchema,
     LandAttribute,
     Name,
-    Tags,
 )
 from pandas import DataFrame
 from pydantic import ValidationError
@@ -163,12 +162,36 @@ class ForestImporter(BaseImporter):
         for index in _indexes:
             _owner = ForestOwner(
                 name_kanji=Name(
-                    first_name=normalize(row[_name_template.format(index=index, type="kanji", name_part="first")]),
-                    last_name=normalize(row[_name_template.format(index=index, type="kanji", name_part="last")])
+                    first_name=normalize(
+                        row[
+                            _name_template.format(
+                                index=index, type="kanji", name_part="first"
+                            )
+                        ]
+                    ),
+                    last_name=normalize(
+                        row[
+                            _name_template.format(
+                                index=index, type="kanji", name_part="last"
+                            )
+                        ]
+                    ),
                 ),
                 name_kana=Name(
-                    first_name=normalize(row[_name_template.format(index=index, type="kana", name_part="first")]),
-                    last_name=normalize(row[_name_template.format(index=index, type="kana", name_part="last")])
+                    first_name=normalize(
+                        row[
+                            _name_template.format(
+                                index=index, type="kana", name_part="first"
+                            )
+                        ]
+                    ),
+                    last_name=normalize(
+                        row[
+                            _name_template.format(
+                                index=index, type="kana", name_part="last"
+                            )
+                        ]
+                    ),
                 ),
                 address=Address(
                     prefecture=row["owner_都道府県"],
@@ -176,7 +199,10 @@ class ForestImporter(BaseImporter):
                     sector=row["owner_大字/字"],
                 ),
             )
-            if _owner.name_kanji.last_name is None and _owner.name_kanji.first_name is None:
+            if (
+                _owner.name_kanji.last_name is None
+                and _owner.name_kanji.first_name is None
+            ):
                 continue
 
             result.append(_owner)
@@ -221,7 +247,9 @@ class ForestImporter(BaseImporter):
             ),
         ]
         tags_name = FOREST_TAG_KEYS.values()  # ["未登録/登録", "所有者順位", "同姓同名"]
-        tags = dict(zip(tags_name, [get_or_default(row[tag], None) for tag in tags_name]))
+        tags = dict(
+            zip(tags_name, [get_or_default(row[tag], None) for tag in tags_name])
+        )
         forest_attributes = self._build_forest_attributes(row)
         land_attributes = self._build_land_attributes(row)
 
