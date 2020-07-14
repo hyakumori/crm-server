@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view, permission_classes
 from slack import WebClient
 from slack.errors import SlackApiError
 
-from hyakumori_crm.core.permissions import SuperUserOnly
+from hyakumori_crm.core.permissions import AdminGroupPermission
 
 from .models import Oauth
 
@@ -45,13 +45,13 @@ def oauth(request):
 
 
 @api_view(["GET"])
-@permission_classes([SuperUserOnly])
+@permission_classes([AdminGroupPermission])
 def list_installs(request):
     return Response(Oauth.objects.all().values("id", "updated_at", "team_name"))
 
 
 @api_view(["POST"])
-@permission_classes([SuperUserOnly])
+@permission_classes([AdminGroupPermission])
 def revoke(request):
     try:
         oauth_token = Oauth.objects.get(pk=request.data.get("id"))

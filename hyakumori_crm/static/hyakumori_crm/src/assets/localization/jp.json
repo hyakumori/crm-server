@@ -252,5 +252,6 @@
         "username": "ユーザー名"
       }
     }
-  }
+  },
+  "contract_type": "契約種類"
 }

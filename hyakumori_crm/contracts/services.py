@@ -19,6 +19,8 @@ class ContractService:
     def setup_contracts(cls):
         cache.delete("get_all_contracttypes_map")
         for contract_type in ContractTypeEnum:
+            if contract_type.name == "fsc":
+                continue
             contract_type_instance, _ = ContractType.objects.get_or_create(
                 name=contract_type.value
             )
