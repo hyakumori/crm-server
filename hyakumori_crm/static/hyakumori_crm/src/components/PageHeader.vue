@@ -1,6 +1,6 @@
 <template>
   <div class="page-header">
-    <v-img src="../assets/img/app-bar.png" height="170" v-if="!isDetail" />
+    <v-img src="../assets/img/app-bar.jpg" height="170" v-if="!isDetail" />
     <v-img src="../assets/img/app-bar-detail.jpg" height="170" v-else />
 
     <div class="page-header__content">
@@ -9,7 +9,7 @@
           <div class="logo-section">
             <img
               style="vertical-align:middle;"
-              src="../assets/img/crm-logo.png"
+              src="../assets/img/crm-logo.svg"
               height="25"
             />
             <v-chip
