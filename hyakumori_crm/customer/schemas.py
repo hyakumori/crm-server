@@ -86,9 +86,20 @@ class CustomerPaginator(Paginator):
                 conditions = reduce(
                     operator.or_,
                     (
-                        Q(**{search_field_filter: value})
-                        for value in values
-                        if len(value) > 0
+                        *[
+                            Q(**{search_field_filter: value})
+                            for value in values
+                            if len(value) > 0
+                        ],
+                        *(
+                            [
+                                Q(**{"forest_tags_repr__icontains": value})
+                                for value in values
+                                if len(value) > 0
+                            ]
+                            if k == "tags"
+                            else []
+                        ),
                     ),
                 )
             defined_filters.append(conditions)

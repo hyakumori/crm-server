@@ -63,16 +63,25 @@ group by crm_customer.id
 """
     if search:
         where = """
-and (concat(sc.name_kanji->>'last_name', '\u3000',
+and (concat(sc.name_kanji->>'last_name', ' ',
     sc.name_kanji->>'first_name') ilike %(search)s
-or concat(sc.name_kana->>'last_name', '\u3000',
+or concat(sc.name_kana->>'last_name', ' ',
     sc.name_kana->>'first_name') ilike %(search)s
 or crm_customer.internal_id ilike %(search)s
 or sc.email ilike %(search)s
 or sc.telephone ilike %(search)s
 or sc.mobilephone ilike %(search)s
-or concat(sc.postal_code, '\u3000', sc.address->>'sector', '\u3000',
-    sc.address->>'municipality', '\u3000', sc.address->>'prefecture') ilike %(search)s)
+or concat(sc.postal_code, ' ', sc.address->>'sector', ' ',
+    sc.address->>'municipality', ' ', sc.address->>'prefecture') ilike %(search)s
+or (
+    select string_agg(tags_repr, ',') tags_repr
+    from (
+        select concat_ws(':', key, value) as tags_repr
+        from jsonb_each_text(tags) as x
+        where value is not null
+    ) as ss
+)::text ilike %(search)s
+)
 """
     else:
         where = ""
@@ -162,6 +171,7 @@ def get_list(
               from (
                 select concat_ws(':', key, value) as tags_repr
                 from jsonb_each_text(tags) as x
+                where value is not null
               ) as ss)::text
             """
             )
@@ -317,7 +327,64 @@ def get_list(
             .from_table("T0")
         )
     else:
-        query = query.wrap()
+        forest_tags_nested = (
+            Query()
+            .from_table({"fc": ForestCustomer}, fields=["customer_id"])
+            .join(
+                {"forest": Forest},
+                condition="fc.forest_id = forest.id",
+                fields=[
+                    {
+                        "forest_tags": RawSQLField(
+                            "(select array_agg(fulltag) tags_arr "
+                            "from ( "
+                            "select concat_ws(':', key, value) as fulltag "
+                            "from jsonb_each_text(forest.tags) as x "
+                            "where value is not null "
+                            ") as ss)"
+                        )
+                    }
+                ],
+            )
+        )
+        forest_tags_unnest = (
+            Query()
+            .from_table(
+                {"A0": forest_tags_nested},
+                fields=[
+                    "customer_id",
+                    {"forest_tags": RawSQLField("unnest(A0.forest_tags)")},
+                ],
+            )
+            .distinct()
+        )
+        forest_tags = (
+            Query()
+            .from_table(
+                {"A1": forest_tags_unnest},
+                fields=[
+                    "customer_id",
+                    {"forest_tags": RawSQLField("array_agg(A1.forest_tags)")},
+                ],
+            )
+            .group_by("customer_id")
+        )
+        query = query.join(
+            "forest_tags",
+            condition="forest_tags.customer_id = c.id",
+            join_type="LEFT JOIN",
+            fields=[
+                {"forest_tags_repr": RawSQLField("array_to_string(forest_tags, ',')")}
+            ],
+        )
+        query = (
+            Query()
+            .with_query(query, alias="T0")
+            .with_query(forest_tags, alias="forest_tags")
+            .with_query(forest_tags_unnest, alias="A1")
+            .with_query(forest_tags_nested, alias="A0")
+            .from_table("T0")
+        )
     if filters:
         query.where(filters)
     total = query.copy().count()
@@ -762,3 +829,7 @@ def save_customer_from_csv_data(customer, data):
     customer.tags = data.tags_json
     customer.banking = data.banking
     customer.save()
+
+
+def create_forest_tags_field_for_customers():
+    Customer.objects.annotate(forest_tags=RawSQL(""))
