@@ -1,7 +1,8 @@
 import operator
 from functools import reduce
 
-from django.db.models import Q
+from django.db.models import Q, Subquery
+from django.db.models.expressions import RawSQL
 from django_filters import CharFilter
 
 from hyakumori_crm.crm.models import Forest
@@ -23,6 +24,74 @@ class ForestFilter(TagsFilterSet, MultipleOrFilterSet):
     contract_end_date = CharFilter(method="contract_icontains_filter")
     fsc_status = CharFilter(method="fsc_icontains_filter")
     fsc_start_date = CharFilter(method="fsc_icontains_filter")
+
+    @property
+    def qs(self):
+        return super().qs.annotate(
+            contracts_json=RawSQL(
+                """json_build_object(
+'contract_type', contracts->0->>'type',
+'contract_status', contracts->0->>'status',
+'contract_start_date', contracts->0->>'start_date',
+'contract_end_date', contracts->0->>'end_date',
+'fsc_status', contracts->-1->>'status',
+'fsc_start_date', contracts->-1->>'start_date'
+)""",
+                params=[],
+            ),
+        )
+
+    @classmethod
+    def get_tags_repr_queryset(cls, queryset):
+        queryset = super().get_tags_repr_queryset(queryset)
+        return queryset.annotate(
+            customer_tags_repr=RawSQL(
+                """select full_tag from (
+    select A2.forest_id,
+        array_to_string(array_agg(distinct A2.full_tag), ',') as full_tag
+    from (
+        select A1.forest_id, unnest(A1.full_tag) as full_tag
+        from (
+            select fc.forest_id,
+                (select array_agg(concat_ws(':', KEY, value)) AS full_tag
+                    FROM jsonb_each_text(c.tags)
+                    WHERE value IS NOT NULL)
+            from crm_forestcustomer fc
+            join crm_customer c on c.id = fc.customer_id
+            where c.tags != '{}'::jsonb
+            and forest_id = crm_forest.id
+        ) A1
+    ) A2
+    group by A2.forest_id
+) A3 where forest_id = crm_forest.id""",
+                params=[],
+            ),
+        )
+
+    def get_tag_filter_conditions(self, name, value):
+        values = list(set(map(lambda v: v.strip(), value.split(","))))
+        if len(values) == 1 and values[0] == "":
+            conditions = Q(**{"tags_repr__isnull": True}) | Q(
+                **{"tags_repr__exact": None}
+            )
+        else:
+            search_field_filter = "tags_repr__icontains"
+            conditions = reduce(
+                operator.or_,
+                (
+                    *[
+                        Q(**{search_field_filter: value})
+                        for value in values
+                        if len(value) > 0
+                    ],
+                    *(
+                        Q(**{"customer_tags_repr__icontains": value})
+                        for value in values
+                        if len(value) > 0
+                    ),
+                ),
+            )
+        return conditions
 
     def _filter_name_with_space(self, search_field_filter, value):
         keywords = list(

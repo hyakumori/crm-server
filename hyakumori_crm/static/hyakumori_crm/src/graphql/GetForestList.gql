@@ -9,7 +9,7 @@ query getForestList($filter: ForestListFilterInput!) {
       attributes
       cadastral
       owner
-      contracts
+      contracts_json
       tags
       land_attributes
     }

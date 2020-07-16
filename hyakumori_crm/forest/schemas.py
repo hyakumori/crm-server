@@ -41,7 +41,7 @@ def validate_contract_type(value):
     values = ContractTypeModel.objects.filter(attributes__assignable=True).values_list(
         "name", flat=True
     )
-    if value not in values:
+    if value and value not in values:
         raise EnumError(enum_values=values, permitted=", ".join(v for v in values))
     return value
 
