@@ -1,6 +1,11 @@
 <template>
   <v-app>
-    <v-content fill-height class="main d-flex">
+    <v-content
+      :style="cssProps"
+      ref="mainContent"
+      fill-height
+      class="main d-flex"
+    >
       <div class="gradient-background"></div>
       <v-container
         grid-list-lg
@@ -8,7 +13,7 @@
       >
         <div class="d-flex justify-center">
           <img
-            :src="require('@/assets/img/crm-logo.png')"
+            :src="require('@/assets/img/crm-logo.svg')"
             height="25"
             class="logo"
           />
@@ -21,13 +26,25 @@
 </template>
 
 <script>
-export default {};
+const imageNum = Math.floor(Math.random() * (3 - 1) + 1);
+const background = require(`../assets/img/background${imageNum}.jpg`);
+
+export default {
+  data() {
+    return {
+      cssProps: {
+        backgroundImage: `url(${background})`,
+      },
+    };
+  },
+};
 </script>
 
 <style lang="scss">
 .main {
   position: relative;
-  background: url("../assets/img/background.png") no-repeat center center;
+  background-repeat: no-repeat;
+  background-position: center center;
   background-size: cover;
 }
 .logo {
@@ -42,9 +59,10 @@ export default {};
   top: 0;
   bottom: 0;
   background: linear-gradient(
-    89.57deg,
-    rgba(14, 102, 91, 0.69) 0%,
-    rgba(13, 255, 226, 0) 100%
+    180deg,
+    rgba(34, 34, 34, 0.8) 0%,
+    rgba(135, 135, 135, 0.3) 15%,
+    rgba(255, 255, 255, 0) 30%
   );
 }
 .main-container {
