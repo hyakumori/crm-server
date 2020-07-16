@@ -8,7 +8,7 @@ type Forest implements Timestamp & Editor {
     attributes: JSON
     cadastral: JSON
     owner: JSON
-    contracts: JSON
+    contracts_json: JSON
     tags: JSON
     land_attributes: JSON
     forest_attributes: JSON

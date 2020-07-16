@@ -14,7 +14,7 @@
         <ValidationProvider :rules="rules" :name="name" v-slot="{ errors }">
           <v-text-field
             class="date-input"
-            @change="emit('change', event)"
+            @change="$emit('change', $event)"
             dense
             height="45"
             outlined

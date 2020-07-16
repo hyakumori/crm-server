@@ -456,7 +456,7 @@ export default {
       if (this.forestsInfo) {
         return this.forestsInfo.forests.map(element => {
           const fCadastral = element.cadastral;
-          const contracts = element.contracts;
+          const contracts = element.contracts_json;
           const tags = element.tags;
 
           let item = {
