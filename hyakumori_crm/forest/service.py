@@ -39,7 +39,6 @@ from .schemas import (
     ContractUpdateInput,
     ForestInput,
     ForestCsvInput,
-    Contract,
     ForestContractStatusBulkUpdate,
 )
 from .filters import ForestFilter
@@ -153,12 +152,10 @@ def get_forests_by_condition(
         order_by = []
     if filters and not filters.is_valid():
         return [], 0
-    query = filters.qs if filters else Forest.objects.all()
+    query = filters.qs
     total = query.count()
     forests = query.order_by("internal_id")[offset : offset + per_page]
-    contract_types = get_all_contracttypes_map()
-    results = [map_forests_contracts(forest, contract_types) for forest in forests]
-    return results, total
+    return forests, total
 
 
 def update_basic_info(forest: Forest, forest_in: ForestInput):

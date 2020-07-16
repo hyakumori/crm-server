@@ -24,8 +24,7 @@ class TagsFilterSet(FilterSet):
             )
         )
 
-    def has_tags_filter(self, queryset, name, value):
-        queryset = self.get_tags_repr_queryset(queryset)
+    def get_tag_filter_conditions(self, name, value):
         values = list(set(map(lambda v: v.strip(), value.split(","))))
         if len(values) == 1 and values[0] == "":
             conditions = Q(**{"tags_repr__isnull": True}) | Q(
@@ -41,5 +40,10 @@ class TagsFilterSet(FilterSet):
                     if len(value) > 0
                 ),
             )
+        return conditions
+
+    def has_tags_filter(self, queryset, name, value):
+        queryset = self.get_tags_repr_queryset(queryset)
+        conditions = self.get_tag_filter_conditions(name, value)
         queryset = queryset.filter(conditions)
         return queryset
