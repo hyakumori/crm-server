@@ -9,7 +9,7 @@
           <div class="logo-section">
             <img
               style="vertical-align:middle;"
-              src="../assets/img/crm-logo.svg"
+              src="../assets/img/crm-logo.png"
               height="25"
             />
             <v-chip
