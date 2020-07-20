@@ -65,6 +65,7 @@
           :address="getForestDisplayName(item)"
           :showAction="false"
           :index="indx"
+          :forestReprOwner="getForestReprOwner(item)"
           mode="search"
           :selectedId="modalSelectingId"
           flat
@@ -92,7 +93,7 @@ import AdditionButton from "../AdditionButton";
 import SelectListModal from "../SelectListModal";
 import ForestInfoCard from "../detail/ForestInfoCard";
 import { reject } from "lodash";
-import { getForestDisplayName } from "@/helpers/forest";
+import { getForestDisplayName, getForestReprOwner } from "@/helpers/forest";
 
 export default {
   name: "forest-list-container",
@@ -144,6 +145,7 @@ export default {
   },
   methods: {
     getForestDisplayName,
+    getForestReprOwner,
     itemsForAddingResultFilter(f) {
       return !!this.forestIdsMap[f.id];
     },

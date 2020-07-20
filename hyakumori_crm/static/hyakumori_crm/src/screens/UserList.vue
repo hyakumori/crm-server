@@ -34,6 +34,9 @@
             @rowData="rowData"
             @selectedRow="selectedRow"
             :autoHeaders="false"
+            :disable-sort="false"
+            sort-by="is_active"
+            :sort-desc="true"
           ></data-list>
         </v-container>
       </v-content>
@@ -95,11 +98,24 @@ export default {
       }));
     },
 
-    async getData(perPage, page = 1) {
+    async getData(perPage, page, sortBy, sortDesc) {
       this.isLoading = true;
-      const response = await this.$rest.get(
-        `/users?page_size=${perPage}&page=${page}`,
-      );
+      let response;
+      if (
+        sortDesc.length > 0 &&
+        sortBy.length > 0 &&
+        sortDesc.length == sortBy.length
+      ) {
+        response = await this.$rest.get(
+          `/users?page_size=${perPage}&page=${page}&sort_by=${sortBy.join(
+            ",",
+          )}&sort_desc=${sortDesc.join(",")}`,
+        );
+      } else {
+        response = await this.$rest.get(
+          `/users?page_size=${perPage}&page=${page}`,
+        );
+      }
 
       if (response) {
         this.results = this.mapResults(response.results);
@@ -124,6 +140,7 @@ export default {
   watch: {
     options: {
       async handler(val, old) {
+        if (Object.keys(old).length == 0) return;
         const { sortBy, sortDesc, page, itemsPerPage } = val;
         this.filter = {
           sortBy,
@@ -132,9 +149,8 @@ export default {
           itemsPerPage,
           preItemsPerPage: old.itemsPerPage || null,
         };
-        await this.getData(itemsPerPage, page);
+        await this.getData(itemsPerPage, page, sortBy, sortDesc);
       },
-      deep: true,
     },
   },
 
@@ -175,7 +191,7 @@ export default {
           text: this.$t("user_management.tables.headers.status"),
           align: "center",
           value: "is_active",
-          sortable: false,
+          sortable: true,
         },
         {
           text: this.$t("user_management.tables.headers.last_login"),
