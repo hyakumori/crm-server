@@ -65,6 +65,7 @@
           @selected="handleForestSelected"
           clickable
           flat
+          :forestReprOwner="getForestReprOwner(item)"
         />
       </template>
     </select-list-modal>
@@ -81,7 +82,7 @@ import AdditionButton from "../AdditionButton";
 import SelectListModal from "../SelectListModal";
 import ForestInfoCard from "./ForestInfoCard";
 import { cloneDeep, pullAllWith, debounce } from "lodash";
-import { getForestDisplayName } from "@/helpers/forest";
+import { getForestDisplayName, getForestReprOwner } from "@/helpers/forest";
 
 export default {
   name: "archive-related-forest-container",
@@ -127,6 +128,7 @@ export default {
 
   methods: {
     getForestDisplayName,
+    getForestReprOwner,
     onCancel() {
       this.selectingForestId = null;
       this.selectingForestIndex = null;

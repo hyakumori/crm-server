@@ -5,6 +5,7 @@ import time
 from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Q, F, Count
+from django.db.models.expressions import RawSQL
 from django.http import HttpResponse, JsonResponse
 from django.utils.translation import gettext_lazy as _
 from rest_framework import mixins
@@ -69,8 +70,24 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
         query = (
             self.get_queryset()
             .annotate(customers_count=Count(F("forestcustomer__customer_id")))
+            .annotate(
+                tags_repr=RawSQL(
+                    "select string_agg(tags_repr, ',') tags_repr "
+                    "from ("
+                    "select concat_ws(':', key, value) as tags_repr "
+                    "from jsonb_each_text(tags) as x "
+                    "where value is not null"
+                    ") as ss",
+                    params=[],
+                )
+            )
             .values(
-                "id", "internal_id", "cadastral", "customers_count", "land_attributes"
+                "id",
+                "internal_id",
+                "cadastral",
+                "customers_count",
+                "land_attributes",
+                "attributes",
             )
         )
         search_str = request.GET.get("search")
@@ -82,6 +99,7 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
                 | Q(cadastral__municipality__icontains=search_str)
                 | Q(cadastral__sector__icontains=search_str)
                 | Q(cadastral__subsector__icontains=search_str)
+                | Q(tags_repr__icontains=search_str)
             )
 
         paginator = default_paginator()

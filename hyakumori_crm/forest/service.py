@@ -31,7 +31,6 @@ from ..crm.models import (
     Contact,
 )
 from ..crm.schemas.contract import ContractType as ContractTypeEnum
-from ..contracts.services import get_all_contracttypes_map
 
 from .schemas import (
     CustomerDefaultInput,

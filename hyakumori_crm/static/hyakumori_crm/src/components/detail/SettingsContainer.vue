@@ -54,7 +54,7 @@ export default {
 
 <template>
   <section-container-wrapper
-    headerContent="Settings"
+    headerContent="設定"
     :toggleEditBtnContent="toggleEditBtnContent"
     :addBtnContent="addBtnContent"
     :isLoading="isLoading_"

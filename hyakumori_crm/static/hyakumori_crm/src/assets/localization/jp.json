@@ -149,7 +149,7 @@
   "messages": {
     "activate_account_success": "アカウントの有効化に成功しました。{seconds}秒後にログイン画面にリダイレクトします。",
     "api_update_general_error": "更新中にエラーが発生しました。入力を再確認した上で、再度更新してみてください。",
-    "confirm_leave": "帰りたい？",
+    "confirm_leave": "処理中ですが、この画面から離れますか？",
     "confirm_upload_csv": "アップロードされたファイルを反映します。継続しますか？",
     "duplicate_content_was_removed": "重複したファイルが削除されました。",
     "email_not_found": "入力したメールアドレスに該当するユーザが存在しません。",
@@ -223,7 +223,7 @@
     "selected_action": "件を選択済み",
     "unable_to_remove_search_msg": "これ以上削除できません。"
   },
-  "site_name": "Hyakumori CRM",
+  "site_name": "100morichan",
   "tables": {
     "another_item_human_kana": "ホカ{count}メイ",
     "another_item_human_kanji": "他{count}名",

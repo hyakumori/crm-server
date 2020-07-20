@@ -122,6 +122,7 @@ class ForestSerializer(ModelSerializer):
             "forestcustomer_id",
             "land_attributes",
             "tags",
+            "attributes",
         ]
 
 

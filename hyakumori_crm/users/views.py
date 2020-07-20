@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db.models import Q
 from djoser import signals
@@ -12,6 +13,7 @@ from rest_framework_simplejwt.views import TokenViewBase
 
 from ..api.decorators import api_validate_model
 from ..activity.services import ActivityService, UserActions
+from ..core.models import Paginator
 from ..core.utils import default_paginator, make_error_json, make_success_json
 from ..permissions import IsAdminUser, is_admin_request
 from ..permissions.services import PermissionService
@@ -20,6 +22,8 @@ from ..archive.permissions import ChangeArchivePersmission
 from .serializers import CustomTokenObtainPairSerializer, UserMinimalSerializer
 from .types import GroupAssginmentInput, PermissionAssignmentInput
 
+User = get_user_model()
+
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,14 +31,24 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CustomUserViewSet(UserViewSet):
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(~Q(email="AnonymousUser"))
-            .order_by("date_joined")
+class MyFilterBackend:
+    def filter_queryset(self, request, queryset, view):
+        paginator = Paginator(
+            sort_by=request.GET.getlist("sort_by"),
+            sort_desc=request.GET.getlist("sort_desc"),
         )
+        return queryset.order_by(*paginator.order_by)
+
+
+class CustomUserViewSet(UserViewSet):
+    queryset = User.objects.filter(~Q(email="AnonymousUser")).prefetch_related("groups")
+
+    def get_queryset(self):
+        paginator = Paginator(
+            sortBy=self.request.GET.getlist("sort_by"),
+            sortDesc=self.request.GET.getlist("sort_desc"),
+        )
+        return super().get_queryset().order_by(*paginator.order_by)
 
     @action(
         detail=False,

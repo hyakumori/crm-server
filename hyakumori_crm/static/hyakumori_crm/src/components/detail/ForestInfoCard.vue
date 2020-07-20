@@ -15,7 +15,8 @@
 
       <div v-if="forestId" class="caption">
         {{ forestId }}
-        <span>{{ customerCount }} 人の所有者</span>
+        {{ forestReprOwner }}
+        <span>{{ customerCount }}人の所有者</span>
       </div>
     </div>
     <v-btn
@@ -62,6 +63,7 @@ export default {
     mode: { type: String, default: "view" },
     handleDeleteClick: Function,
     clickable: { type: Boolean, default: false },
+    forestReprOwner: { type: String },
   },
   computed: {
     actionIcon() {
