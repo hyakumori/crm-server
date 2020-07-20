@@ -6,3 +6,8 @@ export function getForestDisplayName(forest) {
     : "";
   return `${sector} ${lotnumber}${sub_lotnumber}`;
 }
+
+export function getForestReprOwner(forest) {
+  const names_kanji = forest?.attributes?.customer_cache?.repr_name_kanji || "";
+  return names_kanji.split(",")[0];
+}

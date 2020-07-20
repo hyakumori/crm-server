@@ -45,7 +45,7 @@ import ContentHeader from "../../components/detail/ContentHeader";
 import ContainerMixin from "../../components/detail/ContainerMixin";
 import ArchiveDetailMixin from "../../components/detail/ArchiveDetailMixin";
 import UpdateButton from "../../components/detail/UpdateButton";
-import { toUtcDatetime, getDate } from "../../helpers/datetime";
+import { toUtcDatetime } from "../../helpers/datetime";
 import PostalHistoryInfo from "./PostalHistoryInfo";
 
 export default {
@@ -122,15 +122,6 @@ export default {
         this.$emit("input", basicInfo.data);
         this.dataMapping(basicInfo.data);
       }
-    },
-
-    setHeaderWithoutParticipant() {
-      this.$store.dispatch("setHeaderInfo", {
-        title: this.info.title,
-        subTitle: getDate(this.info.archive_date),
-        backUrl: "/postal-histories",
-        tags: this.info.tags,
-      });
     },
 
     async submit(data) {

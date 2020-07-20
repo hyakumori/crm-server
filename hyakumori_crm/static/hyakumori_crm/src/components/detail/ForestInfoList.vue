@@ -17,6 +17,7 @@
           :selectedId="selectedId"
           @selected="(fId, inx) => $emit('selected', fId, inx)"
           :clickable="itemClickable"
+          :forestReprOwner="getForestReprOwner(forest)"
         />
       </v-col>
     </template>
@@ -25,7 +26,7 @@
 
 <script>
 import ForestInfoCard from "./ForestInfoCard";
-import { getForestDisplayName } from "@/helpers/forest";
+import { getForestDisplayName, getForestReprOwner } from "@/helpers/forest";
 
 export default {
   name: "forest-info-list",
@@ -42,6 +43,7 @@ export default {
   },
   methods: {
     getForestDisplayName,
+    getForestReprOwner,
   },
 };
 </script>

@@ -47,7 +47,7 @@ import ArchiveDetailMixin from "./ArchiveDetailMixin";
 import ArchiveBasicInfo from "./ArchiveBasicInfo";
 import UpdateButton from "./UpdateButton";
 import { cloneDeep } from "lodash";
-import { toUtcDatetime, getDate } from "../../helpers/datetime";
+import { toUtcDatetime } from "../../helpers/datetime";
 
 export default {
   name: "archive-basic-info-container",
@@ -116,6 +116,7 @@ export default {
     },
 
     async fetchBasicInfo() {
+      if (!this.id) return;
       this.loading = true;
       const basicInfo = await this.$rest.get(`archives/${this.id}`);
 
@@ -126,22 +127,12 @@ export default {
       }
     },
 
-    setHeaderWithoutParticipant() {
-      this.$store.dispatch("setHeaderInfo", {
-        title: this.info.title,
-        subTitle: getDate(this.info.archive_date),
-        backUrl: "/archives",
-        tags: this.info.tags,
-      });
-    },
-
     async submit(data) {
       this.createLoading = true;
       data.archive_date = toUtcDatetime(data.archive_date);
       try {
         const newData = await this.$rest.post("/archives", data);
         if (newData) {
-          this.setHeaderWithoutParticipant();
           await this.$router.push(`/archives/${newData.id}`);
         }
       } catch (err) {}
