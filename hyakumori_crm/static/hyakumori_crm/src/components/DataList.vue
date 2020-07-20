@@ -4,7 +4,7 @@
       class="pa-0"
       ref="dataTable"
       v-model="selected"
-      disable-sort
+      :disable-sort="disableSort"
       :dense="dense"
       light
       :height="tableHeight"
@@ -24,6 +24,8 @@
         itemsPerPageText: $t('raw_text.rows_per_page'),
       }"
       @click:row="clickRow"
+      :sort-by="sortBy"
+      :sort-desc="sortDesc"
     >
       <template v-if="tableRowIcon" v-slot:[`item.${iconRowValue}`]="{ item }">
         <div class="d-flex align-center justify-center">
@@ -146,6 +148,9 @@ export default {
       type: Boolean,
       default: true,
     },
+    disableSort: { type: Boolean, default: true },
+    sortBy: { type: [String, Array], default: () => [] },
+    sortDesc: { type: [Boolean, Array], default: () => [] },
   },
 
   data() {
