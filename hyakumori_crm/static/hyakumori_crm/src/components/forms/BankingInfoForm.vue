@@ -51,41 +51,49 @@ export default {
   <ValidationObserver ref="form" v-slot="{ dirty, invalid }">
     <v-form>
       <v-row>
-        <v-col class="">
+        <v-col>
+          <label class="font-weight-bold">{{
+            $t("forms.labels.bank.account_designator")
+          }}</label>
+          <TextInput
+            v-model="form.account_designator"
+            name="account_designator"
+          />
+        </v-col>
+        <v-col>
           <label class="font-weight-bold">{{
             $t("forms.labels.bank.bank_name")
           }}</label>
           <TextInput v-model="form.bank_name" name="bank_name" />
         </v-col>
+      </v-row>
+      <v-row>
         <v-col>
           <label class="font-weight-bold">{{
             $t("forms.labels.bank.branch_name")
           }}</label>
           <TextInput v-model="form.branch_name" name="branch_name" />
         </v-col>
-      </v-row>
-      <v-row>
-        <v-col class="">
+        <v-col>
           <label class="font-weight-bold">{{
             $t("forms.labels.bank.account_type")
           }}</label>
           <TextInput v-model="form.account_type" name="account_type" />
         </v-col>
+      </v-row>
+      <v-row>
         <v-col>
           <label class="font-weight-bold">{{
             $t("forms.labels.bank.account_number")
           }}</label>
           <TextInput v-model="form.account_number" name="account_number" />
         </v-col>
-      </v-row>
-      <v-row>
-        <v-col class="">
+        <v-col>
           <label class="font-weight-bold">{{
             $t("forms.labels.bank.account_name")
           }}</label>
           <TextInput v-model="form.account_name" name="account_name" />
         </v-col>
-        <v-col></v-col>
       </v-row>
       <v-row>
         <v-col>
