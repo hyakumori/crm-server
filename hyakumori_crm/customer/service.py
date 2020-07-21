@@ -829,7 +829,3 @@ def save_customer_from_csv_data(customer, data):
     customer.tags = data.tags_json
     customer.banking = data.banking
     customer.save()
-
-
-def create_forest_tags_field_for_customers():
-    Customer.objects.annotate(forest_tags=RawSQL(""))

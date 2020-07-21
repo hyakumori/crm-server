@@ -1,8 +1,10 @@
+from typing import Any, Dict, Type
+from enum import Enum
+
 import querybuilder.query
 import pydantic
 from pydantic import errors
-from typing import Any
-from enum import Enum
+from pydantic.error_wrappers import get_exc_type
 
 
 class CompleteSorter(querybuilder.query.Sorter):
@@ -51,6 +53,30 @@ def enum_validator(v: Any, field: "ModelField", config: "BaseConfig") -> Enum:
     return enum_v.value if config.use_enum_values else enum_v
 
 
+def error_dict(
+    exc: Exception, config: Type["BaseConfig"], loc: "Loc"
+) -> Dict[str, Any]:
+    type_ = get_exc_type(exc.__class__)
+    msg_template = (
+        config.error_msg_templates.get(f"{type_}.{'.'.join(loc)}")
+        or config.error_msg_templates.get(type_)
+        or getattr(exc, "msg_template", None)
+    )
+    ctx = exc.__dict__
+    if msg_template:
+        msg = msg_template.format(**ctx)
+    else:
+        msg = str(exc)
+
+    d: Dict[str, Any] = {"loc": loc, "msg": msg, "type": type_}
+
+    if ctx:
+        d["ctx"] = ctx
+
+    return d
+
+
+pydantic.error_wrappers.error_dict = error_dict
 pydantic.validators.enum_validator = enum_validator
 # https://github.com/samuelcolvin/pydantic/blob/2eb62a3b2f/pydantic/validators.py#L500
 pydantic.validators._VALIDATORS[0][1][1] = enum_validator
