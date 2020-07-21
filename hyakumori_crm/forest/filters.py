@@ -11,7 +11,7 @@ from hyakumori_crm.core.filters import MultipleOrFilterSet
 
 
 class ForestFilter(TagsFilterSet, MultipleOrFilterSet):
-    internal_id = CharFilter(method="icontains_filter")
+    # internal_id = CharFilter(method="icontains_filter")
     cadastral__municipality = CharFilter(method="icontains_filter")
     cadastral__sector = CharFilter(method="icontains_filter")
     land_attributes__地番本番 = CharFilter(method="icontains_filter")
