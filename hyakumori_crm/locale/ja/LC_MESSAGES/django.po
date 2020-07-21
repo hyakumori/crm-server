@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-02 00:07+0700\n"
+"POT-Creation-Date: 2020-07-21 15:53+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,12 +59,12 @@ msgstr ""
 msgid "Logged action, id: {id}"
 msgstr "ログに記録されたアクション、ID：{id}"
 
-#: archive/restful.py:179 postal_history/restful.py:200
+#: archive/restful.py:181 postal_history/restful.py:200
 msgid "Could not get download url"
 msgstr "ダウンロードURLを取得できませんでした"
 
 #: archive/schemas.py:95 archive/schemas.py:99 archive/schemas.py:103
-#: archive/schemas.py:117 customer/schemas.py:220 customer/schemas.py:263
+#: archive/schemas.py:117 customer/schemas.py:235 customer/schemas.py:278
 #: postal_history/schemas.py:140 postal_history/schemas.py:146
 #: postal_history/schemas.py:150 postal_history/schemas.py:164
 msgid "Contact {} not found"
@@ -87,23 +87,23 @@ msgstr "期限切れのURL"
 msgid "file not found"
 msgstr "ファイルが見つかりません"
 
-#: contracts/models.py:8
+#: contracts/models.py:13
 msgid "contract type name"
 msgstr ""
 
-#: contracts/models.py:10
+#: contracts/models.py:20
 msgid "contract code name, reversed enum value"
 msgstr ""
 
-#: contracts/models.py:11
+#: contracts/models.py:23
 msgid "contract type description"
 msgstr ""
 
-#: contracts/models.py:15 contracts/models.py:16
+#: contracts/models.py:28 contracts/models.py:29
 msgid "contract type"
 msgstr "契約種類"
 
-#: contracts/models.py:19
+#: contracts/models.py:32
 #, python-brace-format
 msgid "ContractType, id: {id}"
 msgstr ""
@@ -112,61 +112,57 @@ msgstr ""
 msgid "Not found"
 msgstr "見つかりません"
 
-#: core/models.py:98 core/models.py:100 forest/schemas.py:81
+#: core/models.py:104 core/models.py:106 forest/schemas.py:97
 msgid "Required"
 msgstr "必須"
 
-#: core/models.py:99
+#: core/models.py:105
 msgid "Bad format"
 msgstr "形式が正しくありません"
 
-#: core/models.py:101
+#: core/models.py:107
 msgid "Invalid Email"
 msgstr "無効なメール"
 
-#: core/models.py:103
+#: core/models.py:109
 #, python-brace-format
 msgid "Required at least {limit_value} character"
 msgstr "{limit_value}文字以上入力する必要があります。"
 
-#: core/models.py:105
+#: core/models.py:111
 msgid "Invalid date format"
 msgstr "不正な日付形式（YYYY-MM-DD）"
 
-#: core/models.py:106
+#: core/models.py:112
 msgid "Invalid UUID"
 msgstr "不正なUUID"
 
-#: core/models.py:107
+#: core/models.py:113
 #, python-brace-format
 msgid "Invalid value, choices are: {permitted}"
 msgstr "無効な値です。選択肢は次のとおりです：{permitted}"
 
-#: core/models.py:109
+#: core/models.py:115
 #, python-brace-format
 msgid "ensure this value has at most {limit_value} characters"
 msgstr "この値が{limit_value}文字以下であることを確認してください"
 
-#: crm/schemas/forest.py:70 forest/schemas.py:101
+#: crm/schemas/forest.py:70 forest/schemas.py:117
 #, python-brace-format
 msgid "{field} is required"
 msgstr "{field}は必須です"
 
-#: crm/schemas/forest.py:74 crm/schemas/forest.py:86 forest/schemas.py:105
-#: forest/schemas.py:116
+#: crm/schemas/forest.py:74 crm/schemas/forest.py:86 forest/schemas.py:121
+#: forest/schemas.py:132
 #, python-brace-format
 msgid "{field} must be a number"
 msgstr "{field}は数字でなければなりません"
 
-#: crm/schemas/forest.py:77 crm/schemas/forest.py:89 forest/schemas.py:107
-#: forest/schemas.py:118
+#: crm/schemas/forest.py:77 crm/schemas/forest.py:89 forest/schemas.py:123
+#: forest/schemas.py:134
 #, python-brace-format
 msgid "{field} must be greater than 0"
 msgstr "{field}は0より大きくなければなりません"
-
-#: customer/resolvers.py:20
-msgid "Internal Id"
-msgstr "ID"
 
 #: customer/resolvers.py:21
 msgid "Fullname Kanji"
@@ -204,61 +200,70 @@ msgstr "携帯番号"
 msgid "Email"
 msgstr "メールアドレス"
 
-#: customer/resolvers.py:30 customer/restful.py:280 customer/tasks.py:31
+#: customer/resolvers.py:30 customer/restful.py:284 customer/tasks.py:41
 #: forest/resolvers.py:92 forest/service.py:307
 msgid "Tag"
 msgstr "タグ"
 
-#: customer/restful.py:319 customer/restful.py:333 forest/restful.py:205
-#: forest/restful.py:219
+#: customer/restful.py:313 customer/restful.py:327 forest/restful.py:225
+#: forest/restful.py:239
 msgid "Please upload a csv file!!"
 msgstr "csvファイルをアップロードしてください!!"
 
-#: customer/schemas.py:130
+#: customer/schemas.py:145
 msgid "Duplicate contacts"
 msgstr "重複する連絡先"
 
-#: customer/schemas.py:140
+#: customer/schemas.py:155
 #, python-brace-format
 msgid "Contact {c} not belong to forest and customer"
 msgstr "連絡先{c}はフォレストと顧客に属していません"
 
-#: customer/schemas.py:152
+#: customer/schemas.py:167
 #, python-brace-format
 msgid "Contact {pk} not found"
 msgstr "連絡先{pk}が見つかりません"
 
-#: customer/schemas.py:171 customer/schemas.py:179
+#: customer/schemas.py:186 customer/schemas.py:194
 msgid "Forest Id {} not found"
 msgstr "フォレストID {}が見つかりません"
 
-#: customer/schemas.py:252
+#: customer/schemas.py:267
 msgid "forest_id not provied for contact_type FOREST"
 msgstr "連絡先タイプFORESTにフォレストIDが指定されていません"
 
-#: customer/schemas.py:257
+#: customer/schemas.py:272
 msgid "customer does not have supplied forest_id"
 msgstr ""
 
-#: customer/service.py:40 customer/tasks.py:54 forest/service.py:74
+#: customer/schemas.py:358
+msgid "Bad format (000-000-0000 or 00-0000-0000 or 0000000000)."
+msgstr ""
+"形式が正しくありません（000-000-0000 又は 00-0000-0000 又は 0000000000）"
+
+#: customer/schemas.py:360
+msgid "Bad format (000-0000)."
+msgstr "形式が正しくありません（000-0000）"
+
+#: customer/schemas.py:362
+msgid "Bad format (000-0000-0000)."
+msgstr "形式が正しくありません（000-0000-0000）"
+
+#: customer/service.py:42 customer/tasks.py:64 forest/service.py:75
 msgid "Customer not found"
 msgstr "顧客が見つかりません"
 
-#: customer/service.py:536
+#: customer/service.py:789
 msgid "Customer ID is empty or not available"
 msgstr "お客様IDが空か、使用できません"
 
-#: customer/tasks.py:39 forest/service.py:520 forest/service.py:553
+#: customer/tasks.py:49 forest/service.py:650 forest/service.py:683
 msgid "Invalid csv file!"
 msgstr "無効なcsvファイル！"
 
-#: customer/tasks.py:59
+#: customer/tasks.py:69
 msgid "Current resources are not ready for update!!"
 msgstr "現在のリソースは更新の準備ができていません!!"
-
-#: forest/resolvers.py:19
-msgid "Forest ID"
-msgstr "土地管理ID"
 
 #: forest/resolvers.py:27
 msgid "Sector"
@@ -304,28 +309,28 @@ msgstr "FSC認証"
 msgid "FSC start"
 msgstr "FSC開始日"
 
-#: forest/schemas.py:159 forest/schemas.py:169
+#: forest/schemas.py:175 forest/schemas.py:185
 #, fuzzy
 #| msgid "Customer Id {v} not found"
 msgid "Customer Id {} not found"
 msgstr "カスタマーID {v}が見つかりません"
 
-#: forest/schemas.py:191 forest/schemas.py:216
+#: forest/schemas.py:207 forest/schemas.py:232
 #, fuzzy, python-brace-format
 #| msgid "Customer Id {v} not found"
 msgid "Customer {v} not found"
 msgstr "カスタマーID{v}が見つかりません"
 
-#: forest/schemas.py:225
+#: forest/schemas.py:241
 #, python-brace-format
 msgid "Contact {v} not found"
 msgstr "連絡先が{v}見つかりません"
 
-#: forest/schemas.py:274
+#: forest/schemas.py:293
 msgid "Invalid format (tag1:value1; tag2:value2)"
 msgstr "無効な形式（タグ1：値1; タグ2：値2）"
 
-#: forest/service.py:49 forest/service.py:541
+#: forest/service.py:50 forest/service.py:671
 msgid "Forest not found"
 msgstr "森が見つかりません"
 
@@ -587,6 +592,12 @@ msgstr ""
 #: users/templates/email/password_reset.html:445
 msgid "パスワードリセット"
 msgstr ""
+
+#~ msgid "Internal Id"
+#~ msgstr "ID"
+
+#~ msgid "Forest ID"
+#~ msgstr "土地管理ID"
 
 #~ msgid "Enter at least telephone or mobilephone or email."
 #~ msgstr "少なくとも電話、携帯電話、または電子メールを入力してください。"

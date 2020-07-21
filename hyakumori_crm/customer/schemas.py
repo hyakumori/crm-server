@@ -337,7 +337,7 @@ class CustomerUploadCsv(HyakumoriDanticModel):
     ] = EMPTY
 
     telephone: Optional[
-        constr(regex=regexes.TELEPHONE_NUMBER, strip_whitespace=True)
+        constr(regex=regexes.CSV_TELEPHONE_NUMBER, strip_whitespace=True)
     ] = EMPTY
 
     mobilephone: Optional[
@@ -351,14 +351,17 @@ class CustomerUploadCsv(HyakumoriDanticModel):
     bank_account_name: Optional[str] = EMPTY
     tags: Optional[str]
 
-    # keep this for next feature
-    # class Config:
-    #     error_msg_templates = {
-    #         **HyakumoriDanticModel.Config.error_msg_templates,
-    #         "value_error.str.regex.telephone": _(
-    #             "Bad format (XXX-XXX-XXXX or XX-XXXX-XXXX or XXXXXXXXXX)"
-    #         ),
-    #     }
+    class Config:
+        error_msg_templates = {
+            **HyakumoriDanticModel.Config.error_msg_templates,
+            "value_error.str.regex.telephone": _(
+                "Bad format (000-000-0000 or 00-0000-0000 or 0000000000)."
+            ),
+            "value_error.str.regex.postal_code": _("Bad format (000-0000)."),
+            "value_error.str.regex.mobilephone": _(
+                "Bad format (000-0000-0000)."
+            ),
+        }
 
     @validator("bank_account_number", pre=True)
     def prepare_account_number(cls, v):
