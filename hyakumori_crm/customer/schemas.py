@@ -350,6 +350,15 @@ class CustomerUploadCsv(HyakumoriDanticModel):
     bank_account_name: Optional[str] = EMPTY
     tags: Optional[str]
 
+    # keep this for next feature
+    # class Config:
+    #     error_msg_templates = {
+    #         **HyakumoriDanticModel.Config.error_msg_templates,
+    #         "value_error.str.regex.telephone": _(
+    #             "Bad format (XXX-XXX-XXXX or XX-XXXX-XXXX or XXXXXXXXXX)"
+    #         ),
+    #     }
+
     @validator("bank_account_number", pre=True)
     def prepare_account_number(cls, v):
         return v[1:-1]
