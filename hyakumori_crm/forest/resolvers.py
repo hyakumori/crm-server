@@ -16,7 +16,7 @@ query = QueryType()
 @login_required(with_policies=["can_view_forests"])
 def get_foresttable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dict:
     headers = [
-        {"text": _("Forest ID"), "align": "right", "value": "internal_id"},
+        {"text": "", "align": "right", "value": "internal_id"},
         {
             "text": _("Municipality"),
             "align": "center",

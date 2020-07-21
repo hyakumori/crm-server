@@ -110,6 +110,7 @@
           itemKey="id"
           mode="forest"
           ref="table"
+          :icon-row-value-slice="{ shouldSlice: true, length: 0 }"
         ></data-list>
       </div>
 
