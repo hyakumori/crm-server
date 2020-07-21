@@ -158,6 +158,7 @@ def get_list(
         "id",
         "internal_id",
         "business_id",
+        {"account_designator": RawSQLField("banking->>'account_designator'")},
         {"bank_name": RawSQLField("banking->>'bank_name'")},
         {"bank_branch_name": RawSQLField("banking->>'branch_name'")},
         {"bank_account_type": RawSQLField("banking->>'account_type'")},
@@ -515,13 +516,6 @@ def update_basic_info(data):
             task_name=f"update_basic_info__forest_cache__{uuid.uuid4().hex.replace('-', '')}",
         )
 
-    return customer
-
-
-def update_banking(data):
-    customer = data.customer
-    customer.banking = data.banking
-    customer.save(update_fields=["banking", "updated_at"])
     return customer
 
 

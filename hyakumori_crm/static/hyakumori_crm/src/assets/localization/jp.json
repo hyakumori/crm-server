@@ -81,6 +81,7 @@
         "title": "タイトル"
       },
       "bank": {
+        "account_designator": "口座指定者",
         "account_name": "口座名義",
         "account_number": "口座番号",
         "account_type": "預金種類",

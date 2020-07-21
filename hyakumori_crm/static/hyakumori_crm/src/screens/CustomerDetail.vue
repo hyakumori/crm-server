@@ -422,6 +422,7 @@ export default {
     },
     bankingInfoFormData() {
       return {
+        account_designator: this.customer?.banking?.account_designator || "",
         bank_name: this.customer?.banking?.bank_name || "",
         branch_name: this.customer?.banking?.branch_name || "",
         account_type: this.customer?.banking?.account_type || "",
@@ -469,6 +470,10 @@ export default {
 
     bankingInfo() {
       return [
+        {
+          label: "口座指定者",
+          value: this.customer?.banking?.account_designator || "",
+        },
         {
           label: "銀行名",
           value: this.customer?.banking?.bank_name || "",

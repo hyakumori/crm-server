@@ -42,6 +42,7 @@ class ContactInput(HyakumoriDanticModel):
 
 
 class BankingInput(HyakumoriDanticModel):
+    account_designator: Optional[str]
     bank_name: Optional[str] = UNKNOWN
     branch_name: Optional[str] = UNKNOWN
     account_type: Optional[str] = EMPTY
