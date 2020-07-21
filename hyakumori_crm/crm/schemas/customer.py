@@ -1,10 +1,10 @@
 from enum import Enum
-from typing import List, Union
+from typing import List, Union, Optional
 
 from pydantic import BaseModel, EmailStr, constr
 
 from ..common import regexes
-from ..common.constants import EMPTY, UNKNOWN
+from ..common.constants import EMPTY
 
 
 class Name(BaseModel):
@@ -50,6 +50,7 @@ class Banking(BaseModel):
     銀行名	支店名	種類	口座番号	口座名義
     """
 
+    account_designator: Optional[str]
     bank_name: Union[str, None] = EMPTY
     branch_name: Union[str, None] = EMPTY
     account_type: Union[str, None] = EMPTY
