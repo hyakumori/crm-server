@@ -585,6 +585,15 @@ def customercontacts_list_with_search(search_str: str = None):
                 "crm_contact.name_kana->>'first_name')",
                 params=[],
             ),
+            tags_repr=RawSQL(
+                "select string_agg(tags_repr, ',') tags_repr "
+                "from ("
+                "select concat_ws(':', key, value) as tags_repr "
+                "from jsonb_each_text(crm_customer.tags) as x "
+                "where value is not null"
+                ") as ss",
+                params=[],
+            ),
         )
         .filter(is_basic__isnull=False)
         .all()
@@ -600,6 +609,7 @@ def customercontacts_list_with_search(search_str: str = None):
             | Q(address__sector__icontains=search_str)
             | Q(address__prefecture__icontains=search_str)
             | Q(address__municipality__icontains=search_str)
+            | Q(tags_repr__icontains=search_str)
         )
     return queryset
 
