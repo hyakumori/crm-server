@@ -596,8 +596,6 @@ def parse_csv_data_to_dict(row_data):
         "fsc_start_date",
     ]
     contract = []
-    work_load_contract = []
-    contracts = []
     forest_attributes = []
     for i in range(len(row_data)):
         if i == 0:
@@ -658,7 +656,10 @@ def csv_upload(fp):
                     if key == "__root__":
                         errors[key] = msgs
                     else:
-                        errors[csv_errors_map[key]].extend(msgs)
+                        try:
+                            errors[csv_errors_map[key]].extend(msgs)
+                        except KeyError:
+                            errors[key].extend(msgs)
 
                 return {"line": line_count + 1, "errors": errors}
             try:
