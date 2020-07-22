@@ -14,7 +14,7 @@ indent_style = space
 indent_size = 4
 
 # Indentation override for all JS under lib directory
-[*.{js,json,yml}]
+[*.{js,json,yml,vue}]
 indent_style = space
 indent_size = 2
 
