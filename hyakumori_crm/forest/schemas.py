@@ -3,7 +3,7 @@ from typing import Optional, List
 from uuid import UUID
 
 from django.utils.translation import gettext_lazy as _
-from pydantic import validator, root_validator, ValidationError
+from pydantic import validator, root_validator
 from pydantic.errors import EnumError
 
 from hyakumori_crm.core.models import HyakumoriDanticModel, Paginator
@@ -94,7 +94,7 @@ class ContractUpdateInput(HyakumoriDanticModel):
             values["fsc_start_date"] = None
             return values
         if fsc_status == FSCContactStatus.joined and not fsc_start_date:
-            raise ValueError(_("Required"))
+            raise ValueError(_("Required"), "fsc_start_date")
         return values
 
 
@@ -134,26 +134,6 @@ class ForestInput(HyakumoriDanticModel):
             raise ValueError(_("{field} must be greater than 0").format(field="地番支番"))
         v["地番支番"] = int_sub_lot_number
         return v
-
-
-def forest_input_wrapper(**kwargs):
-    try:
-        return ForestInput(**kwargs)
-    except ValidationError as e:
-        try:
-            contracts_err = next(filter(lambda e: e._loc == "contracts", e.raw_errors))
-            try:
-                contracts_err_root = next(
-                    filter(lambda e: e._loc == "__root__", contracts_err.exc.raw_errors)
-                )
-                e._error_cache = None
-                contracts_err.exc._error_cache = None
-                contracts_err_root._loc = "fsc_start_date"
-            except StopIteration:
-                pass
-        except StopIteration:
-            pass
-        raise e
 
 
 class OwnerPksInput(HyakumoriDanticModel):

@@ -39,7 +39,7 @@ from .schemas import (
     ForestSerializer,
     CustomerMemoInput,
     ContactType,
-    required_contact_input_wrapper,
+    RequiredContactInput,
 )
 from .service import (
     contacts_list_with_search,
@@ -121,7 +121,7 @@ class CustomerViewSets(ViewSet):
         remove=True,
     )
     @api_validate_model(ContactsInput, methods=["PUT", "PATCH"])
-    @api_validate_model(required_contact_input_wrapper, methods=["POST"])
+    @api_validate_model(RequiredContactInput, methods=["POST"])
     def contacts(self, request, *, customer=None, data=None):
         if request.method == "GET":
             obj = customer
