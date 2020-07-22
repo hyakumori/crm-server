@@ -1,6 +1,8 @@
 import csv
 import pathlib
+import operator
 import time
+from functools import reduce
 
 from django.core.cache import cache
 from django.db import transaction
@@ -74,7 +76,7 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
                 tags_repr=RawSQL(
                     "select string_agg(tags_repr, ',') tags_repr "
                     "from ("
-                    "select concat_ws(':', key, value) as tags_repr "
+                    "select concat_ws(': ', key, value) as tags_repr "
                     "from jsonb_each_text(tags) as x "
                     "where value is not null"
                     ") as ss",
@@ -99,7 +101,10 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
                 | Q(cadastral__municipality__icontains=search_str)
                 | Q(cadastral__sector__icontains=search_str)
                 | Q(cadastral__subsector__icontains=search_str)
-                | Q(tags_repr__icontains=search_str)
+                | reduce(
+                    operator.and_,
+                    (Q(tags_repr__icontains=v) for v in search_str.split(",")),
+                )
             )
 
         paginator = default_paginator()

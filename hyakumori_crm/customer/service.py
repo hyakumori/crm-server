@@ -1,5 +1,7 @@
 import uuid
 import itertools
+import operator
+from functools import reduce
 from typing import Iterator, Union
 from uuid import UUID
 
@@ -61,6 +63,7 @@ on crm_customer.id = A0.customer_id
 where crm_customer.deleted is null{where_clause}
 group by crm_customer.id
 """
+    and_tags_map = {}
     if search:
         where = """
 and (concat(sc.name_kanji->>'last_name', ' ',
@@ -74,19 +77,26 @@ or sc.mobilephone ilike %(search)s
 or concat(sc.postal_code, ' ', sc.address->>'sector', ' ',
     sc.address->>'municipality', ' ', sc.address->>'prefecture') ilike %(search)s
 or (
+"""
+        and_tags = []
+        for i, v in enumerate(search.split(",")):
+            and_tags_map[f"v{i}"] = "%%%s%%" % v
+            and_tags.append(
+                f"""(
     select string_agg(tags_repr, ',') tags_repr
     from (
-        select concat_ws(':', key, value) as tags_repr
+        select concat_ws(': ', key, value) as tags_repr
         from jsonb_each_text(tags) as x
         where value is not null
     ) as ss
-)::text ilike %(search)s
-)
+)::text ilike %(v{i})s
 """
+            )
+        where += "and\n".join(and_tags) + "\n))"
     else:
         where = ""
     sql = sql.format(where_clause=where)
-    return Customer.objects.raw(sql, {"search": "%%%s%%" % search})
+    return Customer.objects.raw(sql, {"search": "%%%s%%" % search, **and_tags_map})
 
 
 def get_customer_contacts(pk: UUID):
@@ -170,7 +180,7 @@ def get_list(
                 """
               (select string_agg(tags_repr, ',') tags_repr
               from (
-                select concat_ws(':', key, value) as tags_repr
+                select concat_ws(': ', key, value) as tags_repr
                 from jsonb_each_text(tags) as x
                 where value is not null
               ) as ss)::text
@@ -339,7 +349,7 @@ def get_list(
                         "forest_tags": RawSQLField(
                             "(select array_agg(fulltag) tags_arr "
                             "from ( "
-                            "select concat_ws(':', key, value) as fulltag "
+                            "select concat_ws(': ', key, value) as fulltag "
                             "from jsonb_each_text(forest.tags) as x "
                             "where value is not null "
                             ") as ss)"
@@ -588,7 +598,7 @@ def customercontacts_list_with_search(search_str: str = None):
             tags_repr=RawSQL(
                 "select string_agg(tags_repr, ',') tags_repr "
                 "from ("
-                "select concat_ws(':', key, value) as tags_repr "
+                "select concat_ws(': ', key, value) as tags_repr "
                 "from jsonb_each_text(crm_customer.tags) as x "
                 "where value is not null"
                 ") as ss",
@@ -609,7 +619,10 @@ def customercontacts_list_with_search(search_str: str = None):
             | Q(address__sector__icontains=search_str)
             | Q(address__prefecture__icontains=search_str)
             | Q(address__municipality__icontains=search_str)
-            | Q(tags_repr__icontains=search_str)
+            | reduce(
+                operator.and_,
+                (Q(tags_repr__icontains=v) for v in search_str.split(",")),
+            )
         )
     return queryset
 
