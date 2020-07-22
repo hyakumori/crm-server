@@ -17,7 +17,7 @@ query = ObjectType("Query")
 @login_required(with_policies=["can_view_customers"])
 def get_customertable_headers(obj: Any, info: GraphQLResolveInfo, **kwargs) -> dict:
     headers = [
-        {"text": _(""), "value": "business_id", "align": "center"},
+        {"text": "", "value": "business_id", "align": "center"},
         {"text": _("Fullname Kanji"), "value": "fullname_kanji", "align": "left"},
         {"text": _("Fullname Kana"), "value": "fullname_kana", "align": "left"},
         {"text": _("Postal Code"), "value": "postal_code", "align": "center"},
