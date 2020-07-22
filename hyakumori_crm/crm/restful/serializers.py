@@ -77,6 +77,7 @@ class LimittedCustomerSerializer(CustomerSerializer):
             "self_contact",
             "forests_count",
             "default",
+            "tags",
         ]
 
 
