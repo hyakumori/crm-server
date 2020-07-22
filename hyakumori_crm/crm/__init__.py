@@ -1,10 +1,11 @@
-from typing import Any, Dict, Type
+from typing import Any, Dict, Type, Union, Sequence
 from enum import Enum
 
 import querybuilder.query
 import pydantic
 from pydantic import errors
 from pydantic.error_wrappers import get_exc_type
+from pydantic.utils import Representation
 
 
 class CompleteSorter(querybuilder.query.Sorter):
@@ -76,6 +77,31 @@ def error_dict(
     return d
 
 
+class ErrorWrapper(Representation):
+    __slots__ = "exc", "_loc"
+
+    def __init__(self, exc: Exception, loc: Union[str, "Loc"]) -> None:
+        if len(exc.args) > 1 and not isinstance(exc, pydantic.ValidationError):
+            self.exc = exc.__class__(exc.args[0])
+            self._loc = exc.args[1]
+        else:
+            self.exc = exc
+            self._loc = loc
+
+    def loc_tuple(self) -> "Loc":
+        if isinstance(self._loc, tuple):
+            return self._loc
+        else:
+            return (self._loc,)
+
+    def __repr_args__(self) -> "ReprArgs":
+        return [("exc", self.exc), ("loc", self.loc_tuple())]
+
+
+pydantic.error_wrappers.ErrorWrapper = ErrorWrapper
+pydantic.error_wrappers.ErrorList = Union[Sequence[Any], ErrorWrapper]
+pydantic.main.ErrorWrapper = ErrorWrapper
+pydantic.fields.ErrorWrapper = ErrorWrapper
 pydantic.error_wrappers.error_dict = error_dict
 pydantic.validators.enum_validator = enum_validator
 # https://github.com/samuelcolvin/pydantic/blob/2eb62a3b2f/pydantic/validators.py#L500
