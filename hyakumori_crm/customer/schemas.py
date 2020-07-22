@@ -312,19 +312,6 @@ class RequiredContactInput(HyakumoriDanticModel):
     #     return values
 
 
-def required_contact_input_wrapper(**kwargs):
-    try:
-        return RequiredContactInput(**kwargs)
-    except ValidationError as e:
-        try:
-            root_err = next(filter(lambda e: e._loc == ("__root__"), e.raw_errors))
-            e._error_cache = None
-            root_err._loc = ("telephone",)
-        except StopIteration:
-            pass
-        raise e
-
-
 class CustomerUploadCsv(HyakumoriDanticModel):
     business_id: constr(regex=regexes.CUSTOMER_ID, strip_whitespace=True)
     fullname_kana: str
@@ -358,9 +345,7 @@ class CustomerUploadCsv(HyakumoriDanticModel):
                 "Bad format (000-000-0000 or 00-0000-0000 or 0000000000)."
             ),
             "value_error.str.regex.postal_code": _("Bad format (000-0000)."),
-            "value_error.str.regex.mobilephone": _(
-                "Bad format (000-0000-0000)."
-            ),
+            "value_error.str.regex.mobilephone": _("Bad format (000-0000-0000)."),
         }
 
     @validator("bank_account_number", pre=True)

@@ -35,7 +35,6 @@ from ..permissions.enums import SystemGroups
 
 from .schemas import (
     ForestInput,
-    forest_input_wrapper,
     OwnerPksInput,
     CustomerDefaultInput,
     CustomerContactDefaultInput,
@@ -150,7 +149,7 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
 
     @action(detail=True, methods=["PUT", "PATCH"], url_path="basic-info")
     @get_or_404(get_func=get_forest_by_pk, to_name="forest", remove=True)
-    @api_validate_model(forest_input_wrapper, "forest_in")
+    @api_validate_model(ForestInput, "forest_in")
     def basic_info(self, request, *, forest_in: ForestInput):
         update_basic_info(forest_in.forest, forest_in)
         ActivityService.log(
