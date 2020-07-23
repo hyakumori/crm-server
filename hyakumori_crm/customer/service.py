@@ -85,7 +85,7 @@ or (
                 f"""(
     select string_agg(tags_repr, ',') tags_repr
     from (
-        select concat_ws(': ', key, value) as tags_repr
+        select concat_ws(':', key, value) as tags_repr
         from jsonb_each_text(tags) as x
         where value is not null
     ) as ss
@@ -180,7 +180,7 @@ def get_list(
                 """
               (select string_agg(tags_repr, ',') tags_repr
               from (
-                select concat_ws(': ', key, value) as tags_repr
+                select concat_ws(':', key, value) as tags_repr
                 from jsonb_each_text(tags) as x
                 where value is not null
               ) as ss)::text
@@ -349,7 +349,7 @@ def get_list(
                         "forest_tags": RawSQLField(
                             "(select array_agg(fulltag) tags_arr "
                             "from ( "
-                            "select concat_ws(': ', key, value) as fulltag "
+                            "select concat_ws(':', key, value) as fulltag "
                             "from jsonb_each_text(forest.tags) as x "
                             "where value is not null "
                             ") as ss)"
@@ -598,7 +598,7 @@ def customercontacts_list_with_search(search_str: str = None):
             tags_repr=RawSQL(
                 "select string_agg(tags_repr, ',') tags_repr "
                 "from ("
-                "select concat_ws(': ', key, value) as tags_repr "
+                "select concat_ws(':', key, value) as tags_repr "
                 "from jsonb_each_text(crm_customer.tags) as x "
                 "where value is not null"
                 ") as ss",

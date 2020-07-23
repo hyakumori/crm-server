@@ -30,14 +30,13 @@
                   draggable
                   pill
                   :close="isUpdate"
-                  :title="`${item.key}: ${item.value}`"
+                  :title="`${item.key}:${item.value}`"
                 >
                   {{
                     item.key.length > 15
                       ? item.key.slice(0, 15) + "..."
                       : item.key
-                  }}:
-                  {{
+                  }}:{{
                     item.value.length > 15
                       ? item.value.slice(0, 15) + "..."
                       : item.value
