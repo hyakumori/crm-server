@@ -4,8 +4,8 @@
       <div class="user-detail__section px-7">
         <div id="basic-info">
           <content-header
-            content="基本情報 (登記情報)"
-            toggleEditBtnContent="基本情報・編集"
+            content="基本情報"
+            toggleEditBtnContent="編集"
             :loading="basicInfo.length === 0 || isLoading"
             @toggleEdit="val => (isUpdate.basicInfo = val)"
           />
