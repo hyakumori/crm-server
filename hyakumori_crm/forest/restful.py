@@ -75,7 +75,7 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
                 tags_repr=RawSQL(
                     "select string_agg(tags_repr, ',') tags_repr "
                     "from ("
-                    "select concat_ws(': ', key, value) as tags_repr "
+                    "select concat_ws(':', key, value) as tags_repr "
                     "from jsonb_each_text(tags) as x "
                     "where value is not null"
                     ") as ss",
