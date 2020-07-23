@@ -76,7 +76,7 @@
       <template v-slot:item.tags="{ item }" class="text-truncate">
         <template v-for="(tag, name, index) in item['tags']">
           <p class="tag" v-if="tag && name" :key="index">
-            {{ `${name}: ${tag}` }}
+            {{ `${name}:${tag}` }}
           </p>
         </template>
       </template>
