@@ -88,7 +88,7 @@
           v-if="$store.getters['forest/taggedCustomers'].length > 0"
         >
           <h4 class="ml-6">顧客タグ情報</h4>
-          <div style="max-height:300px;overflow-y:auto;">
+          <div style="overflow-y:auto;">
             <tag-detail-card
               class="ml-6"
               v-for="c in $store.getters['forest/taggedCustomers']"
