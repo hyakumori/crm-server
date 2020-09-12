@@ -22,7 +22,7 @@ test-frontend:
     - yarn config set cache-folder $CI_PROJECT_DIR/.cache/yarn
     - yarn install
   script:
-    - yarn lint
+    - yarn lint --no-fix
     - yarn test --passWithNoTests
 
 test-backend:

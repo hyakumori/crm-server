@@ -42,6 +42,7 @@ class MyFilterBackend:
 
 class CustomUserViewSet(UserViewSet):
     queryset = User.objects.filter(~Q(email="AnonymousUser")).prefetch_related("groups")
+    lookup_field = "pk"
 
     def get_queryset(self):
         paginator = Paginator(

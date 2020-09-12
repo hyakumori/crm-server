@@ -98,7 +98,7 @@ export default {
       }));
     },
 
-    async getData(perPage, page, sortBy, sortDesc) {
+    async getData(perPage, page, sortBy = [], sortDesc = []) {
       this.isLoading = true;
       let response;
       if (
