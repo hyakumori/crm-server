@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 import pydantic
 
 from hyakumori_crm.core.decorators import errors_wrapper
-from hyakumori_crm.crm.models import Customer, Forest
+from hyakumori_crm.crm.models import Customer, Contact, CustomerContact, Forest
 
 from .schemas import CustomerUploadCsv
 from .service import save_customer_from_csv_data
@@ -53,34 +53,46 @@ def csv_upload(fp):
             if line_count == 0:
                 line_count += 1
             row_data = {k: row[v] for k, v in header_map.items()}
-            try:
-                c = Customer.objects.select_for_update(nowait=True).get(
-                    business_id=row_data["business_id"]
+            customer_contact = None
+            if not row_data["business_id"]:
+                c = Customer()
+                self_contact = Contact()
+                c._self_contact = self_contact
+                customer_contact = CustomerContact(
+                    is_basic=True, customer=c, contact=self_contact
                 )
-                customer_ids.append(c.id)
-            except Customer.DoesNotExist:
-                return {
-                    "line": line_count + 1,
-                    "errors": {"__root__": [_("Customer not found")]},
-                }
-            except OperationalError:
-                return {
-                    "errors": {
-                        "__root__": [_("Current resources are not ready for update!!")]
-                    }
-                }
             else:
                 try:
-                    customer_data = CustomerUploadCsv(**row_data)
-                    save_customer_from_csv_data(c, customer_data)
-                except pydantic.ValidationError as e:
-                    errors = {}
-                    for key, msgs in errors_wrapper(e.errors()).items():
-                        if key == "__root__":
-                            errors[key] = msgs
-                        else:
-                            errors[header_map[key]] = msgs
-                    return {"line": line_count + 1, "errors": errors}
+                    c = Customer.objects.select_for_update(nowait=True).get(
+                        business_id=row_data["business_id"]
+                    )
+                    customer_ids.append(c.id)
+                except Customer.DoesNotExist:
+                    return {
+                        "line": line_count + 1,
+                        "errors": {"__root__": [_("Customer not found")]},
+                    }
+                except OperationalError:
+                    return {
+                        "errors": {
+                            "__root__": [
+                                _("Current resources are not ready for update!!")
+                            ]
+                        }
+                    }
+            try:
+                customer_data = CustomerUploadCsv(**row_data)
+                save_customer_from_csv_data(c, customer_data)
+                if customer_contact is not None:
+                    customer_contact.save()
+            except pydantic.ValidationError as e:
+                errors = {}
+                for key, msgs in errors_wrapper(e.errors()).items():
+                    if key == "__root__":
+                        errors[key] = msgs
+                    else:
+                        errors[header_map[key]] = msgs
+                return {"line": line_count + 1, "errors": errors}
             line_count += 1
         fids = Forest.objects.filter(
             forestcustomer__customer_id__in=customer_ids

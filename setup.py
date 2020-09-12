@@ -339,7 +339,7 @@ IS_LIGHT_BUILD = os.environ.get("HYAKUMORI_LIGHT_BUILD") == "1"
 
 def get_requirements(env):
     if env == "base":
-        fname = "requirements.in"
+        fname = "requirements.txt"
     else:
         fname = "requirements-{}.txt".format(env)
     with open(fname) as fp:

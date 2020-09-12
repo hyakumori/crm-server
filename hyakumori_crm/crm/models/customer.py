@@ -78,12 +78,14 @@ class Customer(BaseResourceModel):
 
     @property
     def self_contact(self):
-        try:
-            return next(
-                filter(lambda cc: cc.is_basic, self.customercontact_set.all())
-            ).contact
-        except StopIteration:
-            return None
+        if not hasattr(self, "_self_contact"):
+            try:
+                self._self_contact = next(
+                    filter(lambda cc: cc.is_basic, self.customercontact_set.all())
+                ).contact
+            except StopIteration:
+                self._self_contact = None
+        return self._self_contact
 
     @property
     def actions(self):

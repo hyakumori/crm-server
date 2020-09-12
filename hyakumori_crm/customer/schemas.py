@@ -313,7 +313,9 @@ class RequiredContactInput(HyakumoriDanticModel):
 
 
 class CustomerUploadCsv(HyakumoriDanticModel):
-    business_id: constr(regex=regexes.CUSTOMER_ID, strip_whitespace=True)
+    business_id: Optional[
+        constr(regex=regexes.CUSTOMER_ID, strip_whitespace=True)
+    ] = EMPTY
     fullname_kana: str
     fullname_kanji: str
     prefecture: Optional[str] = EMPTY

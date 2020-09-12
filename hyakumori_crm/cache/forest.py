@@ -15,8 +15,7 @@ def refresh_customer_forest_cache(forest_ids: List[str]):
     forest_filters = dict()
     now = time.time()
 
-    if len(forest_ids) > 0:
-        forest_filters["id__in"] = forest_ids
+    forest_filters["id__in"] = forest_ids
 
     forests = Forest.objects.filter(**forest_filters).prefetch_related(
         Prefetch(
