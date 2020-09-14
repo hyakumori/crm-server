@@ -38,7 +38,7 @@ header_map = {
     "bank_account_type": "口座情報_種別",
     "bank_account_number": "口座情報_口座番号",
     "bank_account_name": "口座情報_口座名義",
-    "tags": _("Tag"),
+    "tags": "タグ",
 }
 
 
