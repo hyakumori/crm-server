@@ -8,7 +8,6 @@ from django.core.exceptions import ValidationError as DjValidationError
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from pydantic import EmailStr, constr, root_validator, validator
-from pydantic.error_wrappers import ValidationError
 from rest_framework.serializers import ModelSerializer, UUIDField
 
 from ..core.models import HyakumoriDanticModel, Paginator
@@ -359,7 +358,7 @@ class CustomerUploadCsv(HyakumoriDanticModel):
         try:
             tags_csv_to_dict(value)
         except ValueError:
-            raise ValueError("Invalid format (tag1:value1; tag2:value2)")
+            raise ValueError(_("Invalid format (tag1:value1; tag2:value2)"))
         return value
 
     @property
