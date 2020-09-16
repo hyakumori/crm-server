@@ -122,7 +122,7 @@ msgstr "形式が正しくありません"
 
 #: core/models.py:107
 msgid "Invalid Email"
-msgstr "無効なメール"
+msgstr "無効なメールアドレスです"
 
 #: core/models.py:109
 #, python-brace-format
@@ -131,7 +131,7 @@ msgstr "{limit_value}文字以上入力する必要があります。"
 
 #: core/models.py:111
 msgid "Invalid date format"
-msgstr "不正な日付形式（YYYY-MM-DD）"
+msgstr "不正な日付形式（正しい形式　YYYY-MM-DD）"
 
 #: core/models.py:112
 msgid "Invalid UUID"
@@ -239,15 +239,15 @@ msgstr ""
 #: customer/schemas.py:358
 msgid "Bad format (000-000-0000 or 00-0000-0000 or 0000000000)."
 msgstr ""
-"形式が正しくありません（000-000-0000 又は 00-0000-0000 又は 0000000000）"
+"形式が正しくありません（正しい形式　000-000-0000 又は 00-0000-0000 又は 0000000000）"
 
 #: customer/schemas.py:360
 msgid "Bad format (000-0000)."
-msgstr "形式が正しくありません（000-0000）"
+msgstr "形式が正しくありません（正しい形式　000-0000）"
 
 #: customer/schemas.py:362
 msgid "Bad format (000-0000-0000)."
-msgstr "形式が正しくありません（000-0000-0000）"
+msgstr "形式が正しくありません（正しい形式　000-0000-0000）"
 
 #: customer/service.py:42 customer/tasks.py:64 forest/service.py:75
 msgid "Customer not found"
@@ -255,11 +255,11 @@ msgstr "顧客が見つかりません"
 
 #: customer/service.py:789
 msgid "Customer ID is empty or not available"
-msgstr "お客様IDが空か、使用できません"
+msgstr "お客様IDが利用できません。"
 
 #: customer/tasks.py:49 forest/service.py:650 forest/service.py:683
 msgid "Invalid csv file!"
-msgstr "無効なcsvファイル！"
+msgstr "無効なcsvファイルです"
 
 #: customer/tasks.py:69
 msgid "Current resources are not ready for update!!"
@@ -328,7 +328,7 @@ msgstr "連絡先が{v}見つかりません"
 
 #: forest/schemas.py:293
 msgid "Invalid format (tag1:value1; tag2:value2)"
-msgstr "無効な形式（タグ1：値1; タグ2：値2）"
+msgstr "形式が正しくありません（正しい形式　タグ1:値1; タグ2:値2）"
 
 #: forest/service.py:50 forest/service.py:671
 msgid "Forest not found"
