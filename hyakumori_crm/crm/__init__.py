@@ -59,7 +59,7 @@ def error_dict(
 ) -> Dict[str, Any]:
     type_ = get_exc_type(exc.__class__)
     msg_template = (
-        config.error_msg_templates.get(f"{type_}.{'.'.join(loc)}")
+        config.error_msg_templates.get(f"{type_}.{'.'.join(map(str, loc))}")
         or config.error_msg_templates.get(type_)
         or getattr(exc, "msg_template", None)
     )
