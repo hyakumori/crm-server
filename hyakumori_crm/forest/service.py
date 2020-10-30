@@ -698,8 +698,8 @@ csv_errors_map = {
     "contracts.contract_end_date": "終了日",
     "contracts.fsc_status": "FSC認証",
     "contracts.fsc_start_date": "FSC開始日",
-    "land_attributes.0.__root__": "土地属性",
-    "land_attributes.1.__root__": "土地属性",
+    "land_attributes.0.__root__": "地番本番",
+    "land_attributes.1.__root__": "地番支番",
     "tags": "タグ",
 }
 
