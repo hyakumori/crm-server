@@ -5,11 +5,12 @@
 #    pip-compile requirements-dev.in
 #
 appdirs==1.4.3            # via black
-attrs==19.3.0             # via black, pytest
+appnope==0.1.2            # via ipython
+attrs==19.3.0             # via -c requirements.txt, black, pytest
 backcall==0.1.0           # via ipython
 black==19.10b0            # via -r requirements-dev.in
-certifi==2019.11.28       # via requests
-chardet==3.0.4            # via requests
+certifi==2020.4.5.2       # via -c requirements.txt, requests
+chardet==3.0.4            # via -c requirements.txt, requests
 click==7.1.1              # via -r requirements-dev.in, black
 coverage==5.0.4           # via -r requirements-dev.in
 decorator==4.4.2          # via ipython, traitlets
