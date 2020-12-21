@@ -1,0 +1,74 @@
+name: Lint and Test
+
+on:
+  push:
+    branches: [ next ]
+  pull_request:
+    branches: [ next ]
+
+  workflow_dispatch:
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Lint Vue
+        run: |
+          cd hyakumori_crm/static/hyakumori_crm
+          yarn install
+          yarn lint --no-fix
+     
+  backend:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: [3.7]
+
+    env:
+      POSTGRES_DB: hyakumori
+      POSTGRES_USER: runner
+      POSTGRES_PASSWORD: youC4nP4ass
+      POSTGRES_HOST_AUTH_METHOD: trust
+          
+    services:
+      postgres:
+        image: postgres:11-alpine
+        env:
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_HOST_AUTH_METHOD: ${{ env.POSTGRES_HOST_AUTH_METHOD }}
+        ports:
+        - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5 
+
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      env: 
+        HYAKUMORI_LIGHT_BUILD: 1
+      run:
+        pip install -U pip setuptools
+        pip install '.[dev]'
+
+    - name: Test with pytest
+      run: |
+        export DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB
+        echo $DATABASE_URL
+        coverage run -m pytest tests
+        coverage report -m
