@@ -11,19 +11,19 @@ on:
 jobs:
   frontend:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v2
-        
+
       - name: Lint Vue
         run: |
           cd hyakumori_crm/static/hyakumori_crm
           yarn install
           yarn lint --no-fix
-     
+
   backend:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         python-version: [3.7]
@@ -33,10 +33,10 @@ jobs:
       POSTGRES_USER: runner
       POSTGRES_PASSWORD: youC4nP4ass
       POSTGRES_HOST_AUTH_METHOD: trust
-          
+
     services:
       postgres:
-        image: postgres:11-alpine
+        image: mdillon/postgis:11-alpine
         env:
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
@@ -48,7 +48,7 @@ jobs:
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 5 
+          --health-retries 5
 
 
     steps:
@@ -60,7 +60,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
-      env: 
+      env:
         HYAKUMORI_LIGHT_BUILD: 1
       run:
         pip install -U pip setuptools
