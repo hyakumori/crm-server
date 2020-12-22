@@ -1,0 +1,10 @@
+FROM node:lts-alpine
+
+WORKDIR /app
+
+COPY ./hyakumori_crm/static/hyakumori_crm/package.json ./
+
+RUN yarn install
+
+COPY ./hyakumori_crm/static/hyakumori_crm/ .
+
