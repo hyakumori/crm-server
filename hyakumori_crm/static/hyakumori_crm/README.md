@@ -2,6 +2,14 @@
 
 ## Project setup
 
+### Add env variables
+
+```
+cp .env.example .env
+```
+
+### install
+
 ```
 yarn install
 ```

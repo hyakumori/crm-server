@@ -24,7 +24,7 @@ For example:
 # -------------- BACKEND --------------
 DEBUG=True
 SECRET_KEY=0fdafa9ea1f1436cb1d3ff56fcd95586
-DATABASE_URL=postgres://postgres:postgres@localhost:5432/datafluct
+DATABASE_URL=postgis://postgres:postgres@postgres:5432/hyakumori
 STATIC_DIR=hyakumori_crm/static/hyakumori_crm/dist
 REDIS_CACHE_URL=redis://redis
 
@@ -33,21 +33,22 @@ CORS_ORIGIN_WHITELIST=http://localhost:8080
 FRONTEND_URL=http://localhost:8000
 TIME_ZONE_PRIMARY=Asia/Tokyo
 
-# EMAIL
-#EMAIL_HOST=
-#EMAIL_PORT=
-#EMAIL_HOST_USER=
-#EMAIL_HOST_PASSWORD=
-#EMAIL_USE_TLS=
-
 # -------------- FRONTEND --------------
 VUE_APP_GRAPHQL_HTTP=http://localhost:8000/graphql
 VUE_APP_REST_HTTP=http://localhost:8000/api/v1
 ```
 
-Note, `EMAIL` settings are commented out until proper configuration settings are understood. 
+Note, `EMAIL` settings are removed until proper configuration settings are understood. 
 
-2. Run docker-compose to launch services:
+2. Copy `.env.example` to `hyakumori_crm/static/hyakumori_crm/.env` and fill necessary variables for both backend and frontend:
+
+```
+cp .env.example hyakumori_crm/static/hyakumori_crm/.env
+```
+
+The contents can be the same as the above `.env` file.
+
+3. Run docker-compose to launch services:
 
 ```
 docker-compose up --b -d
