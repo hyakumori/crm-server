@@ -2,9 +2,7 @@ version: "3.5"
 
 services:
   crm-backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.backend
+    build: .
     entrypoint:
       - dockerize
       - -timeout
@@ -17,17 +15,17 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/datafluct
+      - DATABASE_URL=postgis://postgres:postgres@postgres:5432/hyakumori
     depends_on:
       - postgres
 
   crm-frontend:
     build:
-      context: .
-      dockerfile: Dockerfile.frontend
+      context: ./hyakumori_crm/static/hyakumori_crm
     command: yarn serve
     volumes:
-      - ./hyakumori_crm/static/hyakumori_crm:/app
+      - ./hyakumori_crm/static/hyakumori_crm/src:/app/src
+      - ./hyakumori_crm/static/hyakumori_crm/public:/app/public
     ports:
       - "8080:8080"
     depends_on:
@@ -40,10 +38,9 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: datafluct
-      PGDATA: /data/postgres
+      POSTGRES_DB: hyakumori
     volumes:
-      - postgres:/data/postgres
+      - postgres:/var/lib/postgresql/data
 
   pgadmin:
     container_name: pgadmin_container
