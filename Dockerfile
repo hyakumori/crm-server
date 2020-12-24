@@ -1,15 +1,31 @@
-FROM python:3.7
+FROM python:3.7-slim
+
 ENV PYTHONUNBUFFERED 1
+ENV DOCKERIZE_VERSION v0.6.1
+ENV WORK_DIR /usr/src/crm
+ENV HYAKUMORI_LIGHT_BUILD=1
 
-ARG HYAKUMORI_VERSION=${HYAKUMORI_VERSION}
+WORKDIR ${WORK_DIR}
 
-RUN pip install -U pip setuptools wheel
-RUN pip install uvicorn
+COPY requirements.txt ${WORK_DIR}
+COPY requirements-dev.txt ${WORK_DIR}
 
-COPY ./dist/hyakumori_crm-${HYAKUMORI_VERSION}.tar.gz /tmp/hyakumori_crm-${HYAKUMORI_VERSION}.tar.gz
+RUN apt update \
+ && apt install -y \
+    binutils \
+    libproj-dev \
+    gdal-bin \
+    wget \
+ && pip install uvicorn \
+ && pip install -r requirements.txt \
+ && pip install -r requirements-dev.txt \
+ && wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+ && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+ && apt purge -y wget \
+ && apt autoremove -y \
+ && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+ && rm -rf /var/lib/apt/lists/*
 
-RUN pip install /tmp/hyakumori_crm-${HYAKUMORI_VERSION}.tar.gz
+COPY . .
 
-EXPOSE 8000
-
-CMD uvicorn hyakumori_crm.asgi:application --host 0.0.0.0 --port 8000 --header Server:apache
+CMD ["uvicorn", "hyakumori_crm.asgi:application", "--host", "0.0.0.0", "--header Server:apache"]

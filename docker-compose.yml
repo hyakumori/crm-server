@@ -1,0 +1,66 @@
+version: "3.5"
+
+services:
+  crm-backend:
+    build: .
+    entrypoint:
+      - dockerize
+      - -timeout
+      - 60s
+      - -wait
+      - tcp://postgres:5432
+    command: uvicorn hyakumori_crm.asgi:application --host 0.0.0.0 --header Server:apache
+    volumes:
+      - .:/usr/src/crm
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgis://postgres:postgres@postgres:5432/hyakumori
+    depends_on:
+      - postgres
+
+  crm-frontend:
+    build:
+      context: ./hyakumori_crm/static/hyakumori_crm
+    command: yarn serve
+    volumes:
+      - ./hyakumori_crm/static/hyakumori_crm/src:/app/src
+      - ./hyakumori_crm/static/hyakumori_crm/public:/app/public
+    ports:
+      - "8080:8080"
+    depends_on:
+      - crm-backend
+
+  postgres:
+    image: mdillon/postgis:11-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hyakumori
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    volumes:
+      - pgadmin:/root/.pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
+
+volumes:
+  postgres:
+  pgadmin:
+  redis:
