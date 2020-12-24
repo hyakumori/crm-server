@@ -7,7 +7,7 @@ from behaviors.managers import StoreDeletedManager
 from behaviors.querysets import StoreDeletedQuerySet
 from django.contrib.postgres.fields.jsonb import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db import models
+from django.contrib.gis.db import models
 from django.utils.translation import gettext_lazy as _
 from django_filters import FilterSet
 from pydantic import BaseModel, Field, root_validator, validator
