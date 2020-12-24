@@ -12,4 +12,3 @@ Dockerfile
 .gitlab-ci.yml
 hyakumori_crm.egg-info
 docker
-yarn.lock

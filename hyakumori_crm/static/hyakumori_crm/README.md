@@ -2,6 +2,16 @@
 
 ## Project setup
 
+### Add env variables
+
+```
+cp .env.example .env
+```
+
+then update the variables to match the root `.env` file (used in backend environment).
+
+### install
+
 ```
 yarn install
 ```
