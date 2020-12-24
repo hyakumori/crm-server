@@ -13,11 +13,12 @@ services:
     volumes:
       - .:/usr/src/crm
     ports:
-      - "8000:8000"
+      - 8000:8000
     environment:
       - DATABASE_URL=postgis://postgres:postgres@postgres:5432/hyakumori
     depends_on:
       - postgres
+    restart: on-failure
 
   crm-frontend:
     build:
@@ -27,9 +28,22 @@ services:
       - ./hyakumori_crm/static/hyakumori_crm/src:/app/src
       - ./hyakumori_crm/static/hyakumori_crm/public:/app/public
     ports:
-      - "8080:8080"
+      - 8080:8080
     depends_on:
       - crm-backend
+    restart: on-failure
+
+  geoserver:
+    image: kartoza/geoserver:2.18.0
+    ports:
+      - 8600:8080
+    environment:
+      COMMUNITY_EXTENSIONS: s3-geotiff-plugin
+    volumes:
+      - geoserver-data:/opt/geoserver/data_dir
+    restart: on-failure
+    depends_on:
+      - postgres
 
   postgres:
     image: mdillon/postgis:11-alpine
@@ -41,6 +55,7 @@ services:
       POSTGRES_DB: hyakumori
     volumes:
       - postgres:/var/lib/postgresql/data
+    restart: on-failure
 
   pgadmin:
     container_name: pgadmin_container
@@ -51,7 +66,8 @@ services:
     volumes:
       - pgadmin:/root/.pgadmin
     ports:
-      - "${PGADMIN_PORT:-5050}:80"
+      - ${PGADMIN_PORT:-5050}:80
+    restart: on-failure
 
   redis:
     image: redis:alpine
@@ -59,8 +75,10 @@ services:
       - 6379:6379
     volumes:
       - redis:/data
+    restart: on-failure
 
 volumes:
+  geoserver-data:
   postgres:
   pgadmin:
   redis:
