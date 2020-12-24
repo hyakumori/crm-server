@@ -9,3 +9,5 @@ RUN yarn install
 
 COPY . .
 
+CMD ["yarn", "serve"]
+
