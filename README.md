@@ -51,7 +51,8 @@ The contents can be the same as the above `.env` file.
 3. Run docker-compose to launch services:
 
 ```
-docker-compose up --b -d
+docker-compose build
+docker-compose up -d
 ```
 
 ## Mailhog
@@ -65,3 +66,34 @@ docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
 - Run `./manage.py setup_schedule_tasks` to set up schedule tasks
 - Run `./manage.py qcluster` to start workers
 - Check info by running `./manage.py qinfo`
+
+## Restoring database
+
+First download the sql dump and copy it to the docker container:
+```bash
+docker cp <path_to_dump.sql> crm_postgres_1:/tmp/hyakumori.sql
+```
+
+Then connect to the postgres docker container:
+
+```bash
+docker exec -it crm_postgres_1 bash
+```
+
+and run the following commands:
+
+```bash
+createdb -U postgres hyakumori
+psql -U postgres hyakumori -c "create extension postgis"
+psql -U postgres hyakumori -c "create role hyakumori_crm_dev"
+psql -U postgres -d hyakumori -f /tmp/hyakumori.sql
+```
+
+### Managing migrations
+
+To run make and run migrations in the containers:
+
+```bash
+docker-compose exec crm-backend python manage.py makemigrations
+docker-compose exec crm-backend python manage.py migrate
+```
