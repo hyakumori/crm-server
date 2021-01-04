@@ -14,6 +14,7 @@ djangorestframework
 django-extensions
 django-query-builder
 django-filter
+djangorestframework-gis
 django-cors-headers
 djoser
 djangorestframework-simplejwt
