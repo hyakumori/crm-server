@@ -154,7 +154,3 @@ class ForestSchema(BaseModel):
     land_attributes: List[LandAttribute] = []
     forest_attributes: List[ForestAttribute] = []
 
-
-class GeoData(BaseModel):
-    latitude: Union[float, None]
-    longitude: Union[float, None]
