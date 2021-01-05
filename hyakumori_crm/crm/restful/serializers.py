@@ -7,7 +7,6 @@ from rest_framework.serializers import (
     SerializerMethodField,
     CharField,
 )
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from ..models import Customer, Contact, Forest, Attachment, Archive
 from ...contracts.models import ContractType
@@ -82,12 +81,11 @@ class LimittedCustomerSerializer(CustomerSerializer):
         ]
 
 
-class ForestSerializer(GeoFeatureModelSerializer):
+class ForestSerializer(ModelSerializer):
     contracts = SerializerMethodField()
 
     class Meta:
         model = Forest
-        geo_field = "geom"
         exclude = ["deleted"]
 
     def get_contracts(self, forest):
@@ -95,10 +93,9 @@ class ForestSerializer(GeoFeatureModelSerializer):
         return map_forests_contracts(forest, contract_types).contracts
 
 
-class ForestListingSerializer(GeoFeatureModelSerializer):
+class ForestListingSerializer(ModelSerializer):
     class Meta:
         model = Forest
-        geo_field = "geom"
         fields = [
             "id",
             "internal_id",
