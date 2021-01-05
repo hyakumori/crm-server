@@ -100,7 +100,7 @@ class Migration(migrations.Migration):
                 ('tags', django.contrib.postgres.fields.jsonb.JSONField(default=hyakumori_crm.crm.models.forest.DefaultForest.tags)),
                 ('land_attributes', django.contrib.postgres.fields.jsonb.JSONField(default=dict)),
                 ('forest_attributes', django.contrib.postgres.fields.jsonb.JSONField(default=dict)),
-                ('geodata', django.contrib.postgres.fields.jsonb.JSONField(default=hyakumori_crm.crm.models.forest.DefaultForest.geodata)),
+                ('geodata', django.contrib.postgres.fields.jsonb.JSONField()),
                 ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='crm_forest_author', to=settings.AUTH_USER_MODEL)),
                 ('editor', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='crm_forest_editor', to=settings.AUTH_USER_MODEL)),
             ],
