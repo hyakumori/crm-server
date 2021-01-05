@@ -12,7 +12,7 @@ type Forest implements Timestamp & Editor {
     tags: JSON
     land_attributes: JSON
     forest_attributes: JSON
-    geodata: JSON
+    geodata: String
     updated_by: User
     updated_at: DateTime
     created_at: DateTime
