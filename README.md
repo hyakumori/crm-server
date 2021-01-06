@@ -36,9 +36,15 @@ TIME_ZONE_PRIMARY=Asia/Tokyo
 # -------------- FRONTEND --------------
 VUE_APP_GRAPHQL_HTTP=http://localhost:8000/graphql
 VUE_APP_REST_HTTP=http://localhost:8000/api/v1
+
+# -------------- GEOSERVER -------------
+COMMUNITY_EXTENSIONS=s3-geotiff-plugin
+AWS_ACCESS_KEY_ID=************
+AWS_SECRET_ACCESS_KEY=***********************
 ```
 
-Note, `EMAIL` settings are removed until proper configuration settings are understood. 
+Note, `EMAIL` settings are removed until proper configuration settings are understood. AWS keys will be moved to 
+ GitHub secrets soon.
 
 2. Copy `.env.example` to `hyakumori_crm/static/hyakumori_crm/.env` and fill necessary variables for both backend and frontend:
 
@@ -83,8 +89,6 @@ docker exec -it crm_postgres_1 bash
 and run the following commands:
 
 ```bash
-createdb -U postgres hyakumori
-psql -U postgres hyakumori -c "create extension postgis"
 psql -U postgres hyakumori -c "create role hyakumori_crm_dev"
 psql -U postgres -d hyakumori -f /tmp/hyakumori.sql
 ```
