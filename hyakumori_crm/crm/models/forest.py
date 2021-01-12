@@ -48,6 +48,10 @@ class Forest(BaseResourceModel):
         ]
 
     @property
+    def geodata4326(self):
+        return self.geodata.transform(4326, clone=True)
+
+    @property
     def customers_count(self):
         return self.forestcustomer_set.all().count()
 

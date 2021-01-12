@@ -1,3 +1,4 @@
+from rest_framework.fields import Field
 from rest_framework.serializers import (
     ModelSerializer,
     UUIDField,
@@ -7,6 +8,7 @@ from rest_framework.serializers import (
     SerializerMethodField,
     CharField,
 )
+from rest_framework_gis.fields import GeometryField
 
 from ..models import Customer, Contact, Forest, Attachment, Archive
 from ...contracts.models import ContractType
@@ -82,6 +84,7 @@ class LimittedCustomerSerializer(CustomerSerializer):
 
 
 class ForestSerializer(ModelSerializer):
+    geodata = GeometryField(allow_null=True, required=False, source="geodata4326")
     contracts = SerializerMethodField()
 
     class Meta:
