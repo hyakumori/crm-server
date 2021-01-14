@@ -18,6 +18,7 @@ services:
       - DATABASE_URL=postgis://postgres:postgres@postgres:5432/hyakumori_crm
     depends_on:
       - postgres
+      - mailhog
     restart: on-failure
 
   crm-frontend:
