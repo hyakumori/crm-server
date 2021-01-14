@@ -72,6 +72,13 @@
           </div>
         </template>
       </page-header>
+      <map-container
+        class="px-7"
+        headerContent="地図"
+        :forests="[]"
+        :big="true"
+      >
+      </map-container>
     </template>
 
     <template #section>
@@ -153,6 +160,7 @@ import { saveAs } from "file-saver";
 import { get as _get } from "lodash";
 import UpdateActionsDialog from "../components/dialogs/UpdateActionsDialog";
 import TableAction from "../components/TableAction";
+import MapContainer from "../components/MapContainer";
 
 export default {
   name: "forest",
@@ -168,6 +176,7 @@ export default {
     PageHeader,
     OutlineRoundBtn,
     UpdateActionsDialog,
+    MapContainer,
   },
 
   data() {

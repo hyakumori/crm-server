@@ -3,6 +3,7 @@
     <slot name="top">
       <page-header />
     </slot>
+    <slot name="forestmap"></slot>
 
     <v-container fluid class="app-width d-flex px-7 pt-7">
       <slot name="section"></slot>

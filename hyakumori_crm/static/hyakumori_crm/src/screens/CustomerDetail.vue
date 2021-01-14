@@ -36,6 +36,14 @@
           itemClickable
         />
 
+        <map-container
+          v-if="forests.length > 0"
+          class="mt-12"
+          headerContent="地図"
+          :forests="forests"
+        >
+        </map-container>
+
         <customer-list-container
           v-if="pk"
           class="mt-12"
@@ -197,6 +205,7 @@ import BankingInfoForm from "../components/forms/BankingInfoForm";
 import { filter, find, some } from "lodash";
 import { tags_to_array } from "../helpers/tags";
 import { getForestDisplayName } from "../helpers/forest";
+import MapContainer from "../components/MapContainer";
 
 export default {
   mixins: [ScreenMixin],
@@ -213,6 +222,7 @@ export default {
     ActionLog,
     MemoInput,
     TagDetailCard,
+    MapContainer,
   },
   props: ["id"],
   data() {
