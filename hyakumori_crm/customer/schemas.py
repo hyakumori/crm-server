@@ -15,6 +15,7 @@ from ..crm.common import regexes
 from ..crm.common.constants import DEFAULT_EMAIL, EMPTY, UNKNOWN
 from ..crm.common.utils import tags_csv_to_dict
 from ..crm.models import Contact, Customer, Forest, ForestCustomer
+from rest_framework_gis.fields import GeometryField
 
 
 class Name(HyakumoriDanticModel):
