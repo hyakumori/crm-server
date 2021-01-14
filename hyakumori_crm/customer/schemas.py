@@ -111,6 +111,7 @@ class CustomerPaginator(Paginator):
 
 class ForestSerializer(ModelSerializer):
     forestcustomer_id = UUIDField(read_only=True)
+    geodata = GeometryField(allow_null=True, required=False, source="geodata4326")
 
     class Meta:
         model = Forest
@@ -123,6 +124,7 @@ class ForestSerializer(ModelSerializer):
             "land_attributes",
             "tags",
             "attributes",
+            "geodata",
         ]
 
 
