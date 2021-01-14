@@ -41,10 +41,13 @@ VUE_APP_REST_HTTP=http://localhost:8000/api/v1
 COMMUNITY_EXTENSIONS=s3-geotiff-plugin
 AWS_ACCESS_KEY_ID=************
 AWS_SECRET_ACCESS_KEY=***********************
+
+# -------------- EMAIL ----------------
+EMAIL_HOST=mailhog
+
 ```
 
-Note, `EMAIL` settings are removed until proper configuration settings are understood. AWS keys will be moved to 
- GitHub secrets soon.
+AWS keys will be moved to GitHub secrets soon.
 
 2. Copy `.env.example` to `hyakumori_crm/static/hyakumori_crm/.env` and fill necessary variables for both backend and frontend:
 
@@ -59,12 +62,6 @@ The contents can be the same as the above `.env` file.
 ```
 docker-compose build
 docker-compose up -d
-```
-
-## Mailhog
-
-```
-docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
 ```
 
 ## Task queue
