@@ -15,9 +15,10 @@ services:
     ports:
       - 8000:8000
     environment:
-      - DATABASE_URL=postgis://postgres:postgres@postgres:5432/hyakumori
+      - DATABASE_URL=postgis://postgres:postgres@postgres:5432/hyakumori_crm
     depends_on:
       - postgres
+      - mailhog
     restart: on-failure
 
   crm-frontend:
@@ -32,6 +33,12 @@ services:
     depends_on:
       - crm-backend
     restart: on-failure
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
 
   geoserver:
     image: kartoza/geoserver:2.18.0
@@ -51,7 +58,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: hyakumori
+      POSTGRES_DB: hyakumori_crm
     volumes:
       - postgres:/var/lib/postgresql/data
     restart: on-failure
