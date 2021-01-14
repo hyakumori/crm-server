@@ -68,7 +68,7 @@ docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
 ```
 
 ## Task queue
-- Using `django-q` for async task and schedule
+Using `django-q` for async task and schedule:
 - Run `./manage.py setup_schedule_tasks` to set up schedule tasks
 - Run `./manage.py qcluster` to start workers
 - Check info by running `./manage.py qinfo`
@@ -89,8 +89,8 @@ docker exec -it crm_postgres_1 bash
 and run the following commands:
 
 ```bash
-psql -U postgres hyakumori -c "create role hyakumori_crm_dev"
-psql -U postgres -d hyakumori -f /tmp/hyakumori.sql
+psql -U postgres hyakumori_crm -c "create role hyakumori_crm_dev"
+psql -U postgres -d hyakumori_crm -f /tmp/hyakumori.sql
 ```
 
 ### Managing migrations
