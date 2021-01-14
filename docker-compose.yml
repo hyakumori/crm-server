@@ -33,6 +33,12 @@ services:
       - crm-backend
     restart: on-failure
 
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
+
   geoserver:
     image: kartoza/geoserver:2.18.0
     ports:
