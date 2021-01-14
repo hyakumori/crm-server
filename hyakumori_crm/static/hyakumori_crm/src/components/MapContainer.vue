@@ -129,8 +129,7 @@ export default {
     this.loading = true;
     if (!this.big) {
       this.loadMapFeatures().then(f => {
-        this.features = f.map(Object.freeze);
-        console.log(this.features);
+        this.features = f;
         this.loading = false;
       });
     } else {
