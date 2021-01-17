@@ -25,6 +25,14 @@
           :id="id"
         />
 
+        <map-container
+          v-if="forests.length > 0"
+          class="mt-12"
+          headerContent="地図"
+          :forests="[forestInfo]"
+        >
+        </map-container>
+
         <attachment-container
           v-acl-only="['manage_archive', 'view_archive']"
           class="consultation-history mt-12"
@@ -126,6 +134,7 @@ import ForestAttributeTable from "../components/detail/ForestAttributeTable";
 import ActionLog from "../components/detail/ActionLog";
 import MemoInput from "../components/detail/MemoInput";
 import TagDetailCard from "../components/tags/TagDetailCard";
+import MapContainer from '../components/MapContainer.vue';
 
 export default {
   name: "forest-detail",
@@ -142,6 +151,7 @@ export default {
     ForestBasicInfoContainer,
     AttachmentContainer,
     ForestContactTabContainer,
+    MapContainer,
   },
   props: {
     id: String,
