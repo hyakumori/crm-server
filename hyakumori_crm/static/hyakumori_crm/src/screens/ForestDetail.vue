@@ -26,7 +26,7 @@
         />
 
         <map-container
-          v-if="forests.length > 0"
+          v-if="forestInfo"
           class="mt-12"
           headerContent="地図"
           :forests="[forestInfo]"
