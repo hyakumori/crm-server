@@ -54,6 +54,8 @@ django-query-builder==1.2.0
     # via -r requirements.in
 django-redis==4.11.0
     # via -r requirements.in
+django-revproxy==0.10.0
+    # via -r requirements.in
 django-sequences==2.4
     # via -r requirements.in
 django-templated-mail==1.1.1
@@ -69,6 +71,7 @@ django==3.0.10
     #   django-q
     #   django-query-builder
     #   django-redis
+    #   django-revproxy
     #   djangorestframework
     #   djangorestframework-simplejwt
 djangorestframework-gis==0.16
@@ -158,6 +161,8 @@ typing-extensions==3.7.4.1
     # via
     #   -r requirements.in
     #   ariadne
+urllib3==1.26.2
+    # via django-revproxy
 wcwidth==0.1.9
     # via blessed
 whitenoise==5.0.1
