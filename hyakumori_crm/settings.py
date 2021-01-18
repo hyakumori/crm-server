@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     "sequences.apps.SequencesConfig",
     "django.contrib.gis",
     'rest_framework_gis',
+    'revproxy',
     # ─── HYAKUMORI APPS ─────────────────────────────────────────────────────────────
     "hyakumori_crm.crm",
     "hyakumori_crm.users",
