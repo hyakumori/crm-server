@@ -8,17 +8,17 @@
         ref="map"
         data-projection="EPSG:4326"
         @mounted="onMapMounted"
-        style="height: 600px; width: 100%"
+        style="height: 600px; width: 100%;"
       >
         <vl-view
           :zoom.sync="zoom"
           :center.sync="center"
           :rotation.sync="rotation"
         ></vl-view>
-
-        <vl-layer-tile>
+        <vl-layer-tile id="osm">
           <vl-source-osm></vl-source-osm>
         </vl-layer-tile>
+
         <div v-if="big">
           <component
             v-for="layer in layers"
@@ -41,6 +41,7 @@
                 >
                   <component
                     :is="geometryTypeToCmpName(feature.geometry.type)"
+                    :coordinates.sync="feature.geometry"
                     v-bind="feature.geometry"
                   />
                 </vl-feature>
@@ -48,7 +49,7 @@
             </component>
           </component>
         </div>
-        <vl-layer-vector v-else>
+        <vl-layer-vector v-else render-mode="vector" overlay="true">
           <vl-source-vector>
             <vl-feature
               v-for="feature in features"
@@ -62,7 +63,8 @@
               />
               <vl-style-box>
                 <vl-style-stroke color="#FFF" :width="1"></vl-style-stroke>
-                <vl-style-fill color="rgba(21,198,166, 0.2)"></vl-style-fill>
+                <vl-style-fill color="red"></vl-style-fill>
+                <!-- <vl-style-fill color="rgba(21,198,166, 0.2)"></vl-style-fill> -->
                 <vl-style-text
                   :text="feature.properties.nametag"
                 ></vl-style-text>
@@ -71,6 +73,8 @@
           </vl-source-vector>
         </vl-layer-vector>
       </vl-map>
+      <div> {{forests}} </div>
+      <div> STuff </div>
     </div>
   </div>
 </template>
@@ -109,7 +113,7 @@ export default {
 
   data() {
     const zoom = 13;
-    const center = [134.3182913187339, 35.18596859977893];
+    const center = [134.33234254149718, 35.2107812998969];
     const rotation = 0;
     const features = [];
     const loading = false;
@@ -142,8 +146,8 @@ export default {
         features: [],
         source: {
           cmp: "vl-source-vector",
-          url:
-            "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
+          url: "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
+            // "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
           layers: "crm:forests",
           extParams: { TILED: true },
           serverType: "geoserver",
@@ -176,6 +180,7 @@ export default {
           },
         };
       });
+      console.log(mapItems)
 
       return new Promise(resolve => {
         resolve(mapItems);
