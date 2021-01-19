@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-20 15:05+0700\n"
+"POT-Creation-Date: 2021-01-20 15:09+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -237,10 +237,8 @@ msgid "customer does not have supplied forest_id"
 msgstr ""
 
 #: customer/schemas.py:346
-msgid "Bad format (000-000-0000 or 00-0000-0000 or 0000000000)."
-msgstr ""
-"形式が正しくありません（正しい形式　000-000-0000 又は 00-0000-0000 又は "
-"0000000000）"
+msgid "Must input digits of length from 1 to 10."
+msgstr "電話番号は1桁から10桁までの数字を入力してください。"
 
 #: customer/schemas.py:348
 msgid "Bad format (000-0000)."
@@ -597,6 +595,11 @@ msgstr ""
 #: users/templates/email/password_reset.html:445
 msgid "パスワードリセット"
 msgstr ""
+
+#~ msgid "Bad format (000-000-0000 or 00-0000-0000 or 0000000000)."
+#~ msgstr ""
+#~ "形式が正しくありません（正しい形式　000-000-0000 又は 00-0000-0000 又は "
+#~ "0000000000）"
 
 #~ msgid "Internal Id"
 #~ msgstr "ID"

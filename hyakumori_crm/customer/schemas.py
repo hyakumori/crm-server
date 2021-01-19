@@ -346,7 +346,7 @@ class CustomerUploadCsv(HyakumoriDanticModel):
         error_msg_templates = {
             **HyakumoriDanticModel.Config.error_msg_templates,
             "value_error.str.regex.telephone": _(
-                "Bad format (000-000-0000 or 00-0000-0000 or 0000000000)."
+                "Must input digits of length from 1 to 10."
             ),
             "value_error.str.regex.postal_code": _("Bad format (000-0000)."),
             "value_error.str.regex.mobilephone": _("Bad format (000-0000-0000)."),
