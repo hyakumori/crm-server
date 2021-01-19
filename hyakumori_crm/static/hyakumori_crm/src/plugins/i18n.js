@@ -14,6 +14,7 @@ const messages = {
       ...jpValidationMessages.messages,
       min_value: "{_field_}は{min}以上の数値でなければなりません。",
       daterange: "不正な期間です。",
+      telephone: "電話番号は1桁から10桁までの数字を入力してください。",
     },
   },
   en: {
