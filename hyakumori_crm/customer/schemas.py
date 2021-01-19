@@ -354,6 +354,10 @@ class CustomerUploadCsv(HyakumoriDanticModel):
 
     @validator("bank_account_number", pre=True)
     def prepare_account_number(cls, v):
+        if v == "":
+            return None
+        if not v.startswith("'") or not v.endswith("'"):
+            raise ValueError(_("Must wrapped in pair of single quotes."))
         return v[1:-1]
 
     @validator("tags")
