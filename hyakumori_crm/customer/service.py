@@ -467,7 +467,7 @@ def get_customer_csv(customers):
             c["bank_name"],
             c["bank_branch_name"],
             c["bank_account_type"],
-            f'"{c["bank_account_number"] or ""}"',
+            f"'{c['bank_account_number'] or ''}'",
             c["bank_account_name"],
             parse_tags_for_csv(c["tags"]),
         ]
