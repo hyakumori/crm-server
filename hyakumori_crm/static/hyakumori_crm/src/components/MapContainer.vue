@@ -87,6 +87,7 @@ import VectorSource from "vuelayers";
 import "vuelayers/lib/style.css"; // needs css-loader
 import { ScaleLine, ZoomSlider } from "ol/control";
 import { kebabCase } from "lodash";
+import axios from "../plugins/http";
 
 Vue.use(VueLayers);
 Vue.use(VectorSource);
@@ -137,22 +138,24 @@ export default {
         this.loading = false;
       });
     } else {
-      this.layers.push({
-        id: "wfs",
-        title: "WFS",
-        cmp: "vl-layer-vector",
-        visible: true,
-        renderMode: "image",
-        features: [],
-        source: {
-          cmp: "vl-source-vector",
-          url: "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
-            // "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
-          layers: "crm:forests",
-          extParams: { TILED: true },
-          serverType: "geoserver",
-        },
-      });
+      const rqj = axios.get(`/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson`)
+      console.log(rqj)
+      // this.layers.push({
+      //   id: "wfs",
+      //   title: "WFS",
+      //   cmp: "vl-layer-vector",
+      //   visible: true,
+      //   renderMode: "image",
+      //   features: [],
+      //   source: {
+      //     cmp: "vl-source-vector",
+      //     url: "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
+      //       // "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
+      //     layers: "crm:forests",
+      //     extParams: { TILED: true },
+      //     serverType: "geoserver",
+      //   },
+      // });
     }
   },
 
