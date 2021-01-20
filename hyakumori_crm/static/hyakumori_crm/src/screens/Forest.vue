@@ -337,7 +337,9 @@ export default {
     async downloadAllCsv() {
       try {
         this.downloadCsvLoading = true;
-        let csvData = await this.$rest.get("/forests/download-csv");
+        let csvData = await this.$rest.get("/forests/download-csv", {
+          responseType: "blob",
+        });
         const blob = new Blob([csvData], { type: "text/csv;charset=UTF-8" });
         saveAs(blob, "all-forests.csv");
       } catch {
@@ -352,6 +354,9 @@ export default {
         let csvData = await this.$rest.post(
           "/forests/download-csv",
           this.selectedRowIds,
+          {
+            responseType: "blob",
+          },
         );
         const blob = new Blob([csvData], { type: "text/csv;charset=UTF-8" });
         saveAs(blob, "selected_forests.csv");

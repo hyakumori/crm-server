@@ -1,3 +1,4 @@
+import codecs
 import csv
 import pathlib
 import operator
@@ -193,7 +194,11 @@ class ForestViewSets(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericVi
             csv_data = get_forests_for_csv()
         else:
             csv_data = get_forests_for_csv(request.data)
-        response = HttpResponse(content_type="text/csv; charset=utf-8-sig")
+        response = HttpResponse(
+            content=codecs.BOM_UTF8,
+            content_type="text/csv; charset=utf-8-sig",
+            charset="utf-8",  # prevent get from content-type
+        )
         response["Content-Disposition"] = "attachment"
         headers = csv_headers()
         writer = csv.writer(response, dialect="excel")
