@@ -29,9 +29,7 @@ arrow
 slackclient
 httpx
 IPython
-black
 flake8
-requests
 filelock
 pytest-django
 coverage
