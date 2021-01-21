@@ -8,7 +8,6 @@ ENV HYAKUMORI_LIGHT_BUILD=1
 WORKDIR ${WORK_DIR}
 
 COPY requirements.txt ${WORK_DIR}
-COPY requirements-dev.txt ${WORK_DIR}
 
 RUN apt update \
  && apt install -y \
@@ -18,7 +17,6 @@ RUN apt update \
     wget \
  && pip install uvicorn \
  && pip install -r requirements.txt \
- && pip install -r requirements-dev.txt \
  && wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
  && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
  && apt purge -y wget \
