@@ -68,8 +68,8 @@ jobs:
       env:
         HYAKUMORI_LIGHT_BUILD: 1
       run:
-        pip install -r requirements.txt
         pip install -r requirements-dev.txt
+        pip install -r requirements.txt
 
     - name: Test with pytest
       run: |
