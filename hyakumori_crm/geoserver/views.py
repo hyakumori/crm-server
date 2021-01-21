@@ -20,6 +20,7 @@ def initialize_request(request):
     """
     Returns the initial request object.
     """
+    # todo: get authenticators from setting file
     return Request(
         request,
         authenticators=[jwt_auth.JWTAuthentication(), authentication.SessionAuthentication(),
