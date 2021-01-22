@@ -43,7 +43,7 @@ jobs:
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           POSTGRES_HOST_AUTH_METHOD: ${{ env.POSTGRES_HOST_AUTH_METHOD }}
         ports:
-        - 5435:5432
+        - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -72,7 +72,7 @@ jobs:
 
     - name: Test with pytest
       run: |
-        export DATABASE_URL=postgis://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5435/$POSTGRES_DB
+        export DATABASE_URL=postgis://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB
         echo $DATABASE_URL
         coverage run -m pytest tests
         coverage report -m
