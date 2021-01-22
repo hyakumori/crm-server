@@ -35,6 +35,7 @@ TIME_ZONE_PRIMARY=Asia/Tokyo
 
 GEOSERVER_USER=**************
 GEOSERVER_PASS=**************
+GEOSERVER_URL=http://geoserver:8080/geoserver/
 
 # -------------- FRONTEND --------------
 VUE_APP_GRAPHQL_HTTP=http://localhost:8000/graphql

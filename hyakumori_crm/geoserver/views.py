@@ -11,6 +11,7 @@ from base64 import b64encode
 
 geoserver_user = os.getenv("GEOSERVER_USER")
 geoserver_pass = os.getenv("GEOSERVER_PASS")
+geoserver_url = os.getenv("GEOSERVER_URL")
 
 credentials = f"{geoserver_user}:{geoserver_pass}"
 credentials_encoded = b64encode(credentials.encode("utf-8")).decode("utf-8")
@@ -28,8 +29,8 @@ def initialize_request(request):
     )
 
 
-class CustomProxyView(ProxyView):
-    upstream = 'http://geoserver:8080/geoserver/'
+class GeoserverProxyView(ProxyView):
+    upstream = geoserver_url
 
     def dispatch(self, request, path):
         self.request = initialize_request(request)
@@ -53,6 +54,6 @@ class CustomProxyView(ProxyView):
     def get_request_headers(self):
         if not hasattr(self.request, 'user') or not self.request.user.has_perms(["crm.view_forest"]):
             raise PermissionDenied()
-        headers = super(CustomProxyView, self).get_request_headers()
+        headers = super(GeoserverProxyView, self).get_request_headers()
         headers["Authorization"] = f"Basic {credentials_encoded}"
         return headers
