@@ -8,7 +8,7 @@ services:
       - -timeout
       - 60s
       - -wait
-      - tcp://postgres:5432
+      - tcp://postgres:5435
     command: uvicorn hyakumori_crm.asgi:application --host 0.0.0.0 --header Server:apache
     volumes:
       - .:/usr/src/crm
@@ -45,7 +45,7 @@ services:
       - 8600:8080
     env_file: .env
     volumes:
-      - geoserver-data:/opt/geoserver/data_dir
+      - geoserver:/opt/geoserver/data_dir
     restart: on-failure
     depends_on:
       - postgres
@@ -53,13 +53,25 @@ services:
   postgres:
     image: mdillon/postgis:11-alpine
     ports:
-      - 5432:5432
+      - 5435:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: hyakumori_crm
     volumes:
       - postgres:/var/lib/postgresql/data
+    restart: on-failure
+
+  geodata:
+    image: mdillon/postgis:11-alpine
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: hyakumori
+      POSTGRES_DB: hyakumori_geo
+    volumes:
+      - geodata:/var/lib/postgresql/data
     restart: on-failure
 
   pgadmin:
@@ -83,7 +95,8 @@ services:
     restart: on-failure
 
 volumes:
-  geoserver-data:
+  geoserver:
   postgres:
+  geodata:
   pgadmin:
   redis:

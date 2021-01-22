@@ -24,7 +24,7 @@ For example:
 # -------------- BACKEND --------------
 DEBUG=True
 SECRET_KEY=0fdafa9ea1f1436cb1d3ff56fcd95586
-DATABASE_URL=postgis://postgres:postgres@postgres:5432/hyakumori
+DATABASE_URL=postgis://postgres:postgres@postgres:5435/hyakumori_crm
 STATIC_DIR=hyakumori_crm/static/hyakumori_crm/dist
 REDIS_CACHE_URL=redis://redis
 
@@ -73,24 +73,21 @@ Using `django-q` for async task and schedule:
 - Run `./manage.py qcluster` to start workers
 - Check info by running `./manage.py qinfo`
 
-## Restoring database
+## Restoring databases
 
-First download the sql dump and copy it to the docker container:
+Download the database dumps from Google Drive and restore using the following:
+
+### To restore crm database:
+
 ```bash
-docker cp <path_to_dump.sql> crm_postgres_1:/tmp/hyakumori.sql
+psql -h 0.0.0.0 -p 5435 -U postgres -d hyakumori_crm -c "CREATE ROLE hyakumori_crm_dev"
+psql -h 0.0.0.0 -p 5435 -U postgres -d hyakumori_crm -f <backup_path>
 ```
 
-Then connect to the postgres docker container:
+### To restore geo database:
 
 ```bash
-docker exec -it crm_postgres_1 bash
-```
-
-and run the following commands:
-
-```bash
-psql -U postgres hyakumori_crm -c "create role hyakumori_crm_dev"
-psql -U postgres -d hyakumori_crm -f /tmp/hyakumori.sql
+psql -h 0.0.0.0 -p 5433 -U admin -d hyakumori_geo -f <backup_path>
 ```
 
 ### Managing migrations
