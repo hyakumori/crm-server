@@ -17,6 +17,7 @@ django-filter
 djangorestframework-gis
 django-cors-headers
 djoser
+django-revproxy
 djangorestframework-simplejwt
 django-guardian
 django-cleanup
@@ -27,3 +28,12 @@ django-sequences
 arrow
 slackclient
 httpx
+IPython
+flake8
+filelock
+pytest-django
+coverage
+orjson
+pandas
+click
+xlrd

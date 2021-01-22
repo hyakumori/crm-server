@@ -33,6 +33,10 @@ CORS_ORIGIN_WHITELIST=http://localhost:8080
 FRONTEND_URL=http://localhost:8000
 TIME_ZONE_PRIMARY=Asia/Tokyo
 
+GEOSERVER_USER=**************
+GEOSERVER_PASS=**************
+GEOSERVER_URL=http://geoserver:8080/geoserver/
+
 # -------------- FRONTEND --------------
 VUE_APP_GRAPHQL_HTTP=http://localhost:8000/graphql
 VUE_APP_REST_HTTP=http://localhost:8000/api/v1
@@ -44,7 +48,6 @@ AWS_SECRET_ACCESS_KEY=***********************
 
 # -------------- EMAIL ----------------
 EMAIL_HOST=mailhog
-
 ```
 
 AWS keys will be moved to GitHub secrets soon.
