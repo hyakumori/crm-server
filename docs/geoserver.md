@@ -14,6 +14,12 @@ and the default user password:
 
 ![admin password change](img/pw-change-user.png)
 
+## Add a CRM user
+
+The CRM will require a user to authenticate in order to fetch protected data from geoserver. This
+ user should have limited read only access and the credentials should match the `GEOSERVER_USER`
+ and `GEOSERVER_PASS` that is declared in the `.env` file.
+
 ## Setting up Data
 
 This section described how to get started with geoserver by adding data that will then be served over WMS and WFS.
