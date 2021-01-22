@@ -24,7 +24,7 @@ For example:
 # -------------- BACKEND --------------
 DEBUG=True
 SECRET_KEY=0fdafa9ea1f1436cb1d3ff56fcd95586
-DATABASE_URL=postgis://postgres:postgres@postgres:5435/hyakumori_crm
+DATABASE_URL=postgis://postgres:postgres@postgres:5432/hyakumori_crm
 STATIC_DIR=hyakumori_crm/static/hyakumori_crm/dist
 REDIS_CACHE_URL=redis://redis
 
