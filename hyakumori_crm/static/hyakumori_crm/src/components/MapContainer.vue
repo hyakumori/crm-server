@@ -23,10 +23,20 @@
           <!-- <vl-layer-tile>
             <vl-source-wms url="http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson" layers="crm:Forests"></vl-source-wms>
           </vl-layer-tile> -->
-          <vl-layer-vector renderMode="image" >
-            <vl-source-vector :features.sync="features"></vl-source-vector>
-            <!-- <vl-source-vector url="http://localhost:8000/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm:Forests&maxFeatures=10000&outputFormat=application/json"></vl-source-vector> -->
-          </vl-layer-vector>
+          <!-- <vl-layer-tile :z-index='10000' render-mode="image"> -->
+          <vl-layer-image :visible="true">
+            <vl-source-image-wms
+              url="http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm:Forests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG:4326&styles=&format=image/png"
+              :image-load-function="imageLoader"
+              projection="EPSG:4326"
+              layers="crm:Forests"
+              :z-index="10000"
+            >
+              <!-- :features.sync="features"> -->
+            </vl-source-image-wms>
+          </vl-layer-image>
+          <!-- <vl-source-vector url="http://localhost:8000/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm:Forests&maxFeatures=10000&outputFormat=application/json"></vl-source-vector> -->
+          <!-- </vl-layer-tile> -->
           <!-- <component
             v-for="layer in layers"
             :is="layer.cmp"
@@ -80,7 +90,6 @@
           </vl-source-vector>
         </vl-layer-vector>
       </vl-map>
-      <div>{{ forests }}</div>
       <div>STuff</div>
     </div>
   </div>
@@ -96,10 +105,14 @@ import { ScaleLine, ZoomSlider } from "ol/control";
 import { kebabCase } from "lodash";
 import axios from "../plugins/http";
 import WmsSource from "vuelayers";
+import { ImageWmsSource } from "vuelayers";
+import { XyzSource } from "vuelayers";
 
+Vue.use(XyzSource);
 Vue.use(WmsSource);
 Vue.use(VueLayers);
 Vue.use(VectorSource);
+Vue.use(ImageWmsSource);
 
 export default {
   name: "map-container",
@@ -147,44 +160,45 @@ export default {
         this.loading = false;
       });
     } else {
-      this.loadBigMap().then(f => {
-        this.features = f.features;
-        this.loading = false;
-        console.log(this.features)
-      })
-    }
-      // const rqj = axios.get(`/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson`)
-      // console.log(rqj)
-      // this.layers.push({
-      //   id: "wfs",
-      //   title: "WFS",
-      //   cmp: "vl-layer-vector",
-      //   visible: true,
-      //   renderMode: "image",
-      //   features: [],
-      //   source: {
-      //     cmp: "vl-source-vector",
-      //     url: this.getRequestUrl(), // "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
-      //     // "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
-      //     layers: "crm:forests",
-      //     extParams: { TILED: true },
-      //     serverType: "geoserver",
-      //   },
-      // });
-      //  // Tile layer with WMS source
-      // this.layers.push({
-      //   id: 'wms',
-      //   title: 'WMS',
-      //   cmp: 'vl-layer-tile',
-      //   visible: false,
-      //   source: {
-      //     cmp: 'vl-source-wms',
-      //     url: 'http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson',
-      //     layers: 'topp:states',
-      //     extParams: {TILED: true},
-      //     serverType: 'geoserver',
-      //   },
+      console.log("blah");
+      // this.loadBigMap().then(f => {
+      //   this.features = f.features;
+      //   this.loading = false;
+      //   console.log(this.features)
       // })
+    }
+    // const rqj = axios.get(`/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson`)
+    // console.log(rqj)
+    // this.layers.push({
+    //   id: "wfs",
+    //   title: "WFS",
+    //   cmp: "vl-layer-vector",
+    //   visible: true,
+    //   renderMode: "image",
+    //   features: [],
+    //   source: {
+    //     cmp: "vl-source-vector",
+    //     url: this.getRequestUrl(), // "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
+    //     // "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
+    //     layers: "crm:forests",
+    //     extParams: { TILED: true },
+    //     serverType: "geoserver",
+    //   },
+    // });
+    //  // Tile layer with WMS source
+    // this.layers.push({
+    //   id: 'wms',
+    //   title: 'WMS',
+    //   cmp: 'vl-layer-tile',
+    //   visible: false,
+    //   source: {
+    //     cmp: 'vl-source-wms',
+    //     url: 'http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson',
+    //     layers: 'topp:states',
+    //     extParams: {TILED: true},
+    //     serverType: 'geoserver',
+    //   },
+    // })
   },
 
   methods: {
@@ -219,26 +233,30 @@ export default {
     },
 
     loadBigMap() {
-      const featuresRequest = axios.get("http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson")
-      console.log(featuresRequest)
+      const featuresRequest = axios.get(
+        "http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson",
+      );
+      console.log(featuresRequest);
       return new Promise(resolve => {
-        resolve(featuresRequest)
-      })
+        resolve(featuresRequest);
+      });
     },
 
-    getUrl() {
-      const url =
-        "http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson";
-      var xhr = new XMLHttpRequest();
-
-      xhr.open("GET", url);
-      xhr.setRequestHeader(
+    imageLoader(im, src) {
+      var client = new XMLHttpRequest();
+      client.open("GET", src);
+      client.setRequestHeader(
         "Authorization",
         "Bearer " + localStorage.getItem("accessToken"),
       );
-      xhr.send();
+      client.onload = function() {
+        var data =
+          "data:image/png;base64," +
+          btoa(unescape(encodeURIComponent(this.response)));
+        im.getImage().src = data
+      };
+      client.send();
     },
-
     // getRequestUrl(extent, resolution, projection) {
     //   // const url = 'http://localhost:8000/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&maxFeatures=100&outputFormat=application%2Fjson';
     //   const url =

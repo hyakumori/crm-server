@@ -134,7 +134,7 @@ import ForestAttributeTable from "../components/detail/ForestAttributeTable";
 import ActionLog from "../components/detail/ActionLog";
 import MemoInput from "../components/detail/MemoInput";
 import TagDetailCard from "../components/tags/TagDetailCard";
-import MapContainer from '../components/MapContainer.vue';
+import MapContainer from "../components/MapContainer.vue";
 
 export default {
   name: "forest-detail",
