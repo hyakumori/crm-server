@@ -24,13 +24,12 @@
             <vl-source-wms url="http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson" layers="crm:Forests"></vl-source-wms>
           </vl-layer-tile> -->
           <!-- <vl-layer-tile :z-index='10000' render-mode="image"> -->
-          <vl-layer-image :visible="true">
+          <vl-layer-image :visible="true" :z-index='10000'>
             <vl-source-image-wms
-              url="http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm:Forests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG:4326&styles=&format=image/png"
+              url='http://localhost:8000/geoserver/crm/wms'
               :image-load-function="imageLoader"
-              projection="EPSG:4326"
               layers="crm:Forests"
-              :z-index="10000"
+              projection="EPSG:4326"
             >
               <!-- :features.sync="features"> -->
             </vl-source-image-wms>
@@ -61,7 +60,7 @@
                     :coordinates.sync="feature.geometry"
                     v-bind="feature.geometry"
                   />
-                </vl-feature>
+                </vl-feature>              url="http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm:Forests&bbox=134.2798973887064,35.14479191322252,134.40287614163228,35.252641012694866&width=768&height=673&srs=EPSG:4326&styles=&format=image/png"
               </template>
             </component>
           </component> -->
@@ -90,7 +89,6 @@
           </vl-source-vector>
         </vl-layer-vector>
       </vl-map>
-      <div>STuff</div>
     </div>
   </div>
 </template>
@@ -167,38 +165,7 @@ export default {
       //   console.log(this.features)
       // })
     }
-    // const rqj = axios.get(`/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson`)
-    // console.log(rqj)
-    // this.layers.push({
-    //   id: "wfs",
-    //   title: "WFS",
-    //   cmp: "vl-layer-vector",
-    //   visible: true,
-    //   renderMode: "image",
-    //   features: [],
-    //   source: {
-    //     cmp: "vl-source-vector",
-    //     url: this.getRequestUrl(), // "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
-    //     // "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
-    //     layers: "crm:forests",
-    //     extParams: { TILED: true },
-    //     serverType: "geoserver",
-    //   },
-    // });
-    //  // Tile layer with WMS source
-    // this.layers.push({
-    //   id: 'wms',
-    //   title: 'WMS',
-    //   cmp: 'vl-layer-tile',
-    //   visible: false,
-    //   source: {
-    //     cmp: 'vl-source-wms',
-    //     url: 'http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson',
-    //     layers: 'topp:states',
-    //     extParams: {TILED: true},
-    //     serverType: 'geoserver',
-    //   },
-    // })
+
   },
 
   methods: {
@@ -232,15 +199,6 @@ export default {
       });
     },
 
-    loadBigMap() {
-      const featuresRequest = axios.get(
-        "http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson",
-      );
-      console.log(featuresRequest);
-      return new Promise(resolve => {
-        resolve(featuresRequest);
-      });
-    },
 
     imageLoader(im, src) {
       var client = new XMLHttpRequest();
@@ -252,8 +210,9 @@ export default {
       client.onload = function() {
         var data =
           "data:image/png;base64," +
-          btoa(unescape(encodeURIComponent(this.response)));
+          btoa(unescape(encodeURIComponent(this.responseText)));
         im.getImage().src = data
+        console.log(im)
       };
       client.send();
     },
