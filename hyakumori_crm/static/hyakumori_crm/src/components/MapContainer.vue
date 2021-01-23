@@ -20,7 +20,14 @@
         </vl-layer-tile>
 
         <div v-if="big">
-          <component
+          <!-- <vl-layer-tile>
+            <vl-source-wms url="http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson" layers="crm:Forests"></vl-source-wms>
+          </vl-layer-tile> -->
+          <vl-layer-vector renderMode="image" >
+            <vl-source-vector :features.sync="features"></vl-source-vector>
+            <!-- <vl-source-vector url="http://localhost:8000/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm:Forests&maxFeatures=10000&outputFormat=application/json"></vl-source-vector> -->
+          </vl-layer-vector>
+          <!-- <component
             v-for="layer in layers"
             :is="layer.cmp"
             :key="layer.id"
@@ -47,7 +54,7 @@
                 </vl-feature>
               </template>
             </component>
-          </component>
+          </component> -->
         </div>
         <vl-layer-vector v-else render-mode="vector" overlay="true">
           <vl-source-vector>
@@ -73,8 +80,8 @@
           </vl-source-vector>
         </vl-layer-vector>
       </vl-map>
-      <div> {{forests}} </div>
-      <div> STuff </div>
+      <div>{{ forests }}</div>
+      <div>STuff</div>
     </div>
   </div>
 </template>
@@ -88,7 +95,9 @@ import "vuelayers/lib/style.css"; // needs css-loader
 import { ScaleLine, ZoomSlider } from "ol/control";
 import { kebabCase } from "lodash";
 import axios from "../plugins/http";
+import WmsSource from "vuelayers";
 
+Vue.use(WmsSource);
 Vue.use(VueLayers);
 Vue.use(VectorSource);
 
@@ -138,8 +147,14 @@ export default {
         this.loading = false;
       });
     } else {
-      const rqj = axios.get(`/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson`)
-      console.log(rqj)
+      this.loadBigMap().then(f => {
+        this.features = f.features;
+        this.loading = false;
+        console.log(this.features)
+      })
+    }
+      // const rqj = axios.get(`/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson`)
+      // console.log(rqj)
       // this.layers.push({
       //   id: "wfs",
       //   title: "WFS",
@@ -149,14 +164,27 @@ export default {
       //   features: [],
       //   source: {
       //     cmp: "vl-source-vector",
-      //     url: "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
-      //       // "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
+      //     url: this.getRequestUrl(), // "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
+      //     // "http://localhost:8600/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&outputFormat=application%2Fjson",
       //     layers: "crm:forests",
       //     extParams: { TILED: true },
       //     serverType: "geoserver",
       //   },
       // });
-    }
+      //  // Tile layer with WMS source
+      // this.layers.push({
+      //   id: 'wms',
+      //   title: 'WMS',
+      //   cmp: 'vl-layer-tile',
+      //   visible: false,
+      //   source: {
+      //     cmp: 'vl-source-wms',
+      //     url: 'http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson',
+      //     layers: 'topp:states',
+      //     extParams: {TILED: true},
+      //     serverType: 'geoserver',
+      //   },
+      // })
   },
 
   methods: {
@@ -183,12 +211,79 @@ export default {
           },
         };
       });
-      console.log(mapItems)
+      console.log(mapItems);
 
       return new Promise(resolve => {
         resolve(mapItems);
       });
     },
+
+    loadBigMap() {
+      const featuresRequest = axios.get("http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson")
+      console.log(featuresRequest)
+      return new Promise(resolve => {
+        resolve(featuresRequest)
+      })
+    },
+
+    getUrl() {
+      const url =
+        "http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson";
+      var xhr = new XMLHttpRequest();
+
+      xhr.open("GET", url);
+      xhr.setRequestHeader(
+        "Authorization",
+        "Bearer " + localStorage.getItem("accessToken"),
+      );
+      xhr.send();
+    },
+
+    // getRequestUrl(extent, resolution, projection) {
+    //   // const url = 'http://localhost:8000/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&maxFeatures=100&outputFormat=application%2Fjson';
+    //   const url =
+    //     "http://localhost:8000/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm:Forests&maxFeatures=100&outputFormat=application/json";
+    //   var xhr = new XMLHttpRequest();
+    //   xhr.open("GET", url);
+    // xhr.setRequestHeader(
+    //   "Authorization",
+    //   "Bearer " + localStorage.getItem("accessToken"),
+    // );
+
+    //   /**
+    //    * @param {Event} event Event.
+    //    * @private
+    //    */
+    //   xhr.onload = function(event) {
+    //     console.log(event);
+    //     // status will be 0 for file:// urls
+    //     if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
+    //       var source = xhr.responseText;
+    //       if (!source) {
+    //         source = new DOMParser().parseFromString(
+    //           xhr.responseText,
+    //           "application/xml",
+    //         );
+    //       }
+    //       // if (source) {
+    //       //   success.call(this, format.readFeatures(source,
+    //       //     {featureProjection: projection}),
+    //       //   format.readProjection(source), format.getLastExtent());
+    //       // } else {
+    //       //   failure.call(this);
+    //       // }
+    //     } else {
+    //       failure.call(this);
+    //     }
+    //   }.bind(this);
+    //   /**
+    //    * @private
+    //    */
+    //   xhr.onerror = function() {
+    //     failure.call(this);
+    //   }.bind(this);
+    //   xhr.send();
+    // },
   },
 };
 </script>
