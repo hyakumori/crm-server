@@ -211,8 +211,8 @@ export default {
         var data =
           "data:image/png;base64," +
           btoa(unescape(encodeURIComponent(this.responseText)));
-        im.getImage().src = data
-        console.log(im)
+        im.getImage().src = URL.createObjectURL(client.response);
+        console.log(URL.createObjectURL(client.response))
       };
       client.send();
     },
