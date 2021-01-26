@@ -24,9 +24,9 @@
             <vl-source-wms url="http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson" layers="crm:Forests"></vl-source-wms>
           </vl-layer-tile> -->
           <!-- <vl-layer-tile :z-index='10000' render-mode="image"> -->
-          <vl-layer-image :visible="true" :z-index='10000'>
+          <vl-layer-image :visible="true" :z-index="10000">
             <vl-source-image-wms
-              url='http://localhost:8000/geoserver/crm/wms'
+              url="http://localhost:8000/geoserver/crm/wms"
               :image-load-function="imageLoader"
               layers="crm:Forests"
               projection="EPSG:4326"
@@ -98,13 +98,10 @@ import ContentHeader from "./detail/ContentHeader";
 import Vue from "vue";
 import VueLayers from "vuelayers";
 import VectorSource from "vuelayers";
+import WmsSource, {ImageWmsSource, XyzSource} from "vuelayers";
 import "vuelayers/lib/style.css"; // needs css-loader
-import { ScaleLine, ZoomSlider } from "ol/control";
-import { kebabCase } from "lodash";
-import axios from "../plugins/http";
-import WmsSource from "vuelayers";
-import { ImageWmsSource } from "vuelayers";
-import { XyzSource } from "vuelayers";
+import {ScaleLine, ZoomSlider} from "ol/control";
+import {kebabCase} from "lodash";
 
 Vue.use(XyzSource);
 Vue.use(WmsSource);
@@ -165,7 +162,6 @@ export default {
       //   console.log(this.features)
       // })
     }
-
   },
 
   methods: {
@@ -198,23 +194,21 @@ export default {
         resolve(mapItems);
       });
     },
-
-
     imageLoader(im, src) {
-      var client = new XMLHttpRequest();
-      client.open("GET", src);
-      client.setRequestHeader(
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", src);
+      xhr.setRequestHeader(
         "Authorization",
         "Bearer " + localStorage.getItem("accessToken"),
       );
-      client.onload = function() {
-        var data =
-          "data:image/png;base64," +
-          btoa(unescape(encodeURIComponent(this.responseText)));
-        im.getImage().src = URL.createObjectURL(client.response);
-        console.log(URL.createObjectURL(client.response))
+      xhr.responseType = "arraybuffer";
+      xhr.onload = function() {
+        const arrayBufferView = new Uint8Array(this.response);
+        const blob = new Blob([arrayBufferView], { type: "image/png" });
+        const urlCreator = window.URL || window.webkitURL;
+        im.getImage().src = urlCreator.createObjectURL(blob);
       };
-      client.send();
+      xhr.send();
     },
     // getRequestUrl(extent, resolution, projection) {
     //   // const url = 'http://localhost:8000/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&maxFeatures=100&outputFormat=application%2Fjson';
