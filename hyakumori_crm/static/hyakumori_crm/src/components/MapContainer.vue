@@ -70,6 +70,7 @@ import WmsSource, { ImageWmsSource, XyzSource } from "vuelayers";
 import "vuelayers/lib/style.css"; // needs css-loader
 import { ScaleLine, ZoomSlider } from "ol/control";
 import { kebabCase } from "lodash";
+import { getCenter } from "ol/extent.js";
 
 Vue.use(XyzSource);
 Vue.use(WmsSource);
@@ -98,9 +99,8 @@ export default {
   },
 
   data() {
-    const zoom = 5;
-    // const center = [134.33234254149718, 35.2107812998969];
-    const center = [0, 0]
+    const zoom = 11;
+    const center = [134.33234254149718, 35.2107812998969];
     const rotation = 0;
     const features = [];
     const loading = false;
@@ -128,21 +128,12 @@ export default {
     }
   },
 
-  watch: {
-  	features: _.debounce(function() {
-    	this.$refs.mapView.$view.fit(
-      	[134.36018137680563, 35.200038484322256, 134.36136854728989, 35.1990141616881],
-      )
-    }, 10),
-  },
-
   computed: {
     calculatedBoundingBox() {
       var bounds = {},
         point,
         latitude,
         longitude;
-      console.log(this.forests);
       let geodataType = this.forests[0].geodata.type;
       let coordinates = this.forests.map(f => f.geodata.coordinates);
 
@@ -151,8 +142,6 @@ export default {
         // It's only a single Polygon
         // For each individual coordinate in this feature's coordinates...
         for (var j = 0; j < coordinates[0].length; j++) {
-          console.log(coordinates[0], "[0]");
-          console.log(coordinates[0][j], "[0]J");
           longitude = coordinates[0][j][0];
           latitude = coordinates[0][j][1];
 
@@ -187,11 +176,21 @@ export default {
       ];
       // Returns an object that contains the bounds of this GeoJSON data.
       // The keys describe a box formed by the northwest (xMin, yMin) and southeast (xMax, yMax) coordinates.
-      return boundingBox;
+      // this.theBox = boundingBox
+      return boundingBox
     },
   },
 
+  watch: {
+    features: _.debounce(function() {
+      this.zoom = 14
+      this.theBox = this.calculatedBoundingBox
+      this.center = this.calculatedBoundingBox
+    },1000),
+  },
+
   methods: {
+
     geometryTypeToCmpName(type) {
       return "vl-geom-" + kebabCase(type);
     },
@@ -203,8 +202,6 @@ export default {
     },
 
     loadMapFeatures() {
-      console.log(this.forests);
-
       const mapItems = this.forests.map(f => {
         return {
           type: "Feature",
