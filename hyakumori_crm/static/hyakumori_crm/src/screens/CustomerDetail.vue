@@ -341,7 +341,6 @@ export default {
         }
         this.forests = forests;
         this.forestsLoading = false;
-        console.log("forests in customerdetail", this.forests);
       });
     },
     fetchContacts() {
