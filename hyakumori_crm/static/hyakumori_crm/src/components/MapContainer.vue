@@ -14,16 +14,14 @@
           :zoom.sync="zoom"
           :center.sync="center"
           :rotation.sync="rotation"
+          :extent="calculatedBoundingBox"
+          ref="mapView"
         ></vl-view>
-        <vl-layer-tile id="osm">
+        <vl-layer-tile id="osm" :key="viewKey">
           <vl-source-osm></vl-source-osm>
         </vl-layer-tile>
 
         <div v-if="big">
-          <!-- <vl-layer-tile>
-            <vl-source-wms url="http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm%3AForests&bbox=134.2798973887064%2C35.14479191322252%2C134.40287614163228%2C35.252641012694866&width=768&height=673&srs=EPSG%3A4326&styles=&format=geojson" layers="crm:Forests"></vl-source-wms>
-          </vl-layer-tile> -->
-          <!-- <vl-layer-tile :z-index='10000' render-mode="image"> -->
           <vl-layer-image :visible="true" :z-index="10000">
             <vl-source-image-wms
               url="http://localhost:8000/geoserver/crm/wms"
@@ -31,42 +29,11 @@
               layers="crm:Forests"
               projection="EPSG:4326"
             >
-              <!-- :features.sync="features"> -->
             </vl-source-image-wms>
           </vl-layer-image>
-          <!-- <vl-source-vector url="http://localhost:8000/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm:Forests&maxFeatures=10000&outputFormat=application/json"></vl-source-vector> -->
-          <!-- </vl-layer-tile> -->
-          <!-- <component
-            v-for="layer in layers"
-            :is="layer.cmp"
-            :key="layer.id"
-            v-bind="layer"
-          >
-            <component :is="layer.source.cmp" v-bind="layer.source">
-              <template
-                v-if="
-                  layer.source.staticFeatures &&
-                    layer.source.staticFeatures.length
-                "
-              >
-                <vl-feature
-                  v-for="feature in layer.source.staticFeatures"
-                  :key="feature.id"
-                  :id="feature.id"
-                  :properties="feature.properties"
-                >
-                  <component
-                    :is="geometryTypeToCmpName(feature.geometry.type)"
-                    :coordinates.sync="feature.geometry"
-                    v-bind="feature.geometry"
-                  />
-                </vl-feature>              url="http://localhost:8000/geoserver/crm/wms?service=WMS&version=1.1.0&request=GetMap&layers=crm:Forests&bbox=134.2798973887064,35.14479191322252,134.40287614163228,35.252641012694866&width=768&height=673&srs=EPSG:4326&styles=&format=image/png"
-              </template>
-            </component>
-          </component> -->
         </div>
-        <vl-layer-vector v-else render-mode="vector" overlay="true">
-          <vl-source-vector>
+        <vl-layer-vector v-else render-mode="vector" :overlay="true">
+          <vl-source-vector ref="geojsonSource">
             <vl-feature
               v-for="feature in features"
               :key="feature.id"
@@ -90,6 +57,7 @@
         </vl-layer-vector>
       </vl-map>
     </div>
+    <div>{{ calculatedBoundingBox }}</div>
   </div>
 </template>
 <script>
@@ -98,10 +66,10 @@ import ContentHeader from "./detail/ContentHeader";
 import Vue from "vue";
 import VueLayers from "vuelayers";
 import VectorSource from "vuelayers";
-import WmsSource, {ImageWmsSource, XyzSource} from "vuelayers";
+import WmsSource, { ImageWmsSource, XyzSource } from "vuelayers";
 import "vuelayers/lib/style.css"; // needs css-loader
-import {ScaleLine, ZoomSlider} from "ol/control";
-import {kebabCase} from "lodash";
+import { ScaleLine, ZoomSlider } from "ol/control";
+import { kebabCase } from "lodash";
 
 Vue.use(XyzSource);
 Vue.use(WmsSource);
@@ -130,12 +98,14 @@ export default {
   },
 
   data() {
-    const zoom = 13;
-    const center = [134.33234254149718, 35.2107812998969];
+    const zoom = 5;
+    // const center = [134.33234254149718, 35.2107812998969];
+    const center = [0, 0]
     const rotation = 0;
     const features = [];
     const loading = false;
     const layers = [];
+    const viewKey = 1;
 
     return {
       zoom,
@@ -144,6 +114,7 @@ export default {
       features,
       loading,
       layers,
+      viewKey,
     };
   },
 
@@ -154,14 +125,70 @@ export default {
         this.features = f;
         this.loading = false;
       });
-    } else {
-      console.log("blah");
-      // this.loadBigMap().then(f => {
-      //   this.features = f.features;
-      //   this.loading = false;
-      //   console.log(this.features)
-      // })
     }
+  },
+
+  watch: {
+  	features: _.debounce(function() {
+    	this.$refs.mapView.$view.fit(
+      	[134.36018137680563, 35.200038484322256, 134.36136854728989, 35.1990141616881],
+      )
+    }, 10),
+  },
+
+  computed: {
+    calculatedBoundingBox() {
+      var bounds = {},
+        point,
+        latitude,
+        longitude;
+      console.log(this.forests);
+      let geodataType = this.forests[0].geodata.type;
+      let coordinates = this.forests.map(f => f.geodata.coordinates);
+
+      // Loop through each "feature"
+      if (geodataType === "Polygon") {
+        // It's only a single Polygon
+        // For each individual coordinate in this feature's coordinates...
+        for (var j = 0; j < coordinates[0].length; j++) {
+          console.log(coordinates[0], "[0]");
+          console.log(coordinates[0][j], "[0]J");
+          longitude = coordinates[0][j][0];
+          latitude = coordinates[0][j][1];
+
+          // Update the bounds recursively by comparing the current xMin/xMax and yMin/yMax with the current coordinate
+          bounds.xMin = bounds.xMin < longitude ? bounds.xMin : longitude;
+          bounds.xMax = bounds.xMax > longitude ? bounds.xMax : longitude;
+          bounds.yMin = bounds.yMin < latitude ? bounds.yMin : latitude;
+          bounds.yMax = bounds.yMax > latitude ? bounds.yMax : latitude;
+        }
+      } else {
+        // It's a MultiPolygon
+        // Loop through each coordinate set
+        for (var j = 0; j < coordinates.length; j++) {
+          // For each individual coordinate in this coordinate set...
+          for (var k = 0; k < coordinates[j][0].length; k++) {
+            longitude = coordinates[j][0][k][0];
+            latitude = coordinates[j][0][k][1];
+
+            // Update the bounds recursively by comparing the current xMin/xMax and yMin/yMax with the current coordinate
+            bounds.xMin = bounds.xMin < longitude ? bounds.xMin : longitude;
+            bounds.xMax = bounds.xMax > longitude ? bounds.xMax : longitude;
+            bounds.yMin = bounds.yMin < latitude ? bounds.yMin : latitude;
+            bounds.yMax = bounds.yMax > latitude ? bounds.yMax : latitude;
+          }
+        }
+      }
+      const boundingBox = [
+        bounds.xMin[0],
+        bounds.yMin[1],
+        bounds.xMax[0],
+        bounds.yMax[1],
+      ];
+      // Returns an object that contains the bounds of this GeoJSON data.
+      // The keys describe a box formed by the northwest (xMin, yMin) and southeast (xMax, yMax) coordinates.
+      return boundingBox;
+    },
   },
 
   methods: {
@@ -176,6 +203,8 @@ export default {
     },
 
     loadMapFeatures() {
+      console.log(this.forests);
+
       const mapItems = this.forests.map(f => {
         return {
           type: "Feature",
@@ -188,7 +217,6 @@ export default {
           },
         };
       });
-      console.log(mapItems);
 
       return new Promise(resolve => {
         resolve(mapItems);
@@ -210,51 +238,6 @@ export default {
       };
       xhr.send();
     },
-    // getRequestUrl(extent, resolution, projection) {
-    //   // const url = 'http://localhost:8000/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm%3AForests&maxFeatures=100&outputFormat=application%2Fjson';
-    //   const url =
-    //     "http://localhost:8000/geoserver/crm/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=crm:Forests&maxFeatures=100&outputFormat=application/json";
-    //   var xhr = new XMLHttpRequest();
-    //   xhr.open("GET", url);
-    // xhr.setRequestHeader(
-    //   "Authorization",
-    //   "Bearer " + localStorage.getItem("accessToken"),
-    // );
-
-    //   /**
-    //    * @param {Event} event Event.
-    //    * @private
-    //    */
-    //   xhr.onload = function(event) {
-    //     console.log(event);
-    //     // status will be 0 for file:// urls
-    //     if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
-    //       var source = xhr.responseText;
-    //       if (!source) {
-    //         source = new DOMParser().parseFromString(
-    //           xhr.responseText,
-    //           "application/xml",
-    //         );
-    //       }
-    //       // if (source) {
-    //       //   success.call(this, format.readFeatures(source,
-    //       //     {featureProjection: projection}),
-    //       //   format.readProjection(source), format.getLastExtent());
-    //       // } else {
-    //       //   failure.call(this);
-    //       // }
-    //     } else {
-    //       failure.call(this);
-    //     }
-    //   }.bind(this);
-    //   /**
-    //    * @private
-    //    */
-    //   xhr.onerror = function() {
-    //     failure.call(this);
-    //   }.bind(this);
-    //   xhr.send();
-    // },
   },
 };
 </script>
