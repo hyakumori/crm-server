@@ -87,7 +87,7 @@ psql -h 0.0.0.0 -p 5435 -U postgres -d hyakumori_crm -f <backup_path>
 ### To restore geo database:
 
 ```bash
-psql -h 0.0.0.0 -p 5433 -U admin -d hyakumori_geo -f <backup_path>
+psql -h 0.0.0.0 -p 5435 -U admin -d hyakumori_geo -f <backup_path>
 ```
 
 ### Managing migrations
