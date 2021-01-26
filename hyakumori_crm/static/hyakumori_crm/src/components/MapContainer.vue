@@ -13,16 +13,14 @@
         <vl-view
           :zoom.sync="zoom"
           :center.sync="center"
-          :rotation.sync="rotation"
-          :extent="calculatedBoundingBox"
           ref="mapView"
         ></vl-view>
-        <vl-layer-tile id="osm" :key="viewKey">
+        <vl-layer-tile id="osm">
           <vl-source-osm></vl-source-osm>
         </vl-layer-tile>
 
         <div v-if="big">
-          <vl-layer-image :visible="true" :z-index="10000">
+          <vl-layer-image>
             <vl-source-image-wms
               url="http://localhost:8000/geoserver/crm/wms"
               :image-load-function="imageLoader"
@@ -47,7 +45,6 @@
               <vl-style-box>
                 <vl-style-stroke color="#FFF" :width="1"></vl-style-stroke>
                 <vl-style-fill color="red"></vl-style-fill>
-                <!-- <vl-style-fill color="rgba(21,198,166, 0.2)"></vl-style-fill> -->
                 <vl-style-text
                   :text="feature.properties.nametag"
                 ></vl-style-text>
@@ -57,7 +54,6 @@
         </vl-layer-vector>
       </vl-map>
     </div>
-    <div>{{ calculatedBoundingBox }}</div>
   </div>
 </template>
 <script>
@@ -66,17 +62,14 @@ import ContentHeader from "./detail/ContentHeader";
 import Vue from "vue";
 import VueLayers from "vuelayers";
 import VectorSource from "vuelayers";
-import WmsSource, { ImageWmsSource, XyzSource } from "vuelayers";
-import "vuelayers/lib/style.css"; // needs css-loader
-import { ScaleLine, ZoomSlider } from "ol/control";
+import WmsSource from "vuelayers";
+import "vuelayers/lib/style.css";
+import { ScaleLine } from "ol/control";
 import { kebabCase } from "lodash";
-import { getCenter } from "ol/extent.js";
 
-Vue.use(XyzSource);
 Vue.use(WmsSource);
 Vue.use(VueLayers);
 Vue.use(VectorSource);
-Vue.use(ImageWmsSource);
 
 export default {
   name: "map-container",
@@ -101,20 +94,16 @@ export default {
   data() {
     const zoom = 11;
     const center = [134.33234254149718, 35.2107812998969];
-    const rotation = 0;
     const features = [];
     const loading = false;
     const layers = [];
-    const viewKey = 1;
 
     return {
       zoom,
       center,
-      rotation,
       features,
       loading,
       layers,
-      viewKey,
     };
   },
 
@@ -130,75 +119,42 @@ export default {
 
   computed: {
     calculatedBoundingBox() {
-      var bounds = {},
-        point,
-        latitude,
-        longitude;
-      let geodataType = this.forests[0].geodata.type;
-      let coordinates = this.forests.map(f => f.geodata.coordinates);
+      const coordinates = this.forests
+        .map(f => f.geodata.coordinates)
+        .flat(Infinity);
 
-      // Loop through each "feature"
-      if (geodataType === "Polygon") {
-        // It's only a single Polygon
-        // For each individual coordinate in this feature's coordinates...
-        for (var j = 0; j < coordinates[0].length; j++) {
-          longitude = coordinates[0][j][0];
-          latitude = coordinates[0][j][1];
+      const latitudes = coordinates.filter((a, i) => i % 2);
+      const longitudes = coordinates.filter((a, i) => !(i % 2));
 
-          // Update the bounds recursively by comparing the current xMin/xMax and yMin/yMax with the current coordinate
-          bounds.xMin = bounds.xMin < longitude ? bounds.xMin : longitude;
-          bounds.xMax = bounds.xMax > longitude ? bounds.xMax : longitude;
-          bounds.yMin = bounds.yMin < latitude ? bounds.yMin : latitude;
-          bounds.yMax = bounds.yMax > latitude ? bounds.yMax : latitude;
-        }
-      } else {
-        // It's a MultiPolygon
-        // Loop through each coordinate set
-        for (var j = 0; j < coordinates.length; j++) {
-          // For each individual coordinate in this coordinate set...
-          for (var k = 0; k < coordinates[j][0].length; k++) {
-            longitude = coordinates[j][0][k][0];
-            latitude = coordinates[j][0][k][1];
+      const xmin = Math.min(...longitudes);
+      const xmax = Math.max(...longitudes);
+      const ymin = Math.min(...latitudes);
+      const ymax = Math.max(...latitudes);
 
-            // Update the bounds recursively by comparing the current xMin/xMax and yMin/yMax with the current coordinate
-            bounds.xMin = bounds.xMin < longitude ? bounds.xMin : longitude;
-            bounds.xMax = bounds.xMax > longitude ? bounds.xMax : longitude;
-            bounds.yMin = bounds.yMin < latitude ? bounds.yMin : latitude;
-            bounds.yMax = bounds.yMax > latitude ? bounds.yMax : latitude;
-          }
-        }
-      }
-      const boundingBox = [
-        bounds.xMin[0],
-        bounds.yMin[1],
-        bounds.xMax[0],
-        bounds.yMax[1],
-      ];
-      // Returns an object that contains the bounds of this GeoJSON data.
-      // The keys describe a box formed by the northwest (xMin, yMin) and southeast (xMax, yMax) coordinates.
-      // this.theBox = boundingBox
-      return boundingBox
+      const c_lon = xmin + (xmax - xmin) / 2;
+      const c_lat = ymin + (ymax - ymin) / 2;
+      const z_lon = Math.log(180 / Math.abs(c_lon - xmin)) / Math.log(2);
+      const z_lat = Math.log(90 / Math.abs(c_lat - ymin)) / Math.log(2);
+      const z_center = Math.floor((z_lon + z_lat) / 2);
+      return [[xmin, ymin, xmax, ymax], z_center];
     },
   },
 
   watch: {
     features: _.debounce(function() {
-      this.zoom = 14
-      this.theBox = this.calculatedBoundingBox
-      this.center = this.calculatedBoundingBox
-    },1000),
+      this.zoom = this.calculatedBoundingBox[1];
+      this.theBox = this.calculatedBoundingBox[0];
+      this.center = this.calculatedBoundingBox[0];
+    }, 1000),
   },
 
   methods: {
-
     geometryTypeToCmpName(type) {
       return "vl-geom-" + kebabCase(type);
     },
 
     onMapMounted() {
-      this.$refs.map.$map
-        .getControls()
-        .extend([new ScaleLine(), new ZoomSlider()]);
+      this.$refs.map.$map.getControls().extend([new ScaleLine()]);
     },
 
     loadMapFeatures() {
