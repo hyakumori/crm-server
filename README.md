@@ -80,7 +80,6 @@ Download the database dumps from Google Drive and restore using the following:
 ### To restore crm database:
 
 ```bash
-psql -h 0.0.0.0 -p 5435 -U postgres -d hyakumori_crm -c "CREATE ROLE hyakumori_crm_dev"
 psql -h 0.0.0.0 -p 5435 -U postgres -d hyakumori_crm -f <backup_path>
 ```
 
