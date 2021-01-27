@@ -1,7 +1,9 @@
-from collections import OrderedDict
-
 import django.http
+import json
 import orjson
+
+from collections import OrderedDict
+from django.contrib.gis.geos.collections import MultiPolygon
 from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework.utils.serializer_helpers import ReturnList
 
@@ -12,6 +14,8 @@ class CustomDjangoJSONEncoder(DjangoJSONEncoder):
             return list(o)
         elif isinstance(o, OrderedDict):
             return dict(o)
+        elif isinstance(o, MultiPolygon):
+            return json.loads(o.transform(4326, clone=True).geojson)
         else:
             DjangoJSONEncoder.default(self, o)
 
