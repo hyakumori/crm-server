@@ -171,7 +171,7 @@ export default {
         "setHeaderInfo",
         this.$store.getters["forest/headerInfo"],
       );
-      this.forestDetailMapInfo = this.$store.state.forest.forest
+      this.forestDetailMapInfo = this.$store.state.forest.forest;
     });
     this.$store.dispatch("forest/getCustomers", this.id);
     this.$store.dispatch("forest/getCustomersContacts", this.id);
@@ -185,7 +185,6 @@ export default {
           "setHeaderInfo",
           this.$store.getters["forest/headerInfo"],
         );
-
       });
       this.$store.dispatch("forest/getCustomers", this.id);
       this.$store.dispatch("forest/getCustomersContacts", this.id);

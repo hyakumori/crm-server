@@ -35,7 +35,6 @@
               <vl-style-fill color="red"></vl-style-fill>
             </vl-style-box>
           </vl-layer-vector>
-
         </div>
         <vl-layer-vector v-else render-mode="vector" :overlay="true">
           <vl-source-vector ref="geojsonSource">
@@ -125,8 +124,7 @@ export default {
       this.loadMapFeatures().then(f => {
         this.features = f;
         this.loading = false;
-        console.log(f)
-      })
+      });
     }
   },
 
@@ -158,6 +156,14 @@ export default {
       this.zoom = this.calculatedBoundingBox[1];
       this.center = this.calculatedBoundingBox[0];
     }, 1000),
+
+    forests: {
+      handler() {
+        this.loadMapFeatures().then(f => {
+          this.features = f;
+        })
+      },
+    },
   },
 
   methods: {
