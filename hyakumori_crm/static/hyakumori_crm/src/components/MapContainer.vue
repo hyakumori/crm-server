@@ -143,7 +143,6 @@ export default {
   watch: {
     features: _.debounce(function() {
       this.zoom = this.calculatedBoundingBox[1];
-      this.theBox = this.calculatedBoundingBox[0];
       this.center = this.calculatedBoundingBox[0];
     }, 1000),
   },
