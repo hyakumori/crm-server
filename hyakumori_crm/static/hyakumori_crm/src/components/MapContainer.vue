@@ -3,8 +3,6 @@
     <content-header :content="headerContent" />
     <div>
       <vl-map
-        :load-tiles-while-animating="true"
-        :load-tiles-while-interacting="true"
         ref="map"
         data-projection="EPSG:4326"
         @mounted="onMapMounted"
