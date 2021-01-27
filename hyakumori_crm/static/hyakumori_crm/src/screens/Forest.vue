@@ -73,9 +73,10 @@
         </template>
       </page-header>
       <map-container
+        v-if="forestsInfo"
         class="px-7"
         headerContent="地図"
-        :forests="[]"
+        :forests="forestsInfo.forests"
         :big="true"
       >
       </map-container>
