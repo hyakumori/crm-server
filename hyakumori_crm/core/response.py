@@ -4,10 +4,13 @@ import django.http
 import orjson
 from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework.utils.serializer_helpers import ReturnList
+from django.contrib.gis.geos.collections import MultiPolygon
 
 
 class CustomDjangoJSONEncoder(DjangoJSONEncoder):
     def default(self, o):
+        if isinstance(o, MultiPolygon):
+            return o.geojson
         if isinstance(o, ReturnList):
             return list(o)
         elif isinstance(o, OrderedDict):
