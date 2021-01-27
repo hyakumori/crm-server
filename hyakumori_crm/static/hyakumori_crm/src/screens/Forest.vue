@@ -76,7 +76,7 @@
         v-if="forestsInfo"
         class="px-7"
         headerContent="地図"
-        :forests="forestsInfo.forests"
+        :forests="forestsForMap"
         :big="true"
       >
       </map-container>
@@ -216,6 +216,7 @@ export default {
       uploadCsvLoading: false,
       contractTypes: [],
       bulkUpdateLoading: false,
+      forestsForMap: null,
     };
   },
 
@@ -251,6 +252,10 @@ export default {
     else next();
   },
   methods: {
+    // updateForestsInMap() {
+    //   this.forestsForMap = this.forestsInfo.forests
+    // },
+
     confirmReload(e) {
       e.returnValue = this.$t("messages.confirm_leave");
     },
@@ -455,6 +460,12 @@ export default {
         };
       },
       deep: true,
+    },
+
+    forestsInfo: {
+      handler(val) {
+        this.forestsForMap = this.forestsInfo.forests;
+      },
     },
   },
 
