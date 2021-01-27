@@ -26,10 +26,10 @@
         />
 
         <map-container
-          v-if="forestInfo"
+          v-if="forestDetailMapInfo"
           class="mt-12"
           headerContent="地図"
-          :forests="[forestInfo]"
+          :forests="[forestDetailMapInfo]"
         >
         </map-container>
 
@@ -162,6 +162,7 @@ export default {
       pageIcon: this.$t("icon.forest_icon"),
       backBtnContent: this.$t("page_header.forest_mgmt"),
       headerTagColor: "#FFC83B",
+      forestDetailMapInfo: null,
     };
   },
   created() {
@@ -170,6 +171,7 @@ export default {
         "setHeaderInfo",
         this.$store.getters["forest/headerInfo"],
       );
+      this.forestDetailMapInfo = this.$store.state.forest.forest
     });
     this.$store.dispatch("forest/getCustomers", this.id);
     this.$store.dispatch("forest/getCustomersContacts", this.id);
@@ -183,6 +185,7 @@ export default {
           "setHeaderInfo",
           this.$store.getters["forest/headerInfo"],
         );
+
       });
       this.$store.dispatch("forest/getCustomers", this.id);
       this.$store.dispatch("forest/getCustomersContacts", this.id);
