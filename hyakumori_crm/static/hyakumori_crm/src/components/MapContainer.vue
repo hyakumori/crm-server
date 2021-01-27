@@ -27,6 +27,15 @@
             >
             </vl-source-image-wms>
           </vl-layer-image>
+          <vl-layer-vector :overlay="true">
+            <vl-source-vector :features.sync="features">
+            </vl-source-vector>
+            <vl-style-box>
+              <vl-style-stroke color="#FFF" :width="1"></vl-style-stroke>
+              <vl-style-fill color="red"></vl-style-fill>
+            </vl-style-box>
+          </vl-layer-vector>
+
         </div>
         <vl-layer-vector v-else render-mode="vector" :overlay="true">
           <vl-source-vector ref="geojsonSource">
@@ -112,6 +121,12 @@ export default {
         this.features = f;
         this.loading = false;
       });
+    } else {
+      this.loadMapFeatures().then(f => {
+        this.features = f;
+        this.loading = false;
+        console.log(f)
+      })
     }
   },
 
