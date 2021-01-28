@@ -13,25 +13,23 @@
           :center.sync="center"
           ref="mapView"
         ></vl-view>
-        <vl-layer-tile id="osm">
-          <vl-source-osm></vl-source-osm>
+        <vl-layer-tile title="base" id="osm" :visible="true">
+          <vl-source-osm layer-name="base"></vl-source-osm>
         </vl-layer-tile>
         <v-menu offset-y :z-index="1005" :close-on-content-click="false">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark v-bind="attrs" v-on="on">
-              Map
+            <v-btn color="green" v-bind="attrs" v-on="on">
+              Layers
               <v-icon dark>mdi-layers</v-icon>
             </v-btn>
           </template>
-          <div class="panel-block" v-for="layer in mapLayers" :key="layer.values_.id" @click="showMapPanelLayer(layer)"
-              :class="{ 'is-active': layer.values_.visible }">
-            <v-switch :key="layer.values_.id" v-model="layer.values_.visible">
-              {{ layer.values_.id }}
+          <div class="panel-area">
+            <v-switch v-for="layer in mapLayers" :key="layer.getProperties().id" v-model="layer.visible" @change="showMapPanelLayer(layer)" :label="layer.getProperties().name">
             </v-switch>
           </div>
         </v-menu>
         <div v-if="big">
-          <vl-layer-image :z-index="1000">
+          <vl-layer-image layer-name="WMS image" :z-index="1000" :visible="true">
             <vl-source-image-wms
               url="http://localhost:8000/geoserver/crm/wms"
               :image-load-function="imageLoader"
@@ -40,7 +38,7 @@
             >
             </vl-source-image-wms>
           </vl-layer-image>
-          <vl-layer-vector :z-index="1001">
+          <vl-layer-vector layer-name="Vectors" :z-index="1001" :visible="true">
             <vl-source-vector :features.sync="features">
             </vl-source-vector>
             <vl-style-box>
@@ -49,7 +47,7 @@
             </vl-style-box>
           </vl-layer-vector>
         </div>
-        <vl-layer-vector v-else render-mode="vector" :z-index="1000">
+        <vl-layer-vector v-else layer-name="Vectors" render-mode="vector" :z-index="1000" :visible="true">
           <vl-source-vector>
             <vl-feature
               v-for="feature in features"
@@ -71,7 +69,6 @@
             </vl-feature>
           </vl-source-vector>
         </vl-layer-vector>
-        <!--// map panel, controls -->
       </vl-map>
     </div>
   </div>
@@ -86,7 +83,6 @@ import WmsSource from "vuelayers";
 import "vuelayers/lib/style.css";
 import { ScaleLine } from "ol/control";
 import { kebabCase } from "lodash";
-// import { mdiLayers } from '@mdi/js';
 
 Vue.use(WmsSource);
 Vue.use(VueLayers);
@@ -183,12 +179,21 @@ export default {
 
     onMapMounted() {
       this.$refs.map.$map.getControls().extend([new ScaleLine()]);
-      this.returnMapLayers()
+      this.returnMapLayers().then(l => {
+        this.mapLayers = l
+      })
     },
 
     returnMapLayers() {
-      this.mapLayers = this.$refs.map.getLayers()
-      console.log(this.mapLayers)
+      const layers = this.$refs.map.getLayers()
+      // for (layer of layers) {
+      //   let i = 1
+      //   layer.set('name', `Layer ${i}`)
+      //   i += 1
+      // }
+      return new Promise(resolve => {
+        resolve(layers)
+      })
     },
 
     loadMapFeatures() {
@@ -227,31 +232,16 @@ export default {
     },
 
     showMapPanelLayer(layer) {
-      layer.values_visible = !layer.values_visible
-      console.log(layer.values_)
+      layer.visible === true ? layer.setVisible(false) : layer.setVisible(true)
     },
   },
 };
 </script>
 <style lang="scss" scoped>
-.map-panel {
-  padding: 0;
-  .panel-heading {
-    box-shadow: 0 .25em .5em transparentize(#343a3a, 0.8);
-  }
-  .panel-content {
-    background: #FFF;
-    box-shadow: 0 .25em .5em transparentize(#343a3a, 0.8);
-  }
-  .panel-block {
-    &.draw-panel {
-      .buttons {
-        .button {
-          display: block;
-          flex: 1 1 100%;
-        }
-      }
-    }
-  }
+.panel-area {
+  padding: 5px;
+  background-color: #AAA;
+  color: black;
+  box-shadow: 0 .25em .5em transparentize(#343a3a, 0.8);
 }
 </style>
