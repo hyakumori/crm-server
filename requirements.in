@@ -3,8 +3,8 @@ Django~=3.0.0
 dj-database-url
 python-dotenv
 whitenoise>=5
-python-dateutil  # via ariadne
-ariadne
+python-dateutil
+ariadne~=0.10.0
 email-validator
 pydantic
 typing_extensions
@@ -37,3 +37,4 @@ orjson
 pandas
 click
 xlrd
+graphql-core~=3.0.3
