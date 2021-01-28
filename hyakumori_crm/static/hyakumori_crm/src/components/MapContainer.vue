@@ -16,9 +16,22 @@
         <vl-layer-tile id="osm">
           <vl-source-osm></vl-source-osm>
         </vl-layer-tile>
-
+        <v-menu offset-y :z-index="1005" :close-on-content-click="false">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn color="primary" dark v-bind="attrs" v-on="on">
+              Map
+              <v-icon dark>mdi-layers</v-icon>
+            </v-btn>
+          </template>
+          <div class="panel-block" v-for="layer in mapLayers" :key="layer.values_.id" @click="showMapPanelLayer(layer)"
+              :class="{ 'is-active': layer.values_.visible }">
+            <v-switch :key="layer.values_.id" v-model="layer.values_.visible">
+              {{ layer.values_.id }}
+            </v-switch>
+          </div>
+        </v-menu>
         <div v-if="big">
-          <vl-layer-image>
+          <vl-layer-image :z-index="1000">
             <vl-source-image-wms
               url="http://localhost:8000/geoserver/crm/wms"
               :image-load-function="imageLoader"
@@ -27,7 +40,7 @@
             >
             </vl-source-image-wms>
           </vl-layer-image>
-          <vl-layer-vector :overlay="true">
+          <vl-layer-vector :z-index="1001">
             <vl-source-vector :features.sync="features">
             </vl-source-vector>
             <vl-style-box>
@@ -36,8 +49,8 @@
             </vl-style-box>
           </vl-layer-vector>
         </div>
-        <vl-layer-vector v-else render-mode="vector" :overlay="true">
-          <vl-source-vector ref="geojsonSource">
+        <vl-layer-vector v-else render-mode="vector" :z-index="1000">
+          <vl-source-vector>
             <vl-feature
               v-for="feature in features"
               :key="feature.id"
@@ -58,6 +71,7 @@
             </vl-feature>
           </vl-source-vector>
         </vl-layer-vector>
+        <!--// map panel, controls -->
       </vl-map>
     </div>
   </div>
@@ -72,6 +86,7 @@ import WmsSource from "vuelayers";
 import "vuelayers/lib/style.css";
 import { ScaleLine } from "ol/control";
 import { kebabCase } from "lodash";
+// import { mdiLayers } from '@mdi/js';
 
 Vue.use(WmsSource);
 Vue.use(VueLayers);
@@ -98,34 +113,29 @@ export default {
   },
 
   data() {
-    const zoom = 11;
-    const center = [134.33234254149718, 35.2107812998969];
-    const features = [];
-    const loading = false;
-    const layers = [];
-
+    const zoom = 11
+    const center = [134.33234254149718, 35.2107812998969]
+    const features = []
+    const loading = false
+    const mapLayers = []
+    const panelOpen = false
     return {
       zoom,
       center,
       features,
       loading,
-      layers,
+      mapLayers,
+      panelOpen,
     };
   },
 
   mounted() {
     this.loading = true;
-    if (!this.big) {
-      this.loadMapFeatures().then(f => {
-        this.features = f;
-        this.loading = false;
-      });
-    } else {
-      this.loadMapFeatures().then(f => {
-        this.features = f;
-        this.loading = false;
-      });
-    }
+    this.loadMapFeatures().then(f => {
+      this.features = f;
+      this.loading = false;
+    });
+    this.loading = false
   },
 
   computed: {
@@ -173,6 +183,12 @@ export default {
 
     onMapMounted() {
       this.$refs.map.$map.getControls().extend([new ScaleLine()]);
+      this.returnMapLayers()
+    },
+
+    returnMapLayers() {
+      this.mapLayers = this.$refs.map.getLayers()
+      console.log(this.mapLayers)
     },
 
     loadMapFeatures() {
@@ -209,6 +225,33 @@ export default {
       };
       xhr.send();
     },
+
+    showMapPanelLayer(layer) {
+      layer.values_visible = !layer.values_visible
+      console.log(layer.values_)
+    },
   },
 };
 </script>
+<style lang="scss" scoped>
+.map-panel {
+  padding: 0;
+  .panel-heading {
+    box-shadow: 0 .25em .5em transparentize(#343a3a, 0.8);
+  }
+  .panel-content {
+    background: #FFF;
+    box-shadow: 0 .25em .5em transparentize(#343a3a, 0.8);
+  }
+  .panel-block {
+    &.draw-panel {
+      .buttons {
+        .button {
+          display: block;
+          flex: 1 1 100%;
+        }
+      }
+    }
+  }
+}
+</style>
