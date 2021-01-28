@@ -28,7 +28,7 @@
               v-for="layer of mapLayers"
               :key="layer.getProperties().id"
               inset
-              v-model="layer.visible"
+              v-model="layer.getProperties().visible"
               @change="showMapPanelLayer(layer)"
               :label="returnLayerLabel(layer.getProperties().id)"
             >
@@ -127,7 +127,6 @@ export default {
     const loading = false;
     const mapLayers = [];
     const panelOpen = false;
-    const layerVisible = true;
     return {
       zoom,
       center,
@@ -135,7 +134,6 @@ export default {
       loading,
       mapLayers,
       panelOpen,
-      layerVisible,
     };
   },
 
@@ -247,7 +245,7 @@ export default {
     },
 
     showMapPanelLayer(layer) {
-      layer.visible ? layer.setVisible(true) : layer.setVisible(false);
+      layer.getProperties().visible ? layer.setVisible(false) : layer.setVisible(true);
     },
   },
 };
