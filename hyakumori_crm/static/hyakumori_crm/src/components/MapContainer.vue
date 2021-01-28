@@ -71,7 +71,7 @@
               v-bind="feature"
             >
               <component
-                :is="geometryTypeToCmpName(feature.geometry.type)"
+                :is="`vl-geom-multi-polygon`"
                 v-bind="feature.geometry"
               />
               <vl-style-box>
@@ -188,10 +188,6 @@ export default {
   },
 
   methods: {
-    geometryTypeToCmpName(type) {
-      return "vl-geom-" + kebabCase(type);
-    },
-
     onMapMounted() {
       this.$refs.map.$map.getControls().extend([new ScaleLine()]);
       this.returnMapLayers().then(l => {
