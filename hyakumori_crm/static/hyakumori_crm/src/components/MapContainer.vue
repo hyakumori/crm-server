@@ -24,12 +24,22 @@
             </v-btn>
           </template>
           <div class="panel-area">
-            <v-switch v-for="layer in mapLayers" :key="layer.getProperties().id" v-model="layer.visible" @change="showMapPanelLayer(layer)" :label="layer.getProperties().name">
+            <v-switch
+              v-for="layer in mapLayers"
+              :key="layer.getProperties().id"
+              v-model="layer.visible"
+              @change="showMapPanelLayer(layer)"
+              :label="layer.values_.name"
+            >
             </v-switch>
           </div>
         </v-menu>
         <div v-if="big">
-          <vl-layer-image layer-name="WMS image" :z-index="1000" :visible="true">
+          <vl-layer-image
+            layer-name="WMS image"
+            :z-index="1000"
+            :visible="true"
+          >
             <vl-source-image-wms
               url="http://localhost:8000/geoserver/crm/wms"
               :image-load-function="imageLoader"
@@ -39,15 +49,20 @@
             </vl-source-image-wms>
           </vl-layer-image>
           <vl-layer-vector layer-name="Vectors" :z-index="1001" :visible="true">
-            <vl-source-vector :features.sync="features">
-            </vl-source-vector>
+            <vl-source-vector :features.sync="features"> </vl-source-vector>
             <vl-style-box>
               <vl-style-stroke color="#FFF" :width="1"></vl-style-stroke>
               <vl-style-fill color="red"></vl-style-fill>
             </vl-style-box>
           </vl-layer-vector>
         </div>
-        <vl-layer-vector v-else layer-name="Vectors" render-mode="vector" :z-index="1000" :visible="true">
+        <vl-layer-vector
+          v-else
+          layer-name="Vectors"
+          render-mode="vector"
+          :z-index="1000"
+          :visible="true"
+        >
           <vl-source-vector>
             <vl-feature
               v-for="feature in features"
@@ -109,12 +124,12 @@ export default {
   },
 
   data() {
-    const zoom = 11
-    const center = [134.33234254149718, 35.2107812998969]
-    const features = []
-    const loading = false
-    const mapLayers = []
-    const panelOpen = false
+    const zoom = 11;
+    const center = [134.33234254149718, 35.2107812998969];
+    const features = [];
+    const loading = false;
+    const mapLayers = [];
+    const panelOpen = false;
     return {
       zoom,
       center,
@@ -131,7 +146,7 @@ export default {
       this.features = f;
       this.loading = false;
     });
-    this.loading = false
+    this.loading = false;
   },
 
   computed: {
@@ -167,7 +182,16 @@ export default {
       handler() {
         this.loadMapFeatures().then(f => {
           this.features = f;
-        })
+        });
+      },
+    },
+    mapLayers: {
+      handler(val) {
+        let i = 1
+        for (const layer of val) {
+          layer.set('name', `Layer ${i}`)
+          i += 1
+        }
       },
     },
   },
@@ -180,20 +204,15 @@ export default {
     onMapMounted() {
       this.$refs.map.$map.getControls().extend([new ScaleLine()]);
       this.returnMapLayers().then(l => {
-        this.mapLayers = l
+        this.mapLayers = l;
       })
     },
 
     returnMapLayers() {
-      const layers = this.$refs.map.getLayers()
-      // for (layer of layers) {
-      //   let i = 1
-      //   layer.set('name', `Layer ${i}`)
-      //   i += 1
-      // }
+      const layers = this.$refs.map.getLayers();
       return new Promise(resolve => {
         resolve(layers)
-      })
+      });
     },
 
     loadMapFeatures() {
@@ -232,7 +251,7 @@ export default {
     },
 
     showMapPanelLayer(layer) {
-      layer.visible === true ? layer.setVisible(false) : layer.setVisible(true)
+      layer.visible === true ? layer.setVisible(false) : layer.setVisible(true);
     },
   },
 };
@@ -240,8 +259,8 @@ export default {
 <style lang="scss" scoped>
 .panel-area {
   padding: 5px;
-  background-color: #AAA;
+  background-color: #aaa;
   color: black;
-  box-shadow: 0 .25em .5em transparentize(#343a3a, 0.8);
+  box-shadow: 0 0.25em 0.5em transparentize(#343a3a, 0.8);
 }
 </style>
