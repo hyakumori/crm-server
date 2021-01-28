@@ -18,9 +18,9 @@
         </vl-layer-tile>
         <v-menu offset-y :z-index="1005" :close-on-content-click="false">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="green" v-bind="attrs" v-on="on">
+            <v-btn class="mapLayerBtn" color="primary" v-bind="attrs" v-on="on">
               レヤー地図
-              <v-icon dark>mdi-layers</v-icon>
+              <v-icon>mdi-layers</v-icon>
             </v-btn>
           </template>
           <div class="panel-area">
@@ -259,8 +259,16 @@ export default {
 <style lang="scss" scoped>
 .panel-area {
   padding: 5px;
-  background-color: #aaa;
+  background-color: rgb(238, 232, 232);
   color: black;
+  font-size: 1.2em;
   box-shadow: 0 0.25em 0.5em transparentize(#343a3a, 0.8);
+}
+
+.mapLayerBtn {
+  position: relative;
+  left: 85%;
+  top: 10%;
+  z-index: 1010;
 }
 </style>
