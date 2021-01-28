@@ -13,8 +13,8 @@
           :center.sync="center"
           ref="mapView"
         ></vl-view>
-        <vl-layer-tile title="base" id="osm" :visible="true">
-          <vl-source-osm layer-name="base"></vl-source-osm>
+        <vl-layer-tile id="osm" :visible="true">
+          <vl-source-osm></vl-source-osm>
         </vl-layer-tile>
         <v-menu offset-y :z-index="1005" :close-on-content-click="false">
           <template v-slot:activator="{ on, attrs }">
@@ -29,14 +29,14 @@
               :key="layer.getProperties().id"
               v-model="layer.visible"
               @change="showMapPanelLayer(layer)"
-              :label="layer.values_.name"
+              :label="returnLayerLabel(layer.getProperties().id)"
             >
             </v-switch>
           </div>
         </v-menu>
         <div v-if="big">
           <vl-layer-image
-            layer-name="WMS image"
+            id="wmsLayer"
             :z-index="1000"
             :visible="true"
           >
@@ -48,7 +48,7 @@
             >
             </vl-source-image-wms>
           </vl-layer-image>
-          <vl-layer-vector layer-name="Vectors" :z-index="1001" :visible="true">
+          <vl-layer-vector id="tableLayer" :z-index="1001" :visible="true">
             <vl-source-vector :features.sync="features"> </vl-source-vector>
             <vl-style-box>
               <vl-style-stroke color="#FFF" :width="1"></vl-style-stroke>
@@ -58,7 +58,7 @@
         </div>
         <vl-layer-vector
           v-else
-          layer-name="Vectors"
+          id="tableLayer"
           render-mode="vector"
           :z-index="1000"
           :visible="true"
@@ -185,15 +185,6 @@ export default {
         });
       },
     },
-    mapLayers: {
-      handler(val) {
-        let i = 1
-        for (const layer of val) {
-          layer.set('name', `レヤー ${i}`)
-          i += 1
-        }
-      },
-    },
   },
 
   methods: {
@@ -206,6 +197,16 @@ export default {
       this.returnMapLayers().then(l => {
         this.mapLayers = l;
       })
+    },
+
+    returnLayerLabel(layerId) {
+      const names = {
+        'osm' : '背後地図',
+        'wmsLayer': 'ベース地図',
+        'tableLayer': 'テーベルレヤー',　
+      }
+
+      return names[layerId]
     },
 
     returnMapLayers() {
