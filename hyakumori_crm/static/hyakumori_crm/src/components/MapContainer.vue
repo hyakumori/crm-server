@@ -19,7 +19,7 @@
         <v-menu offset-y :z-index="1005" :close-on-content-click="false">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="green" v-bind="attrs" v-on="on">
-              Layers
+              レヤー地図
               <v-icon dark>mdi-layers</v-icon>
             </v-btn>
           </template>
@@ -189,7 +189,7 @@ export default {
       handler(val) {
         let i = 1
         for (const layer of val) {
-          layer.set('name', `Layer ${i}`)
+          layer.set('name', `レヤー ${i}`)
           i += 1
         }
       },
