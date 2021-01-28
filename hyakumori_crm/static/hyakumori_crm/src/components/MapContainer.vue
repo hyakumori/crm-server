@@ -25,8 +25,9 @@
           </template>
           <div class="panel-area">
             <v-switch
-              v-for="layer in mapLayers"
+              v-for="layer of mapLayers"
               :key="layer.getProperties().id"
+              inset
               v-model="layer.visible"
               @change="showMapPanelLayer(layer)"
               :label="returnLayerLabel(layer.getProperties().id)"
@@ -35,11 +36,7 @@
           </div>
         </v-menu>
         <div v-if="big">
-          <vl-layer-image
-            id="wmsLayer"
-            :z-index="1000"
-            :visible="true"
-          >
+          <vl-layer-image id="wmsLayer" :z-index="1000" :visible="true">
             <vl-source-image-wms
               url="http://localhost:8000/geoserver/crm/wms"
               :image-load-function="imageLoader"
@@ -130,6 +127,7 @@ export default {
     const loading = false;
     const mapLayers = [];
     const panelOpen = false;
+    const layerVisible = true;
     return {
       zoom,
       center,
@@ -137,6 +135,7 @@ export default {
       loading,
       mapLayers,
       panelOpen,
+      layerVisible,
     };
   },
 
@@ -192,23 +191,23 @@ export default {
       this.$refs.map.$map.getControls().extend([new ScaleLine()]);
       this.returnMapLayers().then(l => {
         this.mapLayers = l;
-      })
+      });
     },
 
     returnLayerLabel(layerId) {
       const names = {
-        'osm' : '背後地図',
-        'wmsLayer': 'ベース地図',
-        'tableLayer': 'テーベルレヤー',　
-      }
+        osm: "背後地図",
+        wmsLayer: "ベース地図",
+        tableLayer: "テーベルレヤー",
+      };
 
-      return names[layerId]
+      return names[layerId];
     },
 
     returnMapLayers() {
       const layers = this.$refs.map.getLayers();
       return new Promise(resolve => {
-        resolve(layers)
+        resolve(layers);
       });
     },
 
@@ -248,7 +247,7 @@ export default {
     },
 
     showMapPanelLayer(layer) {
-      layer.visible === true ? layer.setVisible(false) : layer.setVisible(true);
+      layer.visible ? layer.setVisible(true) : layer.setVisible(false);
     },
   },
 };
