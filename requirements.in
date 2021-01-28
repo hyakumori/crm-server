@@ -28,7 +28,6 @@ django-sequences
 arrow
 slackclient
 httpx
-IPython
 flake8
 filelock
 pytest-django
@@ -38,3 +37,4 @@ pandas
 click
 xlrd
 graphql-core~=3.0.3
+pygments

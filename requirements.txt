@@ -6,8 +6,6 @@
 #
 aiohttp==3.7.3
     # via slackclient
-appnope==0.1.2
-    # via ipython
 ariadne==0.10.0
     # via -r requirements.in
 arrow==0.17.0
@@ -24,8 +22,6 @@ attrs==20.3.0
     # via
     #   aiohttp
     #   pytest
-backcall==0.2.0
-    # via ipython
 blessed==1.17.12
     # via django-q
 certifi==2020.12.5
@@ -50,8 +46,6 @@ cryptography==3.3.1
     # via
     #   -r requirements.in
     #   social-auth-core
-decorator==4.4.2
-    # via ipython
 defusedxml==0.6.0
     # via
     #   python3-openid
@@ -142,14 +136,8 @@ idna==2.10
     #   yarl
 iniconfig==1.1.1
     # via pytest
-ipython-genutils==0.2.0
-    # via traitlets
-ipython==7.19.0
-    # via -r requirements.in
 itypes==1.2.0
     # via coreapi
-jedi==0.18.0
-    # via ipython
 jinja2==2.11.2
     # via coreschema
 markupsafe==1.1.1
@@ -172,20 +160,10 @@ packaging==20.8
     # via pytest
 pandas==1.2.1
     # via -r requirements.in
-parso==0.8.1
-    # via jedi
-pexpect==4.8.0
-    # via ipython
-pickleshare==0.7.5
-    # via ipython
 pluggy==0.13.1
     # via pytest
-prompt-toolkit==3.0.14
-    # via ipython
 psycopg2-binary==2.8.6
     # via -r requirements.in
-ptyprocess==0.7.0
-    # via pexpect
 py==1.10.0
     # via pytest
 pycodestyle==2.6.0
@@ -197,7 +175,7 @@ pydantic==1.7.3
 pyflakes==2.2.0
     # via flake8
 pygments==2.7.4
-    # via ipython
+    # via -r requirements.in
 pyjwt==2.0.1
     # via
     #   djangorestframework-simplejwt
@@ -258,8 +236,6 @@ starlette==0.13.8
     # via ariadne
 toml==0.10.2
     # via pytest
-traitlets==5.0.5
-    # via ipython
 typing-extensions==3.7.4.3
     # via
     #   -r requirements.in
@@ -272,15 +248,10 @@ urllib3==1.26.3
     #   django-revproxy
     #   requests
 wcwidth==0.2.5
-    # via
-    #   blessed
-    #   prompt-toolkit
+    # via blessed
 whitenoise==5.2.0
     # via -r requirements.in
 xlrd==2.0.1
     # via -r requirements.in
 yarl==1.6.3
     # via aiohttp
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
