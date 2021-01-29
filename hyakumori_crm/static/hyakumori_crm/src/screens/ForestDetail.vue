@@ -2,6 +2,12 @@
   <main-section class="forest-detail">
     <template #section>
       <div class="forest-detail__section px-7">
+        <map-container
+          style="margin-top: -40px; margin-bottom: 52px"
+          v-if="forestDetailMapInfo"
+          :forests="[forestDetailMapInfo]"
+        />
+
         <forest-basic-info-container
           headerContent="基本情報 (登記情報)"
           toggleEditBtnContent="追加・編集"
@@ -126,6 +132,7 @@ import ForestAttributeTable from "../components/detail/ForestAttributeTable";
 import ActionLog from "../components/detail/ActionLog";
 import MemoInput from "../components/detail/MemoInput";
 import TagDetailCard from "../components/tags/TagDetailCard";
+import MapContainer from "../components/MapContainer.vue";
 
 export default {
   name: "forest-detail",
@@ -142,6 +149,7 @@ export default {
     ForestBasicInfoContainer,
     AttachmentContainer,
     ForestContactTabContainer,
+    MapContainer,
   },
   props: {
     id: String,
@@ -152,6 +160,7 @@ export default {
       pageIcon: this.$t("icon.forest_icon"),
       backBtnContent: this.$t("page_header.forest_mgmt"),
       headerTagColor: "#FFC83B",
+      forestDetailMapInfo: null,
     };
   },
   created() {
@@ -160,6 +169,7 @@ export default {
         "setHeaderInfo",
         this.$store.getters["forest/headerInfo"],
       );
+      this.forestDetailMapInfo = this.$store.state.forest.forest;
     });
     this.$store.dispatch("forest/getCustomers", this.id);
     this.$store.dispatch("forest/getCustomersContacts", this.id);
