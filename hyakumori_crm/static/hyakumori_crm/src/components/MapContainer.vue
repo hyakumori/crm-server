@@ -245,7 +245,9 @@ export default {
     },
 
     showMapPanelLayer(layer) {
-      layer.getProperties().visible ? layer.setVisible(false) : layer.setVisible(true);
+      layer.getProperties().visible
+        ? layer.setVisible(false)
+        : layer.setVisible(true);
     },
   },
 };
