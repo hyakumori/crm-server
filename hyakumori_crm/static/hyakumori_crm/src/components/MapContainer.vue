@@ -94,7 +94,6 @@ import VectorSource from "vuelayers";
 import WmsSource from "vuelayers";
 import "vuelayers/lib/style.css";
 import { ScaleLine } from "ol/control";
-import { kebabCase } from "lodash";
 
 Vue.use(WmsSource);
 Vue.use(VueLayers);
@@ -227,6 +226,7 @@ export default {
         resolve(mapItems);
       });
     },
+
     imageLoader(im, src) {
       const xhr = new XMLHttpRequest();
       xhr.open("GET", src);

@@ -252,10 +252,6 @@ export default {
     else next();
   },
   methods: {
-    // updateForestsInMap() {
-    //   this.forestsForMap = this.forestsInfo.forests
-    // },
-
     confirmReload(e) {
       e.returnValue = this.$t("messages.confirm_leave");
     },
