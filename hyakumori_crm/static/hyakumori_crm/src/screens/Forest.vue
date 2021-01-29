@@ -459,7 +459,7 @@ export default {
     },
 
     forestsInfo: {
-      handler(val) {
+      handler() {
         this.forestsForMap = this.forestsInfo.forests;
       },
     },
