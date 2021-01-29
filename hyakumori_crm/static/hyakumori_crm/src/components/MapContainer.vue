@@ -13,7 +13,7 @@
       <v-menu offset-y :z-index="1005" :close-on-content-click="false">
         <template v-slot:activator="{ on, attrs }">
           <v-btn class="mapLayerBtn" color="primary" v-bind="attrs" v-on="on">
-            レヤー地図
+            レイヤー情報
             <v-icon>mdi-layers</v-icon>
           </v-btn>
         </template>
@@ -185,9 +185,9 @@ export default {
 
     returnLayerLabel(layerId) {
       const names = {
-        osm: "背後地図",
-        wmsLayer: "ベース地図",
-        tableLayer: "テーベルレヤー",
+        osm: "背景地図",
+        wmsLayer: "全ての地番",
+        tableLayer: "表内の情報",
       };
 
       return names[layerId];
