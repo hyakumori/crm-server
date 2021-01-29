@@ -3,6 +3,7 @@
     <template #section>
       <div class="forest-detail__section px-7">
         <map-container
+          style="margin-top: -40px; margin-bottom: 52px"
           v-if="forestDetailMapInfo"
           :forests="[forestDetailMapInfo]"
         />

@@ -38,7 +38,7 @@
 
         <map-container
           v-if="forests.length > 0"
-          class="mt-7"
+          style="margin-top: -20px; margin-bottom: 62px"
           :forests="forests"
         >
         </map-container>
