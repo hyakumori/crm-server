@@ -38,8 +38,7 @@
 
         <map-container
           v-if="forests.length > 0"
-          class="mt-12"
-          headerContent="地図"
+          class="mt-7"
           :forests="forests"
         >
         </map-container>
