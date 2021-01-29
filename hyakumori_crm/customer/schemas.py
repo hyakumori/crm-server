@@ -15,6 +15,7 @@ from ..crm.common import regexes
 from ..crm.common.constants import DEFAULT_EMAIL, EMPTY, UNKNOWN
 from ..crm.common.utils import tags_csv_to_dict
 from ..crm.models import Contact, Customer, Forest, ForestCustomer
+from rest_framework_gis.fields import GeometryField
 
 
 class Name(HyakumoriDanticModel):
@@ -111,6 +112,7 @@ class CustomerPaginator(Paginator):
 
 class ForestSerializer(ModelSerializer):
     forestcustomer_id = UUIDField(read_only=True)
+    geodata = GeometryField(allow_null=True, required=False, source="geodata4326")
 
     class Meta:
         model = Forest
@@ -123,6 +125,7 @@ class ForestSerializer(ModelSerializer):
             "land_attributes",
             "tags",
             "attributes",
+            "geodata",
         ]
 
 
