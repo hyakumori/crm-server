@@ -75,7 +75,6 @@
       <map-container
         v-if="forestsInfo"
         class="px-7"
-        headerContent="地図"
         :forests="forestsForMap"
         :big="true"
       >
