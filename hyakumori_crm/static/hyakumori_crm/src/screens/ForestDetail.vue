@@ -2,6 +2,11 @@
   <main-section class="forest-detail">
     <template #section>
       <div class="forest-detail__section px-7">
+        <map-container
+          v-if="forestDetailMapInfo"
+          :forests="[forestDetailMapInfo]"
+        />
+
         <forest-basic-info-container
           headerContent="基本情報 (登記情報)"
           toggleEditBtnContent="追加・編集"
@@ -24,14 +29,6 @@
           "
           :id="id"
         />
-
-        <map-container
-          v-if="forestDetailMapInfo"
-          class="mt-12"
-          headerContent="地図"
-          :forests="[forestDetailMapInfo]"
-        >
-        </map-container>
 
         <attachment-container
           v-acl-only="['manage_archive', 'view_archive']"
