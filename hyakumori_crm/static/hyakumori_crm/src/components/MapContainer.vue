@@ -7,8 +7,16 @@
       style="height: 400px; width: 100%;"
     >
       <vl-view :zoom.sync="zoom" :center.sync="center"></vl-view>
-      <vl-layer-tile id="osm" :visible="true">
+      <!-- <vl-layer-tile id="osm" :visible="true">
         <vl-source-osm></vl-source-osm>
+      </vl-layer-tile> -->
+      <vl-layer-tile
+        v-for="baseLayer in baseLayers"
+        :key="baseLayer.name"
+        :id="baseLayer.id"
+        :visible="baseLayer.visible"
+        >
+        <vl-source-xyz v-bind="baseLayer" :url="baseLayer.url" />
       </vl-layer-tile>
       <v-menu offset-y :z-index="1005" :close-on-content-click="false">
         <template v-slot:activator="{ on, attrs }">
@@ -81,6 +89,18 @@
           </vl-feature>
         </vl-source-vector>
       </vl-layer-vector>
+      <div class="base-layers-panel">
+        <div class="buttons has-addons">
+          <v-btn v-for="layer in baseLayers"
+                  :key="layer.name" :class="{ 'is-info': layer.visible }"
+                  @click="showBaseLayer(layer.name)">
+            {{ layer.name }}
+          </v-btn>
+          <v-btn @click="mapVisible = !mapVisible">
+            {{ mapVisible ? 'Hide map' : 'Show map' }}
+          </v-btn>
+        </div>
+      </div>
     </vl-map>
   </div>
 </template>
@@ -118,6 +138,49 @@ export default {
     const loading = false;
     const mapLayers = [];
     const panelOpen = false;
+    const mapVisible = true;
+
+    const baseLayers = [
+        {
+          name: '標準地図',
+          id: 'std',
+          visible: true,
+          url: 'https://maps.gsi.go.jp/xyz/std/{z}/{x}/{y}.png?_=20201001a',
+        },
+        {
+          name: '淡色地図',
+          id: 'pale',
+          url: 'https://maps.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png?_=20201001a',
+          visible: false,
+        },
+        {
+          name: '白地図',
+          id: 'blank',
+          url: 'https://maps.gsi.go.jp/xyz/blank/{z}/{x}/{y}.png?_=20201001a',
+          visible: false,
+        },
+        /**
+         * English map returns 404
+         */
+
+        // {
+        //   name: 'English',
+        //   id: 'english',
+        //   url: 'https://maps.gsi.go.jp/xyz/english/{z}/{x}/{y}.png?_=20201001a',
+        //   visible: false,
+        // },
+
+        /**
+         * ORT map returns 404s for tiles when zoomed in
+         */
+        {
+          name: '写真',
+          id: 'ort',
+          url: 'https://maps.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg',
+          visible: false,
+        },
+      ]
+
     return {
       zoom,
       center,
@@ -125,6 +188,8 @@ export default {
       loading,
       mapLayers,
       panelOpen,
+      mapVisible,
+      baseLayers,
     };
   },
 
@@ -134,7 +199,6 @@ export default {
       this.features = f;
       this.loading = false;
     });
-    this.loading = false;
   },
 
   computed: {
@@ -241,6 +305,17 @@ export default {
         ? layer.setVisible(false)
         : layer.setVisible(true);
     },
+
+    showBaseLayer(name) {
+      let layer = this.baseLayers.find(layer => layer.visible)
+      if (layer != null) {
+        layer.visible = false
+      }
+      layer = this.baseLayers.find(layer => layer.name === name)
+      if (layer != null) {
+        layer.visible = true
+      }
+    },
   },
 };
 </script>
@@ -259,6 +334,13 @@ export default {
   float: right;
   right: 10px;
   top: 50px;
+  z-index: 1010;
+}
+
+.base-layers-panel {
+  position: relative;
+  float: right;
+  top: 90%;
   z-index: 1010;
 }
 </style>
