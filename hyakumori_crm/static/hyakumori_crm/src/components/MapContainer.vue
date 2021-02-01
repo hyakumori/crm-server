@@ -160,7 +160,7 @@ export default {
         visible: true,
         url: "https://maps.gsi.go.jp/xyz/std/{z}/{x}/{y}.png?_=20201001a",
         attributions:
-          '© <a href="https://maps.gsi.go.jp/development/ichiran.html"> 国土地理院 </a>',
+          '<a href="https://maps.gsi.go.jp/development/ichiran.html"> 国土地理院 </a>',
       },
     ];
 
