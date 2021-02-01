@@ -362,11 +362,4 @@ export default {
   top: 50px;
   z-index: 1010;
 }
-
-.base-layers-panel {
-  position: relative;
-  float: right;
-  top: 90%;
-  z-index: 1010;
-}
 </style>
