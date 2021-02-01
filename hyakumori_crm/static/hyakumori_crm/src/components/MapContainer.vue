@@ -13,7 +13,11 @@
         :id="baseLayer.id"
         :visible="baseLayer.visible"
       >
-        <vl-source-xyz v-bind="baseLayer" :url="baseLayer.url" />
+        <vl-source-xyz
+          v-bind="baseLayer"
+          :url="baseLayer.url"
+          :attributions="baseLayer.attributions"
+        />
       </vl-layer-tile>
       <vl-layer-image
         v-for="raster in rasterLayers"
@@ -155,6 +159,8 @@ export default {
         id: "std",
         visible: true,
         url: "https://maps.gsi.go.jp/xyz/std/{z}/{x}/{y}.png?_=20201001a",
+        attributions:
+          '© <a href="https://maps.gsi.go.jp/development/ichiran.html"> 国土地理院 </a>',
       },
     ];
 
