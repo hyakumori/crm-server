@@ -96,7 +96,6 @@
           }}</label>
           <TextInput
             rules="telephone"
-            :maxLength="12"
             :name="`${fieldNamePrefix}telephone`"
             :placeholder="
               $t('forms.placeholders.customer.phone_number') +
