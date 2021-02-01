@@ -75,6 +75,7 @@
       <map-container
         v-if="forestsInfo"
         class="px-7"
+        style="margin-top: -20px; margin-bottom: 30px"
         :forests="forestsForMap"
         :big="true"
       >
