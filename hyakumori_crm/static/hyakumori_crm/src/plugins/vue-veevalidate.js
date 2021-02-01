@@ -2,10 +2,11 @@ import * as rules from "vee-validate/dist/rules";
 
 import { configure, extend } from "vee-validate";
 
-const telephoneRe = /^(\d{2}-\d{4}-\d{4}|\d{3}-\d{3}-\d{4}|\d{4}-\d{2}-\d{4}|\d{1,10})$/;
+const telephoneRe = /^\d{1,10}$/;
 
 extend("telephone", value => {
-  if (!telephoneRe.test(value)) {
+  const onlyDigits = value.replaceAll("-", "");
+  if (!telephoneRe.test(onlyDigits)) {
     return false;
   }
   return true;
