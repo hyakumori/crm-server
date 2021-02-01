@@ -7,17 +7,28 @@
       style="height: 400px; width: 100%;"
     >
       <vl-view :zoom.sync="zoom" :center.sync="center"></vl-view>
-      <!-- <vl-layer-tile id="osm" :visible="true">
-        <vl-source-osm></vl-source-osm>
-      </vl-layer-tile> -->
       <vl-layer-tile
         v-for="baseLayer in baseLayers"
         :key="baseLayer.name"
         :id="baseLayer.id"
         :visible="baseLayer.visible"
-        >
+      >
         <vl-source-xyz v-bind="baseLayer" :url="baseLayer.url" />
       </vl-layer-tile>
+      <vl-layer-image
+        v-for="raster in rasterLayers"
+        :key="raster.name"
+        :id="raster.id"
+        :visible="raster.visible"
+      >
+        <vl-source-image-wms
+          v-bind="raster"
+          :layers="raster.layer"
+          :url="raster.url"
+          :image-load-function="imageLoader"
+        >
+        </vl-source-image-wms>
+      </vl-layer-image>
       <v-menu offset-y :z-index="1005" :close-on-content-click="false">
         <template v-slot:activator="{ on, attrs }">
           <v-btn class="mapLayerBtn" color="primary" v-bind="attrs" v-on="on">
@@ -27,7 +38,7 @@
         </template>
         <div class="panel-area">
           <v-switch
-            v-for="layer of mapLayers"
+            v-for="layer of vLayers"
             :key="layer.getProperties().id"
             inset
             v-model="layer.getProperties().visible"
@@ -35,6 +46,16 @@
             :label="returnLayerLabel(layer.getProperties().id)"
           >
           </v-switch>
+          <v-radio-group mandatory>
+            <v-radio
+              v-for="layer of rLayers"
+              :key="layer.name"
+              :label="returnLayerLabel(layer.getProperties().id)"
+              :value="layer.name"
+              @change="showBaseLayer(layer.getProperties().id)"
+            >
+            </v-radio>
+          </v-radio-group>
         </div>
       </v-menu>
       <div v-if="big">
@@ -89,18 +110,6 @@
           </vl-feature>
         </vl-source-vector>
       </vl-layer-vector>
-      <div class="base-layers-panel">
-        <div class="buttons has-addons">
-          <v-btn v-for="layer in baseLayers"
-                  :key="layer.name" :class="{ 'is-info': layer.visible }"
-                  @click="showBaseLayer(layer.name)">
-            {{ layer.name }}
-          </v-btn>
-          <v-btn @click="mapVisible = !mapVisible">
-            {{ mapVisible ? 'Hide map' : 'Show map' }}
-          </v-btn>
-        </div>
-      </div>
     </vl-map>
   </div>
 </template>
@@ -141,45 +150,40 @@ export default {
     const mapVisible = true;
 
     const baseLayers = [
-        {
-          name: '標準地図',
-          id: 'std',
-          visible: true,
-          url: 'https://maps.gsi.go.jp/xyz/std/{z}/{x}/{y}.png?_=20201001a',
-        },
-        {
-          name: '淡色地図',
-          id: 'pale',
-          url: 'https://maps.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png?_=20201001a',
-          visible: false,
-        },
-        {
-          name: '白地図',
-          id: 'blank',
-          url: 'https://maps.gsi.go.jp/xyz/blank/{z}/{x}/{y}.png?_=20201001a',
-          visible: false,
-        },
-        /**
-         * English map returns 404
-         */
+      {
+        name: "標準地図",
+        id: "std",
+        visible: true,
+        url: "https://maps.gsi.go.jp/xyz/std/{z}/{x}/{y}.png?_=20201001a",
+      },
+    ];
 
-        // {
-        //   name: 'English',
-        //   id: 'english',
-        //   url: 'https://maps.gsi.go.jp/xyz/english/{z}/{x}/{y}.png?_=20201001a',
-        //   visible: false,
-        // },
-
-        /**
-         * ORT map returns 404s for tiles when zoomed in
-         */
-        {
-          name: '写真',
-          id: 'ort',
-          url: 'https://maps.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg',
-          visible: false,
-        },
-      ]
+    const rasterLayers = [
+      {
+        name: "赤色立体図",
+        id: "red",
+        visible: false,
+        url: "http://localhost:8000/geoserver/raster/wms",
+        layer: "raster:赤色立体図データ",
+        projection: "EPSG:4326",
+      },
+      {
+        name: "DEM",
+        id: "dem",
+        visible: false,
+        url: "http://localhost:8000/geoserver/raster/wms",
+        layer: "raster:DEMデータ",
+        projection: "EPSG:4326",
+      },
+      {
+        name: "航空写真",
+        id: "rgb",
+        visible: false,
+        url: "http://localhost:8000/geoserver/raster/wms",
+        layer: "raster:航空写真データ",
+        projection: "EPSG:4326",
+      },
+    ];
 
     return {
       zoom,
@@ -190,6 +194,7 @@ export default {
       panelOpen,
       mapVisible,
       baseLayers,
+      rasterLayers,
     };
   },
 
@@ -222,6 +227,18 @@ export default {
       const z_center = Math.floor((z_lon + z_lat) / 2);
       return [[xmin, ymin, xmax, ymax], z_center];
     },
+    vLayers() {
+      const allLayers = this.mapLayers;
+      return allLayers.filter(function(el) {
+        return ["wmsLayer", "tableLayer"].includes(el.getProperties().id);
+      });
+    },
+    rLayers() {
+      const allLayers = this.mapLayers;
+      return allLayers.filter(function(el) {
+        return ["std", "red", "dem", "rgb"].includes(el.getProperties().id);
+      });
+    },
   },
 
   watch: {
@@ -249,11 +266,13 @@ export default {
 
     returnLayerLabel(layerId) {
       const names = {
-        osm: "背景地図",
         wmsLayer: "全ての地番",
         tableLayer: "表内の情報",
+        dem: "DEM",
+        red: "赤色立体図",
+        std: "標準地図",
+        rgb: "航空写真",
       };
-
       return names[layerId];
     },
 
@@ -306,15 +325,15 @@ export default {
         : layer.setVisible(true);
     },
 
-    showBaseLayer(name) {
-      let layer = this.baseLayers.find(layer => layer.visible)
-      if (layer != null) {
-        layer.visible = false
-      }
-      layer = this.baseLayers.find(layer => layer.name === name)
-      if (layer != null) {
-        layer.visible = true
-      }
+    showBaseLayer(id) {
+      let currentLayer =
+        this.baseLayers.find(layer => layer.visible) ||
+        this.rasterLayers.find(layer => layer.visible);
+      currentLayer.visible = false;
+      let newLayer =
+        this.baseLayers.find(layer => layer.id === id) ||
+        this.rasterLayers.find(layer => layer.id === id);
+      newLayer.visible = true;
     },
   },
 };
