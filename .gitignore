@@ -206,8 +206,6 @@ wpdevserver.lock
 .env.*
 !.env.*.sample
 !.env.sample
-data_import/**/*.pickle
-!data_import/**/lib
 
 media/**/*
 static/**/*
