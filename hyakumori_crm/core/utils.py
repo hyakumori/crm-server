@@ -1,3 +1,4 @@
+import io
 import logging
 
 from itertools import chain
@@ -97,9 +98,12 @@ class Echo:
     interface.
     """
 
+    def __init__(self, initial_content=""):
+        self.initial_content = io.StringIO(initial_content)
+
     def write(self, value):
         """Write the value by returning it, instead of storing in a buffer."""
-        return value
+        return self.initial_content.read() + value
 
 
 def clear_maintain_task_id_cache(task=None):

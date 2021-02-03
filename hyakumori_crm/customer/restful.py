@@ -1,3 +1,4 @@
+import codecs
 import csv
 import pathlib
 import time
@@ -258,7 +259,7 @@ class CustomerViewSets(ViewSet):
         else:
             filters = Q(id__in=pks)
         headers = [
-            "\ufeff所有者ID",  # contains BOM char for opening on windows excel
+            "所有者ID",  # contains BOM char for opening on windows excel
             "土地所有者名（漢字）",
             "土地所有者名（カナ）",
             "土地所有者住所_都道府県",
@@ -293,7 +294,7 @@ class CustomerViewSets(ViewSet):
             for row in rows:
                 yield row
 
-        pseudo_buffer = Echo()
+        pseudo_buffer = Echo(codecs.BOM_UTF8.decode())
         writer = csv.writer(pseudo_buffer)
         response = StreamingHttpResponse(
             (

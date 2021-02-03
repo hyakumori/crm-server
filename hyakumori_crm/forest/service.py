@@ -296,7 +296,7 @@ def update_forest_memo(forest, memo):
 
 
 def csv_headers():
-    header = ["\ufeff内部ID", "土地管理ID"]
+    header = ["内部ID", "土地管理ID"]
     return list(
         itertools.chain(
             header,
@@ -640,7 +640,6 @@ def csv_upload(fp):
         reader = csv.reader(f)
         line_count = 0
         headers = csv_headers()
-        headers[0] = headers[0][1:]
         for row in reader:
             if line_count == 0:
                 line_count += 1
