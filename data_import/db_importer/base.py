@@ -1,2 +1,0 @@
-class BaseDbImporter(object):
-    pass
