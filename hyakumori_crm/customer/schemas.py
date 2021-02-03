@@ -1,4 +1,5 @@
 import operator
+import re
 from enum import Enum
 from functools import reduce
 from typing import List, Optional
@@ -34,11 +35,20 @@ class ContactInput(HyakumoriDanticModel):
     name_kana: Name
     postal_code: Optional[constr(regex=regexes.POSTAL_CODE, strip_whitespace=True)]
     address: Optional[Address] = {}
-    telephone: Optional[constr(regex=regexes.TELEPHONE_NUMBER, strip_whitespace=True)]
+    telephone: Optional[str]
     mobilephone: Optional[
         constr(regex=regexes.MOBILEPHONE_NUMBER, strip_whitespace=True)
     ]
     email: Optional[EmailStr] = DEFAULT_EMAIL
+
+    @validator("telephone")
+    def validate_telephone(cls, v):
+        if not v:
+            return v
+        only_digits = v.replace("-", "")
+        if not re.match(regexes.TELEPHONE_NUMBER, only_digits):
+            raise ValueError(_("Must input digits of length from 1 to 10."))
+        return v
 
 
 class BankingInput(HyakumoriDanticModel):
@@ -296,7 +306,7 @@ class RequiredContactInput(HyakumoriDanticModel):
     postal_code: Optional[constr(regex=regexes.POSTAL_CODE, strip_whitespace=True)]
 
     address: Optional[Address] = {}
-    telephone: Optional[constr(regex=regexes.TELEPHONE_NUMBER, strip_whitespace=True)]
+    telephone: Optional[str]
 
     mobilephone: Optional[
         constr(regex=regexes.MOBILEPHONE_NUMBER, strip_whitespace=True)
@@ -304,14 +314,14 @@ class RequiredContactInput(HyakumoriDanticModel):
     email: Optional[EmailStr]
     contact_type: NonDirectContactType
 
-    # @root_validator
-    # def validate_atleast_one_way_to_contact(cls, values):
-    #     telephone = values.get("telephone")
-    #     mobilephone = values.get("mobilephone")
-    #     email = values.get("email")
-    #     if not telephone and not mobilephone and not email:
-    #         raise ValueError(_("Enter at least telephone or mobilephone or email."))
-    #     return values
+    @validator("telephone")
+    def validate_telephone(cls, v):
+        if not v:
+            return v
+        only_digits = v.replace("-", "")
+        if not re.match(regexes.TELEPHONE_NUMBER, only_digits):
+            raise ValueError(_("Must input digits of length from 1 to 10."))
+        return v
 
 
 class CustomerUploadCsv(HyakumoriDanticModel):
@@ -327,9 +337,7 @@ class CustomerUploadCsv(HyakumoriDanticModel):
         constr(regex=regexes.POSTAL_CODE, strip_whitespace=True)
     ] = EMPTY
 
-    telephone: Optional[
-        constr(regex=regexes.CSV_TELEPHONE_NUMBER, strip_whitespace=True)
-    ] = EMPTY
+    telephone: Optional[str] = EMPTY
 
     mobilephone: Optional[
         constr(regex=regexes.MOBILEPHONE_NUMBER, strip_whitespace=True)
@@ -346,14 +354,27 @@ class CustomerUploadCsv(HyakumoriDanticModel):
         error_msg_templates = {
             **HyakumoriDanticModel.Config.error_msg_templates,
             "value_error.str.regex.telephone": _(
-                "Bad format (000-000-0000 or 00-0000-0000 or 0000000000)."
+                "Must input digits of length from 1 to 10."
             ),
             "value_error.str.regex.postal_code": _("Bad format (000-0000)."),
             "value_error.str.regex.mobilephone": _("Bad format (000-0000-0000)."),
         }
 
+    @validator("telephone")
+    def validate_telephone(cls, v):
+        if not v:
+            return v
+        only_digits = v.replace("-", "")
+        if not re.match(regexes.TELEPHONE_NUMBER, only_digits):
+            raise ValueError(_("Must input digits of length from 1 to 10."))
+        return v
+
     @validator("bank_account_number", pre=True)
     def prepare_account_number(cls, v):
+        if v == "":
+            return None
+        if not v.startswith("'") or not v.endswith("'"):
+            raise ValueError(_("Must wrapped in pair of single quotes."))
         return v[1:-1]
 
     @validator("tags")

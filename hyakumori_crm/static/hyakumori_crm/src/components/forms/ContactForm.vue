@@ -95,8 +95,7 @@
             $t("forms.labels.customer.phone_number")
           }}</label>
           <TextInput
-            v-mask="'##-####-####'"
-            :maxLength="12"
+            rules="telephone"
             :name="`${fieldNamePrefix}telephone`"
             :placeholder="
               $t('forms.placeholders.customer.phone_number') +
