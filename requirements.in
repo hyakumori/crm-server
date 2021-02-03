@@ -33,7 +33,4 @@ filelock
 pytest-django
 coverage
 orjson
-pandas
-click
-xlrd
 graphql-core~=3.0.3
