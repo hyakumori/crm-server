@@ -9,24 +9,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  frontend:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Lint Vue
-        run: |
-          cd hyakumori_crm/static/hyakumori_crm
-          yarn install
-          yarn lint --no-fix
-
   backend:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.7, 3.8, 3.9]
 
     env:
       POSTGRES_DB: hyakumori
@@ -36,7 +24,7 @@ jobs:
 
     services:
       postgres:
-        image: mdillon/postgis:11-alpine
+        image: postgis/postgis
         env:
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
