@@ -56,7 +56,7 @@ django-cleanup==5.1.0
     # via -r requirements.in
 django-cors-headers==3.7.0
     # via -r requirements.in
-django-extensions==3.1.0
+django-extensions==3.1.1
     # via -r requirements.in
 django-filter==2.4.0
     # via -r requirements.in
@@ -74,11 +74,11 @@ django-redis==4.12.1
     # via -r requirements.in
 django-revproxy==0.10.0
     # via -r requirements.in
-django-sequences==2.5
+django-sequences==2.6
     # via -r requirements.in
 django-templated-mail==1.1.1
     # via djoser
-django==3.0.11
+django==3.1.6
     # via
     #   -r requirements.in
     #   django-cors-headers
