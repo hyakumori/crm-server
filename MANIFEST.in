@@ -1,7 +1,0 @@
-include setup.py README.md MANIFEST.in
-recursive-include ./ requirements*.txt requirements*.in
-graft hyakumori_crm
-prune hyakumori_crm/static/hyakumori_crm
-graft hyakumori_crm/static/hyakumori_crm/dist
-include hyakumori_crm/static/hyakumori_crm/assets.json
-global-exclude *.py[cod]

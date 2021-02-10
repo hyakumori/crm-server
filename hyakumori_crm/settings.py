@@ -37,16 +37,8 @@ ALLOWED_HOSTS = ["localhost"]
 ALLOWED_HOSTS += os.getenv("ALLOWED_HOSTS", "").split(",")
 
 # Application definition
-STATIC_ROOT = os.path.join(
-    BASE_DIR, os.getenv("STATIC_DIR", "hyakumori_crm/static/hyakumori_crm/dist")
-)
-
-if os.getenv("STATIC_DIR") == "":
-    STATIC_ROOT = None
-
-static_app = []
-if not STATIC_ROOT and DEBUG:
-    static_app = ["hyakumori_crm.static"]
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_URL = "/static/"
 
 orjson_experiment = []
 if DEBUG:
@@ -55,7 +47,6 @@ if DEBUG:
 INSTALLED_APPS = [
     *orjson_experiment,
     "whitenoise.runserver_nostatic",
-    *static_app,  # this need high priority due to some override commands
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",

@@ -209,3 +209,7 @@ wpdevserver.lock
 
 media/**/*
 static/**/*
+
+hyakumori/static/
+
+*.rdb
