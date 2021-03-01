@@ -1,6 +1,8 @@
+import json
 from typing import Any
-from graphql import GraphQLResolveInfo
-from ariadne import QueryType
+
+from graphql import GraphQLResolveInfo, default_field_resolver
+from ariadne import QueryType, SchemaDirectiveVisitor
 from django.utils.translation import gettext as _
 
 from ..core.decorators import validate_model
@@ -10,6 +12,19 @@ from .filters import ForestFilter
 from ..graphql.decorators import login_required
 
 query = QueryType()
+
+
+class GeojsonDirective(SchemaDirectiveVisitor):
+    def visit_field_definition(self, field, object_type):
+        original_resolver = field.resolve or default_field_resolver
+
+        def resolve_formatted_date(obj, info, **kwargs):
+            result = original_resolver(obj, info, **kwargs)
+            if result is None:
+                return None
+            return json.loads(result.transform(4326, clone=True).geojson)
+        field.resolve = resolve_formatted_date
+        return field
 
 
 @query.field("foresttable_headers")
