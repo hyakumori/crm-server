@@ -40,12 +40,7 @@ ALLOWED_HOSTS += os.getenv("ALLOWED_HOSTS", "").split(",")
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATIC_URL = "/static/"
 
-orjson_experiment = []
-if DEBUG:
-    orjson_experiment = ["hyakumori_crm.core.response"]
-
 INSTALLED_APPS = [
-    *orjson_experiment,
     "whitenoise.runserver_nostatic",
     "django.contrib.auth",
     "django.contrib.contenttypes",
