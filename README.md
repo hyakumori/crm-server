@@ -36,13 +36,21 @@ DATABASE_URL=postgis://postgres:postgres@localhost:5432/hyakumori_crm
 STATIC_DIR=
 REDIS_CACHE_URL=
 
-ALLOW_HOSTS=*.nip.io,localhost
-CORS_ORIGIN_WHITELIST=http://localhost:8080
+FRONTEND_DOMAIN=localhost:8080
+
+ALLOWED_HOSTS=.*demo.georeport.org,*.nip.io,localhost,127.0.0.1
+CORS_ORIGIN_WHITELIST=http://localhost:8080,http://localhost:5000
 TIME_ZONE_PRIMARY=Asia/Tokyo
 
 GEOSERVER_USER=**************
 GEOSERVER_PASS=**************
 GEOSERVER_URL=http://localhost:8600/geoserver/
+
+EMAIL_HOST=localhost
+EMAIL_PORT=1025
+EMAIL_HOST_USER=
+EMAIL_HOST_PASSWORD=
+EMAIL_USE_TLS=no
 ```
 
 2. Install requirements:
