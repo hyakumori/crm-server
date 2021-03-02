@@ -30,7 +30,7 @@ cp .env.example .env
 For example:
 
 ```
-DEBUG=TRUE
+DEBUG=True
 SECRET_KEY=0fdafa9ea1f1436cb1d3ff56fcd95586
 DATABASE_URL=postgis://postgres:postgres@localhost:5432/hyakumori_crm
 STATIC_DIR=
