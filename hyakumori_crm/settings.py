@@ -199,7 +199,7 @@ AUTHENTICATION_BACKENDS = (
     "guardian.backends.ObjectPermissionBackend",
 )
 
-DOMAIN = os.getenv("FRONTEND_DOMAIN", '')
+DOMAIN = os.getenv("FRONTEND_DOMAIN", 'localhost:8080')
 
 # Djoser
 DJOSER = {
