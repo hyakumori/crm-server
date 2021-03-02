@@ -199,6 +199,8 @@ AUTHENTICATION_BACKENDS = (
     "guardian.backends.ObjectPermissionBackend",
 )
 
+DOMAIN = os.getenv("FRONTEND_DOMAIN", '')
+
 # Djoser
 DJOSER = {
     "PASSWORD_RESET_CONFIRM_URL": "auth/reset-password/{uid}/{token}",
