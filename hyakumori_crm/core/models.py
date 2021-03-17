@@ -5,7 +5,7 @@ from typing import Any, Union, ClassVar, Optional, Sequence, Dict
 from behaviors.behaviors import StoreDeleted
 from behaviors.managers import StoreDeletedManager
 from behaviors.querysets import StoreDeletedQuerySet
-from django.contrib.postgres.fields.jsonb import JSONField
+from django.db.models import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.gis.db import models
 from django.utils.translation import gettext_lazy as _
