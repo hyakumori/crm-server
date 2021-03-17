@@ -1,4 +1,4 @@
-from django.contrib.postgres.fields.jsonb import JSONField
+from django.db.models import JSONField
 from django.db import models
 from django.db.models import OuterRef, Subquery, Count, F
 

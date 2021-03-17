@@ -1,7 +1,7 @@
 import uuid
 
 from django.contrib.auth.models import AbstractUser, Group
-from django.contrib.postgres.fields.jsonb import JSONField
+from django.db.models import JSONField
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 

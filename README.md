@@ -1,6 +1,6 @@
-# Hyakumori crm
+# Hyakumori CRM API
 
-This repository holds the source code for the API of the hyakumori CRM. It is written in Python and uses the GeoDjango framework.
+A geospatial-enabled Python API for the Hyakumori CRM.
 
 ## Requirements
 
@@ -14,7 +14,7 @@ This repository holds the source code for the API of the hyakumori CRM. It is wr
 The application also expects the following services to be running in tandem with django:
 
 * redis
-* geoserver
+* geoserver (with the [S3 Geotiff plugin](https://docs.geoserver.org/latest/en/user/community/s3-geotiff/index.html))
 * mailhog
 
 Each of these can be run locally or from a suitable docker container. 
@@ -38,8 +38,8 @@ REDIS_CACHE_URL=
 
 FRONTEND_DOMAIN=localhost:8080
 
-ALLOWED_HOSTS=.*demo.georeport.org,*.nip.io,localhost,127.0.0.1
-CORS_ORIGIN_WHITELIST=http://localhost:8080,http://localhost:5000
+ALLOWED_HOSTS=localhost
+CORS_ORIGIN_WHITELIST=http://localhost:8080
 TIME_ZONE_PRIMARY=Asia/Tokyo
 
 GEOSERVER_USER=**************
@@ -82,7 +82,7 @@ python manage.py createsuperuser
 python manage.py crm_setup
 ```
 
-## Usage
+## How to use
 
 *Important: make sure that geoserver, redis, and mailhog are all running and are accessible at the appropriate ports!*
 
@@ -106,3 +106,19 @@ Using `django-q` for async task and schedule:
 - Run `./manage.py setup_schedule_tasks` to set up schedule tasks
 - Run `./manage.py qcluster` to start workers
 - Check info by running `./manage.py qinfo`
+
+## Contributing and Support
+
+The Hyakumori Project appreciates any [contributions](https://github.com/hyakumori/.github/blob/main/CONTRIBUTING.md).
+
+## Authors
+
+The Hyakumori CRM API was developed by the Hyakumori Team with additional contributions from:
+
+- [Iosefa Percival](https://github.com/iosefa)
+- [Nathaniel Nasarow](https://github.com/Torgian)
+- ... [and others](https://github.com/hyakumori/crm-server/graphs/contributors)
+
+## LICENSE
+
+This program is free software. See [LICENSE](LICENSE) for more information.
