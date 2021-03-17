@@ -21,7 +21,7 @@ django-revproxy
 djangorestframework-simplejwt
 django-guardian
 django-cleanup
-cryptography
+cryptography>=3.3.2
 django-redis
 django-q
 django-sequences
@@ -34,3 +34,4 @@ pytest-django
 coverage
 orjson
 graphql-core~=3.0.3
+aiohttp>=3.7.4
