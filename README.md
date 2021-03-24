@@ -27,32 +27,6 @@ Each of these can be run locally or from a suitable docker container.
 cp .env.example .env
 ```
 
-For example:
-
-```
-DEBUG=True
-SECRET_KEY=0fdafa9ea1f1436cb1d3ff56fcd95586
-DATABASE_URL=postgis://postgres:postgres@localhost:5432/hyakumori_crm
-STATIC_DIR=
-REDIS_CACHE_URL=
-
-FRONTEND_DOMAIN=localhost:8080
-
-ALLOWED_HOSTS=localhost
-CORS_ORIGIN_WHITELIST=http://localhost:8080
-TIME_ZONE_PRIMARY=Asia/Tokyo
-
-GEOSERVER_USER=**************
-GEOSERVER_PASS=**************
-GEOSERVER_URL=http://localhost:8600/geoserver/
-
-EMAIL_HOST=localhost
-EMAIL_PORT=1025
-EMAIL_HOST_USER=
-EMAIL_HOST_PASSWORD=
-EMAIL_USE_TLS=no
-```
-
 2. Install requirements:
 
 Create and active a virtual environment then install requirements: 
