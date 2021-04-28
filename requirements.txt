@@ -234,7 +234,7 @@ typing-extensions==3.7.4.3
     #   ariadne
 uritemplate==3.0.1
     # via coreapi
-urllib3==1.26.3
+urllib3==1.26.4
     # via
     #   django-revproxy
     #   requests
