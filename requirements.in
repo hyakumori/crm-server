@@ -1,5 +1,5 @@
 psycopg2-binary~=2.8
-Django~=3.1.0
+Django~=3.1.8
 dj-database-url
 python-dotenv
 whitenoise>=5
