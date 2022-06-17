@@ -11,6 +11,8 @@ COPY requirements.txt ${WORK_DIR}
 RUN apt update \
  && apt install -y \
     binutils \
+    gcc \
+    libpq-dev \
     libproj-dev \
     gdal-bin \
     wget \
