@@ -14,7 +14,7 @@ arrow==0.17.0
     # via
     #   -r requirements.in
     #   django-q
-asgiref>=3.4.0
+asgiref==3.5.2
     # via
     #   django
     #   djoser
@@ -52,6 +52,21 @@ defusedxml==0.6.0
     #   social-auth-core
 dj-database-url==0.5.0
     # via -r requirements.in
+django==3.1.8
+    # via
+    #   -r requirements.in
+    #   django-cors-headers
+    #   django-filter
+    #   django-guardian
+    #   django-model-utils
+    #   django-picklefield
+    #   django-q
+    #   django-query-builder
+    #   django-redis
+    #   django-revproxy
+    #   django-sequences
+    #   djangorestframework
+    #   djangorestframework-simplejwt
 django-behaviors==0.5.1
     # via -r requirements.in
 django-cleanup==5.1.0
@@ -80,20 +95,10 @@ django-sequences==2.6
     # via -r requirements.in
 django-templated-mail==1.1.1
     # via djoser
-django==3.1.8
+djangorestframework==3.12.2
     # via
     #   -r requirements.in
-    #   django-cors-headers
-    #   django-filter
-    #   django-guardian
-    #   django-model-utils
-    #   django-picklefield
-    #   django-q
-    #   django-query-builder
-    #   django-redis
-    #   django-revproxy
-    #   django-sequences
-    #   djangorestframework
+    #   djangorestframework-gis
     #   djangorestframework-simplejwt
 djangorestframework-gis==0.17
     # via -r requirements.in
@@ -101,11 +106,6 @@ djangorestframework-simplejwt==4.6.0
     # via
     #   -r requirements.in
     #   djoser
-djangorestframework==3.12.2
-    # via
-    #   -r requirements.in
-    #   djangorestframework-gis
-    #   djangorestframework-simplejwt
 djoser==2.1.0
     # via -r requirements.in
 dnspython==2.1.0
@@ -166,7 +166,7 @@ pycodestyle==2.6.0
     # via flake8
 pycparser==2.20
     # via cffi
-pydantic==1.7.3
+pydantic==1.7.4
     # via -r requirements.in
 pyflakes==2.2.0
     # via flake8
@@ -176,10 +176,10 @@ pyjwt==2.0.1
     #   social-auth-core
 pyparsing==2.4.7
     # via packaging
-pytest-django==4.1.0
-    # via -r requirements.in
 pytest==6.2.2
     # via pytest-django
+pytest-django==4.1.0
+    # via -r requirements.in
 python-dateutil==2.8.1
     # via
     #   -r requirements.in
@@ -196,13 +196,13 @@ pytz==2020.5
     #   fleming
 redis==3.5.3
     # via django-redis
-requests-oauthlib==1.3.0
-    # via social-auth-core
 requests==2.25.1
     # via
     #   coreapi
     #   requests-oauthlib
     #   social-auth-core
+requests-oauthlib==1.3.0
+    # via social-auth-core
 rfc3986[idna2008]==1.4.0
     # via httpx
 six==1.15.0
