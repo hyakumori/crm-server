@@ -221,7 +221,7 @@ social-auth-app-django==4.0.0
     # via djoser
 social-auth-core==4.0.3
     # via social-auth-app-django
-sqlparse==0.4.1
+sqlparse==0.4.2
     # via django
 starlette==0.13.8
     # via ariadne
