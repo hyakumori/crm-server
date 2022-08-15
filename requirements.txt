@@ -170,7 +170,7 @@ pydantic==1.7.4
     # via -r requirements.in
 pyflakes==2.2.0
     # via flake8
-pyjwt==2.0.1
+pyjwt==2.4.0
     # via
     #   djangorestframework-simplejwt
     #   social-auth-core
