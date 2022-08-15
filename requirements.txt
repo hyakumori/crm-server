@@ -8,6 +8,8 @@ aiohttp==3.7.4.post0
     # via
     #   -r requirements.in
     #   slackclient
+anyio==3.6.1
+    # via httpcore
 ariadne==0.10.0
     # via -r requirements.in
 arrow==0.17.0
@@ -28,6 +30,7 @@ blessed==1.17.12
     # via django-q
 certifi==2020.12.5
     # via
+    #   httpcore
     #   httpx
     #   requests
 cffi==1.14.4
@@ -124,12 +127,13 @@ graphql-core==3.0.5
     #   ariadne
 h11==0.12.0
     # via httpcore
-httpcore==0.12.2
+httpcore==0.15.0
     # via httpx
-httpx==0.16.1
+httpx==0.23.0
     # via -r requirements.in
 idna==2.10
     # via
+    #   anyio
     #   email-validator
     #   requests
     #   rfc3986
@@ -215,6 +219,7 @@ slackclient==2.9.3
     # via -r requirements.in
 sniffio==1.2.0
     # via
+    #   anyio
     #   httpcore
     #   httpx
 social-auth-app-django==4.0.0
