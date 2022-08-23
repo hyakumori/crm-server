@@ -1,5 +1,5 @@
 import pytest
-import orjson
+import json
 from rest_framework.test import force_authenticate
 from hyakumori_crm.crm.models import (
     Customer,
@@ -92,7 +92,7 @@ def test_customer_contacts(admin_user, api_rf):
     resp = view(req, pk=customer1.pk)
     resp.render()
     assert resp.status_code == 200
-    resp_data = orjson.loads(resp.content)
+    resp_data = json.loads(resp.content)
     assert resp_data["count"] == 2
     assert len(resp_data["results"]) == 2
     # check forest1's contact is customer2's contact
@@ -123,7 +123,7 @@ def test_customer_forests(admin_user, api_rf):
     resp = view(req, pk=customer1.pk)
     resp.render()
     assert resp.status_code == 200
-    resp_data = orjson.loads(resp.content)
+    resp_data = json.loads(resp.content)
     assert resp_data["count"] == 2
     assert len(resp_data["results"]) == 2
 

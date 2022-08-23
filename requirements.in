@@ -32,6 +32,5 @@ flake8
 filelock
 pytest-django
 coverage
-orjson
 graphql-core~=3.0.3
 aiohttp>=3.7.4
