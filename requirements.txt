@@ -178,7 +178,7 @@ pyjwt==2.4.0
     #   social-auth-core
 pyparsing==2.4.7
     # via packaging
-pytest==6.2.2
+pytest==6.2.5
     # via pytest-django
 pytest-django==4.1.0
     # via -r requirements.in
