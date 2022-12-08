@@ -28,7 +28,7 @@ attrs==20.3.0
     #   pytest
 blessed==1.17.12
     # via django-q
-certifi==2020.12.5
+certifi==2022.12.7
     # via
     #   httpcore
     #   httpx
